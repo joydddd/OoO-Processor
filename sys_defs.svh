@@ -310,4 +310,65 @@ typedef struct packed {
 	logic [2:0]       mem_size; // byte, half-word or word
 } EX_MEM_PACKET;
 
+`define PR 6  // 64 Physical registers (32AR+32ROB)
+`define ZERO_PR 0  // PR[0] = AR[0], always read 0 and don't write.
+`define ROB 5     // 32 reorder buffer entries
+`define FU 3 // how many fus in total? Assume 8
+`define RS 4// 16 RS
+`define OP 
+`define SD #1    //sequential assignment delay
+
+//FU: 3 * Int ALU(+,-,bitwise), 2* load/store, 2* int multi, 1* branch
+
+typedef struct packed{
+    logic [`PR-1:0] t0;
+    logic [`PR-1:0] t1;
+    logic [`PR-1:0] t2;
+ }CDB_T_PACKET;
+
+typedef struct packed {
+    logic               valid; // if low, the data in this struct is garbage
+    FU_SELECT           fu_sel;
+    OP_SELECT           op_sel;
+    logic [`XLEN-1:0]   NPC;   // PC + 4
+    logic [`XLEN-1:0]   PC;    // PC
+    ALU_OPA_SELECT      opa_select; // ALU opa mux select (ALU_OPA_xxx *)
+    ALU_OPB_SELECT      opb_select; // ALU opb mux select (ALU_OPB_xxx *)
+    logic INST          inst;
+    logic               halt;          // is this a halt?
+
+    logic [`PR-1:0]     dest_pr;
+    logic [`PR-1:0]     reg1_pr;
+    logic               reg1_ready;
+    logic [`PR-1:0]     reg2_pr;
+    logic               reg2_ready;
+} RS_IN_PACKET;
+
+typedef struct packed {
+    FU_SELECT           fu_sel;
+    OP_SELECT           op_sel;
+    logic [`XLEN-1:0]   NPC;   // PC + 4
+    logic [`XLEN-1:0]   PC;    // PC
+    ALU_OPA_SELECT      opa_select; // ALU opa mux select (ALU_OPA_xxx *)
+    ALU_OPB_SELECT      opb_select; // ALU opb mux select (ALU_OPB_xxx *)
+    logic INST          inst;
+    logic               halt;          // is this a halt?
+    logic [`PR-1:0]     dest_pr;
+    logic [`PR-1:0]     reg1_pr;
+    logic [`PR-1:0]     reg2_pr;
+    logic               valid;
+} RS_S_PACKET;
+
+typedef struct packed{
+    logic alu_1;
+    logic alu_2;
+    logic alu_3;
+    logic storeload_1;
+    logic storeload_2;
+    logic mult_1;
+    logic mult_2;
+    logic branch;
+} FU_STATE_PACKET;
+
+
 `endif // __SYS_DEFS_VH__
