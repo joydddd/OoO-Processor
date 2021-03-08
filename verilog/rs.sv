@@ -21,17 +21,17 @@ logic [2**`RS-1:0]             issue_ready;
 always_comb begin
     for (int i = 0; i < 2**`RS; i++) begin
         if (issue_ready[i] == 0 && rs_entries[i].reg1_ready && rs_entries[i].reg2_ready) begin
-            case(rs_entries.fu_sel)
+            case(rs_entries[i].fu_sel)
                 ALU_1: begin
                     if (fu_ready.alu_1 == 1) begin
                         issue_ready[i] = 1;
                     end
                     else if (fu_ready.alu_2 == 1) begin
-                        rs_entries.fu_sel = ALU_2;
+                        rs_entries[i].fu_sel = ALU_2;
                         issue_ready[i] = 1;
                     end
                     else if (fu_ready.alu_3 == 1) begin
-                        rs_entries.fu_sel = ALU_3;
+                        rs_entries[i].fu_sel = ALU_3;
                         issue_ready[i] = 1;
                     end
                 end
@@ -40,7 +40,7 @@ always_comb begin
                         issue_ready[i] = 1;
                     end
                     else if (fu_ready.storeload_2 == 1) begin
-                        rs_entries.fu_sel = LS_2;
+                        rs_entries[i].fu_sel = LS_2;
                         issue_ready[i] = 1;
                     end
                 end
@@ -49,7 +49,7 @@ always_comb begin
                         issue_ready[i] = 1;
                     end
                     else if (fu_ready.mult_2 == 1) begin
-                        rs_entries.fu_sel = MULT_2;
+                        rs_entries[i].fu_sel = MULT_2;
                         issue_ready[i] = 1;
                     end
                 end
