@@ -315,12 +315,12 @@ typedef struct packed {
 `define ROB 5     // 32 reorder buffer entries
 `define FU 3 // how many fus in total? Assume 8
 `define RS 4// 16 RS
-`define RSW 16 // = 2**`RS
+`define RSW 16 // = 2**`RS, change ps width in RS as well!! 
 `define OP 4
 
 //FU: 3 * Int ALU(+,-,bitwise), 2* load/store, 2* int multi, 1* branch
 
-typedef enum logic [`FU:0] {
+typedef enum logic [`FU-1:0] {
 	ALU_1 = 0,
 	ALU_2 = 1, 
 	ALU_3 = 2,
@@ -331,7 +331,7 @@ typedef enum logic [`FU:0] {
 	BRANCH = 7
 } FU_SELECT;
 
-typedef enum logic{
+typedef enum logic[`OP-1:0]{
 		ADD = 0,
 		SUB = 1,
 		AND = 2,
