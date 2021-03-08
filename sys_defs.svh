@@ -315,16 +315,46 @@ typedef struct packed {
 `define ROB 5     // 32 reorder buffer entries
 `define FU 3 // how many fus in total? Assume 8
 `define RS 4// 16 RS
-`define OP 
-`define SD #1    //sequential assignment delay
+`define RSW 16 // = 2**`RS
+`define OP 4
 
 //FU: 3 * Int ALU(+,-,bitwise), 2* load/store, 2* int multi, 1* branch
 
+typedef enum logic [`FU:0] {
+	ALU_1 = 0,
+	ALU_2 = 1, 
+	ALU_3 = 2,
+	LS_1 = 3,
+	LS_2 = 4,
+	MULT_1 = 5,
+	MULT_2 = 6,
+	BRANCH = 7
+} FU_SELECT;
+
+typedef enum logic{
+		ADD = 0,
+		SUB = 1,
+		AND = 2,
+		SLT = 3,
+		SLTU = 4,
+		OR = 5,
+		XOR = 6,
+		SRL = 7,
+		SLL = 8,
+		SRA = 9
+} OP_SELECT;
+
 typedef struct packed{
-    logic [`PR-1:0] t0;
-    logic [`PR-1:0] t1;
-    logic [`PR-1:0] t2;
- }CDB_T_PACKET;
+	logic alu_1;
+	logic alu_2;
+	logic alu_3;
+	logic storeload_1;
+	logic storeload_2;
+	logic mult_1;
+	logic mult_2;
+	logic branch;
+} FU_STATE_PACKET;
+
 
 typedef struct packed {
     logic               valid; // if low, the data in this struct is garbage
@@ -334,7 +364,7 @@ typedef struct packed {
     logic [`XLEN-1:0]   PC;    // PC
     ALU_OPA_SELECT      opa_select; // ALU opa mux select (ALU_OPA_xxx *)
     ALU_OPB_SELECT      opb_select; // ALU opb mux select (ALU_OPB_xxx *)
-    logic INST          inst;
+    INST          		inst;
     logic               halt;          // is this a halt?
 
     logic [`PR-1:0]     dest_pr;
@@ -351,7 +381,7 @@ typedef struct packed {
     logic [`XLEN-1:0]   PC;    // PC
     ALU_OPA_SELECT      opa_select; // ALU opa mux select (ALU_OPA_xxx *)
     ALU_OPB_SELECT      opb_select; // ALU opb mux select (ALU_OPB_xxx *)
-    logic INST          inst;
+    INST          		inst;
     logic               halt;          // is this a halt?
     logic [`PR-1:0]     dest_pr;
     logic [`PR-1:0]     reg1_pr;
@@ -360,15 +390,31 @@ typedef struct packed {
 } RS_S_PACKET;
 
 typedef struct packed{
-    logic alu_1;
-    logic alu_2;
-    logic alu_3;
-    logic storeload_1;
-    logic storeload_2;
-    logic mult_1;
-    logic mult_2;
-    logic branch;
-} FU_STATE_PACKET;
+	logic 			OP_SELECT;
+	logic	[`PR-1:0] 	dest_pr;
+	logic	[`XLEN-1:0]	r1_value;
+	logic	[`XLEN-1:0] 	r2_value;
+} ISSUE_FU_PACKET;
+
+typedef struct packed{
+	logic if_take_branch;
+	logic [`PR-1:0] dest_pr;
+	logic [`XLEN-1:0] dest_value;
+} FU_COMPLETE_PACKET;
+
+typedef struct packed{
+    logic [`PR-1:0] t0;
+    logic [`PR-1:0] t1;
+    logic [`PR-1:0] t2;
+ }CDB_T_PACKET;
+
+ typedef struct packed {
+	logic 			valid;
+	logic [`PR-1:0] 	Tnew;
+	logic [`PR-1:0] 	Told;
+	logic [4:0] 		arch_reg;
+	logic 			completed;
+} ROB_ENTRY_PACKET;
 
 
 `endif // __SYS_DEFS_VH__
