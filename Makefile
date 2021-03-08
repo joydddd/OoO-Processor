@@ -46,7 +46,7 @@ endif
 VCS = vcs -V -sverilog +vc -Mupdate -line -full64 +vcs+vcdpluson -debug_pp
 LIB = /afs/umich.edu/class/eecs470/lib/verilog/lec25dscc25.v
 # Reservation Station
-RSTESTBENCH = testbench/rs_test.sv
+RSTESTBENCH = testbench/rs_test.sv testbench/rs_print.c
 RSFILES = verilog/rs.sv verilog/ps.sv
 
 # SIMULATION CONFIG
