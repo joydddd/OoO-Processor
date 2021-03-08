@@ -320,28 +320,28 @@ typedef struct packed {
 
 //FU: 3 * Int ALU(+,-,bitwise), 2* load/store, 2* int multi, 1* branch
 
-typedef enum logic [`FU:0] {
-	ALU_1 = 0,
-	ALU_2 = 1, 
-	ALU_3 = 2,
-	LS_1 = 3,
-	LS_2 = 4,
-	MULT_1 = 5,
-	MULT_2 = 6,
-	BRANCH = 7
+typedef enum logic [`FU-1:0] {
+	ALU_1 = `FU'd0,
+	ALU_2 = `FU'd1, 
+	ALU_3 = `FU'd2,
+	LS_1 = `FU'd3,
+	LS_2 = `FU'd4,
+	MULT_1 = `FU'd5,
+	MULT_2 = `FU'd6,
+	BRANCH = `FU'd7
 } FU_SELECT;
 
-typedef enum logic{
-		ADD = 0,
-		SUB = 1,
-		AND = 2,
-		SLT = 3,
-		SLTU = 4,
-		OR = 5,
-		XOR = 6,
-		SRL = 7,
-		SLL = 8,
-		SRA = 9
+typedef enum logic [`OP-1:0] {
+		ADD = `OP'd0,
+		SUB = `OP'd1,
+		AND = `OP'd2,
+		SLT = `OP'd3,
+		SLTU = `OP'd4,
+		OR = `OP'd5,
+		XOR = `OP'd6,
+		SRL = `OP'd7,
+		SLL = `OP'd8,
+		SRA = `OP'd9
 } OP_SELECT;
 
 typedef struct packed{
