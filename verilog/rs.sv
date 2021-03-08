@@ -36,7 +36,7 @@ logic [`RSW-1:0] entry_av, entry_av_after2, entry_av_after1;
 
 assign struct_stall = ~not_stall;
 always_comb 
-    for(int i=0; i<`RSW-1; i++) begin
+    for(int i=0; i<`RSW; i++) begin
         entry_av[i] = issue_EN[i] | ~rs_entries[i].valid;
     end
 assign entry_av_after2 = entry_av & ~new_entry[2];
@@ -52,7 +52,7 @@ ps16 sel_av0(.req(entry_av_after1), .en(1'b1), .gnt(new_entry[0]), .req_up(not_s
 logic [`RSW-1:0] reg1_ready_next;
 logic [`RSW-1:0] reg2_ready_next;
 always_comb begin
-    for(int i=0; i<`RSW-1; i++)begin
+    for(int i=0; i<`RSW; i++)begin
         reg1_ready_next[i] = rs_entries[i].reg1_pr==cdb_t.t0 ||
                              rs_entries[i].reg1_pr==cdb_t.t1 ||
                              rs_entries[i].reg1_pr==cdb_t.t2 ? 
@@ -67,7 +67,7 @@ end
 /* allocate new entry & modify ready bit */ 
 RS_IN_PACKET [`RSW-1:0] rs_entries_next;
 always_comb begin
-    for(int i=0; i < `RSW-1; i++) begin
+    for(int i=0; i < `RSW; i++) begin
         if (new_entry[2][i])
             rs_entries_next[i] = rs_in[2];
         else if (new_entry[1][i])
