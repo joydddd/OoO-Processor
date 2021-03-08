@@ -75,8 +75,8 @@ always_ff @( posedge clock ) begin :
 end
 
 
-
 logic [2**`RS-1:0]      issue_ready;
+logic [2**`RS-1:0]      issue_ready_next;
 // when an instruction in the RS is issued, set "issued" to 1 at the same cycle
 // if "issued" is 1, clear the corresponding RS entry at the next cycle, and set "issued" to 0
 logic [2**`RS-1:0]      issued;
@@ -88,43 +88,44 @@ RS_ISSUE_READY [2:0]    ready_list;
 RS_S_PACKET [2:0]   issue_insts_temp;
 // TODO: design
 always_comb begin
+    issue_ready_next = issue_ready;
     for (int i = 0; i < 2**`RS; i++) begin
-        if (issue_ready[i] == 0 && rs_entries[i].reg1_ready && rs_entries[i].reg2_ready) begin
+        if (issue_ready_next[i] == 0 && rs_entries[i].reg1_ready && rs_entries[i].reg2_ready) begin
             case(rs_entries[i].fu_sel)
                 ALU_1: begin
                     if (fu_ready.alu_1 == 1'b1) begin
-                        issue_ready[i] = 1'b1;
+                        issue_ready_next[i] = 1'b1;
                     end
                     else if (fu_ready.alu_2 == 1'b1) begin
                         rs_entries[i].fu_sel = ALU_2;
-                        issue_ready[i] = 1'b1;
+                        issue_ready_next[i] = 1'b1;
                     end
                     else if (fu_ready.alu_3 == 1'b1) begin
                         rs_entries[i].fu_sel = ALU_3;
-                        issue_ready[i] = 1'b1;
+                        issue_ready_next[i] = 1'b1;
                     end
                 end
                 LS_1: begin
                     if (fu_ready.storeload_1 == 1'b1) begin
-                        issue_ready[i] = 1'b1;
+                        issue_ready_next[i] = 1'b1;
                     end
                     else if (fu_ready.storeload_2 == 1'b1) begin
                         rs_entries[i].fu_sel = LS_2;
-                        issue_ready[i] = 1'b1;
+                        issue_ready_next[i] = 1'b1;
                     end
                 end
                 MULT_1: begin
                     if (fu_ready.mult_1 == 1'b1) begin
-                        issue_ready[i] = 1'b1;
+                        issue_ready_next[i] = 1'b1;
                     end
                     else if (fu_ready.mult_2 == 1'b1) begin
                         rs_entries[i].fu_sel = MULT_2;
-                        issue_ready[i] = 1'b1;
+                        issue_ready_next[i] = 1'b1;
                     end
                 end
                 BRANCH: begin
                     if (fu_ready.branch == 1'b1) begin
-                        issue_ready[i] = 1'b1;
+                        issue_ready_next[i] = 1'b1;
                     end
                 end
             endcase
@@ -137,7 +138,7 @@ always_comb begin
     issue_insts_temp = 0;
     // find the 3 oldest issuable instructions
     for (int i = 0; i < 2**`RS; i++) begin
-        if (issue_ready[i]) begin
+        if (issue_ready_next[i]) begin
             if (!ready_list[0].valid || rs_entries[i].PC < ready_list[0].PC) begin
                 ready_list[2] = ready_list[1];
                 ready_list[1] = ready_list[0];
@@ -157,7 +158,7 @@ always_comb begin
                 ready_list[2].PC        = rs_entries[i].PC;
             end
             else begin
-                issue_ready[i] = 0;
+                issue_ready_next[i] = 0;
             end
         end
     end
@@ -189,11 +190,13 @@ end
 always_ff @(posedge clock) begin
     if (reset) begin
         issued <= 0;
+        issue_ready <= 0;
         // TODO
     end
     else begin
         issued <= issued_next;
         issue_insts <= issue_insts_temp;
+        issue_ready <= issue_ready_next;
         // TODO
     end
 end
