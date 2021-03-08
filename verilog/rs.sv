@@ -75,10 +75,10 @@ always_comb begin
         else if (new_entry[0][i])
             rs_entries_next[i] = rs_in[0];
         else begin
-            rs_entries_next[i] = rs_entries;
+            rs_entries_next[i] = rs_entries[i];
             rs_entries_next[i].reg1_ready = reg1_ready_next[i];
             rs_entries_next[i].reg2_ready = reg2_ready_next[i];
-            if (issue_EN[i]) rs_entries_next[i].valid = 0;
+            // if (issue_EN[i]) rs_entries_next[i].valid = 0;
         end
     end
 end
