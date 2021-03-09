@@ -14,13 +14,13 @@ module RS(
     output RS_S_PACKET [2:0]    issue_insts,
     output logic [2:0]          struct_stall    // if high, stall corresponding dispatch, dependent on fu_req
 `ifdef TEST_MODE
-    , output RS_IN_PACKET [2**`RS-1:0] rs_entries_display
+    , output RS_IN_PACKET [`RSW-1:0] rs_entries_display
 `endif
 );
 
-FU_SELECT [2**`RS-1:0] fu_updated;
+FU_SELECT [`RSW-1:0] fu_updated;
 
-RS_IN_PACKET [2**`RS-1:0]        rs_entries;
+RS_IN_PACKET [`RSW-1:0]        rs_entries;
 `ifdef TEST_MODE
     assign rs_entries_display = rs_entries;
 `endif
@@ -77,20 +77,23 @@ always_comb begin
         else if (new_entry[0][i])
             rs_entries_next[i] = rs_in[0];
         else begin
-            rs_entries_next[i] = rs_entries;
+            rs_entries_next[i] = rs_entries[i];
             rs_entries_next[i].reg1_ready = reg1_ready_next[i];
             rs_entries_next[i].reg2_ready = reg2_ready_next[i];
-            rs_entries_next[i].fu_sel = fu_updated[i];
+            /*if (issue_EN[i]) begin
+                rs_entries_next[i].valid = 1'b0;
+                issue_EN[i] = 1'b0;
+            end*/
         end
     end
 end
 
-logic [2**`RS-1:0]      issue_ready;
-logic [2**`RS-1:0]      issue_ready_next;
+logic [`RSW-1:0]      issue_ready;
+logic [`RSW-1:0]      issue_ready_next;
 // when an instruction in the RS is issued, set "issued" to 1 at the same cycle
 // if "issued" is 1, clear the corresponding RS entry at the next cycle, and set "issued" to 0
-logic [2**`RS-1:0]      issued;
-logic [2**`RS-1:0]      issued_next;
+logic [`RSW-1:0]      issued;
+logic [`RSW-1:0]      issued_next;
 
 typedef struct packed {
     logic               valid;
@@ -106,7 +109,7 @@ RS_S_PACKET [2:0]   issue_insts_temp;
 always_comb begin
     fu_updated = 0;
     issue_ready_next = issue_ready;
-    for (int i = 0; i < 2**`RS; i++) begin
+    for (int i = 0; i < `RSW; i++) begin
         if (issue_ready_next[i] == 0 && rs_entries[i].reg1_ready && rs_entries[i].reg2_ready) begin
             case(rs_entries[i].fu_sel)
                 ALU_1: begin
@@ -158,7 +161,7 @@ always_comb begin
     ready_list = 0;
     issue_insts_temp = 0;
     // find the 3 oldest issuable instructions
-    for (int i = 0; i < 2**`RS; i++) begin
+    for (int i = 0; i < `RSW; i++) begin
         if (issue_ready_next[i]) begin
             if (!ready_list[0].valid || rs_entries[i].PC < ready_list[0].PC) begin
                 ready_list[2] = ready_list[1];
@@ -186,6 +189,9 @@ always_comb begin
 
     for (int i = 0; i < 3; i++) begin
         if (ready_list[i].valid) begin
+            `ifndef RS_ALLOCATE_DEBUG
+            issue_EN[ready_list[i].rs_index] = 1'b1;
+            `endif
             issued_next[ready_list[i].rs_index] = 1'b1;
             issue_insts_temp[i].fu_sel  = rs_entries[ready_list[i].rs_index].fu_sel;
             issue_insts_temp[i].op_sel  = rs_entries[ready_list[i].rs_index].op_sel;
@@ -204,22 +210,25 @@ always_comb begin
             rs_entries_next[i] = rs_entries[i];
             rs_entries_next[i].reg1_ready = reg1_ready_next[i];
             rs_entries_next[i].reg2_ready = reg2_ready_next[i];
-            // if (issue_EN[i]) rs_entries_next[i].valid = 0;
+            /*if (issue_EN[i]) begin
+                rs_entries_next[i].valid = 1'b0;
+                issue_EN[i] = 1'b0;
+            end*/
         end
     end
 end
 
 always_ff @(posedge clock) begin
     if (reset) begin
-        issued <= 0;
-        issue_insts <= 0;
-        issue_ready <= 0;
+        issued <= `SD 0;
+        issue_insts <= `SD 0;
+        issue_ready <= `SD 0;
         rs_entries <= `SD 0; 
     end
     else begin
-        issued <= issued_next;
-        issue_insts <= issue_insts_temp;
-        issue_ready <= issue_ready_next;
+        issued <= `SD issued_next;
+        issue_insts <= `SD issue_insts_temp;
+        issue_ready <= `SD issue_ready_next;
         rs_entries <= `SD rs_entries_next;
     end
 end
