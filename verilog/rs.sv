@@ -1,3 +1,10 @@
+`define TEST_MODE
+`define RS_ALLOCATE_DEBUG
+`ifndef __RS_V__
+`define __RS_V__
+
+`timescale 1ns/100ps
+
 module RS(
     input                       clock,
     input                       reset,
@@ -76,13 +83,6 @@ always_comb begin
             rs_entries_next[i].fu_sel = fu_updated[i];
         end
     end
-end
-
-always_ff @(posedge clock) begin
-    if (reset)
-        rs_entries <= `SD 0; 
-    else 
-        rs_entries <= `SD rs_entries_next;
 end
 
 logic [2**`RS-1:0]      issue_ready;
@@ -201,25 +201,26 @@ always_comb begin
             issue_insts_temp[i].valid   = rs_entries[ready_list[i].rs_index].valid;
         end
         else begin
-            break;
+            rs_entries_next[i] = rs_entries[i];
+            rs_entries_next[i].reg1_ready = reg1_ready_next[i];
+            rs_entries_next[i].reg2_ready = reg2_ready_next[i];
+            // if (issue_EN[i]) rs_entries_next[i].valid = 0;
         end
     end
 end
 
-
-// synopsys sync_set_reset "reset"
 always_ff @(posedge clock) begin
     if (reset) begin
         issued <= 0;
         issue_insts <= 0;
         issue_ready <= 0;
-        // TODO
+        rs_entries <= `SD 0; 
     end
     else begin
         issued <= issued_next;
         issue_insts <= issue_insts_temp;
         issue_ready <= issue_ready_next;
-        // TODO
+        rs_entries <= `SD rs_entries_next;
     end
 end
 endmodule
