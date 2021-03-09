@@ -46,8 +46,8 @@ endif
 VCS = vcs -V -sverilog +vc -Mupdate -line -full64 +vcs+vcdpluson -debug_pp
 LIB = /afs/umich.edu/class/eecs470/lib/verilog/lec25dscc25.v
 # Reservation Station
-RSTESTBENCH = 
-RSFILES = verilog/rs.sv
+RSTESTBENCH = testbench/rs_testbench.sv
+RSFILES = verilog/rs.sv verilog/ps.sv
 
 # SIMULATION CONFIG
 
@@ -91,7 +91,7 @@ all:    simv
 
 # Simulation:
 rs: rs_simv
-	./sv_simv | tee rs_sim_program.out
+	./rs_simv | tee rs_sim_program.out
 rs_simv: $(HEADERS) $(RSFILES) $(RSTESTBENCH)
 	$(VCS) $^ -o rs_simv
 

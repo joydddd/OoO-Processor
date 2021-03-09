@@ -48,3 +48,11 @@ Thumbs.db
 *.mov
 *.wmv
 
+# simv files
+csrc/
+rs_simv.daidir/
+
+ucli.key
+vcdplus.vpd
+*.out
+*_simv

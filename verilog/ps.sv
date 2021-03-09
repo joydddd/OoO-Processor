@@ -62,9 +62,9 @@ module ps16(
     wire [3:0]tmp;
     wire [3:0]sel;
     ps4 psll(.req(req[15:12]), .en(sel[3]), .gnt(gnt[15:12]), .req_up(tmp[3]));
-    ps4 pslr (.req(req[11:8]), .en(sel[2]), .gnt(gnt[11:8]), .req_up(tmp[2]));
+    ps4 pslr(.req(req[11:8]), .en(sel[2]), .gnt(gnt[11:8]), .req_up(tmp[2]));
     ps4 psrl(.req(req[7:4]), .en(sel[1]), .gnt(gnt[7:4]), .req_up(tmp[1]));
-    ps4 psrl(.req(req[3:0]), .en(sel[0]), .gnt(gnt[3:0]), .req_up(tmp[0]));
+    ps4 psrr(.req(req[3:0]), .en(sel[0]), .gnt(gnt[3:0]), .req_up(tmp[0]));
     ps4 pstop(.req(tmp), .en(en), .gnt(sel), .req_up(req_up));
 
 endmodule
