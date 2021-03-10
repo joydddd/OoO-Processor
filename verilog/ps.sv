@@ -80,10 +80,10 @@ module pc_sel2(
 );
     logic [1:0] pri;
     wire larger;
-    assign req_up == req[1] || req[0];
+    assign req_up = req[1] || req[0];
     assign gnt = en? pri:2'b0;
-    assgin larger = req[1] > req[0];
-    always_comb 
+    assign larger = req[1] < req[0];
+    always_comb begin
         case(req)
             2'b11: begin
                 pri = larger?2'b10:2'b01;
@@ -99,7 +99,7 @@ module pc_sel2(
             end
             2'b00: begin
                 pri = 2'b00;
-                pc_up = `XLEN'bfffffff;
+                pc_up = `XLEN'hfffffff;
             end
         endcase
     end

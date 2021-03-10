@@ -6,6 +6,102 @@
 
 `timescale 1ns/100ps
 
+module Issue_Select(
+    input RS_IN_PACKET [`RSW-1:0]   rs_entries,
+    input [`RSW-1:0]                tag_ready_in,
+    input FU_STATE_PACKET           fu_ready,
+    input FU_SELECT [`RSW-1:0]      fu_single_comb,
+    output FU_STATE_PACKET          fu_ready_next,
+    output [`RSW-1:0]               tag_ready_next,
+    output FU_SELECT [`RSW-1:0]     fu_single_comb_next
+);
+
+logic no_issue;
+logic [`RSW-1:0] tag_ready_temp;
+logic [`RSW-1:0] tag_ready;
+
+ps16 sel_av2(.req(tag_ready), .en(1'b1), .gnt(tag_ready_temp), .req_up(no_issue));
+
+assign tag_ready_next = tag_ready_temp | tag_ready;
+
+always_comb begin
+    tag_ready = tag_ready_in;
+    for (int i = 0; i < 2**`RS; i++) begin
+        if (~tag_ready[i] && rs_entries[i].reg1_ready && rs_entries[i].reg2_ready) begin
+            case(rs_entries[i].fu_sel)
+                ALU_1: begin
+                    if (fu_ready.alu_1 == 1'b1 || fu_ready.alu_2 == 1'b1 || fu_ready.alu_3 == 1'b1)
+                        tag_ready[i] = 1'b1;
+                end
+                LS_1: begin
+                    if (fu_ready.storeload_1 == 1'b1 || fu_ready.storeload_2 == 1'b1) begin
+                        tag_ready[i] = 1'b1;
+                    end
+                end
+                MULT_1: begin
+                    if (fu_ready.mult_1 == 1'b1 || fu_ready.mult_2 == 1'b1) begin
+                        tag_ready[i] = 1'b1;
+                    end
+                end
+                BRANCH: begin
+                    if (fu_ready.branch == 1'b1) begin
+                        tag_ready[i] = 1'b1;
+                    end
+                end
+            endcase
+        end
+    end
+    fu_ready_next = fu_ready;
+    for (int i = 0; i < `RSW; i++) begin
+        if (tag_ready_temp[i] == 1) begin
+            case (rs_entries[i].fu_sel)
+                ALU_1: begin
+                    if (fu_ready.alu_1 == 1'b1) begin
+                        fu_ready_next.alu_1 = 1'b0;
+                        fu_single_comb_next[i] = ALU_1;
+                    end
+                    else if (fu_ready.alu_2 == 1'b1) begin
+                        fu_ready_next.alu_2 = 1'b0;
+                        fu_single_comb_next[i] = ALU_2;
+                    end
+                    else if (fu_ready.alu_3 == 1'b1) begin
+                        fu_ready_next.alu_3 = 1'b0;
+                        fu_single_comb_next[i] = ALU_3;
+                    end
+                end
+                LS_1: begin
+                    if (fu_ready.storeload_1 == 1'b1) begin
+                        fu_ready_next.storeload_1 = 1'b0;
+                        fu_single_comb_next[i] = LS_1;
+                    end
+                    else if (fu_ready.storeload_2 == 1'b1) begin
+                        fu_ready_next.storeload_2 = 1'b0;
+                        fu_single_comb_next[i] = LS_2;
+                    end
+                end
+                MULT_1: begin
+                    if (fu_ready.mult_1 == 1'b1) begin
+                        fu_ready_next.mult_1 = 1'b0;
+                        fu_single_comb_next[i] = MULT_1;
+                    end
+                    else if (fu_ready.mult_2 == 1'b1) begin
+                        fu_ready_next.mult_2 = 1'b0;
+                        fu_single_comb_next[i] = MULT_2;
+                    end
+                end
+                BRANCH: begin
+                    if (fu_ready.branch == 1'b1) begin
+                        fu_ready_next.branch = 1'b0;
+                        fu_single_comb_next[i] = BRANCH;
+                    end
+                end
+            endcase
+        end
+    end
+end
+
+endmodule
+
 module RS(
     input                       clock,
     input                       reset,
@@ -104,103 +200,51 @@ end
 
 /***********End of allocate logic***********/
 
-logic [`RSW-1:0]      issue_ready;
-logic [`RSW-1:0]      issue_ready_next;
-
-typedef struct packed {
-    logic               valid;
-    logic [`RS-1:0]      rs_index;
-    logic [`XLEN-1:0]   PC;
-} RS_ISSUE_READY;
-
-// the current three smallest pc, 0 is the oldest, 2 is the newest
-RS_ISSUE_READY [2:0]    ready_list;
-
 RS_S_PACKET [2:0]   issue_insts_temp;
 
+/*****NEW*****/
+wire FU_STATE_PACKET fu_ready_one_to_two;
+wire FU_STATE_PACKET fu_ready_two_to_three;
+wire FU_STATE_PACKET fu_ready_waste;
+
+wire [`RSW-1:0] tag_ready_one_to_two;
+wire [`RSW-1:0] tag_ready_two_to_three;
+wire [`RSW-1:0] tag_ready_final;
+
+wire FU_SELECT [`RSW-1:0] fu_single_comb_one_to_two;
+wire FU_SELECT [`RSW-1:0] fu_single_comb_two_to_three;
+wire FU_SELECT [`RSW-1:0] fu_single_comb_final;
+
+Issue_Select issue_first(.rs_entries(rs_entries), .tag_ready_in(0), .fu_ready(fu_ready), .fu_single_comb(0), .fu_ready_next(fu_ready_one_to_two), .tag_ready_next(tag_ready_one_to_two), .fu_single_comb_next(fu_single_comb_one_to_two));
+
+Issue_Select issue_second(.rs_entries(rs_entries), .tag_ready_in(tag_ready_one_to_two), .fu_ready(fu_ready_one_to_two), .fu_single_comb(fu_single_comb_one_to_two), .fu_ready_next(fu_ready_two_to_three), .tag_ready_next(tag_ready_two_to_three), .fu_single_comb_next(fu_single_comb_two_to_three));
+
+Issue_Select issue_third(.rs_entries(rs_entries), .tag_ready_in(tag_ready_two_to_three), .fu_ready(fu_ready_two_to_three), .fu_single_comb(fu_single_comb_two_to_three), .fu_ready_next(fu_ready_waste), .tag_ready_next(tag_ready_final), .fu_single_comb_next(fu_single_comb_final));
+
 always_comb begin
-    fu_updated = 0;
-    issue_ready_next = issue_ready;
-    for (int i = 0; i < 2**`RS; i++) begin
-        if (issue_ready_next[i] == 0 && rs_entries[i].reg1_ready && rs_entries[i].reg2_ready) begin
-            case(rs_entries[i].fu_sel)
-                ALU_1: begin
-                    if (fu_ready.alu_1 == 1'b1 | fu_ready.alu_2 == 1'b1 | fu_ready.alu_3 == 1'b1)
-                        issue_ready_next[i] = 1'b1;
-                end
-                LS_1: begin
-                    if (fu_ready.storeload_1 == 1'b1 || fu_ready.storeload_2 == 1'b1) begin
-                        issue_ready_next[i] = 1'b1;
-                    end
-                end
-                MULT_1: begin
-                    if (fu_ready.mult_1 == 1'b1 || fu_ready.mult_2 == 1'b1) begin
-                        issue_ready_next[i] = 1'b1;
-                    end
-                end
-                BRANCH: begin
-                    if (fu_ready.branch == 1'b1) begin
-                        fu_updated[i] = BRANCH;
-                        issue_ready_next[i] = 1'b1;
-                    end
-                end
-            endcase
-        end
-    end
-
-    // hc
-    ready_list = 0;
-    issue_insts_temp = 0;
-    // find the 3 oldest issuable instructions
-    for (int i = 0; i < `RSW; i++) begin
-        if (issue_ready_next[i]) begin
-            if (!ready_list[0].valid || rs_entries[i].PC < ready_list[0].PC) begin
-                ready_list[2] = ready_list[1];
-                ready_list[1] = ready_list[0];
-                ready_list[0].valid     = 1'b1;
-                ready_list[0].rs_index  = i[`RS-1:0];
-                ready_list[0].PC        = rs_entries[i].PC;
-            end
-            else if (!ready_list[1].valid || rs_entries[i].PC < ready_list[1].PC) begin
-                ready_list[2] = ready_list[1];
-                ready_list[1].valid     = 1'b1;
-                ready_list[1].rs_index  = i[`RS-1:0];
-                ready_list[1].PC        = rs_entries[i].PC;
-            end
-            else if (!ready_list[2].valid || rs_entries[i].PC < ready_list[2].PC) begin
-                ready_list[2].valid     = 1'b1;
-                ready_list[2].rs_index  = i[`RS-1:0];
-                ready_list[2].PC        = rs_entries[i].PC;
-            end
-            else begin
-                issue_ready_next[i] = 0;
-            end
-        end
-    end
-
     // Initialize issue_EN to 0
     `ifndef RS_ALLOCATE_DEBUG
         issue_EN = `RSW'b0;
     `endif
 
     // Set the output based on which RS entries are going to be issued
-    for (int i = 0; i < 3; i++) begin
-        if (ready_list[i].valid) begin
+    for (int i = 0; i < `RSW; i++) begin
+        if (tag_ready_final[i]) begin
             `ifndef RS_ALLOCATE_DEBUG
-            issue_EN[ready_list[i].rs_index] = 1'b1;
+            issue_EN[i] = 1'b1;
             `endif
-            issue_insts_temp[i].fu_sel  = rs_entries[ready_list[i].rs_index].fu_sel;
-            issue_insts_temp[i].op_sel  = rs_entries[ready_list[i].rs_index].op_sel;
-            issue_insts_temp[i].NPC     = rs_entries[ready_list[i].rs_index].NPC;
-            issue_insts_temp[i].PC      = rs_entries[ready_list[i].rs_index].PC;
-            issue_insts_temp[i].opa_select = rs_entries[ready_list[i].rs_index].opa_select;
-            issue_insts_temp[i].opb_select = rs_entries[ready_list[i].rs_index].opb_select;
-            issue_insts_temp[i].inst    = rs_entries[ready_list[i].rs_index].inst;
-            issue_insts_temp[i].halt    = rs_entries[ready_list[i].rs_index].halt;
-            issue_insts_temp[i].dest_pr = rs_entries[ready_list[i].rs_index].dest_pr;
-            issue_insts_temp[i].reg1_pr = rs_entries[ready_list[i].rs_index].reg1_pr;
-            issue_insts_temp[i].reg2_pr = rs_entries[ready_list[i].rs_index].reg2_pr;
-            issue_insts_temp[i].valid   = rs_entries[ready_list[i].rs_index].valid;
+            issue_insts_temp[i].fu_sel  = fu_single_comb_final[i];
+            issue_insts_temp[i].op_sel  = rs_entries[i].op_sel;
+            issue_insts_temp[i].NPC     = rs_entries[i].NPC;
+            issue_insts_temp[i].PC      = rs_entries[i].PC;
+            issue_insts_temp[i].opa_select = rs_entries[i].opa_select;
+            issue_insts_temp[i].opb_select = rs_entries[i].opb_select;
+            issue_insts_temp[i].inst    = rs_entries[i].inst;
+            issue_insts_temp[i].halt    = rs_entries[i].halt;
+            issue_insts_temp[i].dest_pr = rs_entries[i].dest_pr;
+            issue_insts_temp[i].reg1_pr = rs_entries[i].reg1_pr;
+            issue_insts_temp[i].reg2_pr = rs_entries[i].reg2_pr;
+            issue_insts_temp[i].valid   = rs_entries[i].valid;
         end
         else begin
             break;
@@ -211,11 +255,9 @@ end
 always_ff @(posedge clock) begin
     if (reset) begin
         issue_insts <= `SD 0;
-        issue_ready <= `SD 0;
     end
     else begin
         issue_insts <= `SD issue_insts_temp;
-        issue_ready <= `SD issue_ready_next;
     end
 end
 endmodule
