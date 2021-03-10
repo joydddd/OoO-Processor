@@ -8,11 +8,11 @@
 
 module Issue_Select(
     input RS_IN_PACKET [`RSW-1:0]   rs_entries,
-    input [`RSW-1:0]                tag_ready_in,
+    input logic [`RSW-1:0]                tag_ready_in,
     input FU_STATE_PACKET           fu_ready,
     input FU_SELECT [`RSW-1:0]      fu_single_comb,
     output FU_STATE_PACKET          fu_ready_next,
-    output [`RSW-1:0]               tag_ready_next,
+    output logic [`RSW-1:0]         tag_ready_next,
     output FU_SELECT [`RSW-1:0]     fu_single_comb_next
 );
 
@@ -22,9 +22,10 @@ logic [`RSW-1:0] tag_ready;
 
 ps16 sel_av2(.req(tag_ready), .en(1'b1), .gnt(tag_ready_temp), .req_up(no_issue));
 
-assign tag_ready_next = tag_ready_temp | tag_ready;
+assign tag_ready_next = tag_ready_temp | tag_ready_in;
 
 always_comb begin
+    fu_single_comb_next = fu_single_comb;
     tag_ready = tag_ready_in;
     for (int i = 0; i < 2**`RS; i++) begin
         if (~tag_ready[i] && rs_entries[i].reg1_ready && rs_entries[i].reg2_ready) begin
@@ -50,6 +51,9 @@ always_comb begin
                 end
             endcase
         end
+        else if (tag_ready[i]) begin
+            tag_ready[i] = 1'b0;
+        end    
     end
     fu_ready_next = fu_ready;
     for (int i = 0; i < `RSW; i++) begin
@@ -128,13 +132,12 @@ RS_IN_PACKET [`RSW-1:0]        rs_entries;
 /* select next entry to allocate */
 logic [2:0][`RSW-1:0] new_entry;    // one hot coding
 logic [`RSW-1:0] issue_EN;          // which entry to issue next
-`ifdef RS_ALLOCATE_DEBUG
-    assign issue_EN = 0;
-`endif
+
+
 
 logic [2:0] not_stall; 
 logic [`RSW-1:0] entry_av, entry_av_after2, entry_av_after1;
-FU_SELECT [`RSW-1:0] fu_updated;
+
 
 assign struct_stall = ~not_stall;
 always_comb 
@@ -180,40 +183,40 @@ always_comb begin
             rs_entries_next[i] = rs_entries[i];
             rs_entries_next[i].reg1_ready = reg1_ready_next[i];
             rs_entries_next[i].reg2_ready = reg2_ready_next[i];
-            rs_entries_next[i] = fu_updated[i];
-            // if (issue_EN[i]) rs_entries_next[i].valid = 0;
+            if (issue_EN[i]) rs_entries_next[i].valid = 0;
         end
     end
 end
-`ifndef IS_DEBUG
+
 always_ff @(posedge clock) begin
     if (reset)
+    `ifndef IS_DEBUG
         rs_entries <= `SD 0; 
+    `else
+        rs_entries <= `SD rs_entries_debug;
+    `endif
     else 
         rs_entries <= `SD rs_entries_next;
 end
-`else
-always_ff @(posedge clock) begin
-    rs_entries <= `SD rs_entries_debug;
-end
-`endif
 
 /***********End of allocate logic***********/
 
 RS_S_PACKET [2:0]   issue_insts_temp;
 
 /*****NEW*****/
-wire FU_STATE_PACKET fu_ready_one_to_two;
-wire FU_STATE_PACKET fu_ready_two_to_three;
-wire FU_STATE_PACKET fu_ready_waste;
+FU_STATE_PACKET fu_ready_one_to_two;
+FU_STATE_PACKET fu_ready_two_to_three;
+FU_STATE_PACKET fu_ready_waste;
 
-wire [`RSW-1:0] tag_ready_one_to_two;
-wire [`RSW-1:0] tag_ready_two_to_three;
-wire [`RSW-1:0] tag_ready_final;
+logic [`RSW-1:0] tag_ready_one_to_two;
+logic [`RSW-1:0] tag_ready_two_to_three;
+logic [`RSW-1:0] tag_ready_final;
 
-wire FU_SELECT [`RSW-1:0] fu_single_comb_one_to_two;
-wire FU_SELECT [`RSW-1:0] fu_single_comb_two_to_three;
-wire FU_SELECT [`RSW-1:0] fu_single_comb_final;
+FU_SELECT [`RSW-1:0] fu_single_comb_one_to_two;
+FU_SELECT [`RSW-1:0] fu_single_comb_two_to_three;
+FU_SELECT [`RSW-1:0] fu_single_comb_final;
+
+int i,k;
 
 Issue_Select issue_first(.rs_entries(rs_entries), .tag_ready_in(0), .fu_ready(fu_ready), .fu_single_comb(0), .fu_ready_next(fu_ready_one_to_two), .tag_ready_next(tag_ready_one_to_two), .fu_single_comb_next(fu_single_comb_one_to_two));
 
@@ -223,43 +226,44 @@ Issue_Select issue_third(.rs_entries(rs_entries), .tag_ready_in(tag_ready_two_to
 
 always_comb begin
     // Initialize issue_EN to 0
-    `ifndef RS_ALLOCATE_DEBUG
-        issue_EN = `RSW'b0;
-    `endif
+
+    k = 0;
 
     // Set the output based on which RS entries are going to be issued
-    for (int i = 0; i < `RSW; i++) begin
-        if (tag_ready_final[i]) begin
-            `ifndef RS_ALLOCATE_DEBUG
-            issue_EN[i] = 1'b1;
-            `endif
-            issue_insts_temp[i].fu_sel  = fu_single_comb_final[i];
-            issue_insts_temp[i].op_sel  = rs_entries[i].op_sel;
-            issue_insts_temp[i].NPC     = rs_entries[i].NPC;
-            issue_insts_temp[i].PC      = rs_entries[i].PC;
-            issue_insts_temp[i].opa_select = rs_entries[i].opa_select;
-            issue_insts_temp[i].opb_select = rs_entries[i].opb_select;
-            issue_insts_temp[i].inst    = rs_entries[i].inst;
-            issue_insts_temp[i].halt    = rs_entries[i].halt;
-            issue_insts_temp[i].dest_pr = rs_entries[i].dest_pr;
-            issue_insts_temp[i].reg1_pr = rs_entries[i].reg1_pr;
-            issue_insts_temp[i].reg2_pr = rs_entries[i].reg2_pr;
-            issue_insts_temp[i].valid   = rs_entries[i].valid;
+    for (int j = 0; j < 3; j++) begin
+        for (i = k; i < `RSW; i++) begin
+            if (tag_ready_final[i]) begin
+                issue_insts_temp[j].fu_sel  = fu_single_comb_final[i];
+                issue_insts_temp[j].op_sel  = rs_entries[i].op_sel;
+                issue_insts_temp[j].NPC     = rs_entries[i].NPC;
+                issue_insts_temp[j].PC      = rs_entries[i].PC;
+                issue_insts_temp[j].opa_select = rs_entries[i].opa_select;
+                issue_insts_temp[j].opb_select = rs_entries[i].opb_select;
+                issue_insts_temp[j].inst    = rs_entries[i].inst;
+                issue_insts_temp[j].halt    = rs_entries[i].halt;
+                issue_insts_temp[j].dest_pr = rs_entries[i].dest_pr;
+                issue_insts_temp[j].reg1_pr = rs_entries[i].reg1_pr;
+                issue_insts_temp[j].reg2_pr = rs_entries[i].reg2_pr;
+                issue_insts_temp[j].valid   = rs_entries[i].valid;
+                k = i + 1;
+                break;
+            end
         end
-        else begin
-            break;
+        if (i == `RSW) begin
+            for (int p = j; p < 3; p++) begin
+                issue_insts_temp[p].valid   = 1'b0;
+            end
         end
     end
 end
+`ifdef RS_ALLOCATE_DEBUG
+    assign issue_EN = 0;
+`else
+    assign issue_EN = tag_ready_final;
+`endif
 
-always_ff @(posedge clock) begin
-    if (reset) begin
-        issue_insts <= `SD 0;
-    end
-    else begin
-        issue_insts <= `SD issue_insts_temp;
-    end
-end
+
+assign issue_insts = issue_insts_temp;
 endmodule
 
 `endif
