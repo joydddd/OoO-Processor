@@ -234,9 +234,18 @@ module testbench;
         show_fu_state();
         show_cdb();
         show_rs_out();
+
+        @(negedge clock);
+        show_rs_table();
+        show_fu_state();
+        show_cdb();
+        show_rs_out();
         
-        
-        
+        @(negedge clock);
+        show_rs_table();
+        show_fu_state();
+        show_cdb();
+        show_rs_out();
 
         @(negedge clock);
         reset = 1'b1;
