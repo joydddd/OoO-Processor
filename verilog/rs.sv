@@ -28,7 +28,7 @@ always_comb begin
     fu_single_comb_next = fu_single_comb;
     tag_ready = tag_ready_in;
     for (int i = 0; i < 2**`RS; i++) begin
-        if (~tag_ready[i] && rs_entries[i].reg1_ready && rs_entries[i].reg2_ready) begin
+        if (~tag_ready[i] && rs_entries[i].valid && rs_entries[i].reg1_ready && rs_entries[i].reg2_ready) begin
             case(rs_entries[i].fu_sel)
                 ALU_1: begin
                     if (fu_ready.alu_1 == 1'b1 || fu_ready.alu_2 == 1'b1 || fu_ready.alu_3 == 1'b1)

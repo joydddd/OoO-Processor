@@ -190,39 +190,39 @@ module testbench;
         @(negedge clock);
         rs_in = 0;
         
-        set_fu_ready(8'b11111111);
+        set_fu_ready(8'b10111111);
         set_cdb_packet(0, 0, 0);
-        set_rs_entry(15, 1, ALU_1, SUB, 0, 4, 32'h40418133, 0,
+        set_rs_entry(15, 1, ALU_1, SUB, 4, 8, 32'h40418133, 0,
             5, 3, 1, 2, 1);
-        set_rs_entry(14, 1, ALU_1, ADD, 4, 8, 32'h00208033, 0,
+        set_rs_entry(14, 1, ALU_1, ADD, 8, 12, 32'h00208033, 0,
             6, 5, 0, 2, 1);
-        set_rs_entry(13, 1, ALU_1, ADD, 8, 12, 32'h007302b3, 0,
+        set_rs_entry(13, 1, ALU_1, ADD, 12, 16, 32'h007302b3, 0,
             7, 3, 1, 6, 0);
-        set_rs_entry(12, 1, ALU_1, SUB, 12, 16, 32'h40418133, 0,
+        set_rs_entry(12, 1, ALU_1, SUB, 16, 20, 32'h40418133, 0,
             5, 3, 1, 2, 1);
-        set_rs_entry(11, 1, ALU_1, ADD, 16, 20, 32'h00208033, 0,
+        set_rs_entry(11, 1, ALU_1, ADD, 20, 24, 32'h00208033, 0,
             6, 5, 0, 2, 1);
-        set_rs_entry(10, 1, ALU_1, ADD, 20, 24, 32'h007302b3, 0,
+        set_rs_entry(10, 1, ALU_1, ADD, 24, 28, 32'h007302b3, 0,
             7, 3, 1, 6, 0);
-        set_rs_entry(9, 1, ALU_1, SUB, 24, 28, 32'h40418133, 0,
+        set_rs_entry(9, 1, ALU_1, SUB, 28, 32, 32'h40418133, 0,
             5, 3, 1, 2, 1);
-        set_rs_entry(8, 1, ALU_1, ADD, 28, 32, 32'h00208033, 0,
+        set_rs_entry(8, 1, ALU_1, ADD, 32, 36, 32'h00208033, 0,
             6, 5, 0, 2, 1);
-        set_rs_entry(7, 1, ALU_1, ADD, 32, 36, 32'h007302b3, 0,
+        set_rs_entry(7, 1, ALU_1, ADD, 36, 40, 32'h007302b3, 0,
             7, 3, 1, 6, 0);
-        set_rs_entry(6, 1, ALU_1, SUB, 36, 40, 32'h40418133, 0,
+        set_rs_entry(6, 1, ALU_1, SUB, 40, 44, 32'h40418133, 0,
             5, 3, 1, 2, 1);
-        set_rs_entry(5, 1, ALU_1, ADD, 40, 44, 32'h00208033, 0,
+        set_rs_entry(5, 1, ALU_1, ADD, 44, 48, 32'h00208033, 0,
             6, 5, 0, 2, 1);
-        set_rs_entry(4, 1, ALU_1, ADD, 44, 48, 32'h007302b3, 0,
+        set_rs_entry(4, 1, ALU_1, ADD, 48, 52, 32'h007302b3, 0,
             7, 3, 1, 6, 0);
-        set_rs_entry(3, 1, ALU_1, SUB, 48, 52, 32'h40418133, 0,
+        set_rs_entry(3, 1, ALU_1, SUB, 52, 56, 32'h40418133, 0,
             5, 3, 1, 2, 1);
-        set_rs_entry(2, 1, ALU_1, ADD, 52, 56, 32'h00208033, 0,
+        set_rs_entry(2, 1, ALU_1, ADD, 56, 60, 32'h00208033, 0,
             6, 5, 0, 2, 1);
-        set_rs_entry(1, 1, ALU_1, ADD, 56, 60, 32'h007302b3, 0,
+        set_rs_entry(1, 1, ALU_1, ADD, 60, 64, 32'h007302b3, 0,
             7, 3, 1, 6, 0);
-        set_rs_entry(0, 1, ALU_1, ADD, 56, 60, 32'h007302b3, 0,
+        set_rs_entry(0, 1, ALU_1, ADD, 64, 68, 32'h007302b3, 0,
             7, 3, 1, 6, 0);
         @(negedge clock);
         reset = 0;
@@ -230,19 +230,21 @@ module testbench;
         show_fu_state();
         show_cdb();
         show_rs_out();
-        @(negedge clock);
+        @(posedge clock);
         set_fu_ready(8'b00011111);
-        show_rs_table();
-        show_fu_state();
-        show_cdb();
-        show_rs_out();
         @(negedge clock);
         show_rs_table();
         show_fu_state();
         show_cdb();
         show_rs_out();
         @(negedge clock);
+        show_rs_table();
+        show_fu_state();
+        show_cdb();
+        show_rs_out();
+        @(posedge clock);
         set_fu_ready(8'b11111111);
+        @(negedge clock);
         show_rs_table();
         show_fu_state();
         show_cdb();
