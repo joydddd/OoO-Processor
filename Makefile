@@ -48,7 +48,7 @@ LIB = /afs/umich.edu/class/eecs470/lib/verilog/lec25dscc25.v
 # Reservation Station
 RSTESTBENCH = testbench/rs_test.sv testbench/rs_print.c
 RSFILES = verilog/rs.sv verilog/ps.sv
-
+RSSYNFILES = rs.vg
 # SIMULATION CONFIG
 
 HEADERS     = $(wildcard *.svh)
@@ -68,7 +68,7 @@ export CACHEFILES
 
 export CACHE_NAME = cache
 export PIPELINE_NAME = pipeline
-
+export RSFILES
 PIPELINE  = $(SYNTH_DIR)/$(PIPELINE_NAME).vg 
 SYNFILES  = $(PIPELINE) $(SYNTH_DIR)/$(PIPELINE_NAME)_svsim.sv
 CACHE     = $(SYNTH_DIR)/$(CACHE_NAME).vg
@@ -94,6 +94,15 @@ rs: rs_simv
 	./rs_simv | tee rs_sim_program.out
 rs_simv: $(HEADERS) $(RSFILES) $(RSTESTBENCH)
 	$(VCS) $^ -o rs_simv
+
+rs.vg: verilog/rs.sv verilog/ps.sv synth/rs.tcl
+	cd $(SYNTH_DIR) && dc_shell-t -f ./rs.tcl | tee rs_synth.out
+
+rs_syn:	rs_syn_simv 
+	./rs_syn_simv | tee rs_syn_program.out
+
+rs_syn_simv:	$(HEADERS) $(RSSYNFILES) $(RSTESTBENCH)
+	$(VCS) $^ $(LIB) +define+SYNTH_TEST -o rs_syn_simv 
 
 sim:	simv
 	./simv | tee sim_program.out

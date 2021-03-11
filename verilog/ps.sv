@@ -82,12 +82,12 @@ module pc_sel2(
     wire larger;
     assign req_up = req[1] || req[0];
     assign gnt = en? pri:2'b0;
-    assign larger = req[1] < req[0];
+    assign smaller = (pc[1] < pc[0]);
     always_comb begin
         case(req)
             2'b11: begin
-                pri = larger?2'b10:2'b01;
-                pc_up = larger?pc[1]:pc[0];
+                pri   = smaller ?   2'b10  :  2'b01;
+                pc_up = smaller ?   pc[1]  :  pc[0];
             end
             2'b10: begin
                 pri = 2'b10;
@@ -119,7 +119,7 @@ module pc_sel4(
 
     pc_sel2 sell(.pc(pc[3:2]), .req(req[3:2]), .en(en_children[1]), .gnt(gnt[3:2]), .req_up(req_children[1]), .pc_up(pc_children[1]));
     pc_sel2 selr(.pc(pc[1:0]), .req(req[1:0]), .en(en_children[0]), .gnt(gnt[1:0]), .req_up(req_children[0]), .pc_up(pc_children[0]));
-    pc_sel2 seltop(.pc(pc_children), .req(req_children), .en(en), .gnt(en_children), .req_up(req_up));
+    pc_sel2 seltop(.pc(pc_children), .req(req_children), .en(en), .gnt(en_children), .req_up(req_up), .pc_up(pc_up));
 endmodule
 
 module pc_sel16(
@@ -139,5 +139,5 @@ module pc_sel16(
     pc_sel4 sel1(.pc(pc[7:4]), .req(req[7:4]), .en(en_children[1]), .gnt(gnt[7:4]), .req_up(req_children[1]), .pc_up(pc_children[1]));
     pc_sel4 sel0(.pc(pc[3:0]), .req(req[3:0]), .en(en_children[0]), .gnt(gnt[3:0]), .req_up(req_children[0]), .pc_up(pc_children[0]));
 
-    pc_sel4 seltop(.pc(pc_children), .req(req_children), .en(en), .gnt(en_children), .req_up(req_up));
+    pc_sel4 seltop(.pc(pc_children), .req(req_children), .en(en), .gnt(en_children), .req_up(req_up), .pc_up(pc_up));
 endmodule

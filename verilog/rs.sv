@@ -8,7 +8,7 @@
 
 module Issue_Select(
     input RS_IN_PACKET [`RSW-1:0]   rs_entries,
-    input logic [`RSW-1:0]                tag_ready_in,
+    input logic [`RSW-1:0]          tag_ready_in,
     input FU_STATE_PACKET           fu_ready,
     input FU_SELECT [`RSW-1:0]      fu_single_comb,
     output FU_STATE_PACKET          fu_ready_next,
@@ -17,19 +17,27 @@ module Issue_Select(
 );
 
 logic no_issue;
-logic [`RSW-1:0] tag_ready_temp;
-logic [`RSW-1:0] tag_ready;
+logic [`RSW-1:0]            tag_ready_temp;
+logic [`RSW-1:0]            tag_ready;
+logic [`RSW-1:0][`XLEN-1:0] pc_comb;
+logic [`XLEN-1:0]           pc_up_waste;
 
-ps16 sel_av2(.req(tag_ready), .en(1'b1), .gnt(tag_ready_temp), .req_up(no_issue));
+pc_sel16 sel_small_pc(.pc(pc_comb), .req(tag_ready), .en(1'b1), .gnt(tag_ready_temp), .req_up(no_issue), .pc_up(pc_up_waste));
 
 assign tag_ready_next = tag_ready_temp | tag_ready_in;
 
+generate
+    genvar i;
+    for (i = 0; i < `RSW; i++) begin
+        assign pc_comb[i] = rs_entries[i].PC;
+    end
+endgenerate
+
 always_comb begin
-    fu_single_comb_next = fu_single_comb;
     tag_ready = tag_ready_in;
     for (int i = 0; i < 2**`RS; i++) begin
         if (~tag_ready[i] && rs_entries[i].valid && rs_entries[i].reg1_ready && rs_entries[i].reg2_ready) begin
-            case(rs_entries[i].fu_sel)
+            priority case(rs_entries[i].fu_sel)
                 ALU_1: begin
                     if (fu_ready.alu_1 == 1'b1 || fu_ready.alu_2 == 1'b1 || fu_ready.alu_3 == 1'b1)
                         tag_ready[i] = 1'b1;
@@ -56,9 +64,10 @@ always_comb begin
         end    
     end
     fu_ready_next = fu_ready;
+    fu_single_comb_next = 0;
     for (int i = 0; i < `RSW; i++) begin
         if (tag_ready_temp[i] == 1) begin
-            case (rs_entries[i].fu_sel)
+            priority case (rs_entries[i].fu_sel)
                 ALU_1: begin
                     if (fu_ready.alu_1 == 1'b1) begin
                         fu_ready_next.alu_1 = 1'b0;
