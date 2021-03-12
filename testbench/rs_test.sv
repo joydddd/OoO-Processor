@@ -181,6 +181,7 @@ module testbench;
     end
 
     initial begin
+        $dumpvars;
         clock = 1'b0;
         reset = 1'b1;
         rs_debug = 0;
