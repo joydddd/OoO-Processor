@@ -12,7 +12,7 @@
 
 `ifndef __ISA_SVH__
 `define __ISA_SVH__
-
+`timescale 1ns/100ps
 // RV32 Opcodes
 `define RV32_LOAD     7'b0000011 //load, self-explanatory
 `define RV32_STORE    7'b0100011 //store, self-explanatory

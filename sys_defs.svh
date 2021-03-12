@@ -10,7 +10,7 @@
 
 `ifndef __SYS_DEFS_VH__
 `define __SYS_DEFS_VH__
-
+`timescale 1ns/100ps
 /* Synthesis testing definition, used in DUT module instantiation */
 
 `ifdef  SYNTH_TEST
@@ -375,6 +375,7 @@ typedef struct packed {
 } RS_IN_PACKET;
 
 typedef struct packed {
+	logic               valid;
     FU_SELECT           fu_sel;
     OP_SELECT           op_sel;
     logic [`XLEN-1:0]   NPC;   // PC + 4
@@ -386,7 +387,6 @@ typedef struct packed {
     logic [`PR-1:0]     dest_pr;
     logic [`PR-1:0]     reg1_pr;
     logic [`PR-1:0]     reg2_pr;
-    logic               valid;
 } RS_S_PACKET;
 
 typedef struct packed{

@@ -1,5 +1,37 @@
 #include <stdio.h>
 #define NOOP_INST 0x00000013
+void print_select(int index,  int valid, int inst,  int npc, int fu_select, int op_select) {
+  printf("|  %1d  |", index);
+  print_stage("", inst, npc, valid);
+  char *fu;
+  char *op;
+  switch(fu_select){
+    case 0: fu = " ALU_1"; break;
+    case 1: fu = " ALU_2"; break;
+    case 2: fu = " ALU_3"; break;
+    case 3: fu = " LS_1 "; break;
+    case 4: fu = " LS_2 "; break;
+    case 5: fu = "MULT_1"; break;
+    case 6: fu = "MULT_2"; break;
+    case 7: fu = "BRANCH"; break;
+    default: fu = "  x   "; break;
+  }
+  switch(op_select) {
+    case 0: op = "ADD"; break;
+    case 1: op = "SUB"; break;
+    case 2: op = "AND"; break;
+    case 3: op = "SLT"; break;
+    case 4: op = "SLTU"; break;
+    case 5: op = "OR "; break;
+    case 6: op = "XOR"; break;
+    case 7: op = "SRL"; break;
+    case 8: op = "SLL"; break;
+    case 9: op = "SRA"; break;
+    default: fu = " x "; break;
+  }
+  printf("| %s |   %s   |\n", fu, op);
+}
+
 
 void print_stage(char* div, int inst, int npc, int valid_inst)
 {
@@ -117,5 +149,5 @@ void print_stage(char* div, int inst, int npc, int valid_inst)
     default: str = "invalid"; break;
     }
   }
-    printf("%s%4d:%-8s", div, npc, str);
+    printf("%s%4x:%-8s", div, npc, str);
 }

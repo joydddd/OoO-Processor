@@ -48,7 +48,7 @@ LIB = /afs/umich.edu/class/eecs470/lib/verilog/lec25dscc25.v
 # Reservation Station
 RSTESTBENCH = testbench/rs_test.sv testbench/rs_print.c
 RSFILES = verilog/rs.sv verilog/ps.sv
-
+RSSYNFILES = synth/RS.vg
 # SIMULATION CONFIG
 
 HEADERS     = $(wildcard *.svh)
@@ -68,7 +68,7 @@ export CACHEFILES
 
 export CACHE_NAME = cache
 export PIPELINE_NAME = pipeline
-
+export RSFILES
 PIPELINE  = $(SYNTH_DIR)/$(PIPELINE_NAME).vg 
 SYNFILES  = $(PIPELINE) $(SYNTH_DIR)/$(PIPELINE_NAME)_svsim.sv
 CACHE     = $(SYNTH_DIR)/$(CACHE_NAME).vg
@@ -94,6 +94,7 @@ rs: rs_simv
 	./rs_simv | tee rs_sim_program.out
 rs_simv: $(HEADERS) $(RSFILES) $(RSTESTBENCH)
 	$(VCS) $^ -o rs_simv
+
 
 sim:	simv
 	./simv | tee sim_program.out
@@ -135,6 +136,15 @@ $(CACHE): $(CACHEFILES) $(SYNTH_DIR)/$(CACHE_NAME).tcl
 $(PIPELINE): $(SIMFILES) $(CACHE) $(SYNTH_DIR)/$(PIPELINE_NAME).tcl
 	cd $(SYNTH_DIR) && dc_shell-t -f ./$(PIPELINE_NAME).tcl | tee $(PIPELINE_NAME)_synth.out
 	echo -e -n 'H\n1\ni\n`timescale 1ns/100ps\n.\nw\nq\n' | ed $(PIPELINE)
+
+$(RSSYNFILES): $(RSFILES) $(SYNTH_DIR)/rs.tcl
+	cd $(SYNTH_DIR) && dc_shell-t -f ./rs.tcl | tee rs_synth.out
+
+rs_syn:	rs_syn_simv 
+	./rs_syn_simv | tee rs_syn_program.out
+
+rs_syn_simv:	$(HEADERS) $(RSSYNFILES) $(RSTESTBENCH)
+	$(VCS) $^ $(LIB) +define+SYNTH_TEST +error+20 -o rs_syn_simv 
 
 syn:	syn_simv 
 	./syn_simv | tee syn_program.out
