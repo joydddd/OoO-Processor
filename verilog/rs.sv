@@ -134,6 +134,8 @@ end
 
 endmodule
 
+`timescale 1ns/100ps
+
 module RS(
     input                       clock,
     input                       reset,

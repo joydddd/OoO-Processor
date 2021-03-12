@@ -10,7 +10,7 @@
 
 `ifndef __SYS_DEFS_VH__
 `define __SYS_DEFS_VH__
-
+`timescale 1ns/100ps
 /* Synthesis testing definition, used in DUT module instantiation */
 
 `ifdef  SYNTH_TEST

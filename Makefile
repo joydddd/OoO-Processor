@@ -102,7 +102,7 @@ rs_syn:	rs_syn_simv
 	./rs_syn_simv | tee rs_syn_program.out
 
 rs_syn_simv:	$(HEADERS) $(RSSYNFILES) $(RSTESTBENCH)
-	$(VCS) $^ $(LIB) +define+SYNTH_TEST -o rs_syn_simv 
+	$(VCS) $^ $(LIB) +define+SYNTH_TEST +error+20 -o rs_syn_simv 
 
 sim:	simv
 	./simv | tee sim_program.out
