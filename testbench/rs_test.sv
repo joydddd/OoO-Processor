@@ -1,7 +1,7 @@
 `timescale 1ns/100ps
 
 
-`define RS_ALLOCATE_DEBUG // test only allocating new entry in rs
+//`define RS_ALLOCATE_DEBUG // test only allocating new entry in rs
 `define TEST_MODE
 
 
@@ -31,12 +31,103 @@ module testbench;
 		#(`VERILOG_CLOCK_PERIOD/2.0);
 		clock = ~clock;
 	end
+
+    task check_value;
+        input [63:0] value1;
+        input [63:0] value2;
+        input string note;
+
+        // begin
+        //     if (value1 != value2) begin
+        //         $display("Cycle %2d %s not match", cycle_count, note);
+        //         $display("@@@Failed.");
+        //         $finish;
+        //     end
+        // end
+    endtask
+
+    task check_rs_entry;
+        input integer rs_in_i;
+
+        input valid;
+        input FU_SELECT fu_sel;
+        input OP_SELECT op_sel;
+        input [`XLEN-1:0] npc;
+        input [`XLEN-1:0] pc;
+        input INST inst;
+        input halt;
+
+        input [`PR-1:0] dest_pr;
+        input [`PR-1:0] reg1_pr;
+        input reg1_ready;
+        input [`PR-1:0] reg2_pr;
+        input reg2_ready;
+
+        begin
+            check_value(rs_entries[rs_in_i].valid, valid, $sformatf("RS entry %2d valid", rs_in_i));
+            if (valid) begin
+                check_value(rs_entries[rs_in_i].fu_sel, fu_sel, $sformatf("RS entry %2d fu_sel", rs_in_i));
+                check_value(rs_entries[rs_in_i].op_sel, op_sel, $sformatf("RS entry %2d op_sel", rs_in_i));
+                check_value(rs_entries[rs_in_i].NPC, npc, $sformatf("RS entry %2d npc", rs_in_i));
+                check_value(rs_entries[rs_in_i].PC, pc, $sformatf("RS entry %2d pc", rs_in_i));
+                check_value(rs_entries[rs_in_i].inst, inst, $sformatf("RS entry %2d inst", rs_in_i));
+                check_value(rs_entries[rs_in_i].halt, halt, $sformatf("RS entry %2d halt", rs_in_i));
+
+                check_value(rs_entries[rs_in_i].dest_pr, dest_pr, $sformatf("RS entry %2d dest_pr", rs_in_i));
+                check_value(rs_entries[rs_in_i].reg1_pr, reg1_pr, $sformatf("RS entry %2d reg1_pr", rs_in_i));
+                check_value(rs_entries[rs_in_i].reg1_ready, reg1_ready, $sformatf("RS entry %2d reg1_ready", rs_in_i));
+                check_value(rs_entries[rs_in_i].reg2_pr, reg2_pr, $sformatf("RS entry %2d reg2_pr", rs_in_i));
+                check_value(rs_entries[rs_in_i].reg2_ready, reg2_ready, $sformatf("RS entry %2d reg2_ready", rs_in_i));
+            end
+        end
+    endtask
+
+    task check_issue_inst;
+        input integer issue_inst_i;
+
+        input valid;
+        input FU_SELECT fu_sel;
+        input OP_SELECT op_sel;
+        input [`XLEN-1:0] npc;
+        input [`XLEN-1:0] pc;
+        input INST inst;
+        input halt;
+
+        input [`PR-1:0] dest_pr;
+        input [`PR-1:0] reg1_pr;
+        input [`PR-1:0] reg2_pr;
+
+        begin
+            check_value(issue_insts[issue_inst_i].valid, valid, $sformatf("Issue insn %2d valid", issue_inst_i));
+
+            if (valid) begin
+                check_value(issue_insts[issue_inst_i].fu_sel, fu_sel, $sformatf("Issue insn %2d fu_sel", issue_inst_i));
+                check_value(issue_insts[issue_inst_i].op_sel, op_sel, $sformatf("Issue insn %2d op_sel", issue_inst_i));
+                check_value(issue_insts[issue_inst_i].NPC, npc, $sformatf("Issue insn %2d npc", issue_inst_i));
+                check_value(issue_insts[issue_inst_i].PC, pc, $sformatf("Issue insn %2d pc", issue_inst_i));
+                check_value(issue_insts[issue_inst_i].inst, inst, $sformatf("Issue insn %2d inst", issue_inst_i));
+                check_value(issue_insts[issue_inst_i].halt, halt, $sformatf("Issue insn %2d halt", issue_inst_i));
+
+                check_value(issue_insts[issue_inst_i].dest_pr, dest_pr, $sformatf("Issue insn %2d dest_pr", issue_inst_i));
+                check_value(issue_insts[issue_inst_i].reg1_pr, reg1_pr, $sformatf("Issue insn %2d reg1_pr", issue_inst_i));
+                check_value(issue_insts[issue_inst_i].reg2_pr, reg2_pr, $sformatf("Issue insn %2d reg2_pr", issue_inst_i));
+            end
+        end
+    endtask
+
+    task check_rs_stall;
+        input [2:0] true_stall;
+
+        begin
+            check_value(rs_stall, true_stall, "RS stall");
+        end
+    endtask
     
 
     task show_rs_table;
         $display("####### Cycle %d ##########", cycle_count);
         for(int i=2**`RS-1; i>=0; i--) begin  // For RS entry, it allocates from 15-0
-            print_stage("*", rs_entries[i].inst, rs_entries[i].NPC[31:0], rs_entries[i].valid);
+            print_stage("*", rs_entries[i].inst, rs_entries[i].PC[31:0], rs_entries[i].valid);
             $display("dest_pr:%d reg1_pr:%d reg1_ready: %b reg2_pr:%d reg2_ready %b", rs_entries[i].dest_pr, rs_entries[i].reg1_pr, rs_entries[i].reg1_ready, rs_entries[i].reg2_pr, rs_entries[i].reg2_ready);
         end
         $display("structual_stall:%b", rs_stall);
@@ -81,7 +172,7 @@ module testbench;
             $display("=====   RS_S Packet   =====");
             $display("| WAY |     inst    | fu_sel | op_sel  |");
             for (int i=0; i < 3; i++) begin
-                print_select(i, issue_insts[i].valid, issue_insts[i].inst, issue_insts[i].NPC, issue_insts[i].fu_sel, issue_insts[i].op_sel);
+                print_select(i, issue_insts[i].valid, issue_insts[i].inst, issue_insts[i].PC, issue_insts[i].fu_sel, issue_insts[i].op_sel);
             end
             $display("| WAY | valid |    PC    | dest_pr | reg1_pr | reg2_pr |       inst | halt |");
             for (int i=0; i < 3; i++) begin
@@ -187,104 +278,600 @@ module testbench;
         rs_debug = 0;
         cdb_t = 0;
         @(negedge clock);
-        @(negedge clock);
         rs_in = 0;
-        
-        set_fu_ready(8'b10111111);
-        set_cdb_packet(0, 0, 0);
-        set_rs_entry(1, 1, ALU_1, SUB, 4, 8, 32'h40418133, 0,
-            5, 3, 1, 2, 1);
-
-        set_rs_entry(8, 1, ALU_1, ADD, 8, 12, 32'h00208033, 0,
-            6, 5, 0, 2, 1);
-
-        set_rs_entry(5, 1, ALU_1, ADD, 12, 16, 32'h007302b3, 0,
-            7, 3, 1, 6, 0);
-
-        set_rs_entry(9, 1, ALU_1, SUB, 16, 20, 32'h40418133, 0,
-            5, 3, 1, 2, 1);
-
-        set_rs_entry(3, 1, ALU_1, ADD, 20, 24, 32'h00208033, 0,
-            6, 5, 0, 2, 1);
-
-        set_rs_entry(2, 1, ALU_1, ADD, 24, 28, 32'h007302b3, 0,
-            7, 3, 1, 6, 0);
-
-        set_rs_entry(4, 1, ALU_1, SUB, 28, 32, 32'h40418133, 0,
-            5, 3, 1, 2, 1);
-
-        set_rs_entry(11, 1, ALU_1, ADD, 32, 36, 32'h00208033, 0,
-            6, 5, 0, 2, 1);
-
-        set_rs_entry(10, 1, ALU_1, ADD, 36, 40, 32'h007302b3, 0,
-            7, 3, 1, 6, 0);
-
-        set_rs_entry(6, 1, ALU_1, SUB, 40, 44, 32'h40418133, 0,
-            5, 3, 1, 2, 1);
-
-        set_rs_entry(7, 1, ALU_1, ADD, 44, 48, 32'h00208033, 0,
-            6, 5, 0, 2, 1);
-
-        set_rs_entry(13, 1, ALU_1, ADD, 48, 52, 32'h007302b3, 0,
-            7, 3, 1, 6, 0);
-
-        set_rs_entry(12, 1, ALU_1, SUB, 52, 56, 32'h40418133, 0,
-            5, 3, 1, 2, 1);
-
-        set_rs_entry(14, 1, ALU_1, ADD, 56, 60, 32'h00208033, 0,
-            6, 5, 0, 2, 1);
-
-        set_rs_entry(0, 1, ALU_1, ADD, 60, 64, 32'h007302b3, 0,
-            7, 3, 1, 6, 0);
-
-        set_rs_entry(15, 1, ALU_1, ADD, 64, 68, 32'h007302b3, 0,
-            7, 3, 1, 6, 0);
-        @(negedge clock);
         reset = 0;
+        set_cdb_packet(0, 0, 0);
+        set_fu_ready(8'b11111111);
+        //A simple test for allocating
+        set_rs_in_packet(2, 1, ALU_1, SUB, 4, 0, 32'h40418133, 0, 5, 3, 1, 2, 1);
+        set_rs_in_packet(1, 1, ALU_1, ADD, 8, 4, 32'h00208033, 0, 6, 5, 0, 2, 1);
+        set_rs_in_packet(0, 1, ALU_1, ADD, 12, 8, 32'h007302b3, 0, 7, 3, 1, 6, 0);
+
+        check_issue_inst(0, 0, ALU_1, SUB, 4, 0, 32'h40418133, 0, 5, 3, 2);
+        check_issue_inst(1, 0, ALU_1, SUB, 4, 0, 32'h40418133, 0, 5, 3, 2);
+        check_issue_inst(2, 0, ALU_1, SUB, 4, 0, 32'h40418133, 0, 5, 3, 2);
+
+        check_rs_stall(3'b000);
+
+        @(negedge clock);
+        check_rs_entry(15, 1, ALU_1, SUB, 4, 0, 32'h40418133, 0, 5, 3, 1, 2, 1);
+        check_rs_entry(14, 1, ALU_1, ADD, 8, 4, 32'h00208033, 0, 6, 5, 0, 2, 1);
+        check_rs_entry(13, 1, ALU_1, ADD, 12, 8, 32'h007302b3, 0, 7, 3, 1, 6, 0);
+        check_rs_entry(12, 0, ALU_1, SUB, 4, 0, 32'h40418133, 0, 5, 3, 1, 2, 1);
+        check_rs_entry(11, 0, ALU_1, ADD, 8, 4, 32'h00208033, 0, 6, 5, 0, 2, 1);
+        check_rs_entry(10, 0, ALU_1, ADD, 12, 8, 32'h007302b3, 0, 7, 3, 1, 6, 0);
+        check_rs_entry(9, 0, ALU_1, SUB, 4, 0, 32'h40418133, 0, 5, 3, 1, 2, 1);
+        check_rs_entry(8, 0, ALU_1, ADD, 8, 4, 32'h00208033, 0, 6, 5, 0, 2, 1);
+        check_rs_entry(7, 0, ALU_1, ADD, 12, 8, 32'h007302b3, 0, 7, 3, 1, 6, 0);
+        check_rs_entry(6, 0, ALU_1, SUB, 4, 0, 32'h40418133, 0, 5, 3, 1, 2, 1);
+        check_rs_entry(5, 0, ALU_1, ADD, 8, 4, 32'h00208033, 0, 6, 5, 0, 2, 1);
+        check_rs_entry(4, 0, ALU_1, ADD, 12, 8, 32'h007302b3, 0, 7, 3, 1, 6, 0);
+        check_rs_entry(3, 0, ALU_1, ADD, 12, 8, 32'h007302b3, 0, 7, 3, 1, 6, 0);
+        check_rs_entry(2, 0, ALU_1, SUB, 4, 0, 32'h40418133, 0, 5, 3, 1, 2, 1);
+        check_rs_entry(1, 0, ALU_1, ADD, 8, 4, 32'h00208033, 0, 6, 5, 0, 2, 1);
+        check_rs_entry(0, 0, ALU_1, ADD, 12, 8, 32'h007302b3, 0, 7, 3, 1, 6, 0);
+        
+        check_issue_inst(0, 1, ALU_1, SUB, 4, 0, 32'h40418133, 0, 5, 3, 2);
+        check_issue_inst(1, 0, ALU_1, SUB, 4, 0, 32'h40418133, 0, 5, 3, 2);
+        check_issue_inst(2, 0, ALU_1, SUB, 4, 0, 32'h40418133, 0, 5, 3, 2);
+
+        check_rs_stall(3'b000);
+        
+        show_rs_table();
+        show_fu_state();
+        show_cdb();
+        show_rs_out();
+
+
+        set_rs_in_packet(2, 1, LS_1, SLL, 16, 12, 32'h40418133, 0, 5, 3, 1, 2, 1);
+        set_rs_in_packet(1, 1, ALU_1, ADD, 20, 16, 32'h00208033, 0, 6, 5, 1, 2, 1);
+        set_rs_in_packet(0, 1, ALU_1, ADD, 24, 20, 32'h007302b3, 0, 7, 3, 1, 6, 1);
+        @(posedge clock);
+        set_fu_ready(8'b01111111);
+        @(negedge clock);
+        check_rs_entry(15, 1, LS_1, SLL, 16, 12, 32'h40418133, 0, 5, 3, 1, 2, 1);
+        check_rs_entry(14, 1, ALU_1, ADD, 8, 4, 32'h00208033, 0, 6, 5, 0, 2, 1);
+        check_rs_entry(13, 1, ALU_1, ADD, 12, 8, 32'h007302b3, 0, 7, 3, 1, 6, 0);
+        check_rs_entry(12, 1, ALU_1, ADD, 20, 16, 32'h00208033, 0, 6, 5, 1, 2, 1);
+        check_rs_entry(11, 1, ALU_1, ADD, 24, 20, 32'h007302b3, 0, 7, 3, 1, 6, 1);
+        check_rs_entry(10, 0, ALU_1, ADD, 12, 8, 32'h007302b3, 0, 7, 3, 1, 6, 0);
+        check_rs_entry(9, 0, ALU_1, SUB, 4, 0, 32'h40418133, 0, 5, 3, 1, 2, 1);
+        check_rs_entry(8, 0, ALU_1, ADD, 8, 4, 32'h00208033, 0, 6, 5, 0, 2, 1);
+        check_rs_entry(7, 0, ALU_1, ADD, 12, 8, 32'h007302b3, 0, 7, 3, 1, 6, 0);
+        check_rs_entry(6, 0, ALU_1, SUB, 4, 0, 32'h40418133, 0, 5, 3, 1, 2, 1);
+        check_rs_entry(5, 0, ALU_1, ADD, 8, 4, 32'h00208033, 0, 6, 5, 0, 2, 1);
+        check_rs_entry(4, 0, ALU_1, ADD, 12, 8, 32'h007302b3, 0, 7, 3, 1, 6, 0);
+        check_rs_entry(3, 0, ALU_1, ADD, 12, 8, 32'h007302b3, 0, 7, 3, 1, 6, 0);
+        check_rs_entry(2, 0, ALU_1, SUB, 4, 0, 32'h40418133, 0, 5, 3, 1, 2, 1);
+        check_rs_entry(1, 0, ALU_1, ADD, 8, 4, 32'h00208033, 0, 6, 5, 0, 2, 1);
+        check_rs_entry(0, 0, ALU_1, ADD, 12, 8, 32'h007302b3, 0, 7, 3, 1, 6, 0);
+        
+        check_issue_inst(2, 1, LS_1, SLL, 16, 12, 32'h40418133, 0, 5, 3, 2);
+        check_issue_inst(1, 1, ALU_2, ADD, 20, 16, 32'h00208033, 0, 6, 5, 2);
+        check_issue_inst(0, 1, ALU_3, ADD, 24, 20, 32'h007302b3, 0, 7, 3, 6);
+
+        check_rs_stall(3'b000);
+
+        
+        set_rs_in_packet(2, 1, ALU_1, SUB, 20, 16, 32'h40418133, 0, 5, 3, 1, 2, 1);
+        set_rs_in_packet(1, 1, LS_1, SRL, 28, 24, 32'h00208033, 0, 6, 5, 0, 2, 1);
+        set_rs_in_packet(0, 1, LS_1, ADD, 32, 28, 32'h007302b3, 0, 7, 3, 1, 6, 0);
+
         show_rs_table();
         show_fu_state();
         show_cdb();
         show_rs_out();
         @(posedge clock);
-        set_fu_ready(8'b00011111);
+        set_fu_ready(8'b00001111);
         @(negedge clock);
+        check_rs_entry(15, 1, ALU_1, SUB, 20, 16, 32'h40418133, 0, 5, 3, 1, 2, 1);
+        check_rs_entry(14, 1, ALU_1, ADD, 8, 4, 32'h00208033, 0, 6, 5, 0, 2, 1);
+        check_rs_entry(13, 1, ALU_1, ADD, 12, 8, 32'h007302b3, 0, 7, 3, 1, 6, 0);
+        check_rs_entry(12, 1, LS_1, SRL, 28, 24, 32'h00208033, 0, 6, 5, 0, 2, 1);
+        check_rs_entry(11, 1, LS_1, ADD, 32, 28, 32'h007302b3, 0, 7, 3, 1, 6, 0);
+        check_rs_entry(10, 0, ALU_1, ADD, 12, 8, 32'h007302b3, 0, 7, 3, 1, 6, 0);
+        check_rs_entry(9, 0, ALU_1, SUB, 4, 0, 32'h40418133, 0, 5, 3, 1, 2, 1);
+        check_rs_entry(8, 0, ALU_1, ADD, 8, 4, 32'h00208033, 0, 6, 5, 0, 2, 1);
+        check_rs_entry(7, 0, ALU_1, ADD, 12, 8, 32'h007302b3, 0, 7, 3, 1, 6, 0);
+        check_rs_entry(6, 0, ALU_1, SUB, 4, 0, 32'h40418133, 0, 5, 3, 1, 2, 1);
+        check_rs_entry(5, 0, ALU_1, ADD, 8, 4, 32'h00208033, 0, 6, 5, 0, 2, 1);
+        check_rs_entry(4, 0, ALU_1, ADD, 12, 8, 32'h007302b3, 0, 7, 3, 1, 6, 0);
+        check_rs_entry(3, 0, ALU_1, ADD, 12, 8, 32'h007302b3, 0, 7, 3, 1, 6, 0);
+        check_rs_entry(2, 0, ALU_1, SUB, 4, 0, 32'h40418133, 0, 5, 3, 1, 2, 1);
+        check_rs_entry(1, 0, ALU_1, ADD, 8, 4, 32'h00208033, 0, 6, 5, 0, 2, 1);
+        check_rs_entry(0, 0, ALU_1, ADD, 12, 8, 32'h007302b3, 0, 7, 3, 1, 6, 0);
+
+        check_issue_inst(2, 0, LS_1, SLL, 16, 12, 32'h40418133, 0, 5, 3, 2);
+        check_issue_inst(1, 0, ALU_2, ADD, 20, 16, 32'h00208033, 0, 6, 5, 2);
+        check_issue_inst(0, 0, ALU_3, ADD, 24, 20, 32'h007302b3, 0, 7, 3, 6);
+
+        check_rs_stall(3'b000);
+
+        set_rs_in_packet(2, 1, ALU_1, SUB, 36, 32, 32'h40418133, 0, 5, 3, 1, 2, 1);
+        set_rs_in_packet(1, 1, ALU_1, ADD, 40, 36, 32'h00208033, 0, 6, 5, 0, 2, 1);
+        set_rs_in_packet(0, 1, ALU_1, ADD, 44, 40, 32'h007302b3, 0, 7, 3, 1, 8, 0);
+
         show_rs_table();
         show_fu_state();
         show_cdb();
         show_rs_out();
+        @(posedge clock);
+        set_fu_ready(8'b01001111);
         @(negedge clock);
+        check_rs_entry(15, 1, ALU_1, SUB, 20, 16, 32'h40418133, 0, 5, 3, 1, 2, 1);
+        check_rs_entry(14, 1, ALU_1, ADD, 8, 4, 32'h00208033, 0, 6, 5, 0, 2, 1);
+        check_rs_entry(13, 1, ALU_1, ADD, 12, 8, 32'h007302b3, 0, 7, 3, 1, 6, 0);
+        check_rs_entry(12, 1, LS_1, SRL, 28, 24, 32'h00208033, 0, 6, 5, 0, 2, 1);
+        check_rs_entry(11, 1, LS_1, ADD, 32, 28, 32'h007302b3, 0, 7, 3, 1, 6, 0);
+        check_rs_entry(10, 1, ALU_1, SUB, 36, 32, 32'h40418133, 0, 5, 3, 1, 2, 1);
+        check_rs_entry(9, 1, ALU_1, ADD, 40, 36, 32'h00208033, 0, 6, 5, 0, 2, 1);
+        check_rs_entry(8, 1, ALU_1, ADD, 44, 40, 32'h007302b3, 0, 7, 3, 1, 8, 0);
+        check_rs_entry(7, 0, ALU_1, ADD, 12, 8, 32'h007302b3, 0, 7, 3, 1, 6, 0);
+        check_rs_entry(6, 0, ALU_1, SUB, 4, 0, 32'h40418133, 0, 5, 3, 1, 2, 1);
+        check_rs_entry(5, 0, ALU_1, ADD, 8, 4, 32'h00208033, 0, 6, 5, 0, 2, 1);
+        check_rs_entry(4, 0, ALU_1, ADD, 12, 8, 32'h007302b3, 0, 7, 3, 1, 6, 0);
+        check_rs_entry(3, 0, ALU_1, ADD, 12, 8, 32'h007302b3, 0, 7, 3, 1, 6, 0);
+        check_rs_entry(2, 0, ALU_1, SUB, 4, 0, 32'h40418133, 0, 5, 3, 1, 2, 1);
+        check_rs_entry(1, 0, ALU_1, ADD, 8, 4, 32'h00208033, 0, 6, 5, 0, 2, 1);
+        check_rs_entry(0, 0, ALU_1, ADD, 12, 8, 32'h007302b3, 0, 7, 3, 1, 6, 0);
+
+        check_issue_inst(2, 0, ALU_2, SUB, 20, 16, 32'h40418133, 0, 5, 3, 2);
+        check_issue_inst(1, 0, ALU_2, ADD, 20, 16, 32'h00208033, 0, 6, 5, 2);
+        check_issue_inst(0, 1, ALU_2, SUB, 20, 16, 32'h40418133, 0, 5, 3, 2);
+
+        check_rs_stall(3'b000);
+
+        set_rs_in_packet(2, 1, MULT_1, SUB, 48, 44, 32'h40418133, 0, 5, 9, 0, 2, 1);
+        set_rs_in_packet(1, 1, BRANCH, ADD, 52, 48, 32'h00208033, 0, 6, 5, 0, 2, 1);
+        set_rs_in_packet(0, 1, MULT_1, ADD, 56, 52, 32'h007302b3, 0, 7, 3, 1, 6, 0);
+
         show_rs_table();
         show_fu_state();
         show_cdb();
         show_rs_out();
+        @(posedge clock);
+        set_fu_ready(8'b10000000);
+        set_cdb_packet(8, 0, 0);
+        @(negedge clock);
+        check_rs_entry(15, 1, MULT_1, SUB, 48, 44, 32'h40418133, 0, 5, 9, 0, 2, 1);
+        check_rs_entry(14, 1, ALU_1, ADD, 8, 4, 32'h00208033, 0, 6, 5, 0, 2, 1);
+        check_rs_entry(13, 1, ALU_1, ADD, 12, 8, 32'h007302b3, 0, 7, 3, 1, 6, 0);
+        check_rs_entry(12, 1, LS_1, SRL, 28, 24, 32'h00208033, 0, 6, 5, 0, 2, 1);
+        check_rs_entry(11, 1, LS_1, ADD, 32, 28, 32'h007302b3, 0, 7, 3, 1, 6, 0);
+        check_rs_entry(10, 1, ALU_1, SUB, 36, 32, 32'h40418133, 0, 5, 3, 1, 2, 1);
+        check_rs_entry(9, 1, ALU_1, ADD, 40, 36, 32'h00208033, 0, 6, 5, 0, 2, 1);
+        check_rs_entry(8, 1, ALU_1, ADD, 44, 40, 32'h007302b3, 0, 7, 3, 1, 8, 0);
+        check_rs_entry(7, 1, BRANCH, ADD, 52, 48, 32'h00208033, 0, 6, 5, 0, 2, 1);
+        check_rs_entry(6, 1, MULT_1, ADD, 56, 52, 32'h007302b3, 0, 7, 3, 1, 6, 0);
+        check_rs_entry(5, 0, ALU_1, ADD, 8, 4, 32'h00208033, 0, 6, 5, 0, 2, 1);
+        check_rs_entry(4, 0, ALU_1, ADD, 12, 8, 32'h007302b3, 0, 7, 3, 1, 6, 0);
+        check_rs_entry(3, 0, ALU_1, ADD, 12, 8, 32'h007302b3, 0, 7, 3, 1, 6, 0);
+        check_rs_entry(2, 0, ALU_1, SUB, 4, 0, 32'h40418133, 0, 5, 3, 1, 2, 1);
+        check_rs_entry(1, 0, ALU_1, ADD, 8, 4, 32'h00208033, 0, 6, 5, 0, 2, 1);
+        check_rs_entry(0, 0, ALU_1, ADD, 12, 8, 32'h007302b3, 0, 7, 3, 1, 6, 0);
+
+        check_issue_inst(2, 0, ALU_2, SUB, 20, 16, 32'h40418133, 0, 5, 3, 2);
+        check_issue_inst(1, 0, ALU_2, ADD, 20, 16, 32'h00208033, 0, 6, 5, 2);
+        check_issue_inst(0, 1, ALU_1, SUB, 36, 32, 32'h40418133, 0, 5, 3, 2);
+
+        check_rs_stall(3'b000);
+
+        set_rs_in_packet(2, 1, ALU_1, SUB, 60, 56, 32'h40418133, 0, 5, 10, 0, 2, 1);
+        set_rs_in_packet(1, 1, ALU_1, ADD, 64, 60, 32'h00208033, 0, 6, 12, 0, 2, 1);
+        set_rs_in_packet(0, 1, ALU_1, ADD, 68, 64, 32'h007302b3, 0, 7, 3, 1, 13, 0);
+
+        show_rs_table();
+        show_fu_state();
+        show_cdb();
+        show_rs_out();
+        @(posedge clock);
+        set_fu_ready(8'b00001111);
+        set_cdb_packet(0, 0, 0);
+        @(negedge clock);
+        check_rs_entry(15, 1, MULT_1, SUB, 48, 44, 32'h40418133, 0, 5, 9, 0, 2, 1);
+        check_rs_entry(14, 1, ALU_1, ADD, 8, 4, 32'h00208033, 0, 6, 5, 0, 2, 1);
+        check_rs_entry(13, 1, ALU_1, ADD, 12, 8, 32'h007302b3, 0, 7, 3, 1, 6, 0);
+        check_rs_entry(12, 1, LS_1, SRL, 28, 24, 32'h00208033, 0, 6, 5, 0, 2, 1);
+        check_rs_entry(11, 1, LS_1, ADD, 32, 28, 32'h007302b3, 0, 7, 3, 1, 6, 0);
+        check_rs_entry(10, 1, ALU_1, SUB, 60, 56, 32'h40418133, 0, 5, 10, 0, 2, 1);
+        check_rs_entry(9, 1, ALU_1, ADD, 40, 36, 32'h00208033, 0, 6, 5, 0, 2, 1);
+        check_rs_entry(8, 1, ALU_1, ADD, 44, 40, 32'h007302b3, 0, 7, 3, 1, 8, 1);
+        check_rs_entry(7, 1, BRANCH, ADD, 52, 48, 32'h00208033, 0, 6, 5, 0, 2, 1);
+        check_rs_entry(6, 1, MULT_1, ADD, 56, 52, 32'h007302b3, 0, 7, 3, 1, 6, 0);
+        check_rs_entry(5, 1, ALU_1, ADD, 64, 60, 32'h00208033, 0, 6, 12, 0, 2, 1);
+        check_rs_entry(4, 1, ALU_1, ADD, 68, 64, 32'h007302b3, 0, 7, 3, 1, 13, 0);
+        check_rs_entry(3, 0, ALU_1, ADD, 12, 8, 32'h007302b3, 0, 7, 3, 1, 6, 0);
+        check_rs_entry(2, 0, ALU_1, SUB, 4, 0, 32'h40418133, 0, 5, 3, 1, 2, 1);
+        check_rs_entry(1, 0, ALU_1, ADD, 8, 4, 32'h00208033, 0, 6, 5, 0, 2, 1);
+        check_rs_entry(0, 0, ALU_1, ADD, 12, 8, 32'h007302b3, 0, 7, 3, 1, 6, 0);
+        
+        check_issue_inst(2, 0, ALU_2, SUB, 20, 16, 32'h40418133, 0, 5, 3, 2);
+        check_issue_inst(1, 0, ALU_2, ADD, 20, 16, 32'h00208033, 0, 6, 5, 2);
+        check_issue_inst(0, 0, ALU_1, SUB, 36, 32, 32'h40418133, 0, 5, 3, 2);
+
+        check_rs_stall(3'b000);
+
+        set_rs_in_packet(2, 1, MULT_1, SUB, 72, 68, 32'h40418133, 0, 5, 14, 0, 2, 1);
+        set_rs_in_packet(1, 1, MULT_1, ADD, 76, 72, 32'h00208033, 0, 6, 15, 0, 2, 1);
+        set_rs_in_packet(0, 1, BRANCH, ADD, 80, 76, 32'h007302b3, 0, 7, 3, 1, 16, 0);
+
+        show_rs_table();
+        show_fu_state();
+        show_cdb();
+        show_rs_out();
+
+        @(posedge clock);
+        set_fu_ready(8'b11110000);
+        set_cdb_packet(0, 6, 10);
+        @(negedge clock);
+        check_rs_entry(15, 1, MULT_1, SUB, 48, 44, 32'h40418133, 0, 5, 9, 0, 2, 1);
+        check_rs_entry(14, 1, ALU_1, ADD, 8, 4, 32'h00208033, 0, 6, 5, 0, 2, 1);
+        check_rs_entry(13, 1, ALU_1, ADD, 12, 8, 32'h007302b3, 0, 7, 3, 1, 6, 0);
+        check_rs_entry(12, 1, LS_1, SRL, 28, 24, 32'h00208033, 0, 6, 5, 0, 2, 1);
+        check_rs_entry(11, 1, LS_1, ADD, 32, 28, 32'h007302b3, 0, 7, 3, 1, 6, 0);
+        check_rs_entry(10, 1, ALU_1, SUB, 60, 56, 32'h40418133, 0, 5, 10, 0, 2, 1);
+        check_rs_entry(9, 1, ALU_1, ADD, 40, 36, 32'h00208033, 0, 6, 5, 0, 2, 1);
+        check_rs_entry(8, 1, ALU_1, ADD, 44, 40, 32'h007302b3, 0, 7, 3, 1, 8, 1);
+        check_rs_entry(7, 1, BRANCH, ADD, 52, 48, 32'h00208033, 0, 6, 5, 0, 2, 1);
+        check_rs_entry(6, 1, MULT_1, ADD, 56, 52, 32'h007302b3, 0, 7, 3, 1, 6, 0);
+        check_rs_entry(5, 1, ALU_1, ADD, 64, 60, 32'h00208033, 0, 6, 12, 0, 2, 1);
+        check_rs_entry(4, 1, ALU_1, ADD, 68, 64, 32'h007302b3, 0, 7, 3, 1, 13, 0);
+        check_rs_entry(3, 1, MULT_1, SUB, 72, 68, 32'h40418133, 0, 5, 14, 0, 2, 1);
+        check_rs_entry(2, 1, MULT_1, ADD, 76, 72, 32'h00208033, 0, 6, 15, 0, 2, 1);
+        check_rs_entry(1, 1, BRANCH, ADD, 80, 76, 32'h007302b3, 0, 7, 3, 1, 16, 0);
+        check_rs_entry(0, 0, BRANCH, ADD, 80, 76, 32'h007302b3, 0, 7, 3, 1, 16, 0);
+
+        check_issue_inst(2, 0, ALU_2, SUB, 20, 16, 32'h40418133, 0, 5, 3, 2);
+        check_issue_inst(1, 0, ALU_2, ADD, 20, 16, 32'h00208033, 0, 6, 5, 2);
+        check_issue_inst(0, 1, ALU_1, ADD, 44, 40, 32'h007302b3, 0, 7, 3, 8);
+
+        check_rs_stall(3'b001);
+
+        set_rs_in_packet(2, 1, MULT_1, SUB, 84, 80, 32'h40418133, 0, 5, 14, 0, 2, 1);
+        set_rs_in_packet(1, 1, MULT_1, ADD, 88, 84, 32'h00208033, 0, 6, 17, 0, 2, 1);
+        set_rs_in_packet(0, 0, BRANCH, ADD, 92, 88, 32'h007302b3, 0, 7, 3, 1, 16, 0);
+
+        show_rs_table();
+        show_fu_state();
+        show_cdb();
+        show_rs_out();
+
+        @(posedge clock);
+        set_fu_ready(8'b11010111);
+        set_cdb_packet(5, 15, 9);
+        @(negedge clock);
+        check_rs_entry(15, 1, MULT_1, SUB, 48, 44, 32'h40418133, 0, 5, 9, 0, 2, 1);
+        check_rs_entry(14, 1, ALU_1, ADD, 8, 4, 32'h00208033, 0, 6, 5, 0, 2, 1);
+        check_rs_entry(13, 1, ALU_1, ADD, 12, 8, 32'h007302b3, 0, 7, 3, 1, 6, 1);
+        check_rs_entry(12, 1, LS_1, SRL, 28, 24, 32'h00208033, 0, 6, 5, 0, 2, 1);
+        check_rs_entry(11, 1, LS_1, ADD, 32, 28, 32'h007302b3, 0, 7, 3, 1, 6, 1);
+        check_rs_entry(10, 1, ALU_1, SUB, 60, 56, 32'h40418133, 0, 5, 10, 1, 2, 1);
+        check_rs_entry(9, 1, ALU_1, ADD, 40, 36, 32'h00208033, 0, 6, 5, 0, 2, 1);
+        check_rs_entry(8, 1, MULT_1, SUB, 84, 80, 32'h40418133, 0, 5, 14, 0, 2, 1);
+        check_rs_entry(7, 1, BRANCH, ADD, 52, 48, 32'h00208033, 0, 6, 5, 0, 2, 1);
+        check_rs_entry(6, 1, MULT_1, ADD, 56, 52, 32'h007302b3, 0, 7, 3, 1, 6, 1);
+        check_rs_entry(5, 1, ALU_1, ADD, 64, 60, 32'h00208033, 0, 6, 12, 0, 2, 1);
+        check_rs_entry(4, 1, ALU_1, ADD, 68, 64, 32'h007302b3, 0, 7, 3, 1, 13, 0);
+        check_rs_entry(3, 1, MULT_1, SUB, 72, 68, 32'h40418133, 0, 5, 14, 0, 2, 1);
+        check_rs_entry(2, 1, MULT_1, ADD, 76, 72, 32'h00208033, 0, 6, 15, 0, 2, 1);
+        check_rs_entry(1, 1, BRANCH, ADD, 80, 76, 32'h007302b3, 0, 7, 3, 1, 16, 0);
+        check_rs_entry(0, 1, MULT_1, ADD, 88, 84, 32'h00208033, 0, 6, 17, 0, 2, 1);
+
+        check_issue_inst(2, 1, ALU_1, ADD, 12, 8, 32'h007302b3, 0, 7, 3, 6);
+        check_issue_inst(1, 1, LS_1, ADD, 32, 28, 32'h007302b3, 0, 7, 3, 6);
+        check_issue_inst(0, 1, MULT_1, ADD, 56, 52, 32'h007302b3, 0, 7, 3, 6);
+
+        check_rs_stall(3'b000);
+
+        show_rs_table();
+        show_fu_state();
+        show_cdb();
+        show_rs_out();
+
+        rs_in = 0;
+        @(posedge clock);
+        set_fu_ready(8'b01100011);
+        set_cdb_packet(0, 17, 0);
+        @(negedge clock);
+        check_rs_entry(15, 1, MULT_1, SUB, 48, 44, 32'h40418133, 0, 5, 9, 1, 2, 1);
+        check_rs_entry(14, 1, ALU_1, ADD, 8, 4, 32'h00208033, 0, 6, 5, 1, 2, 1);
+        check_rs_entry(13, 0, ALU_1, ADD, 12, 8, 32'h007302b3, 0, 7, 3, 1, 6, 1);
+        check_rs_entry(12, 1, LS_1, SRL, 28, 24, 32'h00208033, 0, 6, 5, 1, 2, 1);
+        check_rs_entry(11, 0, LS_1, ADD, 32, 28, 32'h007302b3, 0, 7, 3, 1, 6, 1);
+        check_rs_entry(10, 1, ALU_1, SUB, 60, 56, 32'h40418133, 0, 5, 10, 1, 2, 1);
+        check_rs_entry(9, 1, ALU_1, ADD, 40, 36, 32'h00208033, 0, 6, 5, 1, 2, 1);
+        check_rs_entry(8, 1, MULT_1, SUB, 84, 80, 32'h40418133, 0, 5, 14, 0, 2, 1);
+        check_rs_entry(7, 1, BRANCH, ADD, 52, 48, 32'h00208033, 0, 6, 5, 1, 2, 1);
+        check_rs_entry(6, 0, MULT_1, ADD, 56, 52, 32'h007302b3, 0, 7, 3, 1, 6, 1);
+        check_rs_entry(5, 1, ALU_1, ADD, 64, 60, 32'h00208033, 0, 6, 12, 0, 2, 1);
+        check_rs_entry(4, 1, ALU_1, ADD, 68, 64, 32'h007302b3, 0, 7, 3, 1, 13, 0);
+        check_rs_entry(3, 1, MULT_1, SUB, 72, 68, 32'h40418133, 0, 5, 14, 0, 2, 1);
+        check_rs_entry(2, 1, MULT_1, ADD, 76, 72, 32'h00208033, 0, 6, 15, 1, 2, 1);
+        check_rs_entry(1, 1, BRANCH, ADD, 80, 76, 32'h007302b3, 0, 7, 3, 1, 16, 0);
+        check_rs_entry(0, 1, MULT_1, ADD, 88, 84, 32'h00208033, 0, 6, 17, 0, 2, 1);
+
+        // check_issue_inst(2, 1, ALU_3, ADD, 8, 4, 32'h00208033, 0, 6, 5, 2);
+        // check_issue_inst(1, 1, ALU_2, ADD, 40, 36, 32'h00208033, 0, 6, 5, 2);
+        // check_issue_inst(0, 1, MULT_2, SUB, 48, 44, 32'h40418133, 0, 5, 9, 2);
+        // CHECK: Is this order expected?
+        check_issue_inst(2, 1, MULT_2, SUB, 48, 44, 32'h40418133, 0, 5, 9, 2);
+        check_issue_inst(1, 1, ALU_2, ADD, 8, 4, 32'h00208033, 0, 6, 5, 2);
+        check_issue_inst(0, 1, ALU_3, ADD, 40, 36, 32'h00208033, 0, 6, 5, 2);
+
+        check_rs_stall(3'b000);
+
+        show_rs_table();
+        show_fu_state();
+        show_cdb();
+        show_rs_out();
+
+        @(posedge clock);
+        set_fu_ready(8'b01000100);
+        set_cdb_packet(0, 14, 0);
+        @(negedge clock);
+
+        check_rs_entry(15, 0, MULT_1, SUB, 48, 44, 32'h40418133, 0, 5, 9, 1, 2, 1);
+        check_rs_entry(14, 0, ALU_1, ADD, 8, 4, 32'h00208033, 0, 6, 5, 1, 2, 1);
+        check_rs_entry(13, 0, ALU_1, ADD, 12, 8, 32'h007302b3, 0, 7, 3, 1, 6, 1);
+        check_rs_entry(12, 1, LS_1, SRL, 28, 24, 32'h00208033, 0, 6, 5, 1, 2, 1);
+        check_rs_entry(11, 0, LS_1, ADD, 32, 28, 32'h007302b3, 0, 7, 3, 1, 6, 1);
+        check_rs_entry(10, 1, ALU_1, SUB, 60, 56, 32'h40418133, 0, 5, 10, 1, 2, 1);
+        check_rs_entry(9, 0, ALU_1, ADD, 40, 36, 32'h00208033, 0, 6, 5, 1, 2, 1);
+        check_rs_entry(8, 1, MULT_1, SUB, 84, 80, 32'h40418133, 0, 5, 14, 0, 2, 1);
+        check_rs_entry(7, 1, BRANCH, ADD, 52, 48, 32'h00208033, 0, 6, 5, 1, 2, 1);
+        check_rs_entry(6, 0, MULT_1, ADD, 56, 52, 32'h007302b3, 0, 7, 3, 1, 6, 1);
+        check_rs_entry(5, 1, ALU_1, ADD, 64, 60, 32'h00208033, 0, 6, 12, 0, 2, 1);
+        check_rs_entry(4, 1, ALU_1, ADD, 68, 64, 32'h007302b3, 0, 7, 3, 1, 13, 0);
+        check_rs_entry(3, 1, MULT_1, SUB, 72, 68, 32'h40418133, 0, 5, 14, 0, 2, 1);
+        check_rs_entry(2, 1, MULT_1, ADD, 76, 72, 32'h00208033, 0, 6, 15, 1, 2, 1);
+        check_rs_entry(1, 1, BRANCH, ADD, 80, 76, 32'h007302b3, 0, 7, 3, 1, 16, 0);
+        check_rs_entry(0, 1, MULT_1, ADD, 88, 84, 32'h00208033, 0, 6, 17, 1, 2, 1);
+
+        check_issue_inst(2, 0, MULT_2, SUB, 48, 44, 32'h40418133, 0, 5, 9, 2);
+        check_issue_inst(1, 1, ALU_2, SUB, 60, 56, 32'h40418133, 0, 5, 10, 2);
+        check_issue_inst(0, 1, MULT_1, ADD, 76, 72, 32'h00208033, 0, 6, 15, 2);
+
+        check_rs_stall(3'b000);
+
+        show_rs_table();
+        show_fu_state();
+        show_cdb();
+        show_rs_out();
+
+        @(posedge clock);
+        set_fu_ready(8'b00111110);
+        set_cdb_packet(0, 13, 12);
+        @(negedge clock);
+
+        check_rs_entry(15, 0, MULT_1, SUB, 48, 44, 32'h40418133, 0, 5, 9, 1, 2, 1);
+        check_rs_entry(14, 0, ALU_1, ADD, 8, 4, 32'h00208033, 0, 6, 5, 1, 2, 1);
+        check_rs_entry(13, 0, ALU_1, ADD, 12, 8, 32'h007302b3, 0, 7, 3, 1, 6, 1);
+        check_rs_entry(12, 1, LS_1, SRL, 28, 24, 32'h00208033, 0, 6, 5, 1, 2, 1);
+        check_rs_entry(11, 0, LS_1, ADD, 32, 28, 32'h007302b3, 0, 7, 3, 1, 6, 1);
+        check_rs_entry(10, 0, ALU_1, SUB, 60, 56, 32'h40418133, 0, 5, 10, 1, 2, 1);
+        check_rs_entry(9, 0, ALU_1, ADD, 40, 36, 32'h00208033, 0, 6, 5, 1, 2, 1);
+        check_rs_entry(8, 1, MULT_1, SUB, 84, 80, 32'h40418133, 0, 5, 14, 1, 2, 1);
+        check_rs_entry(7, 1, BRANCH, ADD, 52, 48, 32'h00208033, 0, 6, 5, 1, 2, 1);
+        check_rs_entry(6, 0, MULT_1, ADD, 56, 52, 32'h007302b3, 0, 7, 3, 1, 6, 1);
+        check_rs_entry(5, 1, ALU_1, ADD, 64, 60, 32'h00208033, 0, 6, 12, 0, 2, 1);
+        check_rs_entry(4, 1, ALU_1, ADD, 68, 64, 32'h007302b3, 0, 7, 3, 1, 13, 0);
+        check_rs_entry(3, 1, MULT_1, SUB, 72, 68, 32'h40418133, 0, 5, 14, 1, 2, 1);
+        check_rs_entry(2, 0, MULT_1, ADD, 76, 72, 32'h00208033, 0, 6, 15, 1, 2, 1);
+        check_rs_entry(1, 1, BRANCH, ADD, 80, 76, 32'h007302b3, 0, 7, 3, 1, 16, 0);
+        check_rs_entry(0, 1, MULT_1, ADD, 88, 84, 32'h00208033, 0, 6, 17, 1, 2, 1);
+
+        check_issue_inst(2, 1, LS_1, SRL, 28, 24, 32'h00208033, 0, 6, 5, 2);
+        check_issue_inst(1, 1, MULT_2, SUB, 84, 80, 32'h40418133, 0, 5, 14, 2);
+        check_issue_inst(0, 1, MULT_1, SUB, 72, 68, 32'h40418133, 0, 5, 14, 2);
+
+        check_rs_stall(3'b000);
+
+        show_rs_table();
+        show_fu_state();
+        show_cdb();
+        show_rs_out();
+
+        @(posedge clock);
+        set_fu_ready(8'b11101001);
+        set_cdb_packet(0, 0, 0);
+        @(negedge clock);
+
+        check_rs_entry(15, 0, MULT_1, SUB, 48, 44, 32'h40418133, 0, 5, 9, 1, 2, 1);
+        check_rs_entry(14, 0, ALU_1, ADD, 8, 4, 32'h00208033, 0, 6, 5, 1, 2, 1);
+        check_rs_entry(13, 0, ALU_1, ADD, 12, 8, 32'h007302b3, 0, 7, 3, 1, 6, 1);
+        check_rs_entry(12, 0, LS_1, SRL, 28, 24, 32'h00208033, 0, 6, 5, 1, 2, 1);
+        check_rs_entry(11, 0, LS_1, ADD, 32, 28, 32'h007302b3, 0, 7, 3, 1, 6, 1);
+        check_rs_entry(10, 0, ALU_1, SUB, 60, 56, 32'h40418133, 0, 5, 10, 1, 2, 1);
+        check_rs_entry(9, 0, ALU_1, ADD, 40, 36, 32'h00208033, 0, 6, 5, 1, 2, 1);
+        check_rs_entry(8, 0, MULT_1, SUB, 84, 80, 32'h40418133, 0, 5, 14, 1, 2, 1);
+        check_rs_entry(7, 1, BRANCH, ADD, 52, 48, 32'h00208033, 0, 6, 5, 1, 2, 1);
+        check_rs_entry(6, 0, MULT_1, ADD, 56, 52, 32'h007302b3, 0, 7, 3, 1, 6, 1);
+        check_rs_entry(5, 1, ALU_1, ADD, 64, 60, 32'h00208033, 0, 6, 12, 1, 2, 1);
+        check_rs_entry(4, 1, ALU_1, ADD, 68, 64, 32'h007302b3, 0, 7, 3, 1, 13, 1);
+        check_rs_entry(3, 0, MULT_1, SUB, 72, 68, 32'h40418133, 0, 5, 14, 1, 2, 1);
+        check_rs_entry(2, 0, MULT_1, ADD, 76, 72, 32'h00208033, 0, 6, 15, 1, 2, 1);
+        check_rs_entry(1, 1, BRANCH, ADD, 80, 76, 32'h007302b3, 0, 7, 3, 1, 16, 0);
+        check_rs_entry(0, 1, MULT_1, ADD, 88, 84, 32'h00208033, 0, 6, 17, 1, 2, 1);
+
+        check_issue_inst(2, 1, BRANCH, ADD, 52, 48, 32'h00208033, 0, 6, 5, 2);
+        check_issue_inst(1, 1, ALU_1, ADD, 64, 60, 32'h00208033, 0, 6, 12, 2);
+        check_issue_inst(0, 1, ALU_2, ADD, 68, 64, 32'h007302b3, 0, 7, 3, 13);
+
+        check_rs_stall(3'b000);
+
+        show_rs_table();
+        show_fu_state();
+        show_cdb();
+        show_rs_out();
+
+        @(posedge clock);
+        set_fu_ready(8'b10011110);
+        set_cdb_packet(0, 0, 0);
+        @(negedge clock);
+
+        check_rs_entry(15, 0, MULT_1, SUB, 48, 44, 32'h40418133, 0, 5, 9, 1, 2, 1);
+        check_rs_entry(14, 0, ALU_1, ADD, 8, 4, 32'h00208033, 0, 6, 5, 1, 2, 1);
+        check_rs_entry(13, 0, ALU_1, ADD, 12, 8, 32'h007302b3, 0, 7, 3, 1, 6, 1);
+        check_rs_entry(12, 0, LS_1, SRL, 28, 24, 32'h00208033, 0, 6, 5, 1, 2, 1);
+        check_rs_entry(11, 0, LS_1, ADD, 32, 28, 32'h007302b3, 0, 7, 3, 1, 6, 1);
+        check_rs_entry(10, 0, ALU_1, SUB, 60, 56, 32'h40418133, 0, 5, 10, 1, 2, 1);
+        check_rs_entry(9, 0, ALU_1, ADD, 40, 36, 32'h00208033, 0, 6, 5, 1, 2, 1);
+        check_rs_entry(8, 0, MULT_1, SUB, 84, 80, 32'h40418133, 0, 5, 14, 1, 2, 1);
+        check_rs_entry(7, 0, BRANCH, ADD, 52, 48, 32'h00208033, 0, 6, 5, 1, 2, 1);
+        check_rs_entry(6, 0, MULT_1, ADD, 56, 52, 32'h007302b3, 0, 7, 3, 1, 6, 1);
+        check_rs_entry(5, 0, ALU_1, ADD, 64, 60, 32'h00208033, 0, 6, 12, 1, 2, 1);
+        check_rs_entry(4, 0, ALU_1, ADD, 68, 64, 32'h007302b3, 0, 7, 3, 1, 13, 1);
+        check_rs_entry(3, 0, MULT_1, SUB, 72, 68, 32'h40418133, 0, 5, 14, 1, 2, 1);
+        check_rs_entry(2, 0, MULT_1, ADD, 76, 72, 32'h00208033, 0, 6, 15, 1, 2, 1);
+        check_rs_entry(1, 1, BRANCH, ADD, 80, 76, 32'h007302b3, 0, 7, 3, 1, 16, 0);
+        check_rs_entry(0, 1, MULT_1, ADD, 88, 84, 32'h00208033, 0, 6, 17, 1, 2, 1);
+
+        check_issue_inst(2, 0, BRANCH, ADD, 52, 48, 32'h00208033, 0, 6, 5, 2);
+        check_issue_inst(1, 0, ALU_1, ADD, 64, 60, 32'h00208033, 0, 6, 12, 2);
+        check_issue_inst(0, 1, MULT_1, ADD, 88, 84, 32'h00208033, 0, 6, 17, 2);
+
+        check_rs_stall(3'b000);
+
+        show_rs_table();
+        show_fu_state();
+        show_cdb();
+        show_rs_out();
+
         @(posedge clock);
         set_fu_ready(8'b11111111);
+        set_cdb_packet(0, 16, 0);
         @(negedge clock);
-        show_rs_table();
-        show_fu_state();
-        show_cdb();
-        show_rs_out();
-        @(negedge clock);
-        show_rs_table();
-        show_fu_state();
-        show_cdb();
-        show_rs_out();
 
-        @(negedge clock);
-        show_rs_table();
-        show_fu_state();
-        show_cdb();
-        show_rs_out();
+        check_rs_entry(15, 0, MULT_1, SUB, 48, 44, 32'h40418133, 0, 5, 9, 1, 2, 1);
+        check_rs_entry(14, 0, ALU_1, ADD, 8, 4, 32'h00208033, 0, 6, 5, 1, 2, 1);
+        check_rs_entry(13, 0, ALU_1, ADD, 12, 8, 32'h007302b3, 0, 7, 3, 1, 6, 1);
+        check_rs_entry(12, 0, LS_1, SRL, 28, 24, 32'h00208033, 0, 6, 5, 1, 2, 1);
+        check_rs_entry(11, 0, LS_1, ADD, 32, 28, 32'h007302b3, 0, 7, 3, 1, 6, 1);
+        check_rs_entry(10, 0, ALU_1, SUB, 60, 56, 32'h40418133, 0, 5, 10, 1, 2, 1);
+        check_rs_entry(9, 0, ALU_1, ADD, 40, 36, 32'h00208033, 0, 6, 5, 1, 2, 1);
+        check_rs_entry(8, 0, MULT_1, SUB, 84, 80, 32'h40418133, 0, 5, 14, 1, 2, 1);
+        check_rs_entry(7, 0, BRANCH, ADD, 52, 48, 32'h00208033, 0, 6, 5, 1, 2, 1);
+        check_rs_entry(6, 0, MULT_1, ADD, 56, 52, 32'h007302b3, 0, 7, 3, 1, 6, 1);
+        check_rs_entry(5, 0, ALU_1, ADD, 64, 60, 32'h00208033, 0, 6, 12, 1, 2, 1);
+        check_rs_entry(4, 0, ALU_1, ADD, 68, 64, 32'h007302b3, 0, 7, 3, 1, 13, 1);
+        check_rs_entry(3, 0, MULT_1, SUB, 72, 68, 32'h40418133, 0, 5, 14, 1, 2, 1);
+        check_rs_entry(2, 0, MULT_1, ADD, 76, 72, 32'h00208033, 0, 6, 15, 1, 2, 1);
+        check_rs_entry(1, 1, BRANCH, ADD, 80, 76, 32'h007302b3, 0, 7, 3, 1, 16, 0);
+        check_rs_entry(0, 0, MULT_1, ADD, 88, 84, 32'h00208033, 0, 6, 17, 1, 2, 1);
+
+        check_issue_inst(2, 0, BRANCH, ADD, 52, 48, 32'h00208033, 0, 6, 5, 2);
+        check_issue_inst(1, 0, ALU_1, ADD, 64, 60, 32'h00208033, 0, 6, 12, 2);
+        check_issue_inst(0, 0, MULT_1, ADD, 88, 84, 32'h00208033, 0, 6, 17, 2);
         
-        @(negedge clock);
+        check_rs_stall(3'b000);
+
         show_rs_table();
         show_fu_state();
         show_cdb();
         show_rs_out();
 
+        @(posedge clock);
+        set_fu_ready(8'b11111111);
+        set_cdb_packet(0, 0, 0);
         @(negedge clock);
-        reset = 1'b1;
+
+        check_rs_entry(15, 0, MULT_1, SUB, 48, 44, 32'h40418133, 0, 5, 9, 1, 2, 1);
+        check_rs_entry(14, 0, ALU_1, ADD, 8, 4, 32'h00208033, 0, 6, 5, 1, 2, 1);
+        check_rs_entry(13, 0, ALU_1, ADD, 12, 8, 32'h007302b3, 0, 7, 3, 1, 6, 1);
+        check_rs_entry(12, 0, LS_1, SRL, 28, 24, 32'h00208033, 0, 6, 5, 1, 2, 1);
+        check_rs_entry(11, 0, LS_1, ADD, 32, 28, 32'h007302b3, 0, 7, 3, 1, 6, 1);
+        check_rs_entry(10, 0, ALU_1, SUB, 60, 56, 32'h40418133, 0, 5, 10, 1, 2, 1);
+        check_rs_entry(9, 0, ALU_1, ADD, 40, 36, 32'h00208033, 0, 6, 5, 1, 2, 1);
+        check_rs_entry(8, 0, MULT_1, SUB, 84, 80, 32'h40418133, 0, 5, 14, 1, 2, 1);
+        check_rs_entry(7, 0, BRANCH, ADD, 52, 48, 32'h00208033, 0, 6, 5, 1, 2, 1);
+        check_rs_entry(6, 0, MULT_1, ADD, 56, 52, 32'h007302b3, 0, 7, 3, 1, 6, 1);
+        check_rs_entry(5, 0, ALU_1, ADD, 64, 60, 32'h00208033, 0, 6, 12, 1, 2, 1);
+        check_rs_entry(4, 0, ALU_1, ADD, 68, 64, 32'h007302b3, 0, 7, 3, 1, 13, 1);
+        check_rs_entry(3, 0, MULT_1, SUB, 72, 68, 32'h40418133, 0, 5, 14, 1, 2, 1);
+        check_rs_entry(2, 0, MULT_1, ADD, 76, 72, 32'h00208033, 0, 6, 15, 1, 2, 1);
+        check_rs_entry(1, 1, BRANCH, ADD, 80, 76, 32'h007302b3, 0, 7, 3, 1, 16, 1);
+        check_rs_entry(0, 0, MULT_1, ADD, 88, 84, 32'h00208033, 0, 6, 17, 1, 2, 1);
+
+        check_issue_inst(2, 0, BRANCH, ADD, 52, 48, 32'h00208033, 0, 6, 5, 2);
+        check_issue_inst(1, 0, ALU_1, ADD, 64, 60, 32'h00208033, 0, 6, 12, 2);
+        check_issue_inst(0, 1, BRANCH, ADD, 80, 76, 32'h007302b3, 0, 7, 3, 16);
+        
+        check_rs_stall(3'b000);
+
+        show_rs_table();
+        show_fu_state();
+        show_cdb();
+        show_rs_out();
+
+        @(posedge clock);
+        set_fu_ready(8'b11111111);
+        set_cdb_packet(0, 0, 0);
         @(negedge clock);
+
+        check_rs_entry(15, 0, MULT_1, SUB, 48, 44, 32'h40418133, 0, 5, 9, 1, 2, 1);
+        check_rs_entry(14, 0, ALU_1, ADD, 8, 4, 32'h00208033, 0, 6, 5, 1, 2, 1);
+        check_rs_entry(13, 0, ALU_1, ADD, 12, 8, 32'h007302b3, 0, 7, 3, 1, 6, 1);
+        check_rs_entry(12, 0, LS_1, SRL, 28, 24, 32'h00208033, 0, 6, 5, 1, 2, 1);
+        check_rs_entry(11, 0, LS_1, ADD, 32, 28, 32'h007302b3, 0, 7, 3, 1, 6, 1);
+        check_rs_entry(10, 0, ALU_1, SUB, 60, 56, 32'h40418133, 0, 5, 10, 1, 2, 1);
+        check_rs_entry(9, 0, ALU_1, ADD, 40, 36, 32'h00208033, 0, 6, 5, 1, 2, 1);
+        check_rs_entry(8, 0, MULT_1, SUB, 84, 80, 32'h40418133, 0, 5, 14, 1, 2, 1);
+        check_rs_entry(7, 0, BRANCH, ADD, 52, 48, 32'h00208033, 0, 6, 5, 1, 2, 1);
+        check_rs_entry(6, 0, MULT_1, ADD, 56, 52, 32'h007302b3, 0, 7, 3, 1, 6, 1);
+        check_rs_entry(5, 0, ALU_1, ADD, 64, 60, 32'h00208033, 0, 6, 12, 1, 2, 1);
+        check_rs_entry(4, 0, ALU_1, ADD, 68, 64, 32'h007302b3, 0, 7, 3, 1, 13, 1);
+        check_rs_entry(3, 0, MULT_1, SUB, 72, 68, 32'h40418133, 0, 5, 14, 1, 2, 1);
+        check_rs_entry(2, 0, MULT_1, ADD, 76, 72, 32'h00208033, 0, 6, 15, 1, 2, 1);
+        check_rs_entry(1, 0, BRANCH, ADD, 80, 76, 32'h007302b3, 0, 7, 3, 1, 16, 1);
+        check_rs_entry(0, 0, MULT_1, ADD, 88, 84, 32'h00208033, 0, 6, 17, 1, 2, 1);
+
+        check_issue_inst(2, 0, BRANCH, ADD, 52, 48, 32'h00208033, 0, 6, 5, 2);
+        check_issue_inst(1, 0, ALU_1, ADD, 64, 60, 32'h00208033, 0, 6, 12, 2);
+        check_issue_inst(0, 0, BRANCH, ADD, 80, 76, 32'h007302b3, 0, 7, 3, 16);
+
+        check_rs_stall(3'b000);
+
+        show_rs_table();
+        show_fu_state();
+        show_cdb();
+        show_rs_out();
+
+        @(posedge clock);
+        set_fu_ready(8'b11111111);
+        set_cdb_packet(12, 13, 2);
+        @(negedge clock);
+
+        check_rs_entry(15, 0, MULT_1, SUB, 48, 44, 32'h40418133, 0, 5, 9, 1, 2, 1);
+        check_rs_entry(14, 0, ALU_1, ADD, 8, 4, 32'h00208033, 0, 6, 5, 1, 2, 1);
+        check_rs_entry(13, 0, ALU_1, ADD, 12, 8, 32'h007302b3, 0, 7, 3, 1, 6, 1);
+        check_rs_entry(12, 0, LS_1, SRL, 28, 24, 32'h00208033, 0, 6, 5, 1, 2, 1);
+        check_rs_entry(11, 0, LS_1, ADD, 32, 28, 32'h007302b3, 0, 7, 3, 1, 6, 1);
+        check_rs_entry(10, 0, ALU_1, SUB, 60, 56, 32'h40418133, 0, 5, 10, 1, 2, 1);
+        check_rs_entry(9, 0, ALU_1, ADD, 40, 36, 32'h00208033, 0, 6, 5, 1, 2, 1);
+        check_rs_entry(8, 0, MULT_1, SUB, 84, 80, 32'h40418133, 0, 5, 14, 1, 2, 1);
+        check_rs_entry(7, 0, BRANCH, ADD, 52, 48, 32'h00208033, 0, 6, 5, 1, 2, 1);
+        check_rs_entry(6, 0, MULT_1, ADD, 56, 52, 32'h007302b3, 0, 7, 3, 1, 6, 1);
+        check_rs_entry(5, 0, ALU_1, ADD, 64, 60, 32'h00208033, 0, 6, 12, 1, 2, 1);
+        check_rs_entry(4, 0, ALU_1, ADD, 68, 64, 32'h007302b3, 0, 7, 3, 1, 13, 1);
+        check_rs_entry(3, 0, MULT_1, SUB, 72, 68, 32'h40418133, 0, 5, 14, 1, 2, 1);
+        check_rs_entry(2, 0, MULT_1, ADD, 76, 72, 32'h00208033, 0, 6, 15, 1, 2, 1);
+        check_rs_entry(1, 0, BRANCH, ADD, 80, 76, 32'h007302b3, 0, 7, 3, 1, 16, 1);
+        check_rs_entry(0, 0, MULT_1, ADD, 88, 84, 32'h00208033, 0, 6, 17, 1, 2, 1);
+
+        check_issue_inst(2, 0, BRANCH, ADD, 52, 48, 32'h00208033, 0, 6, 5, 2);
+        check_issue_inst(1, 0, ALU_1, ADD, 64, 60, 32'h00208033, 0, 6, 12, 2);
+        check_issue_inst(0, 0, BRANCH, ADD, 80, 76, 32'h007302b3, 0, 7, 3, 16);
+
+        check_rs_stall(3'b000);
+
+        show_rs_table();
+        show_fu_state();
+        show_cdb();
+        show_rs_out();
+
+        $display(" ");
+        $display("----------Finished running testbench--------------");
+        // $display("@@@Passed.");
         $finish;
 
     end

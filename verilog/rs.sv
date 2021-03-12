@@ -252,7 +252,7 @@ RS_IN_PACKET [2:0] issue_pckts;
 logic [`RSW-1:0] tag_ready;
 always_comb begin
     for(int i=0; i<`RSW; i++) begin
-        tag_ready[i] = reg1_ready_next[i] & reg2_ready_next[i];
+        tag_ready[i] = reg1_ready_next[i] & reg2_ready_next[i] & rs_entries[i].valid;
     end
 end
 always_comb begin
