@@ -48,7 +48,7 @@ LIB = /afs/umich.edu/class/eecs470/lib/verilog/lec25dscc25.v
 # Reservation Station
 RSTESTBENCH = testbench/rs_test.sv testbench/rs_print.c
 RSFILES = verilog/rs.sv verilog/ps.sv
-RSSYNFILES = rs.vg
+RSSYNFILES = synth/RS.vg
 # SIMULATION CONFIG
 
 HEADERS     = $(wildcard *.svh)
@@ -95,7 +95,7 @@ rs: rs_simv
 rs_simv: $(HEADERS) $(RSFILES) $(RSTESTBENCH)
 	$(VCS) $^ -o rs_simv
 
-rs.vg: verilog/rs.sv verilog/ps.sv synth/rs.tcl
+synth/RS.vg: verilog/rs.sv verilog/ps.sv synth/rs.tcl
 	cd $(SYNTH_DIR) && dc_shell-t -f ./rs.tcl | tee rs_synth.out
 
 rs_syn:	rs_syn_simv 
