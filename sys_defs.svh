@@ -112,26 +112,26 @@ typedef enum logic [1:0] {
 // ALU function code input
 // probably want to leave these alone
 //
-typedef enum logic [4:0] {
-	ALU_ADD     = 5'h00,
-	ALU_SUB     = 5'h01,
-	ALU_SLT     = 5'h02,
-	ALU_SLTU    = 5'h03,
-	ALU_AND     = 5'h04,
-	ALU_OR      = 5'h05,
-	ALU_XOR     = 5'h06,
-	ALU_SLL     = 5'h07,
-	ALU_SRL     = 5'h08,
-	ALU_SRA     = 5'h09,
-	ALU_MUL     = 5'h0a,
-	ALU_MULH    = 5'h0b,
-	ALU_MULHSU  = 5'h0c,
-	ALU_MULHU   = 5'h0d,
-	ALU_DIV     = 5'h0e,
-	ALU_DIVU    = 5'h0f,
-	ALU_REM     = 5'h10,
-	ALU_REMU    = 5'h11
-} ALU_FUNC;
+// typedef enum logic [4:0] {
+// 	ALU_ADD     = 5'h00,
+// 	ALU_SUB     = 5'h01,
+// 	ALU_SLT     = 5'h02,
+// 	ALU_SLTU    = 5'h03,
+// 	ALU_AND     = 5'h04,
+// 	ALU_OR      = 5'h05,
+// 	ALU_XOR     = 5'h06,
+// 	ALU_SLL     = 5'h07,
+// 	ALU_SRL     = 5'h08,
+// 	ALU_SRA     = 5'h09,
+// 	ALU_MUL     = 5'h0a,
+// 	ALU_MULH    = 5'h0b,
+// 	ALU_MULHSU  = 5'h0c,
+// 	ALU_MULHU   = 5'h0d,
+// 	ALU_DIV     = 5'h0e,
+// 	ALU_DIVU    = 5'h0f,
+// 	ALU_REM     = 5'h10,
+// 	ALU_REMU    = 5'h11
+// } ALU_FUNC;
 
 //////////////////////////////////////////////
 //
@@ -268,35 +268,6 @@ typedef struct packed {
 	logic [`XLEN-1:0] PC;  // PC 
 } IF_ID_PACKET;
 
-//////////////////////////////////////////////
-//
-// ID Packets:
-// Data that is exchanged from ID to EX stage
-//
-//////////////////////////////////////////////
-
-typedef struct packed {
-	logic [`XLEN-1:0] NPC;   // PC + 4
-	logic [`XLEN-1:0] PC;    // PC
-
-	logic [`XLEN-1:0] rs1_value;    // reg A value                                  
-	logic [`XLEN-1:0] rs2_value;    // reg B value                                  
-	                                                                                
-	ALU_OPA_SELECT opa_select; // ALU opa mux select (ALU_OPA_xxx *)
-	ALU_OPB_SELECT opb_select; // ALU opb mux select (ALU_OPB_xxx *)
-	INST inst;                 // instruction
-	
-	logic [4:0] dest_reg_idx;  // destination (writeback) register index      
-	ALU_FUNC    alu_func;      // ALU function select (ALU_xxx *)
-	logic       rd_mem;        // does inst read memory?
-	logic       wr_mem;        // does inst write memory?
-	logic       cond_branch;   // is inst a conditional branch?
-	logic       uncond_branch; // is inst an unconditional branch?
-	logic       halt;          // is this a halt?
-	logic       illegal;       // is this instruction illegal?
-	logic       csr_op;        // is this a CSR operation? (we only used this as a cheap way to get return code)
-	logic       valid;         // is inst a valid instruction to be counted for CPI calculations?
-} ID_EX_PACKET;
 
 typedef struct packed {
 	logic [`XLEN-1:0] alu_result; // alu_result
@@ -331,18 +302,53 @@ typedef enum logic [`FU-1:0] {
 	BRANCH = 7
 } FU_SELECT;
 
+/* OP select for different fu */
+typedef enum logic[`OP-1:0] {
+	ALU_ADD = 0,
+	ALU_SUB,
+	ALU_SLT,
+	ALU_SLTU,
+	ALU_AND,
+	ALU_OR,
+	ALU_XOR,
+	ALU_SLL,
+	ALU_SRL,
+	ALU_SRA
+} ALU_SELECT;
 typedef enum logic[`OP-1:0]{
-		ADD = 0,
-		SUB = 1,
-		AND = 2,
-		SLT = 3,
-		SLTU = 4,
-		OR = 5,
-		XOR = 6,
-		SRL = 7,
-		SLL = 8,
-		SRA = 9
+	MULT,
+	MULH,
+	MULHSU,
+	MULHU
+} MULT_SELECT;
+
+typedef enum logic [`OP-1:0]{
+	/* selects the camparision logic */ 
+	UNCOND,
+	BEQ,
+	BNE,
+	BLT,
+	BGE,
+	BLTU,
+	BGEU
+}BR_SELECT;
+typedef enum logic[`OP-1:0]{
+	LUPP, // used for LUI instruction
+	LOAD,
+	STORE
+}LS_SELECT;
+
+typedef union packed{
+	
+	ALU_SELECT alu;
+	MULT_SELECT mult;
+	BR_SELECT br;
+	LS_SELECT ls;
+
 } OP_SELECT;
+
+
+
 
 typedef struct packed{
 	logic alu_1;
