@@ -1,5 +1,6 @@
 `timescale 1ns/100ps
-
+`ifndef __RS_TEST_SV__
+`define __RS_TEST_SV__
 
 //`define RS_ALLOCATE_DEBUG // test only allocating new entry in rs
 `define TEST_MODE
@@ -37,13 +38,14 @@ module testbench;
         input [63:0] value2;
         input string note;
 
-        // begin
-        //     if (value1 != value2) begin
-        //         $display("Cycle %2d %s not match", cycle_count, note);
-        //         $display("@@@Failed.");
-        //         $finish;
-        //     end
-        // end
+        begin
+            if (value1 != value2) begin
+                $display("Cycle %2d %s not match", cycle_count, note);
+                $display("Value1: %2d, Value2: %2d", value1, value2);
+                $display("@@@Failed.");
+                $finish;
+            end
+        end
     endtask
 
     task check_rs_entry;
@@ -127,7 +129,7 @@ module testbench;
     task show_rs_table;
         $display("####### Cycle %d ##########", cycle_count);
         for(int i=2**`RS-1; i>=0; i--) begin  // For RS entry, it allocates from 15-0
-            print_stage("*", rs_entries[i].inst, rs_entries[i].PC[31:0], rs_entries[i].valid);
+            print_stage("*", rs_entries[i].fu_sel, rs_entries[i].NPC[31:0], rs_entries[i].valid);
             $display("dest_pr:%d reg1_pr:%d reg1_ready: %b reg2_pr:%d reg2_ready %b", rs_entries[i].dest_pr, rs_entries[i].reg1_pr, rs_entries[i].reg1_ready, rs_entries[i].reg2_pr, rs_entries[i].reg2_ready);
         end
         $display("structual_stall:%b", rs_stall);
@@ -156,7 +158,7 @@ module testbench;
             $display("=====   RS_IN Packet   =====");
             $display("| WAY |     inst    | fu_sel | op_sel  |");
             for (int i=0; i < 3; i++) begin
-                print_select(i, rs_in[i].valid, rs_in[i].inst, rs_in[i].NPC, rs_in[i].fu_sel, rs_in[i].op_sel);
+                print_select(i, rs_in[i].valid, rs_in[i].fu_sel, rs_in[i].NPC, rs_in[i].fu_sel, rs_in[i].op_sel);
             end
             $display("| WAY | dest_pr | reg1_pr | reg1_ready | reg2_pr | reg2_ready |");
             for (int i=0; i < 3; i++) begin
@@ -172,7 +174,7 @@ module testbench;
             $display("=====   RS_S Packet   =====");
             $display("| WAY |     inst    | fu_sel | op_sel  |");
             for (int i=0; i < 3; i++) begin
-                print_select(i, issue_insts[i].valid, issue_insts[i].inst, issue_insts[i].PC, issue_insts[i].fu_sel, issue_insts[i].op_sel);
+                print_select(i, issue_insts[i].valid, issue_insts[i].fu_sel, issue_insts[i].NPC, issue_insts[i].fu_sel, issue_insts[i].op_sel);
             end
             $display("| WAY | valid |    PC    | dest_pr | reg1_pr | reg2_pr |       inst | halt |");
             for (int i=0; i < 3; i++) begin
@@ -293,6 +295,12 @@ module testbench;
 
         check_rs_stall(3'b000);
 
+        show_rs_table();
+        show_rs_in();
+        show_fu_state();
+        show_cdb();
+        show_rs_out();
+
         @(negedge clock);
         check_rs_entry(15, 1, ALU_1, SUB, 4, 0, 32'h40418133, 0, 5, 3, 1, 2, 1);
         check_rs_entry(14, 1, ALU_1, ADD, 8, 4, 32'h00208033, 0, 6, 5, 0, 2, 1);
@@ -316,16 +324,18 @@ module testbench;
         check_issue_inst(2, 0, ALU_1, SUB, 4, 0, 32'h40418133, 0, 5, 3, 2);
 
         check_rs_stall(3'b000);
-        
-        show_rs_table();
-        show_fu_state();
-        show_cdb();
-        show_rs_out();
 
 
         set_rs_in_packet(2, 1, LS_1, SLL, 16, 12, 32'h40418133, 0, 5, 3, 1, 2, 1);
         set_rs_in_packet(1, 1, ALU_1, ADD, 20, 16, 32'h00208033, 0, 6, 5, 1, 2, 1);
         set_rs_in_packet(0, 1, ALU_1, ADD, 24, 20, 32'h007302b3, 0, 7, 3, 1, 6, 1);
+
+        show_rs_table();
+        show_rs_in();
+        show_fu_state();
+        show_cdb();
+        show_rs_out();
+
         @(posedge clock);
         set_fu_ready(8'b01111111);
         @(negedge clock);
@@ -346,9 +356,9 @@ module testbench;
         check_rs_entry(1, 0, ALU_1, ADD, 8, 4, 32'h00208033, 0, 6, 5, 0, 2, 1);
         check_rs_entry(0, 0, ALU_1, ADD, 12, 8, 32'h007302b3, 0, 7, 3, 1, 6, 0);
         
-        check_issue_inst(2, 1, LS_1, SLL, 16, 12, 32'h40418133, 0, 5, 3, 2);
+        check_issue_inst(0, 1, LS_1, SLL, 16, 12, 32'h40418133, 0, 5, 3, 2);
         check_issue_inst(1, 1, ALU_2, ADD, 20, 16, 32'h00208033, 0, 6, 5, 2);
-        check_issue_inst(0, 1, ALU_3, ADD, 24, 20, 32'h007302b3, 0, 7, 3, 6);
+        check_issue_inst(2, 1, ALU_3, ADD, 24, 20, 32'h007302b3, 0, 7, 3, 6);
 
         check_rs_stall(3'b000);
 
@@ -358,6 +368,7 @@ module testbench;
         set_rs_in_packet(0, 1, LS_1, ADD, 32, 28, 32'h007302b3, 0, 7, 3, 1, 6, 0);
 
         show_rs_table();
+        show_rs_in();
         show_fu_state();
         show_cdb();
         show_rs_out();
@@ -381,9 +392,9 @@ module testbench;
         check_rs_entry(1, 0, ALU_1, ADD, 8, 4, 32'h00208033, 0, 6, 5, 0, 2, 1);
         check_rs_entry(0, 0, ALU_1, ADD, 12, 8, 32'h007302b3, 0, 7, 3, 1, 6, 0);
 
-        check_issue_inst(2, 0, LS_1, SLL, 16, 12, 32'h40418133, 0, 5, 3, 2);
+        check_issue_inst(0, 0, LS_1, SLL, 16, 12, 32'h40418133, 0, 5, 3, 2);
         check_issue_inst(1, 0, ALU_2, ADD, 20, 16, 32'h00208033, 0, 6, 5, 2);
-        check_issue_inst(0, 0, ALU_3, ADD, 24, 20, 32'h007302b3, 0, 7, 3, 6);
+        check_issue_inst(2, 0, ALU_3, ADD, 24, 20, 32'h007302b3, 0, 7, 3, 6);
 
         check_rs_stall(3'b000);
 
@@ -392,6 +403,7 @@ module testbench;
         set_rs_in_packet(0, 1, ALU_1, ADD, 44, 40, 32'h007302b3, 0, 7, 3, 1, 8, 0);
 
         show_rs_table();
+        show_rs_in();
         show_fu_state();
         show_cdb();
         show_rs_out();
@@ -426,6 +438,7 @@ module testbench;
         set_rs_in_packet(0, 1, MULT_1, ADD, 56, 52, 32'h007302b3, 0, 7, 3, 1, 6, 0);
 
         show_rs_table();
+        show_rs_in();
         show_fu_state();
         show_cdb();
         show_rs_out();
@@ -461,6 +474,7 @@ module testbench;
         set_rs_in_packet(0, 1, ALU_1, ADD, 68, 64, 32'h007302b3, 0, 7, 3, 1, 13, 0);
 
         show_rs_table();
+        show_rs_in();
         show_fu_state();
         show_cdb();
         show_rs_out();
@@ -496,6 +510,7 @@ module testbench;
         set_rs_in_packet(0, 1, BRANCH, ADD, 80, 76, 32'h007302b3, 0, 7, 3, 1, 16, 0);
 
         show_rs_table();
+        show_rs_in();
         show_fu_state();
         show_cdb();
         show_rs_out();
@@ -532,6 +547,7 @@ module testbench;
         set_rs_in_packet(0, 0, BRANCH, ADD, 92, 88, 32'h007302b3, 0, 7, 3, 1, 16, 0);
 
         show_rs_table();
+        show_rs_in();
         show_fu_state();
         show_cdb();
         show_rs_out();
@@ -557,18 +573,20 @@ module testbench;
         check_rs_entry(1, 1, BRANCH, ADD, 80, 76, 32'h007302b3, 0, 7, 3, 1, 16, 0);
         check_rs_entry(0, 1, MULT_1, ADD, 88, 84, 32'h00208033, 0, 6, 17, 0, 2, 1);
 
-        check_issue_inst(2, 1, ALU_1, ADD, 12, 8, 32'h007302b3, 0, 7, 3, 6);
+        check_issue_inst(0, 1, ALU_1, ADD, 12, 8, 32'h007302b3, 0, 7, 3, 6);
         check_issue_inst(1, 1, LS_1, ADD, 32, 28, 32'h007302b3, 0, 7, 3, 6);
-        check_issue_inst(0, 1, MULT_1, ADD, 56, 52, 32'h007302b3, 0, 7, 3, 6);
+        check_issue_inst(2, 1, MULT_1, ADD, 56, 52, 32'h007302b3, 0, 7, 3, 6);
 
         check_rs_stall(3'b000);
 
+        rs_in = 0;
+
         show_rs_table();
+        show_rs_in();
         show_fu_state();
         show_cdb();
         show_rs_out();
 
-        rs_in = 0;
         @(posedge clock);
         set_fu_ready(8'b01100011);
         set_cdb_packet(0, 17, 0);
@@ -595,12 +613,13 @@ module testbench;
         // check_issue_inst(0, 1, MULT_2, SUB, 48, 44, 32'h40418133, 0, 5, 9, 2);
         // CHECK: Is this order expected?
         check_issue_inst(2, 1, MULT_2, SUB, 48, 44, 32'h40418133, 0, 5, 9, 2);
-        check_issue_inst(1, 1, ALU_2, ADD, 8, 4, 32'h00208033, 0, 6, 5, 2);
-        check_issue_inst(0, 1, ALU_3, ADD, 40, 36, 32'h00208033, 0, 6, 5, 2);
+        check_issue_inst(0, 1, ALU_2, ADD, 8, 4, 32'h00208033, 0, 6, 5, 2);
+        check_issue_inst(1, 1, ALU_3, ADD, 40, 36, 32'h00208033, 0, 6, 5, 2);
 
         check_rs_stall(3'b000);
 
         show_rs_table();
+        show_rs_in();
         show_fu_state();
         show_cdb();
         show_rs_out();
@@ -628,12 +647,13 @@ module testbench;
         check_rs_entry(0, 1, MULT_1, ADD, 88, 84, 32'h00208033, 0, 6, 17, 1, 2, 1);
 
         check_issue_inst(2, 0, MULT_2, SUB, 48, 44, 32'h40418133, 0, 5, 9, 2);
-        check_issue_inst(1, 1, ALU_2, SUB, 60, 56, 32'h40418133, 0, 5, 10, 2);
-        check_issue_inst(0, 1, MULT_1, ADD, 76, 72, 32'h00208033, 0, 6, 15, 2);
+        check_issue_inst(0, 1, ALU_2, SUB, 60, 56, 32'h40418133, 0, 5, 10, 2);
+        check_issue_inst(1, 1, MULT_1, ADD, 76, 72, 32'h00208033, 0, 6, 15, 2);
 
         check_rs_stall(3'b000);
 
         show_rs_table();
+        show_rs_in();
         show_fu_state();
         show_cdb();
         show_rs_out();
@@ -660,13 +680,14 @@ module testbench;
         check_rs_entry(1, 1, BRANCH, ADD, 80, 76, 32'h007302b3, 0, 7, 3, 1, 16, 0);
         check_rs_entry(0, 1, MULT_1, ADD, 88, 84, 32'h00208033, 0, 6, 17, 1, 2, 1);
 
-        check_issue_inst(2, 1, LS_1, SRL, 28, 24, 32'h00208033, 0, 6, 5, 2);
-        check_issue_inst(1, 1, MULT_2, SUB, 84, 80, 32'h40418133, 0, 5, 14, 2);
-        check_issue_inst(0, 1, MULT_1, SUB, 72, 68, 32'h40418133, 0, 5, 14, 2);
+        check_issue_inst(0, 1, LS_1, SRL, 28, 24, 32'h00208033, 0, 6, 5, 2);
+        check_issue_inst(2, 1, MULT_2, SUB, 84, 80, 32'h40418133, 0, 5, 14, 2);
+        check_issue_inst(1, 1, MULT_1, SUB, 72, 68, 32'h40418133, 0, 5, 14, 2);
 
         check_rs_stall(3'b000);
 
         show_rs_table();
+        show_rs_in();
         show_fu_state();
         show_cdb();
         show_rs_out();
@@ -693,13 +714,14 @@ module testbench;
         check_rs_entry(1, 1, BRANCH, ADD, 80, 76, 32'h007302b3, 0, 7, 3, 1, 16, 0);
         check_rs_entry(0, 1, MULT_1, ADD, 88, 84, 32'h00208033, 0, 6, 17, 1, 2, 1);
 
-        check_issue_inst(2, 1, BRANCH, ADD, 52, 48, 32'h00208033, 0, 6, 5, 2);
+        check_issue_inst(0, 1, BRANCH, ADD, 52, 48, 32'h00208033, 0, 6, 5, 2);
         check_issue_inst(1, 1, ALU_1, ADD, 64, 60, 32'h00208033, 0, 6, 12, 2);
-        check_issue_inst(0, 1, ALU_2, ADD, 68, 64, 32'h007302b3, 0, 7, 3, 13);
+        check_issue_inst(2, 1, ALU_2, ADD, 68, 64, 32'h007302b3, 0, 7, 3, 13);
 
         check_rs_stall(3'b000);
 
         show_rs_table();
+        show_rs_in();
         show_fu_state();
         show_cdb();
         show_rs_out();
@@ -733,6 +755,7 @@ module testbench;
         check_rs_stall(3'b000);
 
         show_rs_table();
+        show_rs_in();
         show_fu_state();
         show_cdb();
         show_rs_out();
@@ -766,6 +789,7 @@ module testbench;
         check_rs_stall(3'b000);
 
         show_rs_table();
+        show_rs_in();
         show_fu_state();
         show_cdb();
         show_rs_out();
@@ -799,6 +823,7 @@ module testbench;
         check_rs_stall(3'b000);
 
         show_rs_table();
+        show_rs_in();
         show_fu_state();
         show_cdb();
         show_rs_out();
@@ -832,6 +857,7 @@ module testbench;
         check_rs_stall(3'b000);
 
         show_rs_table();
+        show_rs_in();
         show_fu_state();
         show_cdb();
         show_rs_out();
@@ -865,15 +891,18 @@ module testbench;
         check_rs_stall(3'b000);
 
         show_rs_table();
+        show_rs_in();
         show_fu_state();
         show_cdb();
         show_rs_out();
 
         $display(" ");
         $display("----------Finished running testbench--------------");
-        // $display("@@@Passed.");
+        $display("@@@Passed.");
         $finish;
 
     end
 
 endmodule
+
+`endif

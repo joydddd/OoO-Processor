@@ -1,8 +1,8 @@
 #include <stdio.h>
 #define NOOP_INST 0x00000013
-void print_select(int index,  int valid, int inst,  int npc, int fu_select, int op_select) {
+void print_select(int index,  int valid, int fu_sel,  int npc, int fu_select, int op_select) {
   printf("|  %1d  |", index);
-  print_stage("", inst, npc, valid);
+  print_stage("", fu_sel, npc, valid);
   char *fu;
   char *op;
   switch(fu_select){
@@ -33,11 +33,37 @@ void print_select(int index,  int valid, int inst,  int npc, int fu_select, int 
 }
 
 
-void print_stage(char* div, int inst, int npc, int valid_inst)
+void print_stage(char* div, int fu_sel, int npc, int valid_inst)
 {
   int opcode, funct3, funct7, funct12;
   char *str;
+
+  if(!valid_inst)
+    str = "-";
+  else if(fu_sel<0)
+    str = "nop";
+  else{
+    if (fu_sel<3)
+    {
+      str = "alu";
+    }
+    else if (fu_sel<5)
+    {
+      str = "ls";
+    }
+    else if (fu_sel<7)
+    {
+      str = "mult";
+    }
+    else {
+      str = "branch";
+    }
+  }
   
+  
+  
+
+  /*
   if(!valid_inst)
     str = "-";
   else if(inst==NOOP_INST)
@@ -149,5 +175,6 @@ void print_stage(char* div, int inst, int npc, int valid_inst)
     default: str = "invalid"; break;
     }
   }
+  */
     printf("%s%4x:%-8s", div, npc, str);
 }
