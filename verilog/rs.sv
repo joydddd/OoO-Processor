@@ -54,7 +54,8 @@ always_comb begin
     end
 end
 assign tag_ready = alu_ready | mult_ready | ls_ready | br_ready;
-pc_sel16 sel_small_pc(.pc(pc_comb), .req(tag_ready), .en(1'b1), .gnt(tag_issue), .req_up(yes_issue), .pc_up(pc_up_waste));
+// pc_sel16 sel_small_pc(.pc(pc_comb), .req(tag_ready), .en(1'b1), .gnt(tag_issue), .req_up(yes_issue), .pc_up(pc_up_waste));
+ps16 sel_ps(.req(tag_ready), .en(1'b1), .gnt(tag_issue), .req_up(yes_issue));
 
 /* update ready entries for each fu */
 assign alu_ready_next = alu_ready_in & ~tag_issue;
