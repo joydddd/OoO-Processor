@@ -375,7 +375,7 @@ module dispatch_stage (
 	output ROB_ENTRY_PACKET[2:0] rob_in,
 
 	/* allocate new PR */
-	output logic [2:0]			valid, // connect to Free_List::Dispatch_EN & MT valid_new. Is 1 if the corresponding inst is valid and doesn’t expect stall. 
+	output logic [2:0]			new_pr_en, // connect to Free_List::Dispatch_EN & MT valid_new. Is 1 if the corresponding inst allocates a new pr 
 	input [2:0] 				free_reg_valid, // Free_List::FreeRegValid
 	input [2:0][`PR-1:0] 		free_pr_in, //  Free_List::FreeReg
 
@@ -422,6 +422,8 @@ always_comb begin
 		valid[i] = ~d_stall[i] & if_id_packet_in[i].valid;
 	end
 end;
+
+// TODO set new_pr_en
 
 /* update and looking up MT */
 always_comb begin

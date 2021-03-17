@@ -51,9 +51,10 @@ RSTESTBENCH = testbench/rs_test.sv testbench/rs_print.c
 RSFILES = verilog/rs.sv verilog/ps.sv
 RSSYNFILES = synth/RS.vg
 
-# dispatch stage
-DTESTBENCH = 
-DFILES = verilog/dispatch.sv
+# dis->is 
+DTESTBENCH = testbench/pipe_test.sv testbench/mt-fl_sim.cpp
+DFILES = verilog/dispatch.sv verilog/pipeline.sv
+DFILES += $(RSFILES)
 DSYNFILES = synth/dispatch.vg
 # SIMULATION CONFIG
 
@@ -103,6 +104,7 @@ rs_simv: $(HEADERS) $(RSFILES) $(RSTESTBENCH)
 
 #dispatch
 dis: dis_simv
+	./dis_simv | tee dis_sim_program.out
 dis_simv: $(HEADERS) $(DFILES) $(DTESTBENCH)
 	$(VCS) $^ -o dis_simv
 
