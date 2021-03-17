@@ -3,11 +3,11 @@
 ////////////////////////////////////
 #define PR_SIZE 64
 #define AR_SIZE 32
-#include "mt-fl_sim.h"
 
 #include <deque>
 #include <iostream>
 #include <vector>
+#include <assert.h>
 using std::cerr;
 using std::deque;
 using std::endl;
@@ -20,6 +20,7 @@ extern "C" void fl_init() {
     for (int i = AR_SIZE; i < PR_SIZE; i++) {
         freelist.push_back(i);
     }
+    cerr << "FreeList Reseted!" << endl;
 }
 
 extern "C" int fl_new_pr_valid() {
@@ -45,7 +46,7 @@ extern "C" int fl_new_pr1() {
     if (freelist.size() < 2)
         return 0;
     else
-        return freelist[1]
+        return freelist[1];
 }
 
 extern "C" int fl_new_pr0() {
@@ -57,16 +58,17 @@ extern "C" int fl_new_pr0() {
 
 extern "C" int fl_pop(int new_pr_en) {
     if (new_pr_en == 0x0) {
-        assert(freelist.size() >= 3) freelist.pop();
-        freelist.pop();
-        freelist.pop();
+        assert(freelist.size() >= 3);
+        freelist.pop_front();
+        freelist.pop_front();
+        freelist.pop_front();
     } else if (new_pr_en == 0x1) {
         assert(freelist.size() >= 2);
-        freelist.pop();
-        freelist.pop();
+        freelist.pop_front();
+        freelist.pop_front();
     } else if (new_pr_en == 0x3) {
         assert(freelist.size() >= 1);
-        freelist.pop();
+        freelist.pop_front();
     } else if (new_pr_en == 0x7) {
         ;
     } else {
@@ -77,19 +79,33 @@ extern "C" int fl_pop(int new_pr_en) {
 
 /* map table simulation */
 static vector<int> mapTable;
+static vector<int> readyTab;
+static bool mt_inited = false; 
 
 extern "C" void mt_init() {
     for (int i = 0; i < AR_SIZE; i++) {
         mapTable.push_back(i);
+        readyTab.push_back(1);
     }
+    mt_inited = true;
+    cerr << "MapTable Reseted!" << endl;
 }
 
-extern "C" int look_up(int i) {
-    assert(i <= AR_SIZE);
-    return mapTable[i];
+extern "C" int mt_look_up(int i) {
+    if (!mt_inited) return 0;
+    assert(i < AR_SIZE);
+    if (mt_init) return mapTable[i];
+    return 0;
 }
 
-extern "C" int map(int ar, int pr) {
+extern "C" int mt_look_up_ready(int i) {
+    if (!mt_inited) return 0;
+    assert(i < AR_SIZE);
+    return readyTab[i];
+}
+
+extern "C" void mt_map(int ar, int pr) {
+    if (!mt_inited) return;
     if (ar == 0 && pr != 0) {
         cerr << "ERROR: maping AR 0 to PR " << pr << endl;
     }
@@ -97,4 +113,5 @@ extern "C" int map(int ar, int pr) {
         cerr << "ERROR: mapping AR " << ar << " to PR 0" << endl;
     }
     mapTable[ar] = pr;
+    if(ar!=0) readyTab[ar] = 0;
 }

@@ -48,10 +48,11 @@ module pipeline(
     , output RS_IN_PACKET [`RSW-1:0]    rs_entries_display
     , output RS_S_PACKET [2:0]          rs_is_packet_display
     , output logic [2:0]                rs_stall_display
+
 `endif
 
 `ifdef DIS_DEBUG
-    , input IF_ID_PACKET                if_d_packet_debug
+    , input IF_ID_PACKET [2:0]          if_d_packet_debug
     , output logic [2:0]                dis_new_pr_en_out
     /* free list simulation */
     , input [2:0]                       free_pr_valid_debug
@@ -67,6 +68,10 @@ module pipeline(
     , input [2:0][`PR-1:0]              maptable_reg2_pr_debug
     , input [2:0][`PR-1:0]              maptable_reg1_ready_debug
     , input [2:0][`PR-1:0]              maptable_reg2_ready_debug
+
+    , input [2:0]                       rob_stall_debug
+    , input FU_STATE_PACKET             fu_ready_debug
+    , input CDB_T_PACKET                cdb_t_debug
 `endif
     
 );
@@ -131,6 +136,7 @@ assign dis_stall_display = dis_stall;
 // RS
 assign rs_is_packet_display = rs_is_packet;
 assign rs_stall_display = rs_stall;
+
 `endif
 
 `ifdef DIS_DEBUG
@@ -149,6 +155,10 @@ assign maptable_reg1_pr = maptable_reg1_pr_debug;
 assign maptable_reg2_pr = maptable_reg2_pr_debug;
 assign maptable_reg1_ready = maptable_reg1_ready_debug;
 assign maptable_reg2_ready = maptable_reg2_ready_debug;
+
+assign rob_stall = rob_stall_debug;
+assign fu_ready = fu_ready_debug;
+assign cdb_t = cdb_t_debug;
 `endif
 
 //////////////////////////////////////////////////

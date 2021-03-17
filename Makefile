@@ -52,7 +52,7 @@ RSFILES = verilog/rs.sv verilog/ps.sv
 RSSYNFILES = synth/RS.vg
 
 # dis->is 
-DTESTBENCH = testbench/pipe_test.sv testbench/mt-fl_sim.cpp
+DTESTBENCH = testbench/pipe_test.sv testbench/mt-fl_sim.cpp testbench/pipe_print.c
 DFILES = verilog/dispatch.sv verilog/pipeline.sv
 DFILES += $(RSFILES)
 DSYNFILES = synth/dispatch.vg
