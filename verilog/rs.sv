@@ -1,6 +1,6 @@
 `define TEST_MODE
 // `define RS_ALLOCATE_DEBUG
-`define IS_DEBUG
+// `define IS_DEBUG
 `ifndef __RS_V__
 `define __RS_V__
 

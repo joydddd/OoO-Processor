@@ -177,10 +177,12 @@ end
 
 always_ff @(posedge clock) begin
     if(reset) begin
-        dis_packet_in.valid <= `SD 0;
-        dis_packet_in.inst <= `SD `NOP;
-        dis_packet_in.NPC <= `SD 0;
-        dis_packet_in.PC <= `SD 0;
+        for(int i=0; i<3; i++) begin
+            dis_packet_in[i].valid <= `SD 0;
+            dis_packet_in[i].inst <= `SD `NOP;
+            dis_packet_in[i].NPC <= `SD 0;
+            dis_packet_in[i].PC <= `SD 0;
+        end
     end else dis_packet_in <= `SD dis_packet_in_next;
 end
 
@@ -211,13 +213,15 @@ dispatch_stage dipatch_0(
     .maptable_new_pr(maptable_allocate_pr),
     .maptable_ar(maptable_allocate_ar),
     .maptable_old_pr(maptable_old_pr),
-    .reg1_ar(maptable_reg1_pr),
-    .reg2_ar(maptable_reg2_pr),
+    .reg1_ar(maptable_lookup_reg1_ar),
+    .reg2_ar(maptable_lookup_reg2_ar),
+    .reg1_pr(maptable_reg1_pr),
+    .reg2_pr(maptable_reg2_pr),
     .reg1_ready(maptable_reg1_ready),
     .reg2_ready(maptable_reg2_ready),
 
 
-    .valid(dis_new_pr_en),
+    .new_pr_en(dis_new_pr_en),
     .d_stall(dis_stall)
 
 );
@@ -248,4 +252,4 @@ RS RS_0(
 
 endmodule
 
-`endif __PIPELINE_V__
+`endif // __PIPELINE_V__
