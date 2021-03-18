@@ -216,18 +216,24 @@ always_comb begin
 			retire_entry[1] = rob_entries[head_incre1];
 			retire_entry[2] = rob_entries[head_incre2];
 			rob_states_next[head] = EMPTY;
+			rob_entries_next[head].completed = 0;
 			rob_states_next[head_incre1] = EMPTY;
-			rob_states_next[head_incre2] = EMPTY;		
+			rob_entries_next[head_incre1].completed = 0;
+			rob_states_next[head_incre2] = EMPTY;
+			rob_entries_next[head_incre2].completed = 0;		
 		end
 		2: begin
 			retire_entry[0] = rob_entries[head];
 			retire_entry[1] = rob_entries[head_incre1];
 			rob_states_next[head] = EMPTY;
+			rob_entries_next[head].completed = 0;
 			rob_states_next[head_incre1] = EMPTY;
+			rob_entries_next[head_incre1].completed = 0;
 		end
 		1: begin
 			retire_entry[0] = rob_entries[head];
 			rob_states_next[head] = EMPTY;
+			rob_entries_next[head].completed = 0;
 		end
 		0: begin
 			

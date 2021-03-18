@@ -300,6 +300,21 @@ module testbench;
         show_rob_table();
         show_rob_in();
         show_rob_out();
+
+        @(negedge clock);
+        set_rob_in_packet(0, 1, 4, 5, 1, 0);
+        set_rob_in_packet(1, 1, 5, 6, 2, 1);
+        set_rob_in_packet(2, 1, 1, 2, 3, 0);
+        tail_incre = 3;
+        show_rob_table();
+        show_rob_in();
+        show_rob_out();
+
+        @(negedge clock);
+        tail_incre = 0;
+        show_rob_table();
+        show_rob_in();
+        show_rob_out();
         $finish;
 
     end
