@@ -1,0 +1,1292 @@
+vcs -V -sverilog +vc -Mupdate -line -full64 +vcs+vcdpluson -debug_pp sys_defs.svh ISA.svh verilog/rob.sv testbench/rob_test.sv -o rob_simv
+/usr/caen/vcs-2017.12-SP2-1/linux64/bin/vcs1 -Mcc=gcc -Mcplusplus=g++ -Masflags= -Mcfl= -pipe -fPIC -O -I/usr/caen/vcs-2017.12-SP2-1/include  -Mxcflags= -pipe -fPIC -I/usr/caen/vcs-2017.12-SP2-1/include -Mldflags= -rdynamic  -Mout=rob_simv -Mamsrun="" -Mvcsaceobjs="" -Mobjects=" /usr/caen/vcs-2017.12-SP2-1/linux64/lib/libvirsim.so /usr/caen/vcs-2017.12-SP2-1/linux64/lib/liberrorinf.so /usr/caen/vcs-2017.12-SP2-1/linux64/lib/libsnpsmalloc.so /usr/caen/vcs-2017.12-SP2-1/linux64/lib/libvfs.so " -Mexternalobj= -Msaverestoreobj=/usr/caen/vcs-2017.12-SP2-1/linux64/lib/vcs_save_restore_new.o -Mcrt0= -Mcrtn="" -Mcsrc="" -Mupdate -Msyslibs=-ldl  -V +vc -line -full64 +vcs+vcdpluson -Xcbug=0x1 -Xpiyushb1=0x80 -o rob_simv -picarchive +vcsd +itf+/usr/caen/vcs-2017.12-SP2-1/linux64/lib/vcsdp.tab +cli+1 -debug=4 +memcbk -sverilog +vpi -gen_obj sys_defs.svh ISA.svh verilog/rob.sv testbench/rob_test.sv  
+                         Chronologic VCS (TM)
+      Version N-2017.12-SP2-1_Full64 -- Thu Mar 18 00:33:56 2021
+               Copyright (c) 1991-2017 by Synopsys Inc.
+                         ALL RIGHTS RESERVED
+
+This program is proprietary and confidential information of Synopsys Inc.
+and may be used and disclosed only as authorized in a license agreement
+controlling such use and disclosure.
+
+Parsing design file 'sys_defs.svh'
+Parsing design file 'ISA.svh'
+Parsing design file 'verilog/rob.sv'
+Parsing design file 'testbench/rob_test.sv'
+Top Level Modules:
+       testbench
+TimeScale is 1 ns / 100 ps
+
+Warning-[ENUMASSIGN] Illegal assignment to enum variable
+verilog/rob.sv, 183
+ROB, "rob_states <= #(1) 0;"
+  Only expressions of the enum type can be assigned to an enum variable. 
+  The type int is incompatible with the enum 'ROB_STATE'
+  Expression: 0
+  Use the static cast operator to convert the expression to enum type.
+
+Starting vcs inline pass...
+1 module and 0 UDP read.
+recompiling module testbench
+  /usr/caen/vcs-2017.12-SP2-1/linux64/bin/vcselab -o rob_simv -nobanner 
+( cd csrc ; make -f Makefile SNPS_VCS_TMPDIR=/tmp/vcs_20210318043355_32537 product )
+make[1]: Entering directory `/afs/umich.edu/user/b/r/brucewei/EECS470/Projects/Project4/group15w21/csrc'
+rm -f _csrc*.so pre_vcsobj_*.so share_vcsobj_*.so
+ld -shared  -o .//../rob_simv.daidir//_csrc0.so objs/amcQw_d.o 
+rm -f _csrc0.so
+if [ -x ../rob_simv ]; then chmod -x ../rob_simv; fi
+g++  -o ../rob_simv    -Wl,-rpath-link=./ -Wl,-rpath='$ORIGIN'/rob_simv.daidir/ -Wl,-rpath=./rob_simv.daidir/ -Wl,-rpath='$ORIGIN'/rob_simv.daidir//scsim.db.dir  -rdynamic  -Wl,-rpath=/usr/caen/vcs-2017.12-SP2-1/linux64/lib -L/usr/caen/vcs-2017.12-SP2-1/linux64/lib -lcmsg     _465_archive_1.so _prev_archive_1.so _csrc0.so  SIM_l.o  _csrc0.so     rmapats_mop.o rmapats.o rmar.o rmar_nd.o  rmar_llvm_0_1.o rmar_llvm_0_0.o          -lzerosoft_rt_stubs -lvirsim -lerrorinf -lsnpsmalloc -lvfs    -lvcsnew -lsimprofile -luclinative /usr/caen/vcs-2017.12-SP2-1/linux64/lib/vcs_tls.o   -Wl,-whole-archive -lvcsucli -Wl,-no-whole-archive          /usr/caen/vcs-2017.12-SP2-1/linux64/lib/vcs_save_restore_new.o -ldl  -lc -lm -lpthread -ldl 
+../rob_simv up to date
+make[1]: Leaving directory `/afs/umich.edu/user/b/r/brucewei/EECS470/Projects/Project4/group15w21/csrc'
+CPU time: .489 seconds to compile + .215 seconds to elab + .811 seconds to link
+./rob_simv | tee rob_sim_program.out
+Chronologic VCS simulator copyright 1991-2017
+Contains Synopsys proprietary information.
+Compiler version N-2017.12-SP2-1_Full64; Runtime version N-2017.12-SP2-1_Full64;  Mar 18 00:34 2021
+VCD+ Writer N-2017.12-SP2-1_Full64 Copyright (c) 1991-2017 by Synopsys Inc.
+ x  x  x
+ x  x  x
+####### Cycle          0 ##########
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+head: 0 tail: 0
+structual_stall:000
+=====   ROB_IN Packet   =====
+| WAY | valid |  Tnew | Told | arch_reg | completed |
+|  0  |     0 |       0 |       0   |      0  |          0 |
+|  1  |     0 |       0 |       0   |      0  |          0 |
+|  2  |     0 |       0 |       0   |      0  |          0 |
+=====   ROB_Retire Packet   =====
+| WAY | valid | busy | Tnew | Told | arch_reg | completed |
+|  0  |     0 |       0 |       0   |      0  |          0 |
+|  1  |     0 |       0 |       0   |      0  |          0 |
+|  2  |     0 |       0 |       0   |      0  |          0 |
+####### Cycle          1 ##########
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+head: 0 tail: 0
+structual_stall:000
+=====   ROB_IN Packet   =====
+| WAY | valid |  Tnew | Told | arch_reg | completed |
+|  0  |     1 |       4 |       5   |      1  |          0 |
+|  1  |     1 |       5 |       6   |      2  |          1 |
+|  2  |     1 |       1 |       2   |      3  |          0 |
+=====   ROB_Retire Packet   =====
+| WAY | valid | busy | Tnew | Told | arch_reg | completed |
+|  0  |     0 |       0 |       0   |      0  |          0 |
+|  1  |     0 |       0 |       0   |      0  |          0 |
+|  2  |     0 |       0 |       0   |      0  |          0 |
+ 3  6  0
+####### Cycle          2 ##########
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:0
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+head: 0 tail: 2
+structual_stall:000
+=====   ROB_IN Packet   =====
+| WAY | valid |  Tnew | Told | arch_reg | completed |
+|  0  |     1 |       4 |       5   |      1  |          0 |
+|  1  |     1 |       5 |       6   |      2  |          1 |
+|  2  |     1 |       1 |       2   |      3  |          0 |
+=====   ROB_Retire Packet   =====
+| WAY | valid | busy | Tnew | Told | arch_reg | completed |
+|  0  |     0 |       0 |       0   |      0  |          0 |
+|  1  |     0 |       0 |       0   |      0  |          0 |
+|  2  |     0 |       0 |       0   |      0  |          0 |
+ 6  9  0
+####### Cycle          3 ##########
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:0
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:0
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+head: 0 tail: 5
+structual_stall:000
+=====   ROB_IN Packet   =====
+| WAY | valid |  Tnew | Told | arch_reg | completed |
+|  0  |     1 |       4 |       5   |      1  |          0 |
+|  1  |     1 |       5 |       6   |      2  |          1 |
+|  2  |     1 |       1 |       2   |      3  |          0 |
+=====   ROB_Retire Packet   =====
+| WAY | valid | busy | Tnew | Told | arch_reg | completed |
+|  0  |     0 |       0 |       0   |      0  |          0 |
+|  1  |     0 |       0 |       0   |      0  |          0 |
+|  2  |     0 |       0 |       0   |      0  |          0 |
+ 9 12  0
+####### Cycle          4 ##########
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:0
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:0
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:0
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+head: 0 tail: 8
+structual_stall:000
+=====   ROB_IN Packet   =====
+| WAY | valid |  Tnew | Told | arch_reg | completed |
+|  0  |     1 |       4 |       5   |      1  |          0 |
+|  1  |     1 |       5 |       6   |      2  |          1 |
+|  2  |     1 |       1 |       2   |      3  |          0 |
+=====   ROB_Retire Packet   =====
+| WAY | valid | busy | Tnew | Told | arch_reg | completed |
+|  0  |     0 |       0 |       0   |      0  |          0 |
+|  1  |     0 |       0 |       0   |      0  |          0 |
+|  2  |     0 |       0 |       0   |      0  |          0 |
+12 15  0
+####### Cycle          5 ##########
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:0
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:0
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:0
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:0
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+head: 0 tail:11
+structual_stall:000
+=====   ROB_IN Packet   =====
+| WAY | valid |  Tnew | Told | arch_reg | completed |
+|  0  |     1 |       4 |       5   |      1  |          0 |
+|  1  |     1 |       5 |       6   |      2  |          1 |
+|  2  |     1 |       1 |       2   |      3  |          0 |
+=====   ROB_Retire Packet   =====
+| WAY | valid | busy | Tnew | Told | arch_reg | completed |
+|  0  |     0 |       0 |       0   |      0  |          0 |
+|  1  |     0 |       0 |       0   |      0  |          0 |
+|  2  |     0 |       0 |       0   |      0  |          0 |
+15 18  0
+####### Cycle          6 ##########
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:0
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:0
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:0
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:0
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:0
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+head: 0 tail:14
+structual_stall:000
+=====   ROB_IN Packet   =====
+| WAY | valid |  Tnew | Told | arch_reg | completed |
+|  0  |     1 |       4 |       5   |      1  |          0 |
+|  1  |     1 |       5 |       6   |      2  |          1 |
+|  2  |     1 |       1 |       2   |      3  |          0 |
+=====   ROB_Retire Packet   =====
+| WAY | valid | busy | Tnew | Told | arch_reg | completed |
+|  0  |     0 |       0 |       0   |      0  |          0 |
+|  1  |     0 |       0 |       0   |      0  |          0 |
+|  2  |     0 |       0 |       0   |      0  |          0 |
+18 21  0
+####### Cycle          7 ##########
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:0
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:0
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:0
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:0
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:0
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:0
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+head: 0 tail:17
+structual_stall:000
+=====   ROB_IN Packet   =====
+| WAY | valid |  Tnew | Told | arch_reg | completed |
+|  0  |     1 |       4 |       5   |      1  |          0 |
+|  1  |     1 |       5 |       6   |      2  |          1 |
+|  2  |     1 |       1 |       2   |      3  |          0 |
+=====   ROB_Retire Packet   =====
+| WAY | valid | busy | Tnew | Told | arch_reg | completed |
+|  0  |     0 |       0 |       0   |      0  |          0 |
+|  1  |     0 |       0 |       0   |      0  |          0 |
+|  2  |     0 |       0 |       0   |      0  |          0 |
+21 24  0
+####### Cycle          8 ##########
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:0
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:0
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:0
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:0
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:0
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:0
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:0
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+head: 0 tail:20
+structual_stall:000
+=====   ROB_IN Packet   =====
+| WAY | valid |  Tnew | Told | arch_reg | completed |
+|  0  |     1 |       4 |       5   |      1  |          0 |
+|  1  |     1 |       5 |       6   |      2  |          1 |
+|  2  |     1 |       1 |       2   |      3  |          0 |
+=====   ROB_Retire Packet   =====
+| WAY | valid | busy | Tnew | Told | arch_reg | completed |
+|  0  |     0 |       0 |       0   |      0  |          0 |
+|  1  |     0 |       0 |       0   |      0  |          0 |
+|  2  |     0 |       0 |       0   |      0  |          0 |
+24 27  0
+####### Cycle          9 ##########
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:0
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:0
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:0
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:0
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:0
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:0
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:0
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:0
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+head: 0 tail:23
+structual_stall:000
+=====   ROB_IN Packet   =====
+| WAY | valid |  Tnew | Told | arch_reg | completed |
+|  0  |     1 |       4 |       5   |      1  |          0 |
+|  1  |     1 |       5 |       6   |      2  |          1 |
+|  2  |     1 |       1 |       2   |      3  |          0 |
+=====   ROB_Retire Packet   =====
+| WAY | valid | busy | Tnew | Told | arch_reg | completed |
+|  0  |     0 |       0 |       0   |      0  |          0 |
+|  1  |     0 |       0 |       0   |      0  |          0 |
+|  2  |     0 |       0 |       0   |      0  |          0 |
+27 30  0
+####### Cycle         10 ##########
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:0
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:0
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:0
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:0
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:0
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:0
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:0
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:0
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:0
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+head: 0 tail:26
+structual_stall:000
+=====   ROB_IN Packet   =====
+| WAY | valid |  Tnew | Told | arch_reg | completed |
+|  0  |     1 |       4 |       5   |      1  |          0 |
+|  1  |     1 |       5 |       6   |      2  |          1 |
+|  2  |     1 |       1 |       2   |      3  |          0 |
+=====   ROB_Retire Packet   =====
+| WAY | valid | busy | Tnew | Told | arch_reg | completed |
+|  0  |     0 |       0 |       0   |      0  |          0 |
+|  1  |     0 |       0 |       0   |      0  |          0 |
+|  2  |     0 |       0 |       0   |      0  |          0 |
+30  0  0
+####### Cycle         11 ##########
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:0 Tnew: 0 Told:  0 arch_reg: 0 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:0
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:0
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:0
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:0
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:0
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:0
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:0
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:0
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:0
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:0
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+head: 0 tail:29
+structual_stall:100
+=====   ROB_IN Packet   =====
+| WAY | valid |  Tnew | Told | arch_reg | completed |
+|  0  |     1 |       4 |       5   |      1  |          0 |
+|  1  |     1 |       5 |       6   |      2  |          1 |
+|  2  |     1 |       1 |       2   |      3  |          0 |
+=====   ROB_Retire Packet   =====
+| WAY | valid | busy | Tnew | Told | arch_reg | completed |
+|  0  |     0 |       0 |       0   |      0  |          0 |
+|  1  |     0 |       0 |       0   |      0  |          0 |
+|  2  |     0 |       0 |       0   |      0  |          0 |
+ 0  0  0
+####### Cycle         12 ##########
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:0
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:0
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:0
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:0
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:0
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:0
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:0
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:0
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:0
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:0
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+head: 0 tail:31
+structual_stall:111
+=====   ROB_IN Packet   =====
+| WAY | valid |  Tnew | Told | arch_reg | completed |
+|  0  |     1 |       4 |       5   |      1  |          0 |
+|  1  |     1 |       5 |       6   |      2  |          1 |
+|  2  |     1 |       1 |       2   |      3  |          0 |
+=====   ROB_Retire Packet   =====
+| WAY | valid | busy | Tnew | Told | arch_reg | completed |
+|  0  |     0 |       0 |       0   |      0  |          0 |
+|  1  |     0 |       0 |       0   |      0  |          0 |
+|  2  |     0 |       0 |       0   |      0  |          0 |
+####### Cycle         13 ##########
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:0
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:0
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:0
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:0
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:0
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:0
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:0
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:0
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:0
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:0
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+head: 0 tail:31
+structual_stall:111
+=====   ROB_IN Packet   =====
+| WAY | valid |  Tnew | Told | arch_reg | completed |
+|  0  |     1 |       4 |       5   |      1  |          0 |
+|  1  |     1 |       5 |       6   |      2  |          1 |
+|  2  |     1 |       1 |       2   |      3  |          0 |
+=====   ROB_Retire Packet   =====
+| WAY | valid | busy | Tnew | Told | arch_reg | completed |
+|  0  |     0 |       0 |       0   |      0  |          0 |
+|  1  |     0 |       0 |       0   |      0  |          0 |
+|  2  |     0 |       0 |       0   |      0  |          0 |
+ 0  0  0
+####### Cycle         14 ##########
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:0
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:0
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:0
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:0
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:0
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:0
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:0
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:0
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:0
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:0
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+head: 0 tail:31
+structual_stall:000
+=====   ROB_IN Packet   =====
+| WAY | valid |  Tnew | Told | arch_reg | completed |
+|  0  |     1 |       4 |       5   |      1  |          0 |
+|  1  |     1 |       5 |       6   |      2  |          1 |
+|  2  |     1 |       1 |       2   |      3  |          0 |
+=====   ROB_Retire Packet   =====
+| WAY | valid | busy | Tnew | Told | arch_reg | completed |
+|  0  |     0 |       0 |       0   |      0  |          0 |
+|  1  |     0 |       0 |       0   |      0  |          0 |
+|  2  |     0 |       0 |       0   |      0  |          0 |
+ 0  0  2
+####### Cycle         15 ##########
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:0
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:0
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:0
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:0
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:0
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:0
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:0
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:0
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:0
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:0
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:1
+head: 0 tail:31
+structual_stall:000
+=====   ROB_IN Packet   =====
+| WAY | valid |  Tnew | Told | arch_reg | completed |
+|  0  |     1 |       4 |       5   |      1  |          0 |
+|  1  |     1 |       5 |       6   |      2  |          1 |
+|  2  |     1 |       1 |       2   |      3  |          0 |
+=====   ROB_Retire Packet   =====
+| WAY | valid | busy | Tnew | Told | arch_reg | completed |
+|  0  |     1 |       4 |       5   |      1  |          1 |
+|  1  |     1 |       5 |       6   |      2  |          1 |
+|  2  |     0 |       0 |       0   |      0  |          0 |
+ 0  0  5
+####### Cycle         16 ##########
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:0
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:0
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:0
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:0
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:0
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:0
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:0
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:0
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:1
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:1
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:1
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:1
+head: 2 tail:31
+structual_stall:000
+=====   ROB_IN Packet   =====
+| WAY | valid |  Tnew | Told | arch_reg | completed |
+|  0  |     1 |       4 |       5   |      1  |          0 |
+|  1  |     1 |       5 |       6   |      2  |          1 |
+|  2  |     1 |       1 |       2   |      3  |          0 |
+=====   ROB_Retire Packet   =====
+| WAY | valid | busy | Tnew | Told | arch_reg | completed |
+|  0  |     1 |       1 |       2   |      3  |          1 |
+|  1  |     1 |       4 |       5   |      1  |          1 |
+|  2  |     1 |       5 |       6   |      2  |          1 |
+ 0  0  8
+####### Cycle         17 ##########
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:0
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:0
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:0
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:0
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:0
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:0
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:0
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:1
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:1
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:1
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:1
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:1
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:1
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:1
+head: 5 tail:31
+structual_stall:000
+=====   ROB_IN Packet   =====
+| WAY | valid |  Tnew | Told | arch_reg | completed |
+|  0  |     1 |       4 |       5   |      1  |          0 |
+|  1  |     1 |       5 |       6   |      2  |          1 |
+|  2  |     1 |       1 |       2   |      3  |          0 |
+=====   ROB_Retire Packet   =====
+| WAY | valid | busy | Tnew | Told | arch_reg | completed |
+|  0  |     1 |       1 |       2   |      3  |          1 |
+|  1  |     1 |       4 |       5   |      1  |          1 |
+|  2  |     1 |       5 |       6   |      2  |          1 |
+ 0  0 11
+####### Cycle         18 ##########
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:0
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:0
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:0
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:0
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:0
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:1
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:1
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:1
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:1
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:1
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:1
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:1
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:1
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:1
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:1
+head: 8 tail:31
+structual_stall:000
+=====   ROB_IN Packet   =====
+| WAY | valid |  Tnew | Told | arch_reg | completed |
+|  0  |     1 |       4 |       5   |      1  |          0 |
+|  1  |     1 |       5 |       6   |      2  |          1 |
+|  2  |     1 |       1 |       2   |      3  |          0 |
+=====   ROB_Retire Packet   =====
+| WAY | valid | busy | Tnew | Told | arch_reg | completed |
+|  0  |     1 |       1 |       2   |      3  |          1 |
+|  1  |     1 |       4 |       5   |      1  |          1 |
+|  2  |     1 |       5 |       6   |      2  |          1 |
+ 0  0 14
+####### Cycle         19 ##########
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:0
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:0
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:0
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:0
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:1
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:1
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:1
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:1
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:1
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:1
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:1
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:1
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:1
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:1
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:1
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:1
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:1
+head:11 tail:31
+structual_stall:000
+=====   ROB_IN Packet   =====
+| WAY | valid |  Tnew | Told | arch_reg | completed |
+|  0  |     1 |       4 |       5   |      1  |          0 |
+|  1  |     1 |       5 |       6   |      2  |          1 |
+|  2  |     1 |       1 |       2   |      3  |          0 |
+=====   ROB_Retire Packet   =====
+| WAY | valid | busy | Tnew | Told | arch_reg | completed |
+|  0  |     1 |       1 |       2   |      3  |          1 |
+|  1  |     1 |       4 |       5   |      1  |          1 |
+|  2  |     1 |       5 |       6   |      2  |          1 |
+ 0  0 17
+####### Cycle         20 ##########
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:0
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:0
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:1
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:1
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:1
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:1
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:1
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:1
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:1
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:1
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:1
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:1
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:1
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:1
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:1
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:1
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:1
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:1
+head:14 tail:31
+structual_stall:000
+=====   ROB_IN Packet   =====
+| WAY | valid |  Tnew | Told | arch_reg | completed |
+|  0  |     1 |       4 |       5   |      1  |          0 |
+|  1  |     1 |       5 |       6   |      2  |          1 |
+|  2  |     1 |       1 |       2   |      3  |          0 |
+=====   ROB_Retire Packet   =====
+| WAY | valid | busy | Tnew | Told | arch_reg | completed |
+|  0  |     1 |       1 |       2   |      3  |          1 |
+|  1  |     1 |       4 |       5   |      1  |          1 |
+|  2  |     1 |       5 |       6   |      2  |          1 |
+ 0  0 20
+####### Cycle         21 ##########
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:0
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:0
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:1
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:1
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:1
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:1
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:1
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:1
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:1
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:1
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:1
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:1
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:1
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:1
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:1
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:1
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:1
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:1
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:1
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:1
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:1
+head:17 tail:31
+structual_stall:000
+=====   ROB_IN Packet   =====
+| WAY | valid |  Tnew | Told | arch_reg | completed |
+|  0  |     1 |       4 |       5   |      1  |          0 |
+|  1  |     1 |       5 |       6   |      2  |          1 |
+|  2  |     1 |       1 |       2   |      3  |          0 |
+=====   ROB_Retire Packet   =====
+| WAY | valid | busy | Tnew | Told | arch_reg | completed |
+|  0  |     1 |       1 |       2   |      3  |          1 |
+|  1  |     1 |       4 |       5   |      1  |          1 |
+|  2  |     1 |       5 |       6   |      2  |          1 |
+ 0  0 23
+####### Cycle         22 ##########
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:1
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:1
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:1
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:1
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:1
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:1
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:1
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:1
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:1
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:1
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:1
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:1
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:1
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:1
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:1
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:1
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:1
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:1
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:1
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:1
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:1
+head:20 tail:31
+structual_stall:000
+=====   ROB_IN Packet   =====
+| WAY | valid |  Tnew | Told | arch_reg | completed |
+|  0  |     1 |       4 |       5   |      1  |          0 |
+|  1  |     1 |       5 |       6   |      2  |          1 |
+|  2  |     1 |       1 |       2   |      3  |          0 |
+=====   ROB_Retire Packet   =====
+| WAY | valid | busy | Tnew | Told | arch_reg | completed |
+|  0  |     1 |       1 |       2   |      3  |          1 |
+|  1  |     1 |       4 |       5   |      1  |          1 |
+|  2  |     1 |       5 |       6   |      2  |          1 |
+ 0  0 26
+####### Cycle         23 ##########
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:1
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:1
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:1
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:1
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:1
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:1
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:1
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:1
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:1
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:1
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:1
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:1
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:1
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:1
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:1
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:1
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:1
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:1
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:1
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:1
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:1
+head:23 tail:31
+structual_stall:000
+=====   ROB_IN Packet   =====
+| WAY | valid |  Tnew | Told | arch_reg | completed |
+|  0  |     1 |       4 |       5   |      1  |          0 |
+|  1  |     1 |       5 |       6   |      2  |          1 |
+|  2  |     1 |       1 |       2   |      3  |          0 |
+=====   ROB_Retire Packet   =====
+| WAY | valid | busy | Tnew | Told | arch_reg | completed |
+|  0  |     1 |       1 |       2   |      3  |          1 |
+|  1  |     1 |       4 |       5   |      1  |          1 |
+|  2  |     1 |       5 |       6   |      2  |          1 |
+ 0  0 29
+####### Cycle         24 ##########
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:1
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:1
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:1
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:1
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:1
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:1
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:1
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:1
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:1
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:1
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:1
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:1
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:1
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:1
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:1
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:1
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:1
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:1
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:1
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:1
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:1
+head:26 tail:31
+structual_stall:000
+=====   ROB_IN Packet   =====
+| WAY | valid |  Tnew | Told | arch_reg | completed |
+|  0  |     1 |       4 |       5   |      1  |          0 |
+|  1  |     1 |       5 |       6   |      2  |          1 |
+|  2  |     1 |       1 |       2   |      3  |          0 |
+=====   ROB_Retire Packet   =====
+| WAY | valid | busy | Tnew | Told | arch_reg | completed |
+|  0  |     1 |       1 |       2   |      3  |          1 |
+|  1  |     1 |       4 |       5   |      1  |          1 |
+|  2  |     1 |       5 |       6   |      2  |          1 |
+####### Cycle         25 ##########
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:1
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:1
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:1
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:1
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:1
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:1
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:1
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:1
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:1
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:1
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:1
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:1
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:1
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:1
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:1
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:1
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:1
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:1
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:1
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:1
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:1
+head:29 tail:31
+structual_stall:000
+=====   ROB_IN Packet   =====
+| WAY | valid |  Tnew | Told | arch_reg | completed |
+|  0  |     1 |       4 |       5   |      1  |          0 |
+|  1  |     1 |       5 |       6   |      2  |          1 |
+|  2  |     1 |       1 |       2   |      3  |          0 |
+=====   ROB_Retire Packet   =====
+| WAY | valid | busy | Tnew | Told | arch_reg | completed |
+|  0  |     1 |       1 |       2   |      3  |          1 |
+|  1  |     1 |       4 |       5   |      1  |          1 |
+|  2  |     1 |       5 |       6   |      2  |          1 |
+ 0  0  2
+####### Cycle         26 ##########
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:1
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:1
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:1
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:1
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:1
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:1
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:1
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:1
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:1
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:1
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:1
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:1
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:1
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:1
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:1
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:1
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:1
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:1
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:1
+valid:1 Tnew: 1 Told:  2 arch_reg: 3 completed:1
+valid:1 Tnew: 5 Told:  6 arch_reg: 2 completed:1
+valid:1 Tnew: 4 Told:  5 arch_reg: 1 completed:1
+head:31 tail:31
+structual_stall:000
+=====   ROB_IN Packet   =====
+| WAY | valid |  Tnew | Told | arch_reg | completed |
+|  0  |     1 |       4 |       5   |      1  |          0 |
+|  1  |     1 |       5 |       6   |      2  |          1 |
+|  2  |     1 |       1 |       2   |      3  |          0 |
+=====   ROB_Retire Packet   =====
+| WAY | valid | busy | Tnew | Told | arch_reg | completed |
+|  0  |     1 |       5 |       6   |      2  |          1 |
+|  1  |     1 |       4 |       5   |      1  |          1 |
+|  2  |     1 |       5 |       6   |      2  |          1 |
+$finish called from file "testbench/rob_test.sv", line 303.
+$finish at simulation time                 2700
+           V C S   S i m u l a t i o n   R e p o r t 
+Time: 270000 ps
+CPU Time:      0.280 seconds;       Data structure size:   0.0Mb
+Thu Mar 18 00:34:00 2021

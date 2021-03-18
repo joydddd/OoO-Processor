@@ -313,6 +313,7 @@ typedef struct packed {
 `define PR 6  // 64 Physical registers (32AR+32ROB)
 `define ZERO_PR 0  // PR[0] = AR[0], always read 0 and don't write.
 `define ROB 5     // 32 reorder buffer entries
+`define ROBW 32
 `define FU 3 // how many fus in total? Assume 8
 `define RS 4// 16 RS
 `define RSW 16 // = 2**`RS, change ps width in RS as well!! 
@@ -343,6 +344,12 @@ typedef enum logic[`OP-1:0]{
 		SLL = 8,
 		SRA = 9
 } OP_SELECT;
+
+typedef enum logic[1:0]{
+		EMPTY = 0,
+		INUSED = 1,
+		COMPLETE = 2
+} ROB_STATE;
 
 typedef struct packed{
 	logic alu_1;

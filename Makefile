@@ -49,6 +49,10 @@ LIB = /afs/umich.edu/class/eecs470/lib/verilog/lec25dscc25.v
 RSTESTBENCH = testbench/rs_test.sv testbench/rs_print.c
 RSFILES = verilog/rs.sv verilog/ps.sv
 RSSYNFILES = synth/RS.vg
+ROBSYNFILES = synth/ROB.vg
+
+ROBTESTBENCH = testbench/rob_test.sv
+ROBFILES = verilog/rob.sv
 # SIMULATION CONFIG
 
 HEADERS     = $(wildcard *.svh)
@@ -69,6 +73,7 @@ export CACHEFILES
 export CACHE_NAME = cache
 export PIPELINE_NAME = pipeline
 export RSFILES
+export ROBFILES
 PIPELINE  = $(SYNTH_DIR)/$(PIPELINE_NAME).vg 
 SYNFILES  = $(PIPELINE) $(SYNTH_DIR)/$(PIPELINE_NAME)_svsim.sv
 CACHE     = $(SYNTH_DIR)/$(CACHE_NAME).vg
@@ -95,6 +100,10 @@ rs: rs_simv
 rs_simv: $(HEADERS) $(RSFILES) $(RSTESTBENCH)
 	$(VCS) $^ -o rs_simv
 
+rob: rob_simv
+	./rob_simv | tee rob_sim_program.out
+rob_simv: $(HEADERS) $(ROBFILES) $(ROBTESTBENCH)
+	$(VCS) $^ -o rob_simv
 
 sim:	simv
 	./simv | tee sim_program.out
@@ -140,11 +149,20 @@ $(PIPELINE): $(SIMFILES) $(CACHE) $(SYNTH_DIR)/$(PIPELINE_NAME).tcl
 $(RSSYNFILES): $(RSFILES) $(SYNTH_DIR)/rs.tcl
 	cd $(SYNTH_DIR) && dc_shell-t -f ./rs.tcl | tee rs_synth.out
 
+$(ROBSYNFILES): $(ROBFILES) $(SYNTH_DIR)/rob.tcl
+	cd $(SYNTH_DIR) && dc_shell-t -f ./rob.tcl | tee rob_synth.out
+
 rs_syn:	rs_syn_simv 
 	./rs_syn_simv | tee rs_syn_program.out
 
 rs_syn_simv:	$(HEADERS) $(RSSYNFILES) $(RSTESTBENCH)
-	$(VCS) $^ $(LIB) +define+SYNTH_TEST +error+20 -o rs_syn_simv 
+	$(VCS) $^ $(LIB) +define+SYNTH_TEST +error+20 -o rs_syn_simv
+
+rob_syn:	rob_syn_simv 
+	./rob_syn_simv | tee rob_syn_program.out
+
+rob_syn_simv:	$(HEADERS) $(ROBSYNFILES) $(ROBTESTBENCH)
+	$(VCS) $^ $(LIB) +define+SYNTH_TEST +error+20 -o rob_syn_simv  
 
 syn:	syn_simv 
 	./syn_simv | tee syn_program.out
