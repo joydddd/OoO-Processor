@@ -396,10 +396,16 @@ typedef struct packed {
 } RS_S_PACKET;
 
 typedef struct packed{
-	logic 			OP_SELECT;
-	logic	[`PR-1:0] 	dest_pr;
-	logic	[`XLEN-1:0]	r1_value;
-	logic	[`XLEN-1:0] 	r2_value;
+	logic 				valid;
+	OP_SELECT			op_sel;
+	logic [`XLEN-1:0]   NPC;   // PC + 4
+    logic [`XLEN-1:0]   PC;    // PC
+	ALU_OPA_SELECT      opa_select; // ALU opa mux select (ALU_OPA_xxx *)
+    ALU_OPB_SELECT      opb_select; // ALU opb mux select (ALU_OPB_xxx *)
+	INST          		inst;
+	logic [`PR-1:0] 	dest_pr;
+	logic [`XLEN-1:0]	r1_value;
+	logic [`XLEN-1:0] 	r2_value;
 } ISSUE_FU_PACKET;
 
 typedef struct packed{

@@ -34,19 +34,25 @@ logic clock, reset;
 
 `ifdef TEST_MODE
 // IF to Dispatch 
-IF_ID_PACKET [2:0]         if_d_packet_display;
+
 
 // ID stage output
-RS_IN_PACKET [2:0]         dis_rs_packet_display;
+IF_ID_PACKET [2:0]         dis_in_display;
 ROB_ENTRY_PACKET [2:0]     dis_rob_packet_display;
 logic [2:0]                dis_stall_display;
 
 // RS
+RS_IN_PACKET [2:0]         dis_rs_packet_display;
 RS_IN_PACKET [`RSW-1:0]    rs_entries_display;
-RS_S_PACKET [2:0]          rs_is_packet_display;
+RS_S_PACKET [2:0]          rs_out_display;
 logic [2:0]                rs_stall_display;
 
+// IS
+RS_S_PACKET [2:0]          is_in_display;
+
+
 // FU 
+ISSUE_FU_PACKET [2**`FU-1:0] fu_in_display;
 FU_STATE_PACKET            fu_ready_display;
 
 // Complete
@@ -69,8 +75,8 @@ logic [2:0] [`PR-1:0]       maptable_allocate_pr_out;
 logic [2:0][`PR-1:0]        maptable_old_pr_debug;
 logic [2:0][`PR-1:0]        maptable_reg1_pr_debug;
 logic [2:0][`PR-1:0]        maptable_reg2_pr_debug;
-logic [2:0][`PR-1:0]        maptable_reg1_ready_debug;
-logic [2:0][`PR-1:0]        maptable_reg2_ready_debug;
+logic [2:0]                 maptable_reg1_ready_debug;
+logic [2:0]                 maptable_reg2_ready_debug;
 
 logic [2:0]                 rob_stall_debug;
 FU_STATE_PACKET             fu_ready_debug;
@@ -81,16 +87,18 @@ pipeline tbd(
     .clock(clock),
     .reset(reset)
 `ifdef TEST_MODE
-    // IF to Dispatch
-    , .if_d_packet_display(if_d_packet_display)
-    // ID stage output
-    , .dis_rs_packet_display(dis_rs_packet_display)
+    // ID
+    , .dis_in_display(dis_in_display)
     , .dis_rob_packet_display(dis_rob_packet_display)
     , .dis_stall_display(dis_stall_display)
     // RS
+    , .dis_rs_packet_display(dis_rs_packet_display)
     , .rs_entries_display(rs_entries_display)
-    , .rs_is_packet_display(rs_is_packet_display)
+    , .rs_out_display(rs_out_display)
     , .rs_stall_display(rs_stall_display)
+    // IS
+    , .is_in_display(is_in_display)
+    , .fu_in_display(fu_in_display)
     // FU
     , .fu_ready_display(fu_ready_display)
     // Complete
@@ -185,11 +193,12 @@ always @(negedge clock) begin
     if (!reset)  begin
         #1;
         print_pipeline;
+        print_alu;
         show_fu_stat;
         show_cdb;
         // show_rs_in;
         show_rs_table;
-        // show_rs_out;
+        show_rs_out;
         show_rob_in;
     end
 end
@@ -200,7 +209,7 @@ task show_rs_in;
         $display("=====   RS_IN Packet   =====");
         $display("| WAY |     inst    | fu_sel | op_sel  |");
         for (int i=2; i >= 0 ; i--) begin
-            print_select(i, dis_rs_packet_display[i].valid, dis_rs_packet_display[i].inst, dis_rs_packet_display[i].NPC, dis_rs_packet_display[i].fu_sel, dis_rs_packet_display[i].op_sel);
+            print_select(i, dis_rs_packet_display[i].valid, dis_rs_packet_display[i].inst, dis_rs_packet_display[i].PC, dis_rs_packet_display[i].fu_sel, dis_rs_packet_display[i].op_sel);
         end
         $display("| WAY | dest_pr | reg1_pr | reg1_ready | reg2_pr | reg2_ready |");
         for (int i=2; i>=0; i--) begin
@@ -216,12 +225,12 @@ task show_rs_out;
         $display("=====   RS_S Packet   =====");
         $display("| WAY |     inst    | fu_sel | op_sel  |");
         for (int i=2; i>=0; i--) begin
-            print_select(i, rs_is_packet_display[i].valid, rs_is_packet_display[i].inst, rs_is_packet_display[i].NPC, rs_is_packet_display[i].fu_sel, rs_is_packet_display[i].op_sel);
+            print_select(i, rs_out_display[i].valid, rs_out_display[i].inst, rs_out_display[i].PC, rs_out_display[i].fu_sel, rs_out_display[i].op_sel);
         end
-        $display("| WAY | valid |    PC    | dest_pr | reg1_pr | reg2_pr |       inst | halt |");
+        $display("| WAY | valid |  PC  | dest_pr | reg1_pr | reg2_pr |       inst | halt |");
         for (int i=2; i>=0; i--) begin
             $display("|  %1d  |     %b | %4h |      %2d |      %2d |     %2d  |",
-                i, rs_is_packet_display[i].valid, rs_is_packet_display[i].PC, rs_is_packet_display[i].dest_pr, rs_is_packet_display[i].reg1_pr, rs_is_packet_display[i].reg2_pr, rs_is_packet_display[i].inst, rs_is_packet_display[i].halt
+                i, rs_out_display[i].valid, rs_out_display[i].PC, rs_out_display[i].dest_pr, rs_out_display[i].reg1_pr, rs_out_display[i].reg2_pr, rs_out_display[i].inst, rs_out_display[i].halt
             );
         end
     end
@@ -229,7 +238,7 @@ endtask
 
 task show_rs_table;
     for(int i=2**`RS-1; i>=0; i--) begin  // For RS entry, it allocates from 15-0
-        print_stage("*", rs_entries_display[i].inst, rs_entries_display[i].NPC[31:0], rs_entries_display[i].valid);
+        print_stage("*", rs_entries_display[i].inst, rs_entries_display[i].PC[31:0], rs_entries_display[i].valid);
         $display("dest_pr:%d reg1_pr:%d reg1_ready: %b reg2_pr:%d reg2_ready %b", rs_entries_display[i].dest_pr, rs_entries_display[i].reg1_pr, rs_entries_display[i].reg1_ready, rs_entries_display[i].reg2_pr, rs_entries_display[i].reg2_ready);
     end
     $display("structual_stall:%b", rs_stall_display);
@@ -254,14 +263,27 @@ endtask
 
 task print_pipeline;
     print_cycles();
-    print_header("\n |     IF      |     DIS    |     IS      |\n");
+    print_header("\n |     IF      |     DIS     |     IS      |\n");
     for(int i=2; i>=0; i--) begin
         print_num(i);
-        /* if_d packet */
-        print_stage("|", if_d_packet_display[i].inst, if_d_packet_display[i].NPC, if_d_packet_display[i].valid);
-        /* dispatch to rs */
-        print_stage("|", dis_rs_packet_display[i].inst, dis_rs_packet_display[i].NPC, dis_rs_packet_display[i].valid);
+        `ifdef DIS_DEBUG
+        /* IF debug */
+        print_stage("|", if_d_packet_debug[i].inst, if_d_packet_debug[i].PC, if_d_packet_debug[i].valid);
+        `endif
+        /* DIS */
+        print_stage("|", dis_in_display[i].inst, dis_in_display[i].PC, dis_in_display[i].valid);
+        // /* dispatch to rs */
+        // print_stage("|", dis_rs_packet_display[i].inst, dis_rs_packet_display[i].PC, dis_rs_packet_display[i].valid);
+        /* IS */
+        print_stage("|", is_in_display[i].inst, is_in_display[i].PC, is_in_display[i].valid);
         print_header("\n");
+    end
+endtask
+
+task print_alu;
+    print_header("\n|    ALU_1    |    ALU_2    |    ALU_1    |     LS_1    |     LS_2    |    MULT_1   |    MULT_2   |    BRANCH   \n");
+    for (int i=0; i<2**`FU; i++) begin
+        print_stage("|", fu_in_display[i].inst, fu_in_display[i].PC, fu_in_display[i].valid);
     end
 endtask
 
@@ -290,7 +312,7 @@ initial begin
     clock = 1'b0;
     reset = 1'b1;
     rob_stall_debug = 3'b000;
-    fu_ready_debug = 8'b0;
+    fu_ready_debug = 8'hff;
     cdb_t_debug = {`RS'b0, `RS'b0, `RS'b0};
     @(posedge clock)
     

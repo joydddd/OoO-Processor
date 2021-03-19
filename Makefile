@@ -53,7 +53,7 @@ RSSYNFILES = synth/RS.vg
 
 # dis
 DTESTBENCH = testbench/dis_test.sv testbench/mt-fl_sim.cpp testbench/pipe_print.c 
-DFILES = verilog/dispatch.sv verilog/pipeline.sv
+DFILES = verilog/dispatch.sv verilog/issue.sv verilog/pipeline.sv 
 DSYNFILES = synth/pipeline.vg
 
 
@@ -111,7 +111,7 @@ rs_simv: $(HEADERS) $(RSFILES) $(RSTESTBENCH)
 dis: dis_simv
 	./dis_simv | tee dis_sim_program.out
 dis_simv: $(HEADERS) $(DFILES) $(RSFILES) $(DTESTBENCH)
-	$(VCS) $^ -o pipe_simv
+	$(VCS) $^ -o dis_simv
 
 
 sim:	simv

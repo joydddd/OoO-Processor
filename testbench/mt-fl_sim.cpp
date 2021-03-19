@@ -153,4 +153,5 @@ extern "C" void mt_map(int ar, int pr) {
         return;
     }
     mapTable[ar] = pr;
+    if (ar != 0) readyTab[ar] = 0;
 }
