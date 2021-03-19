@@ -158,15 +158,21 @@ always @(posedge clock) begin
         end
     end
 end
-always @(negedge clock) begin
-    if (!reset) begin
-    for (int i=0; i<3; i++) begin
-        maptable_old_pr_debug[i] = mt_look_up(maptable_allocate_ar_out[i]);
+always @(maptable_allocate_ar_out) begin
+    maptable_old_pr_debug[2] = mt_look_up(maptable_allocate_ar_out[2]);
+    maptable_old_pr_debug[1] = mt_look_up(maptable_allocate_ar_out[1]);
+    maptable_old_pr_debug[0] = mt_look_up(maptable_allocate_ar_out[0]);
+end
+always @(maptable_lookup_reg1_ar_out) begin
+    for(int i=0; i<3; i++) begin
         maptable_reg1_pr_debug[i] = mt_look_up(maptable_lookup_reg1_ar_out[i]);
-        maptable_reg2_pr_debug[i] = mt_look_up(maptable_lookup_reg2_ar_out[i]);
         maptable_reg1_ready_debug[i] = mt_look_up_ready(maptable_lookup_reg1_ar_out[i]);
-        maptable_reg2_ready_debug[i] = mt_look_up_ready(maptable_lookup_reg2_ar_out[i]);
     end
+end
+always @(maptable_lookup_reg2_ar_out) begin
+    for(int i=0; i<3; i++) begin
+        maptable_reg2_pr_debug[i] = mt_look_up(maptable_lookup_reg2_ar_out[i]);
+        maptable_reg2_ready_debug[i] = mt_look_up_ready(maptable_lookup_reg2_ar_out[i]);
     end
 end
 
@@ -181,9 +187,10 @@ always @(negedge clock) begin
         print_pipeline;
         show_fu_stat;
         show_cdb;
-        show_rs_in;
+        // show_rs_in;
         show_rs_table;
-        show_rs_out;
+        // show_rs_out;
+        show_rob_in;
     end
 end
 
@@ -192,11 +199,11 @@ task show_rs_in;
     begin
         $display("=====   RS_IN Packet   =====");
         $display("| WAY |     inst    | fu_sel | op_sel  |");
-        for (int i=0; i < 3; i++) begin
+        for (int i=2; i >= 0 ; i--) begin
             print_select(i, dis_rs_packet_display[i].valid, dis_rs_packet_display[i].inst, dis_rs_packet_display[i].NPC, dis_rs_packet_display[i].fu_sel, dis_rs_packet_display[i].op_sel);
         end
         $display("| WAY | dest_pr | reg1_pr | reg1_ready | reg2_pr | reg2_ready |");
-        for (int i=0; i < 3; i++) begin
+        for (int i=2; i>=0; i--) begin
             $display("|  %1d  |      %2d |      %2d |          %b |     %2d  |          %b |",
                 i, dis_rs_packet_display[i].dest_pr, dis_rs_packet_display[i].reg1_pr, dis_rs_packet_display[i].reg1_ready, dis_rs_packet_display[i].reg2_pr, dis_rs_packet_display[i].reg2_ready
             );
@@ -208,11 +215,11 @@ task show_rs_out;
     begin
         $display("=====   RS_S Packet   =====");
         $display("| WAY |     inst    | fu_sel | op_sel  |");
-        for (int i=0; i < 3; i++) begin
+        for (int i=2; i>=0; i--) begin
             print_select(i, rs_is_packet_display[i].valid, rs_is_packet_display[i].inst, rs_is_packet_display[i].NPC, rs_is_packet_display[i].fu_sel, rs_is_packet_display[i].op_sel);
         end
         $display("| WAY | valid |    PC    | dest_pr | reg1_pr | reg2_pr |       inst | halt |");
-        for (int i=0; i < 3; i++) begin
+        for (int i=2; i>=0; i--) begin
             $display("|  %1d  |     %b | %4h |      %2d |      %2d |     %2d  |",
                 i, rs_is_packet_display[i].valid, rs_is_packet_display[i].PC, rs_is_packet_display[i].dest_pr, rs_is_packet_display[i].reg1_pr, rs_is_packet_display[i].reg2_pr, rs_is_packet_display[i].inst, rs_is_packet_display[i].halt
             );
@@ -236,6 +243,13 @@ endtask;
 task show_cdb;
     $display("CDB: %d  %d  %d", cdb_t_display.t0, cdb_t_display.t1, cdb_t_display.t2);
 endtask;
+
+task show_rob_in;
+    $display("ROB|valid| Tnew | Told | Reg  |Completed|");
+    for(int i=2; i>=0; i--) begin
+        $display(" %1d |  %1d  |  %2d  |  %2d  |  %2d  |    %1d    |", i, dis_rob_packet_display[i].valid, dis_rob_packet_display[i].Tnew, dis_rob_packet_display[i].Told, dis_rob_packet_display[i].arch_reg, dis_rob_packet_display[i].completed);
+    end
+endtask
 
 
 task print_pipeline;

@@ -532,7 +532,7 @@ assign reg2_ar = reg2_arch;
 always_comb begin
 	for(int i=0; i<3; i++) begin
 		rob_in[i].valid = dis_packet[i].valid;
-		rob_in[i].Tnew = free_pr_in[i];
+		rob_in[i].Tnew = dest_pr[i];
 		rob_in[i].Told = maptable_old_pr[i];
 		rob_in[i].arch_reg = dest_arch[i];
 		rob_in[i].completed = 0;
