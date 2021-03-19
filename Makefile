@@ -51,18 +51,19 @@ RSTESTBENCH = testbench/rs_test.sv testbench/rs_print.c
 RSFILES = verilog/rs.sv verilog/ps.sv
 RSSYNFILES = synth/RS.vg
 
-# dis->is 
-DTESTBENCH = testbench/pipe_test.sv testbench/mt-fl_sim.cpp testbench/pipe_print.c
+# dis
+DTESTBENCH = testbench/dis_test.sv testbench/mt-fl_sim.cpp testbench/pipe_print.c 
 DFILES = verilog/dispatch.sv verilog/pipeline.sv
-DFILES += $(RSFILES)
-DSYNFILES = synth/dispatch.vg
+DSYNFILES = synth/pipeline.vg
+
+
 # SIMULATION CONFIG
 
 HEADERS     = $(wildcard *.svh)
-TESTBENCH   = $(wildcard testbench/*.sv)
-TESTBENCH  += $(wildcard testbench/*.c)
-PIPEFILES   = $(wildcard verilog/*.sv)
-CACHEFILES  = $(wildcard verilog/cache/*.sv)
+# TESTBENCH   = $(wildcard testbench/*.sv)
+# TESTBENCH  += $(wildcard testbench/*.c)
+# PIPEFILES   = $(wildcard verilog/*.sv)
+# CACHEFILES  = $(wildcard verilog/cache/*.sv)
 
 SIMFILES    = $(PIPEFILES) $(CACHEFILES)
 
@@ -72,10 +73,14 @@ SYNTH_DIR = ./synth
 export HEADERS
 export PIPEFILES
 export CACHEFILES
+export RSFILES
+export DFILES
+
 
 export CACHE_NAME = cache
 export PIPELINE_NAME = pipeline
-export RSFILES
+export RS_NAME = RS
+
 PIPELINE  = $(SYNTH_DIR)/$(PIPELINE_NAME).vg 
 SYNFILES  = $(PIPELINE) $(SYNTH_DIR)/$(PIPELINE_NAME)_svsim.sv
 CACHE     = $(SYNTH_DIR)/$(CACHE_NAME).vg
@@ -102,11 +107,11 @@ rs: rs_simv
 rs_simv: $(HEADERS) $(RSFILES) $(RSTESTBENCH)
 	$(VCS) $^ -o rs_simv
 
-#dispatch
+#dis-pipeline
 dis: dis_simv
 	./dis_simv | tee dis_sim_program.out
-dis_simv: $(HEADERS) $(DFILES) $(DTESTBENCH)
-	$(VCS) $^ -o dis_simv
+dis_simv: $(HEADERS) $(DFILES) $(RSFILES) $(DTESTBENCH)
+	$(VCS) $^ -o pipe_simv
 
 
 sim:	simv
@@ -143,12 +148,12 @@ assembly: assemble disassemble hex
 
 # Synthesis
 
-$(CACHE): $(CACHEFILES) $(SYNTH_DIR)/$(CACHE_NAME).tcl
-	cd $(SYNTH_DIR) && dc_shell-t -f ./$(CACHE_NAME).tcl | tee $(CACHE_NAME)_synth.out
+# $(CACHE): $(CACHEFILES) $(SYNTH_DIR)/$(CACHE_NAME).tcl
+# 	cd $(SYNTH_DIR) && dc_shell-t -f ./$(CACHE_NAME).tcl | tee $(CACHE_NAME)_synth.out
 
-$(PIPELINE): $(SIMFILES) $(CACHE) $(SYNTH_DIR)/$(PIPELINE_NAME).tcl
-	cd $(SYNTH_DIR) && dc_shell-t -f ./$(PIPELINE_NAME).tcl | tee $(PIPELINE_NAME)_synth.out
-	echo -e -n 'H\n1\ni\n`timescale 1ns/100ps\n.\nw\nq\n' | ed $(PIPELINE)
+# $(PIPELINE): $(SIMFILES) $(CACHE) $(SYNTH_DIR)/$(PIPELINE_NAME).tcl
+# 	cd $(SYNTH_DIR) && dc_shell-t -f ./$(PIPELINE_NAME).tcl | tee $(PIPELINE_NAME)_synth.out
+# 	echo -e -n 'H\n1\ni\n`timescale 1ns/100ps\n.\nw\nq\n' | ed $(PIPELINE)
 
 $(RSSYNFILES): $(RSFILES) $(SYNTH_DIR)/rs.tcl
 	cd $(SYNTH_DIR) && dc_shell-t -f ./rs.tcl | tee rs_synth.out
@@ -158,6 +163,18 @@ rs_syn:	rs_syn_simv
 
 rs_syn_simv:	$(HEADERS) $(RSSYNFILES) $(RSTESTBENCH)
 	$(VCS) $^ $(LIB) +define+SYNTH_TEST +error+20 -o rs_syn_simv 
+
+# dispatch pipeline test
+$(DSYNFILES): $(RSSYNFILES) $(SYNTH_DIR)/dis.tcl $(DFILES)
+	cd $(SYNTH_DIR) && dc_shell-t -f ./dis.tcl | tee dis_synth.out
+
+dis_syn: dis_syn_simv
+	./dis_syn_simv | tee dis_syn_program.out
+
+dis_syn_simv: $(HEADERS) $(DSYNFILES) $(DTESTBENCH)
+	$(VCS) $^ $(LIB) +define+SYNTH_TEST +error+20 -o dis_syn_simv 
+
+
 
 syn:	syn_simv 
 	./syn_simv | tee syn_program.out
