@@ -8,9 +8,9 @@
 /* import freelist simulator */
 import "DPI-C" function void fl_init();
 import "DPI-C" function int fl_new_pr_valid();
-import "DPI-C" function int fl_new_pr2();
-import "DPI-C" function int fl_new_pr1();
-import "DPI-C" function int fl_new_pr0();
+import "DPI-C" function int fl_new_pr2(int new_pr_en);
+import "DPI-C" function int fl_new_pr1(int new_pr_en);
+import "DPI-C" function int fl_new_pr0(int new_pr_en);
 import "DPI-C" function int fl_pop(int new_pr_en);
 
 /* import map table simulator */ 
@@ -45,6 +45,12 @@ logic [2:0]                dis_stall_display;
 RS_IN_PACKET [`RSW-1:0]    rs_entries_display;
 RS_S_PACKET [2:0]          rs_is_packet_display;
 logic [2:0]                rs_stall_display;
+
+// FU 
+FU_STATE_PACKET            fu_ready_display;
+
+// Complete
+CDB_T_PACKET               cdb_t_display;
 
 `endif
 
@@ -85,6 +91,10 @@ pipeline tbd(
     , .rs_entries_display(rs_entries_display)
     , .rs_is_packet_display(rs_is_packet_display)
     , .rs_stall_display(rs_stall_display)
+    // FU
+    , .fu_ready_display(fu_ready_display)
+    // Complete
+    , .cdb_t_display(cdb_t_display)
 `endif // TEST_MODE
 
 `ifdef DIS_DEBUG
@@ -103,6 +113,10 @@ pipeline tbd(
     , .maptable_reg2_pr_debug(maptable_reg2_pr_debug)
     , .maptable_reg1_ready_debug(maptable_reg1_ready_debug)
     , .maptable_reg2_ready_debug(maptable_reg2_ready_debug)
+
+    , .rob_stall_debug(rob_stall_debug)
+    , .fu_ready_debug(fu_ready_debug)
+    , .cdb_t_debug(cdb_t_debug)
 `endif
 );
 
@@ -124,11 +138,14 @@ always @(posedge clock) begin
         fl_pop(dis_new_pr_en_out);
     end
 end
-always @(negedge clock) begin
-    free_pr_valid_debug = fl_new_pr_valid();
-    free_pr_debug[2] = fl_new_pr2();
-    free_pr_debug[1] = fl_new_pr1();
-    free_pr_debug[0] = fl_new_pr0();
+always @(dis_new_pr_en_out, clock) begin
+    `SD;
+    if (!reset) begin
+        free_pr_valid_debug = fl_new_pr_valid();
+        free_pr_debug[2] = fl_new_pr2(dis_new_pr_en_out);
+        free_pr_debug[1] = fl_new_pr1(dis_new_pr_en_out);
+        free_pr_debug[0] = fl_new_pr0(dis_new_pr_en_out);
+    end
 end
 
 /* map table simulator */
@@ -136,15 +153,27 @@ always @(posedge clock) begin
     if (reset) begin
         mt_init();
     end else begin
-        mt_map(maptable_allocate_ar_out, maptable_allocate_pr_out);
+        for(int i=0; i<3; i++) begin
+            mt_map(maptable_allocate_ar_out[i], maptable_allocate_pr_out[i]); 
+        end
     end
 end
-always @(negedge clock) begin
-    maptable_old_pr_debug = mt_look_up(maptable_allocate_ar_out);
-    maptable_reg1_pr_debug = mt_look_up(maptable_lookup_reg1_ar_out);
-    maptable_reg2_pr_debug = mt_look_up(maptable_lookup_reg2_ar_out);
-    maptable_reg1_ready_debug = mt_look_up_ready(maptable_lookup_reg1_ar_out);
-    maptable_reg2_ready_debug = mt_look_up_ready(maptable_lookup_reg2_ar_out);
+always @(maptable_allocate_ar_out) begin
+    maptable_old_pr_debug[2] = mt_look_up(maptable_allocate_ar_out[2]);
+    maptable_old_pr_debug[1] = mt_look_up(maptable_allocate_ar_out[1]);
+    maptable_old_pr_debug[0] = mt_look_up(maptable_allocate_ar_out[0]);
+end
+always @(maptable_lookup_reg1_ar_out) begin
+    for(int i=0; i<3; i++) begin
+        maptable_reg1_pr_debug[i] = mt_look_up(maptable_lookup_reg1_ar_out[i]);
+        maptable_reg1_ready_debug[i] = mt_look_up_ready(maptable_lookup_reg1_ar_out[i]);
+    end
+end
+always @(maptable_lookup_reg2_ar_out) begin
+    for(int i=0; i<3; i++) begin
+        maptable_reg2_pr_debug[i] = mt_look_up(maptable_lookup_reg2_ar_out[i]);
+        maptable_reg2_ready_debug[i] = mt_look_up_ready(maptable_lookup_reg2_ar_out[i]);
+    end
 end
 
 
@@ -154,10 +183,14 @@ end
 /////////////////////////////////////////////////////////////
 always @(negedge clock) begin
     if (!reset)  begin
+        #1;
         print_pipeline;
-        show_rs_in;
+        show_fu_stat;
+        show_cdb;
+        // show_rs_in;
         show_rs_table;
-        show_rs_out;
+        // show_rs_out;
+        show_rob_in;
     end
 end
 
@@ -166,11 +199,11 @@ task show_rs_in;
     begin
         $display("=====   RS_IN Packet   =====");
         $display("| WAY |     inst    | fu_sel | op_sel  |");
-        for (int i=0; i < 3; i++) begin
-            print_select(i, dis_rs_packet_display[i].valid, dis_rs_packet_display[i].fu_sel, dis_rs_packet_display[i].NPC, dis_rs_packet_display[i].fu_sel, dis_rs_packet_display[i].op_sel);
+        for (int i=2; i >= 0 ; i--) begin
+            print_select(i, dis_rs_packet_display[i].valid, dis_rs_packet_display[i].inst, dis_rs_packet_display[i].NPC, dis_rs_packet_display[i].fu_sel, dis_rs_packet_display[i].op_sel);
         end
         $display("| WAY | dest_pr | reg1_pr | reg1_ready | reg2_pr | reg2_ready |");
-        for (int i=0; i < 3; i++) begin
+        for (int i=2; i>=0; i--) begin
             $display("|  %1d  |      %2d |      %2d |          %b |     %2d  |          %b |",
                 i, dis_rs_packet_display[i].dest_pr, dis_rs_packet_display[i].reg1_pr, dis_rs_packet_display[i].reg1_ready, dis_rs_packet_display[i].reg2_pr, dis_rs_packet_display[i].reg2_ready
             );
@@ -182,11 +215,11 @@ task show_rs_out;
     begin
         $display("=====   RS_S Packet   =====");
         $display("| WAY |     inst    | fu_sel | op_sel  |");
-        for (int i=0; i < 3; i++) begin
+        for (int i=2; i>=0; i--) begin
             print_select(i, rs_is_packet_display[i].valid, rs_is_packet_display[i].inst, rs_is_packet_display[i].NPC, rs_is_packet_display[i].fu_sel, rs_is_packet_display[i].op_sel);
         end
         $display("| WAY | valid |    PC    | dest_pr | reg1_pr | reg2_pr |       inst | halt |");
-        for (int i=0; i < 3; i++) begin
+        for (int i=2; i>=0; i--) begin
             $display("|  %1d  |     %b | %4h |      %2d |      %2d |     %2d  |",
                 i, rs_is_packet_display[i].valid, rs_is_packet_display[i].PC, rs_is_packet_display[i].dest_pr, rs_is_packet_display[i].reg1_pr, rs_is_packet_display[i].reg2_pr, rs_is_packet_display[i].inst, rs_is_packet_display[i].halt
             );
@@ -196,11 +229,27 @@ endtask
 
 task show_rs_table;
     for(int i=2**`RS-1; i>=0; i--) begin  // For RS entry, it allocates from 15-0
-        print_stage("*", rs_entries_display[i].fu_sel, rs_entries_display[i].NPC[31:0], rs_entries_display[i].valid);
+        print_stage("*", rs_entries_display[i].inst, rs_entries_display[i].NPC[31:0], rs_entries_display[i].valid);
         $display("dest_pr:%d reg1_pr:%d reg1_ready: %b reg2_pr:%d reg2_ready %b", rs_entries_display[i].dest_pr, rs_entries_display[i].reg1_pr, rs_entries_display[i].reg1_ready, rs_entries_display[i].reg2_pr, rs_entries_display[i].reg2_ready);
     end
     $display("structual_stall:%b", rs_stall_display);
 endtask; // show_rs_table
+
+
+task show_fu_stat;
+    $display("fu ready: %8b", fu_ready_debug);
+endtask; 
+
+task show_cdb;
+    $display("CDB: %d  %d  %d", cdb_t_display.t0, cdb_t_display.t1, cdb_t_display.t2);
+endtask;
+
+task show_rob_in;
+    $display("ROB|valid| Tnew | Told | Reg  |Completed|");
+    for(int i=2; i>=0; i--) begin
+        $display(" %1d |  %1d  |  %2d  |  %2d  |  %2d  |    %1d    |", i, dis_rob_packet_display[i].valid, dis_rob_packet_display[i].Tnew, dis_rob_packet_display[i].Told, dis_rob_packet_display[i].arch_reg, dis_rob_packet_display[i].completed);
+    end
+endtask
 
 
 task print_pipeline;
@@ -241,33 +290,37 @@ initial begin
     clock = 1'b0;
     reset = 1'b1;
     rob_stall_debug = 3'b000;
-    fu_ready_debug = 8'hff;
+    fu_ready_debug = 8'b0;
     cdb_t_debug = {`RS'b0, `RS'b0, `RS'b0};
     @(posedge clock)
     
-    @(posedge clock)
+    @(negedge clock)
     reset = 1'b0;
-    set_if_d_packet(2, 32'h40418133, 0);
-    set_if_d_packet(1, 32'h40418133, 4);
-    set_if_d_packet(0, 32'h40418133, 8);
+    set_if_d_packet(2, 32'h03f301b3, 0);
+    set_if_d_packet(1, 32'h00312023, 4);
+    set_if_d_packet(0, 32'h00012203, 8);
 
-    @(posedge clock)
-    set_if_d_packet(2, 32'h40418133, 12);
-    set_if_d_packet(1, 32'h40418133, 16);
-    set_if_d_packet(0, 32'h40418133, 20);
+    @(negedge clock)
+    set_if_d_packet(2, 32'h10412023, 12);
+    set_if_d_packet(1, 32'h00810113, 16);
+    set_if_d_packet(0, 32'h00130313, 20);
 
-    @(posedge clock)
-    set_if_d_packet(2, 32'h40418133, 24);
-    set_if_d_packet(1, 32'h40418133, 28);
-    set_if_d_packet(0, 32'h40418133, 32);
+    @(negedge clock)
+    set_if_d_packet(2, 32'h01032293, 24);
+    set_if_d_packet(1, 32'h00000013, 28);
+    set_if_d_packet(0, 32'h00000513, 32);
 
-    @(posedge clock)
-    set_if_d_packet(2, 32'h40418133, 36);
-    set_if_d_packet(1, 32'h40418133, 40);
-    set_if_d_packet(0, 32'h40418133, 44);
+    @(negedge clock)
+    set_if_d_packet(2, 32'h000035b7, 36);
+    set_if_d_packet(1, 32'h01a58593, 40);
+    set_if_d_packet(0, 32'h15600613, 44);
     
 
-    
+    @(negedge clock)
+    @(negedge clock)
+    @(negedge clock)
+    @(negedge clock)
+    @(negedge clock)
     
     $display("@@@Pass: test finished");
     $finish;

@@ -49,6 +49,12 @@ module pipeline(
     , output RS_S_PACKET [2:0]          rs_is_packet_display
     , output logic [2:0]                rs_stall_display
 
+    // FU
+    , output FU_STATE_PACKET            fu_ready_display
+    
+    // Complete
+    , output CDB_T_PACKET               cdb_t_display
+
 `endif
 
 `ifdef DIS_DEBUG
@@ -136,6 +142,11 @@ assign dis_stall_display = dis_stall;
 // RS
 assign rs_is_packet_display = rs_is_packet;
 assign rs_stall_display = rs_stall;
+
+// FU
+assign fu_ready_display = fu_ready;
+assign cdb_t_display = cdb_t;
+
 
 `endif
 
