@@ -265,8 +265,7 @@ always_comb begin
 	for (int i = 0; i < complete_valid; i++) begin
 		rob_states_next[complete_entry[i]] = COMPLETE;
 		rob_entries_next[complete_entry[i]].completed = 1;
-	end
-	$display("*****%d %d********", output_diff, input_diff);	
+	end	
 end
 
 always_ff @(posedge clock) begin

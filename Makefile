@@ -50,9 +50,13 @@ RSTESTBENCH = testbench/rs_test.sv testbench/rs_print.c
 RSFILES = verilog/rs.sv verilog/ps.sv
 RSSYNFILES = synth/RS.vg
 ROBSYNFILES = synth/ROB.vg
+FREELISTSYNFILES = synth/Freelist.vg
 
 ROBTESTBENCH = testbench/rob_test.sv
 ROBFILES = verilog/rob.sv
+
+FREELISTTESTBENCH = testbench/freelist_test.sv
+FREELISTFILES = verilog/freelist.sv
 # SIMULATION CONFIG
 
 HEADERS     = $(wildcard *.svh)
@@ -74,6 +78,7 @@ export CACHE_NAME = cache
 export PIPELINE_NAME = pipeline
 export RSFILES
 export ROBFILES
+export FREELISTFILES
 PIPELINE  = $(SYNTH_DIR)/$(PIPELINE_NAME).vg 
 SYNFILES  = $(PIPELINE) $(SYNTH_DIR)/$(PIPELINE_NAME)_svsim.sv
 CACHE     = $(SYNTH_DIR)/$(CACHE_NAME).vg
@@ -104,6 +109,11 @@ rob: rob_simv
 	./rob_simv | tee rob_sim_program.out
 rob_simv: $(HEADERS) $(ROBFILES) $(ROBTESTBENCH)
 	$(VCS) $^ -o rob_simv
+
+freelist: freelist_simv
+	./freelist_simv | tee freelist_sim_program.out
+freelist_simv: $(HEADERS) $(FREELISTFILES) $(FREELISTTESTBENCH)
+	$(VCS) $^ -o freelist_simv
 
 sim:	simv
 	./simv | tee sim_program.out
@@ -152,6 +162,9 @@ $(RSSYNFILES): $(RSFILES) $(SYNTH_DIR)/rs.tcl
 $(ROBSYNFILES): $(ROBFILES) $(SYNTH_DIR)/rob.tcl
 	cd $(SYNTH_DIR) && dc_shell-t -f ./rob.tcl | tee rob_synth.out
 
+$(FREELISTSYNFILES): $(FREELISTFILES) $(SYNTH_DIR)/freelist.tcl
+	cd $(SYNTH_DIR) && dc_shell-t -f ./freelist.tcl | tee freelist_synth.out
+
 rs_syn:	rs_syn_simv 
 	./rs_syn_simv | tee rs_syn_program.out
 
@@ -162,7 +175,13 @@ rob_syn:	rob_syn_simv
 	./rob_syn_simv | tee rob_syn_program.out
 
 rob_syn_simv:	$(HEADERS) $(ROBSYNFILES) $(ROBTESTBENCH)
-	$(VCS) $^ $(LIB) +define+SYNTH_TEST +error+20 -o rob_syn_simv  
+	$(VCS) $^ $(LIB) +define+SYNTH_TEST +error+20 -o rob_syn_simv
+
+freelist_syn:	freelist_syn_simv 
+	./freelist_syn_simv | tee freelist_syn_program.out
+
+freelist_syn_simv:	$(HEADERS) $(FREELISTSYNFILES) $(FREELISTTESTBENCH)
+	$(VCS) $^ $(LIB) +define+SYNTH_TEST +error+20 -o freelist_syn_simv   
 
 syn:	syn_simv 
 	./syn_simv | tee syn_program.out

@@ -1,6 +1,6 @@
 `timescale 1ns/100ps
-`ifndef __RS_TEST_SV__
-`define __RS_TEST_SV__
+`ifndef __ROB_TEST_SV__
+`define __ROB_TEST_SV__
 
 //`define RS_ALLOCATE_DEBUG // test only allocating new entry in rs
 `define TEST_MODE
