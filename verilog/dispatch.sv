@@ -393,43 +393,136 @@ module dispatch_stage (
 	input [2:0]					reg2_ready,
 	output logic [2:0]			d_stall // if is 1, corresponding inst stall due to structural hazard. 
 );
+/* rule out invalid inst and struct stall */
+IF_ID_PACKET [2:0] dis_packet;
+logic [2:0] valid_og;
+logic [2:0] valid_one_to_two;
+logic [2:0] valid_two_to_three;
+assign d_stall = rs_stall | rob_stall | ~free_reg_valid; 
+
+/* reorder valid instructions */
+// always_comb begin
+// 	for (int i=0; i<3; i++) begin
+// 		valid_og[i] = if_id_packet_in[i].valid;
+// 	end
+// end
+
+// always_comb begin
+// 	valid_one_to_two = valid_og;
+// 	dis_packet[2] = 0;
+// 	/* entry 2 */
+// 	if (!d_stall[2])
+// 		if (valid_og[0]) begin
+// 			dis_packet[2] = if_id_packet_in[2];
+// 			dis_packet[2].valid = 1;
+// 		end else if (if_id_packet_in[1].valid) begin
+// 			valid_one_to_two[1] = 0;
+// 			dis_packet[2] = if_id_packet_in[1];
+// 			dis_packet[2].valid = 1;
+// 		end else if (if_id_packet_in[0].valid) begin
+// 			valid_one_to_two[0] = 0;
+// 			dis_packet[2] = if_id_packet_in[0];
+// 			dis_packet[2].valid = 1;
+// 		end
+// end;
+
+// always_comb begin
+// /* entry 1*/
+// 	valid_two_to_three = valid_one_to_two;
+// 	dis_packet[1] = 0;
+// 	if (!d_stall[1]) begin
+// 		if(valid_one_to_two[1]) begin
+// 			dis_packet[1] = if_id_packet_in[1];
+// 			dis_packet[1].valid = 1;
+// 		end else if (valid_one_to_two[0]) begin
+// 			valid_two_to_three[0] = 0;
+// 			dis_packet[1] = if_id_packet_in[1];
+// 			dis_packet[1].valid = 1;
+// 		end
+// 	end
+// end;
+
+// always_comb begin
+// 	/* entry 0 */
+// 	dis_packet[0] = 0;
+// 	if (!d_stall[0] && valid_two_to_three[0]) begin
+// 		dis_packet[0] = if_id_packet_in[0];
+// 		dis_packet[0].valid = 1;
+// 	end
+// end
+
+always_comb begin
+	dis_packet = if_id_packet_in;
+	for(int i=0; i<3; i++) begin
+		dis_packet[i].valid = if_id_packet_in[i].valid & ~d_stall[i];
+	end
+end
+
 /* decode */
-FU_SELECT [3:0]fu_sel;
-OP_SELECT [3:0]op_sel;
+FU_SELECT [2:0]fu_sel;
+OP_SELECT [2:0]op_sel;
 logic [2:0][4:0] dest_arch, reg1_arch, reg2_arch;
 ALU_OPA_SELECT [2:0] opa_select;
 ALU_OPB_SELECT [2:0] opb_select;
+logic [2:0] halt;
 
 
 decoder decode_0(
-	.if_packet(if_id_packet_in),
-	.fu_sel(fu_sel), 
-	.op_sel(op_sel),
-	.opa_select(opa_select),
-	.opb_select(opb_select),
-	.dest_reg(dest_arch),
-	.reg1(reg1_arch),
-	.reg2(reg2_arch),
-	.halt(halt)      // non-zero on a haltn
+	.if_packet(dis_packet[0]),
+	.fu_sel(fu_sel[0]), 
+	.op_sel(op_sel[0]),
+	.opa_select(opa_select[0]),
+	.opb_select(opb_select[0]),
+	.dest_reg(dest_arch[0]),
+	.reg1(reg1_arch[0]), 
+	.reg2(reg2_arch[0]),
+	.halt(halt[0])      // non-zero on a haltn
+);
+
+decoder decode_1(
+	.if_packet(dis_packet[1]),
+	.fu_sel(fu_sel[1]), 
+	.op_sel(op_sel[1]),
+	.opa_select(opa_select[1]),
+	.opb_select(opb_select[1]),
+	.dest_reg(dest_arch[1]),
+	.reg1(reg1_arch[1]),
+	.reg2(reg2_arch[1]),
+	.halt(halt[1])      // non-zero on a haltn
+);
+
+decoder decode_2(
+	.if_packet(dis_packet[2]),
+	.fu_sel(fu_sel[2]), 
+	.op_sel(op_sel[2]),
+	.opa_select(opa_select[2]),
+	.opb_select(opb_select[2]),
+	.dest_reg(dest_arch[2]),
+	.reg1(reg1_arch[2]),
+	.reg2(reg2_arch[2]),
+	.halt(halt[2])      // non-zero on a haltn
 );
 
 
-/* rule out invalid inst and struct stall */
-logic[2:0] valid;
-assign d_stall = rs_stall | rob_stall | ~free_reg_valid; 
+
+logic [2:0][`PR-1:0] dest_pr;
 always_comb begin
 	for(int i=0; i<3; i++) begin
-		valid[i] = ~d_stall[i] & if_id_packet_in[i].valid;
+		new_pr_en[i] = dis_packet[i].valid & (dest_arch[i] != `ZERO_REG);
 	end
-end;
+end
 
-// TODO set new_pr_en
+always_comb begin
+	for(int i=0; i<3; i++) begin
+		dest_pr[i] = (dis_packet[i].valid && dest_arch[i]!=`ZERO_REG)?free_pr_in[i]:`ZERO_REG;
+	end
+end
 
 /* update and looking up MT */
 always_comb begin
 	for(int i=0; i<3; i++) begin
-		maptable_ar[i] = valid[i]?dest_arch[i]:`ZERO_REG;
-		maptable_new_pr[i] = valid[i]?free_pr_in[i]:`ZERO_REG;
+		maptable_ar[i] = dis_packet[i].valid?dest_arch[i]:`ZERO_REG;
+		maptable_new_pr[i] = dest_pr[i];
 	end
 end
 assign reg1_ar = reg1_arch;
@@ -438,7 +531,7 @@ assign reg2_ar = reg2_arch;
 /* allocate rob */
 always_comb begin
 	for(int i=0; i<3; i++) begin
-		rob_in[i].valid = valid[i];
+		rob_in[i].valid = dis_packet[i].valid;
 		rob_in[i].Tnew = free_pr_in[i];
 		rob_in[i].Told = maptable_old_pr[i];
 		rob_in[i].arch_reg = dest_arch[i];
@@ -449,15 +542,16 @@ end
 /* allocate rs */
 always_comb begin
 	for(int i=0; i<3; i++) begin
-		rs_in[i].valid = valid[i];
+		rs_in[i].valid = dis_packet[i].valid;
 		rs_in[i].fu_sel = fu_sel[i];
 		rs_in[i].op_sel = op_sel[i];
-		rs_in[i].NPC = if_id_packet_in[i].NPC;
-		rs_in[i].PC = if_id_packet_in[i].PC;
+		rs_in[i].NPC = dis_packet[i].NPC;
+		rs_in[i].PC = dis_packet[i].PC;
 		rs_in[i].opa_select = opa_select[i];
 		rs_in[i].opb_select = opb_select[i];
-		rs_in[i].inst = if_id_packet_in[i].inst;
-		rs_in[i].dest_pr = free_pr_in[i];
+		rs_in[i].inst = dis_packet[i].inst;
+		rs_in[i].halt = halt;
+		rs_in[i].dest_pr = dest_pr[i];
 		rs_in[i].reg1_pr = reg1_pr[i];
 		rs_in[i].reg1_ready = reg1_ready[i];
 		rs_in[i].reg2_pr = reg2_pr[i];
