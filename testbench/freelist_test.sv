@@ -93,9 +93,6 @@ module testbench;
         RetireReg = 0;
         BPRecoverEN = 0;
         BPRecoverHead = 0;
-        show_freelist_table();
-        show_retire_reg();
-        show_free_reg();
         
         @(negedge clock);
         reset = 0;
@@ -103,18 +100,20 @@ module testbench;
         show_retire_reg();
         show_free_reg();
 
-        @(negedge clock);
-        DispatchEN = 3;
-        show_freelist_table();
-        show_retire_reg();
-        show_free_reg();
-
+        @(posedge clock);
+        DispatchEN = 3'b111;
 
         @(negedge clock);
         show_freelist_table();
         show_retire_reg();
         show_free_reg();
 
+
+        @(negedge clock);
+        show_freelist_table();
+        show_retire_reg();
+        show_free_reg();
+
         @(negedge clock);
         show_freelist_table();
         show_retire_reg();
@@ -155,9 +154,11 @@ module testbench;
         show_retire_reg();
         show_free_reg();
 
-        @(negedge clock);     
-                        RetireEN = 1;
-        set_retire_reg(0,1);     
+        @(posedge clock);  
+        RetireEN = 3'b001;
+        set_retire_reg(0,1);  
+
+        @(negedge clock);        
         show_freelist_table();
         show_retire_reg();
         show_free_reg();

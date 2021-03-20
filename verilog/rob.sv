@@ -12,7 +12,6 @@ module ROB(
 	input reset,
 	
     input ROB_ENTRY_PACKET[2:0] rob_in,
-    input [2:0]  tail_incre,           //how long should tail move
 
 	input [2:0] complete_valid,
 	input [2:0][`ROB-1:0] complete_entry,  // which ROB entry is done
@@ -55,6 +54,7 @@ logic [`ROB-1:0] output_diff;
 logic [`ROB-1:0] head_next;
 logic [`ROB-1:0] tail_next;
 logic [2:0] head_incre;
+logic [2:0]  tail_incre;
 
 `ifdef TEST_MODE
     assign rob_entries_display = rob_entries;
@@ -73,6 +73,9 @@ assign input_start_incre2 = input_start + 2;
 assign input_start_incre3 = input_start + 3;
 assign input_diff = input_end - input_start;
 assign output_diff = output_end - head;
+assign tail_incre = (rob_in[0].valid & rob_in[1].valid & rob_in[2].valid) ? 3 :
+					(rob_in[1].valid & rob_in[2].valid) ? 2 :
+					(rob_in[2].valid) ? 1 : 0;
 /* move head */
 
 always_comb begin
@@ -161,11 +164,11 @@ always_comb begin
 				end
 				else if (tail_incre2 == head_next) begin
 					tail_next = tail + 1;
-					struct_stall = 3'b110;
+					struct_stall = 3'b011;
 				end
 				else if (tail_incre3 == head_next) begin
 					tail_next = tail + 2;
-					struct_stall = 3'b100;
+					struct_stall = 3'b001;
 				end
 				else begin
 					tail_next = tail + 3;
@@ -175,11 +178,11 @@ always_comb begin
 			2: begin
 				if (tail_incre1 == head_next) begin
 					tail_next = tail;
-					struct_stall = 3'b011;
+					struct_stall = 3'b110;
 				end
 				else if (tail_incre2 == head_next) begin
 					tail_next = tail + 1;
-					struct_stall = 3'b010;
+					struct_stall = 3'b100;
 				end
 				else begin
 					tail_next = tail + 2;
@@ -189,7 +192,7 @@ always_comb begin
 			1: begin
 				if (tail_incre1 == head_next) begin
 					tail_next = tail;
-					struct_stall = 3'b001;
+					struct_stall = 3'b100;
 				end
 				else begin
 					tail_next = tail + 1;
@@ -212,9 +215,9 @@ always_comb begin
 	retire_entry = 0;
 	priority case (output_diff)
 		3: begin
-			retire_entry[0] = rob_entries[head];
+			retire_entry[2] = rob_entries[head];
 			retire_entry[1] = rob_entries[head_incre1];
-			retire_entry[2] = rob_entries[head_incre2];
+			retire_entry[0] = rob_entries[head_incre2];
 			rob_states_next[head] = EMPTY;
 			rob_entries_next[head].completed = 0;
 			rob_states_next[head_incre1] = EMPTY;
@@ -223,7 +226,7 @@ always_comb begin
 			rob_entries_next[head_incre2].completed = 0;		
 		end
 		2: begin
-			retire_entry[0] = rob_entries[head];
+			retire_entry[2] = rob_entries[head];
 			retire_entry[1] = rob_entries[head_incre1];
 			rob_states_next[head] = EMPTY;
 			rob_entries_next[head].completed = 0;
@@ -231,7 +234,7 @@ always_comb begin
 			rob_entries_next[head_incre1].completed = 0;
 		end
 		1: begin
-			retire_entry[0] = rob_entries[head];
+			retire_entry[2] = rob_entries[head];
 			rob_states_next[head] = EMPTY;
 			rob_entries_next[head].completed = 0;
 		end
@@ -241,30 +244,32 @@ always_comb begin
 	endcase
 	priority case (input_diff)
 		3: begin
-			rob_entries_next[input_start] = rob_in[0];
+			rob_entries_next[input_start] = rob_in[2];
 			rob_states_next[input_start] = INUSED;
 			rob_entries_next[input_start_incre1] = rob_in[1];
 			rob_states_next[input_start_incre1] = INUSED;	
-			rob_entries_next[input_start_incre2] = rob_in[2];
+			rob_entries_next[input_start_incre2] = rob_in[0];
 			rob_states_next[input_start_incre2] = INUSED;		
 		end
 		2: begin
-			rob_entries_next[input_start] = rob_in[0];
+			rob_entries_next[input_start] = rob_in[2];
 			rob_states_next[input_start] = INUSED;
 			rob_entries_next[input_start_incre1] = rob_in[1];
 			rob_states_next[input_start_incre1] = INUSED;		
 		end
 		1: begin
-			rob_entries_next[input_start] = rob_in[0];
+			rob_entries_next[input_start] = rob_in[2];
 			rob_states_next[input_start] = INUSED;	
 		end
 		0: begin
 			
 		end
 	endcase
-	for (int i = 0; i < complete_valid; i++) begin
-		rob_states_next[complete_entry[i]] = COMPLETE;
-		rob_entries_next[complete_entry[i]].completed = 1;
+	for (int i = 0; i < 3; i++) begin
+		if (complete_valid[i]) begin
+			rob_states_next[complete_entry[i]] = COMPLETE;
+			rob_entries_next[complete_entry[i]].completed = 1;
+		end
 	end	
 end
 

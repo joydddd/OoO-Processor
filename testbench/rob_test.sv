@@ -10,7 +10,6 @@ module testbench;
 
     logic clock, reset;
     ROB_ENTRY_PACKET[2:0] rob_in;
-    logic [2:0]  tail_incre;           //how long should tail move
 
 	logic [2:0] complete_valid;
 	logic [2:0][`ROB-1:0] complete_entry;  // which ROB entry is done
@@ -26,7 +25,7 @@ module testbench;
     logic [31:0] cycle_count;
 
 
-    ROB tbp(.clock(clock), .reset(reset), .rob_in(rob_in), .tail_incre(tail_incre), .complete_valid(complete_valid), .complete_entry(complete_entry), .retire_entry(retire_entry), .struct_stall(rob_stall),.rob_entries_display(rob_entries), .head_display(head), .tail_display(tail), .rob_entries_debug(rob_debug));
+    ROB tbp(.clock(clock), .reset(reset), .rob_in(rob_in), .complete_valid(complete_valid), .complete_entry(complete_entry), .retire_entry(retire_entry), .struct_stall(rob_stall),.rob_entries_display(rob_entries), .head_display(head), .tail_display(tail), .rob_entries_debug(rob_debug));
 
     always begin
 		#(`VERILOG_CLOCK_PERIOD/2.0);
@@ -123,7 +122,6 @@ module testbench;
         clock = 1'b0;
         reset = 1'b1;
         rob_debug = 0;
-        tail_incre = 0;
         complete_valid = 0;
         complete_entry = 0;
         rob_in = 0;
@@ -134,12 +132,11 @@ module testbench;
         show_rob_in();
         show_rob_out();
 
-        @(negedge clock);
+        @(posedge clock);
         set_rob_in_packet(0, 1, 4, 5, 1, 0);
         set_rob_in_packet(1, 1, 5, 6, 2, 1);
         set_rob_in_packet(2, 1, 1, 2, 3, 0);
-        tail_incre = 3;
-
+        @(negedge clock);
         show_rob_table();
         show_rob_in();
         show_rob_out();
@@ -199,84 +196,98 @@ module testbench;
         show_rob_in();
         show_rob_out();
 
+        @(posedge clock);
+        set_rob_in_packet(0, 0, 4, 5, 1, 0);
+        set_rob_in_packet(1, 0, 5, 6, 2, 1);
+        set_rob_in_packet(2, 0, 1, 2, 3, 0);
+
         @(negedge clock);
-        tail_incre = 0;
         show_rob_table();
         show_rob_in();
         show_rob_out();
 
-        @(negedge clock);
+        @(posedge clock);
         complete_valid = 1;
         set_complete_entry(0,0);
+
+        @(negedge clock);
         show_rob_table();
         show_rob_in();
         show_rob_out();
 
 
-        @(negedge clock);
-        complete_valid = 3;
+        @(posedge clock);
+        complete_valid = 3'b111;
         set_complete_entry(0,2);
         set_complete_entry(1,3);
         set_complete_entry(2,5);
+
+        @(negedge clock);
         show_rob_table();
         show_rob_in();
         show_rob_out();
 
-        @(negedge clock);
-        complete_valid = 3;
+        @(posedge clock);
         set_complete_entry(0,6);
         set_complete_entry(1,8);
         set_complete_entry(2,9);
+
+        @(negedge clock);
         show_rob_table();
         show_rob_in();
         show_rob_out();
 
-        @(negedge clock);
-        complete_valid = 3;
+        @(posedge clock);
         set_complete_entry(0,11);
         set_complete_entry(1,12);
         set_complete_entry(2,14);
+
+        @(negedge clock);
         show_rob_table();
         show_rob_in();
         show_rob_out();
 
-        @(negedge clock);
-        complete_valid = 3;
+        @(posedge clock);
         set_complete_entry(0,15);
         set_complete_entry(1,17);
         set_complete_entry(2,18);
+
+        @(negedge clock);
         show_rob_table();
         show_rob_in();
         show_rob_out();
 
-                @(negedge clock);
-        complete_valid = 3;
+                @(posedge clock);
         set_complete_entry(0,20);
         set_complete_entry(1,21);
         set_complete_entry(2,23);
+        @(negedge clock);
         show_rob_table();
         show_rob_in();
         show_rob_out();
 
-        @(negedge clock);
-        complete_valid = 3;
+        @(posedge clock);
         set_complete_entry(0,24);
         set_complete_entry(1,26);
         set_complete_entry(2,27);
+
+        @(negedge clock);
         show_rob_table();
         show_rob_in();
         show_rob_out();
 
-        @(negedge clock);
-        complete_valid = 2;
+        @(posedge clock);
+        complete_valid = 3'b011;
         set_complete_entry(0,29);
         set_complete_entry(1,30);
+
+        @(negedge clock);
         show_rob_table();
         show_rob_in();
         show_rob_out();
 
         @(negedge clock);
-        complete_valid = 0;
+        complete_valid = 3'b000;
         show_rob_table();
         show_rob_in();
         show_rob_out();
@@ -291,27 +302,22 @@ module testbench;
         show_rob_in();
         show_rob_out();
 
-        @(negedge clock);
-        show_rob_table();
-        show_rob_in();
-        show_rob_out();
+        @(posedge clock);
+        set_rob_in_packet(0, 1, 9, 5, 1, 0);
+        set_rob_in_packet(1, 1, 8, 6, 2, 1);
+        set_rob_in_packet(2, 1, 7, 2, 3, 0);
 
         @(negedge clock);
         show_rob_table();
         show_rob_in();
         show_rob_out();
+ @(posedge clock);
+        set_rob_in_packet(0, 0, 9, 5, 1, 0);
+        set_rob_in_packet(1, 0, 8, 6, 2, 1);
+        set_rob_in_packet(2, 0, 7, 2, 3, 0);
+
 
         @(negedge clock);
-        set_rob_in_packet(0, 1, 4, 5, 1, 0);
-        set_rob_in_packet(1, 1, 5, 6, 2, 1);
-        set_rob_in_packet(2, 1, 1, 2, 3, 0);
-        tail_incre = 3;
-        show_rob_table();
-        show_rob_in();
-        show_rob_out();
-
-        @(negedge clock);
-        tail_incre = 0;
         show_rob_table();
         show_rob_in();
         show_rob_out();
