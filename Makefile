@@ -51,6 +51,11 @@ RSTESTBENCH = testbench/rs_test.sv testbench/rs_print.c
 RSFILES = verilog/rs.sv verilog/ps.sv
 RSSYNFILES = synth/RS.vg
 
+# Maptables
+MTTESTBENCH = testbench/test_maptable.sv testbench/mt-fl_sim.cpp
+MTFILES = verilog/map_tables.sv
+MTSYNFILES = synth/map_table.vg
+
 # dis->is 
 DTESTBENCH = testbench/pipe_test.sv testbench/mt-fl_sim.cpp testbench/pipe_print.c
 DFILES = verilog/dispatch.sv verilog/pipeline.sv
@@ -101,6 +106,13 @@ rs: rs_simv
 	./rs_simv | tee rs_sim_program.out
 rs_simv: $(HEADERS) $(RSFILES) $(RSTESTBENCH)
 	$(VCS) $^ -o rs_simv
+
+# map_table:
+mt: mt_simv
+	./rs_simv | tee rs_sim_program.out
+mt_simv: $(HEADERS) $(MTFILES) $(MTTESTBENCH)
+	$(VCS) $^ -o rs_simv
+
 
 #dispatch
 dis: dis_simv

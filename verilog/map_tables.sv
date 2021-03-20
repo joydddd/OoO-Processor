@@ -13,6 +13,10 @@ module map_table(
     output logic 	[2:0]			    reg1_ready,
     output logic	[2:0]			    reg2_ready,
     output logic	[2:0][`PR-1:0] 		Told_out
+    `ifdef TEST_MODE
+    , output logic [31:0][`PR-1:0] map_array_disp,
+      output logic [31:0] ready_array_disp
+    `endif
 );
 
     //The registers inside map_table
@@ -24,6 +28,11 @@ module map_table(
     logic [31:0] ready_array_reset;
     logic [31:0][`PR-1:0] map_array_PS;
     logic [31:0] ready_array_PS;
+
+    `ifdef TEST_MODE
+    assign map_array_disp = map_array;
+    assign ready_array_disp = ready_array;
+    `endif
 
     always_comb begin : Compute_reset
         for (int i = 0; i < 32; i++) begin
