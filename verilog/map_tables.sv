@@ -1,3 +1,5 @@
+`define TEST_MODE 
+
 module map_table(
     input 					            clock,
     input 					            reset,
