@@ -52,6 +52,11 @@ module pipeline(
 
     // IS
     , output RS_S_PACKET [2:0]          is_in_display
+    , output FU_FIFO_PACKET             fu_fifo_stall_display
+    , output ISSUE_FU_PACKET [`IS_FIFO_DEPTH-1:0] alu_fifo_display
+    , output ISSUE_FU_PACKET [`IS_FIFO_DEPTH-1:0] mult_fifo_display
+    , output ISSUE_FU_PACKET [`IS_FIFO_DEPTH-1:0] br_fifo_display
+    , output ISSUE_FU_PACKET [`IS_FIFO_DEPTH-1:0] ls_fifo_display
 
 
     // FU
@@ -122,11 +127,15 @@ logic [2:0]             maptable_reg2_ready;
 /* Issue stage */
 RS_S_PACKET [2:0]       is_packet_in;
 ISSUE_FU_PACKET [2**`FU-1:0] is_fu_packet;
+FU_FIFO_PACKET          fu_fifo_stall;
 logic [2:0][`PR-1:0]    is_pr1_idx, is_pr2_idx; // access pr
 
 
 /* physical register */
 logic [2:0][`XLEN-1:0]  pr1_read, pr2_read;
+// TODO: plug in pr
+assign pr1_read = 0;
+assign pr2_read = 0;
 
 
 /* Reorder Buffer */
@@ -158,6 +167,7 @@ assign rs_out_display = rs_is_packet;
 // IS
 assign is_in_display = is_packet_in;
 assign fu_in_display = fu_packet_in;
+assign fu_fifo_stall_display = fu_fifo_stall;
 
 // FU
 assign fu_ready_display = fu_ready;
@@ -277,7 +287,7 @@ RS RS_0(
     .reset(reset),
     .rs_in(dis_rs_packet),
     .cdb_t(cdb_t),
-    .fu_ready(fu_ready),
+    .fu_fifo_stall(fu_fifo_stall),
     
     // Outputs
     .issue_insts(rs_is_packet),
@@ -308,13 +318,23 @@ end
 
 issue_stage issue_0(
     // Input
+    .clock(clock),
+    .reset(reset),
     .rs_out(is_packet_in),
     .read_rda(pr1_read),
     .read_rdb(pr2_read),
+    .fu_ready(fu_ready),
     // Output
     .rda_idx(is_pr1_idx),
     .rdb_idx(is_pr2_idx),
-    .issue_2_fu(is_fu_packet)
+    .issue_2_fu(is_fu_packet),
+    .fu_fifo_stall(fu_fifo_stall)
+    `ifdef TEST_MODE
+    , .alu_fifo_display(alu_fifo_display)
+    , .ls_fifo_display(ls_fifo_display)
+    , .mult_fifo_display(mult_fifo_display)
+    , .br_fifo_display(br_fifo_display)
+    `endif
 );
 
 //////////////////////////////////////////////////

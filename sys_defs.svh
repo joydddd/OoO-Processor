@@ -289,6 +289,8 @@ typedef struct packed {
 `define RSW 16 // = 2**`RS, change ps width in RS as well!! 
 `define OP 4
 
+`define IS_FIFO_DEPTH 32
+
 //FU: 3 * Int ALU(+,-,bitwise), 2* load/store, 2* int multi, 1* branch
 
 typedef enum logic [`FU-1:0] {
@@ -339,27 +341,32 @@ typedef enum logic[`OP-1:0]{
 }LS_SELECT;
 
 typedef union packed{
-	
 	ALU_SELECT alu;
 	MULT_SELECT mult;
-	BR_SELECT br;
 	LS_SELECT ls;
-
+	BR_SELECT br;
 } OP_SELECT;
 
 
 
 
 typedef struct packed{
-	logic alu_1;
+	logic alu_1; 
 	logic alu_2;
 	logic alu_3;
-	logic storeload_1;
-	logic storeload_2;
+	logic loadstore_1;
+	logic loadstore_2;
 	logic mult_1;
 	logic mult_2;
 	logic branch;
 } FU_STATE_PACKET;
+
+typedef struct packed{
+	logic alu;
+	logic ls;
+	logic mult;
+	logic branch;
+} FU_FIFO_PACKET;
 
 
 typedef struct packed {

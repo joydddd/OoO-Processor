@@ -18,20 +18,14 @@ suppress_message {"VER-130"}
 #/***********************************************************/
 lappend search_path ../
 
-set rs_module [getenv RS_NAME]
-set is_fifo_module [getenv IS_FIFO_NAME]
-
-read_file -f ddc [list ${rs_module}.ddc ${is_fifo_module}.ddc]
-set_dont_touch [list ${rs_module} ${is_fifo_module}]
-
 set headers [getenv HEADERS]
-set sources [getenv DFILES]
+set sources [getenv ISFIFOFILE]
 
 read_file -f sverilog [list ${headers} ${sources}]
-set design_name [getenv PIPELINE_NAME]
+set design_name fu_FIFO_3
 set clock_name clock
 set reset_name reset
-set CLK_PERIOD 9.5
+set CLK_PERIOD 6
 
 
 #/***********************************************************/

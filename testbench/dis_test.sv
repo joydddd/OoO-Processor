@@ -49,6 +49,11 @@ logic [2:0]                rs_stall_display;
 
 // IS
 RS_S_PACKET [2:0]          is_in_display;
+FU_FIFO_PACKET             fu_fifo_stall_display;
+ISSUE_FU_PACKET [`IS_FIFO_DEPTH-1:0] alu_fifo_display;
+ISSUE_FU_PACKET [`IS_FIFO_DEPTH-1:0] mult_fifo_display;
+ISSUE_FU_PACKET [`IS_FIFO_DEPTH-1:0] br_fifo_display;
+ISSUE_FU_PACKET [`IS_FIFO_DEPTH-1:0] ls_fifo_display;
 
 
 // FU 
@@ -98,8 +103,13 @@ pipeline tbd(
     , .rs_stall_display(rs_stall_display)
     // IS
     , .is_in_display(is_in_display)
-    , .fu_in_display(fu_in_display)
+    , .fu_fifo_stall_display(fu_fifo_stall_display)
+    , .alu_fifo_display(alu_fifo_display)
+    , .mult_fifo_display(mult_fifo_display)
+    , .br_fifo_display(br_fifo_display)
+    , .ls_fifo_display(ls_fifo_display)
     // FU
+    , .fu_in_display(fu_in_display)
     , .fu_ready_display(fu_ready_display)
     // Complete
     , .cdb_t_display(cdb_t_display)
@@ -193,6 +203,7 @@ always @(negedge clock) begin
     if (!reset)  begin
         #1;
         print_pipeline;
+        print_is_fifo;
         print_alu;
         show_fu_stat;
         show_cdb;
@@ -280,8 +291,20 @@ task print_pipeline;
     end
 endtask
 
+task print_is_fifo;
+    $display("IS FIFO stall: %4b", fu_fifo_stall_display);
+    print_header("\n|     ALU     |     LS      |    MULT     |   BRANCH    |\n");
+    for(int i=0; i<`IS_FIFO_DEPTH; i++) begin
+        print_stage("|", alu_fifo_display[i].inst, alu_fifo_display[i].PC, alu_fifo_display[i].valid);
+        print_stage("|", ls_fifo_display[i].inst, ls_fifo_display[i].PC, ls_fifo_display[i].valid);
+        print_stage("|", mult_fifo_display[i].inst, mult_fifo_display[i].PC, mult_fifo_display[i].valid);
+        print_stage("|", br_fifo_display[i].inst, br_fifo_display[i].PC, br_fifo_display[i].valid);
+        print_header("\n");
+    end
+endtask
+
 task print_alu;
-    print_header("\n|    ALU_1    |    ALU_2    |    ALU_1    |     LS_1    |     LS_2    |    MULT_1   |    MULT_2   |    BRANCH   \n");
+    print_header("\n|    ALU_1    |    ALU_2    |    ALU_3    |     LS_1    |     LS_2    |    MULT_1   |    MULT_2   |    BRANCH   \n");
     for (int i=0; i<2**`FU; i++) begin
         print_stage("|", fu_in_display[i].inst, fu_in_display[i].PC, fu_in_display[i].valid);
     end
@@ -306,36 +329,142 @@ task set_if_d_packet_invalid;
     if_d_packet_debug[i].valid = 0;
 endtask
 
-
+int PC; 
 initial begin
     $dumpvars;
     clock = 1'b0;
     reset = 1'b1;
     rob_stall_debug = 3'b000;
-    fu_ready_debug = 8'hff;
+    fu_ready_debug = 8'b00011111;
     cdb_t_debug = {`RS'b0, `RS'b0, `RS'b0};
+    PC = 0;
     @(posedge clock)
     
     @(negedge clock)
     reset = 1'b0;
-    set_if_d_packet(2, 32'h03f301b3, 0);
-    set_if_d_packet(1, 32'h00312023, 4);
-    set_if_d_packet(0, 32'h00012203, 8);
+    set_if_d_packet(2, 32'h03f301b3, PC);
+    set_if_d_packet(1, 32'h00312023, PC+4);
+    set_if_d_packet(0, 32'h00012203, PC+8);
+    `SD PC = PC + 12;
 
     @(negedge clock)
-    set_if_d_packet(2, 32'h10412023, 12);
-    set_if_d_packet(1, 32'h00810113, 16);
-    set_if_d_packet(0, 32'h00130313, 20);
+    set_if_d_packet(2, 32'h10412023, PC);
+    set_if_d_packet(1, 32'h00810113, PC+4);
+    set_if_d_packet(0, 32'h00130313, PC+8);
+    `SD PC = PC + 12;
 
     @(negedge clock)
-    set_if_d_packet(2, 32'h01032293, 24);
-    set_if_d_packet(1, 32'h00000013, 28);
-    set_if_d_packet(0, 32'h00000513, 32);
+    set_if_d_packet(2, 32'h01032293, PC);
+    set_if_d_packet(1, 32'h00000013, PC+4);
+    set_if_d_packet(0, 32'h00000513, PC+8);
+    `SD PC = PC + 12;
 
     @(negedge clock)
-    set_if_d_packet(2, 32'h000035b7, 36);
-    set_if_d_packet(1, 32'h01a58593, 40);
-    set_if_d_packet(0, 32'h15600613, 44);
+    set_if_d_packet(2, 32'h000035b7, PC);
+    set_if_d_packet(1, 32'h01a58593, PC+4);
+    set_if_d_packet(0, 32'h15600613, PC+8);
+    `SD PC = PC + 12;
+
+        @(negedge clock)
+    reset = 1'b0;
+    set_if_d_packet(2, 32'h03f301b3, PC);
+    set_if_d_packet(1, 32'h00312023, PC+4);
+    set_if_d_packet(0, 32'h00012203, PC+8);
+    `SD PC = PC + 12;
+
+    @(negedge clock)
+    set_if_d_packet(2, 32'h10412023, PC);
+    set_if_d_packet(1, 32'h00810113, PC+4);
+    set_if_d_packet(0, 32'h00130313, PC+8);
+    `SD PC = PC + 12;
+
+    @(negedge clock)
+    set_if_d_packet(2, 32'h01032293, PC);
+    set_if_d_packet(1, 32'h00000013, PC+4);
+    set_if_d_packet(0, 32'h00000513, PC+8);
+    `SD PC = PC + 12;
+
+    @(negedge clock)
+    set_if_d_packet(2, 32'h000035b7, PC);
+    set_if_d_packet(1, 32'h01a58593, PC+4);
+    set_if_d_packet(0, 32'h15600613, PC+8);
+    `SD PC = PC + 12;
+
+        @(negedge clock)
+    reset = 1'b0;
+    set_if_d_packet(2, 32'h03f301b3, PC);
+    set_if_d_packet(1, 32'h00312023, PC+4);
+    set_if_d_packet(0, 32'h00012203, PC+8);
+    `SD PC = PC + 12;
+
+    @(negedge clock)
+    set_if_d_packet(2, 32'h10412023, PC);
+    set_if_d_packet(1, 32'h00810113, PC+4);
+    set_if_d_packet(0, 32'h00130313, PC+8);
+    `SD PC = PC + 12;
+
+    @(negedge clock)
+    set_if_d_packet(2, 32'h01032293, PC);
+    set_if_d_packet(1, 32'h00000013, PC+4);
+    set_if_d_packet(0, 32'h00000513, PC+8);
+    `SD PC = PC + 12;
+
+    @(negedge clock)
+    set_if_d_packet(2, 32'h000035b7, PC);
+    set_if_d_packet(1, 32'h01a58593, PC+4);
+    set_if_d_packet(0, 32'h15600613, PC+8);
+    `SD PC = PC + 12;
+
+        @(negedge clock)
+    reset = 1'b0;
+    set_if_d_packet(2, 32'h03f301b3, PC);
+    set_if_d_packet(1, 32'h00312023, PC+4);
+    set_if_d_packet(0, 32'h00012203, PC+8);
+    `SD PC = PC + 12;
+
+    @(negedge clock)
+    set_if_d_packet(2, 32'h10412023, PC);
+    set_if_d_packet(1, 32'h00810113, PC+4);
+    set_if_d_packet(0, 32'h00130313, PC+8);
+    `SD PC = PC + 12;
+
+    @(negedge clock)
+    set_if_d_packet(2, 32'h01032293, PC);
+    set_if_d_packet(1, 32'h00000013, PC+4);
+    set_if_d_packet(0, 32'h00000513, PC+8);
+    `SD PC = PC + 12;
+
+    @(negedge clock)
+    set_if_d_packet(2, 32'h000035b7, PC);
+    set_if_d_packet(1, 32'h01a58593, PC+4);
+    set_if_d_packet(0, 32'h15600613, PC+8);
+    `SD PC = PC + 12;
+
+        @(negedge clock)
+    reset = 1'b0;
+    set_if_d_packet(2, 32'h03f301b3, PC);
+    set_if_d_packet(1, 32'h00312023, PC+4);
+    set_if_d_packet(0, 32'h00012203, PC+8);
+    `SD PC = PC + 12;
+
+    @(negedge clock)
+    set_if_d_packet(2, 32'h10412023, PC);
+    set_if_d_packet(1, 32'h00810113, PC+4);
+    set_if_d_packet(0, 32'h00130313, PC+8);
+    `SD PC = PC + 12;
+
+    @(negedge clock)
+    set_if_d_packet(2, 32'h01032293, PC);
+    set_if_d_packet(1, 32'h00000013, PC+4);
+    set_if_d_packet(0, 32'h00000513, PC+8);
+    `SD PC = PC + 12;
+
+    @(negedge clock)
+    set_if_d_packet(2, 32'h000035b7, PC);
+    set_if_d_packet(1, 32'h01a58593, PC+4);
+    set_if_d_packet(0, 32'h15600613, PC+8);
+    `SD PC = PC + 12;
+    
     
 
     @(negedge clock)
