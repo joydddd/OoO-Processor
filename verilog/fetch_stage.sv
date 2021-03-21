@@ -95,6 +95,7 @@ module fetch_stage (
 
     logic   [2:0][7:0]  mem_count_down;
     logic   [2:0][7:0]  mem_count_down_next;
+    logic   [1:0]       count_down_shift;
     wire    [2:0]       data_ready;
 
     logic   read_mem2, read_mem1;
@@ -115,8 +116,8 @@ module fetch_stage (
 
     // data_ready indicate whether the data is available, either read from memory or in the cache
     assign  data_ready[2] = ~cache_miss[2] | mem_count_down[2] == 0;
-    assign  data_ready[1] = ~cache_miss[1] | mem_count_down[1] == 0;
-    assign  data_ready[0] = ~cache_miss[0] | mem_count_down[0] == 0;
+    assign  data_ready[1] = ~cache_miss[1] | mem_count_down[1] == 0 | (mem_count_down[2] == 0 & PC_reg[1][`XLEN-1:3] == PC_reg[2][`XLEN-1:3]);
+    assign  data_ready[0] = ~cache_miss[0] | mem_count_down[0] == 0 | (mem_count_down[1] == 0 & PC_reg[0][`XLEN-1:3] == PC_reg[1][`XLEN-1:3]) | (mem_count_down[2] == 0 & PC_reg[0][`XLEN-1:3] == PC_reg[2][`XLEN-1:3]);
 
 	// the next_PC[2] (smallest PC) is:
     //  1. target_PC, if take branch
@@ -131,6 +132,12 @@ module fetch_stage (
                         PC_reg[0] + 4;
     assign next_PC[1] = next_PC[2] + 4;
     assign next_PC[0] = next_PC[1] + 4;
+
+    assign count_down_shift = take_branch    ? 2'd0 :
+                              ~data_ready[2] ? 2'd0 :
+                              ~data_ready[1] ? 2'd1 :
+                              ~data_ready[0] ? 2'd2 :
+                              2'd0;
 
     // Pass PC and NPC down pipeline w/instruction
 	assign if_packet_out[2].NPC = PC_reg[2] + 4;
@@ -194,6 +201,17 @@ module fetch_stage (
                 proc2Imem_addr = {PC_reg[0][`XLEN-1:3], 3'b0};
                 mem_count_down_next[0] = `MEM_LATENCY_IN_CYCLES - 1;
             end
+        end
+
+        if (count_down_shift == 2'd1) begin
+            mem_count_down_next[2] = mem_count_down_next[1];
+            mem_count_down_next[1] = mem_count_down_next[0];
+            mem_count_down_next[0] = {8{1'b1}};
+        end
+        else if (count_down_shift == 2'd2) begin
+            mem_count_down_next[2] = mem_count_down_next[0];
+            mem_count_down_next[1] = {8{1'b1}};
+            mem_count_down_next[0] = {8{1'b1}};
         end
 
         // TODO: update the cache when finishing reading from memory

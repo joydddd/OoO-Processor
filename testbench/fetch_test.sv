@@ -7,7 +7,7 @@ module testbench();
     logic               clock;
     logic               reset;
     logic  [3:0]        Imem2proc_response; // unused
-    logic [63:0]        Imem2proc_data;     // unused
+    logic [63:0]        Imem2proc_data;
     logic  [3:0]        Imem2proc_tag;      // unused
     logic [63:0]        proc2Icache_addr;   // unused
     logic [63:0]        cachemem_data;      // unused
@@ -46,7 +46,7 @@ module testbench();
     endtask
 
     assign Imem2proc_response = 0;
-    assign Imem2proc_data = 0;    
+    assign Imem2proc_data = 64'h12345678abcdef01;    
     assign Imem2proc_tag = 0;     
     assign proc2Icache_addr = 0;  
     assign cachemem_data = 0;     
@@ -78,6 +78,33 @@ module testbench();
         #2
         show_out();
 
+        @(negedge clock);
+        #2
+        show_out();
+        @(negedge clock);
+        #2
+        show_out();
+        @(negedge clock);
+        #2
+        show_out();
+        @(negedge clock);
+        #2
+        show_out();
+        @(negedge clock);
+        #2
+        show_out();
+        @(negedge clock);
+        #2
+        show_out();
+        @(negedge clock);
+        #2
+        show_out();
+        @(negedge clock);
+        #2
+        show_out();
+        @(negedge clock);
+        #2
+        show_out();
         @(negedge clock);
         #2
         show_out();
