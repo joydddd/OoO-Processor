@@ -5,7 +5,7 @@ Warning: Design 'pipeline' contains 2 high-fanout nets. A fanout number of 1000 
 Report : design
 Design : pipeline
 Version: O-2018.06
-Date   : Sun Mar 21 13:38:29 2021
+Date   : Mon Mar 22 13:24:48 2021
 ****************************************
 
 Design allows ideal nets on clock nets.
@@ -87,7 +87,7 @@ Design Parameters:
 Report : area
 Design : pipeline
 Version: O-2018.06
-Date   : Sun Mar 21 13:38:29 2021
+Date   : Mon Mar 22 13:24:49 2021
 ****************************************
 
 Library(s) Used:
@@ -95,22 +95,22 @@ Library(s) Used:
     lec25dscc25_TT (File: /afs/umich.edu/class/eecs470/lib/synopsys/lec25dscc25_TT.db)
 
 Number of ports:                        58023
-Number of nets:                        184158
-Number of cells:                       152389
-Number of combinational cells:         125497
-Number of sequential cells:             26887
+Number of nets:                        183920
+Number of cells:                       152071
+Number of combinational cells:         125182
+Number of sequential cells:             26884
 Number of macros/black boxes:               0
-Number of buf/inv:                      43238
-Number of references:                      56
+Number of buf/inv:                      43330
+Number of references:                      50
 
-Combinational area:            8450181.931808
-Buf/Inv area:                  1468490.380711
-Noncombinational area:         4662919.457611
+Combinational area:            8458859.974388
+Buf/Inv area:                  1477829.872292
+Noncombinational area:         4663508.334015
 Macro/Black Box area:                0.000000
-Net Interconnect area:          119440.392947
+Net Interconnect area:          119275.201832
 
-Total cell area:              13113101.389420
-Total area:                   13232541.782367
+Total cell area:              13122368.308403
+Total area:                   13241643.510235
 1
  
 ****************************************
@@ -123,7 +123,7 @@ Report : timing
         -transition_time
 Design : pipeline
 Version: O-2018.06
-Date   : Sun Mar 21 13:38:29 2021
+Date   : Mon Mar 22 13:24:49 2021
 ****************************************
 
  * Some/all delay information is back-annotated.
@@ -135,7 +135,7 @@ Wire Load Model Mode: top
 
   Startpoint: is_packet_in_reg[2][fu_sel][2]
               (rising edge-triggered flip-flop clocked by clock)
-  Endpoint: is_packet_in_reg[0][NPC][31]
+  Endpoint: is_packet_in_reg[0][PC][20]
             (rising edge-triggered flip-flop clocked by clock)
   Path Group: clock
   Path Type: max
@@ -149,185 +149,175 @@ Wire Load Model Mode: top
   clock clock (rise edge)                                           0.00       0.00
   clock network delay (ideal)                                       0.00       0.00
   is_packet_in_reg[2][fu_sel][2]/CLK (dffcs2)             0.00      0.00 #     0.00 r
-  is_packet_in_reg[2][fu_sel][2]/QN (dffcs2)              0.17      0.17       0.17 f
-  n328 (net)                                    1                   0.00       0.17 f
-  U2724/DIN (ib1s2)                                       0.17      0.00       0.17 f
-  U2724/Q (ib1s2)                                         0.10      0.04       0.22 r
-  n2272 (net)                                   1                   0.00       0.22 r
-  U5480/DIN3 (nor4s1)                                     0.10      0.00       0.22 r
-  U5480/Q (nor4s1)                                        0.39      0.15       0.37 f
-  issue_0/ls_fifo_in[2][valid] (net)            1                   0.00       0.37 f
-  issue_0/ls_fifo/fu_pckt_in[2][valid] (fu_FIFO_3)                  0.00       0.37 f
-  issue_0/ls_fifo/fu_pckt_in[2][valid] (net)                        0.00       0.37 f
-  issue_0/ls_fifo/U25380/DIN (ib1s1)                      0.39      0.00       0.37 f
-  issue_0/ls_fifo/U25380/Q (ib1s1)                        0.81      0.36       0.72 r
-  issue_0/ls_fifo/n22749 (net)                  9                   0.00       0.72 r
-  issue_0/ls_fifo/U29079/DIN (i1s3)                       0.81      0.00       0.73 r
-  issue_0/ls_fifo/U29079/Q (i1s3)                         0.62      0.34       1.06 f
-  issue_0/ls_fifo/n22743 (net)                 25                   0.00       1.06 f
-  issue_0/ls_fifo/U37029/DIN2 (xor2s1)                    0.62      0.00       1.07 f
-  issue_0/ls_fifo/U37029/Q (xor2s1)                       0.22      0.32       1.38 r
-  issue_0/ls_fifo/n28629 (net)                  2                   0.00       1.38 r
-  issue_0/ls_fifo/U37030/DIN2 (xor2s1)                    0.22      0.00       1.39 r
-  issue_0/ls_fifo/U37030/Q (xor2s1)                       0.23      0.17       1.55 f
-  issue_0/ls_fifo/wr_count[0] (net)             2                   0.00       1.55 f
-  issue_0/ls_fifo/U47254/DIN1 (and2s1)                    0.23      0.00       1.55 f
-  issue_0/ls_fifo/U47254/Q (and2s1)                       0.16      0.21       1.76 f
-  issue_0/ls_fifo/add_61/carry[1] (net)         1                   0.00       1.76 f
-  issue_0/ls_fifo/U47238/CIN (fadd1s1)                    0.16      0.00       1.77 f
-  issue_0/ls_fifo/U47238/OUTC (fadd1s1)                   0.21      0.28       2.05 f
-  issue_0/ls_fifo/add_61/carry[2] (net)         2                   0.00       2.05 f
-  issue_0/ls_fifo/U47252/DIN1 (and2s1)                    0.21      0.00       2.05 f
-  issue_0/ls_fifo/U47252/Q (and2s1)                       0.17      0.21       2.26 f
-  issue_0/ls_fifo/add_61/carry[3] (net)         2                   0.00       2.26 f
-  issue_0/ls_fifo/U47250/DIN1 (and2s1)                    0.17      0.00       2.26 f
-  issue_0/ls_fifo/U47250/Q (and2s1)                       0.20      0.22       2.48 f
-  issue_0/ls_fifo/add_61/carry[4] (net)         2                   0.00       2.48 f
-  issue_0/ls_fifo/U47249/DIN1 (xor2s1)                    0.20      0.00       2.48 f
-  issue_0/ls_fifo/U47249/Q (xor2s1)                       0.17      0.23       2.72 f
-  issue_0/ls_fifo/tail_next[4] (net)            3                   0.00       2.72 f
-  issue_0/ls_fifo/U47256/DIN2 (oai1112s1)                 0.17      0.00       2.72 f
-  issue_0/ls_fifo/U47256/Q (oai1112s1)                    0.63      0.22       2.94 r
-  issue_0/ls_fifo/n22750 (net)                  1                   0.00       2.94 r
-  issue_0/ls_fifo/U29259/DIN (ib1s1)                      0.63      0.00       2.94 r
-  issue_0/ls_fifo/U29259/Q (ib1s1)                        0.24      0.10       3.04 f
-  issue_0/ls_fifo/n22751 (net)                  2                   0.00       3.04 f
-  issue_0/ls_fifo/U47240/DIN2 (and2s1)                    0.24      0.00       3.04 f
-  issue_0/ls_fifo/U47240/Q (and2s1)                       0.14      0.22       3.26 f
-  issue_0/ls_fifo/N115 (net)                    1                   0.00       3.26 f
-  issue_0/ls_fifo/U358/DIN2 (or2s2)                       0.14      0.00       3.26 f
-  issue_0/ls_fifo/U358/Q (or2s2)                          0.09      0.14       3.41 f
-  issue_0/ls_fifo/almost_full (net)             2                   0.00       3.41 f
-  issue_0/ls_fifo/almost_full (fu_FIFO_3)                           0.00       3.41 f
-  n2703 (net)                                                       0.00       3.41 f
-  RS_0/fu_fifo_stall[ls] (RS)                                       0.00       3.41 f
-  RS_0/fu_fifo_stall[ls] (net)                                      0.00       3.41 f
-  RS_0/U6593/DIN (i1s1)                                   0.09      0.00       3.41 f
-  RS_0/U6593/Q (i1s1)                                     0.11      0.05       3.46 r
-  RS_0/n6009 (net)                              1                   0.00       3.46 r
-  RS_0/U6594/DIN (i1s1)                                   0.11      0.00       3.46 r
-  RS_0/U6594/Q (i1s1)                                     0.80      0.37       3.82 f
-  RS_0/n6010 (net)                             16                   0.00       3.82 f
-  RS_0/U8424/DIN3 (oai322s1)                              0.80      0.00       3.82 f
-  RS_0/U8424/Q (oai322s1)                                 0.81      0.40       4.22 r
-  RS_0/n5849 (net)                              1                   0.00       4.22 r
-  RS_0/U6442/DIN (ib1s1)                                  0.81      0.00       4.23 r
-  RS_0/U6442/Q (ib1s1)                                    0.27      0.10       4.33 f
-  RS_0/n8258 (net)                              1                   0.00       4.33 f
-  RS_0/U6506/DIN2 (or4s3)                                 0.27      0.00       4.33 f
-  RS_0/U6506/Q (or4s3)                                    0.15      0.18       4.51 f
-  RS_0/n5957 (net)                              3                   0.00       4.51 f
-  RS_0/U7521/DIN (i1s3)                                   0.15      0.00       4.51 f
-  RS_0/U7521/Q (i1s3)                                     0.70      0.28       4.79 r
-  RS_0/n6793 (net)                             28                   0.00       4.79 r
-  RS_0/U6824/DIN1 (nor2s3)                                0.70      0.01       4.80 r
-  RS_0/U6824/Q (nor2s3)                                   0.32      0.17       4.96 f
-  RS_0/n5818 (net)                              3                   0.00       4.96 f
-  RS_0/U7506/DIN3 (nnd3s2)                                0.32      0.00       4.97 f
-  RS_0/U7506/Q (nnd3s2)                                   0.30      0.16       5.13 r
-  RS_0/n5792 (net)                              3                   0.00       5.13 r
-  RS_0/U6710/DIN (ib1s1)                                  0.30      0.00       5.13 r
-  RS_0/U6710/Q (ib1s1)                                    0.18      0.09       5.22 f
-  RS_0/n8248 (net)                              2                   0.00       5.22 f
-  RS_0/U7509/DIN1 (nnd3s2)                                0.18      0.00       5.22 f
-  RS_0/U7509/Q (nnd3s2)                                   0.23      0.09       5.31 r
-  RS_0/n5809 (net)                              2                   0.00       5.31 r
-  RS_0/U6810/DIN (i1s1)                                   0.23      0.00       5.31 r
-  RS_0/U6810/Q (i1s1)                                     0.21      0.11       5.42 f
-  RS_0/n8224 (net)                              2                   0.00       5.42 f
-  RS_0/U6808/DIN3 (nnd3s1)                                0.21      0.00       5.42 f
-  RS_0/U6808/Q (nnd3s1)                                   0.32      0.16       5.58 r
-  RS_0/n5812 (net)                              2                   0.00       5.58 r
-  RS_0/U6705/DIN1 (or2s2)                                 0.32      0.00       5.58 r
-  RS_0/U6705/Q (or2s2)                                    0.34      0.27       5.84 r
-  RS_0/n6132 (net)                              5                   0.00       5.84 r
-  RS_0/U7201/DIN (i1s3)                                   0.34      0.00       5.85 r
-  RS_0/U7201/Q (i1s3)                                     0.34      0.18       6.03 f
-  RS_0/n6771 (net)                             15                   0.00       6.03 f
-  RS_0/U6703/DIN2 (or2s1)                                 0.34      0.00       6.03 f
-  RS_0/U6703/Q (or2s1)                                    0.18      0.23       6.27 f
-  RS_0/n5761 (net)                              2                   0.00       6.27 f
-  RS_0/U7321/DIN1 (nnd3s2)                                0.18      0.00       6.27 f
-  RS_0/U7321/Q (nnd3s2)                                   0.29      0.11       6.38 r
-  RS_0/n5769 (net)                              2                   0.00       6.38 r
-  RS_0/U6726/DIN (ib1s2)                                  0.29      0.00       6.39 r
-  RS_0/U6726/Q (ib1s2)                                    0.13      0.06       6.45 f
-  RS_0/n8218 (net)                              2                   0.00       6.45 f
-  RS_0/U11174/DIN1 (nnd4s1)                               0.13      0.00       6.45 f
-  RS_0/U11174/Q (nnd4s1)                                  0.35      0.09       6.54 r
-  RS_0/n5788 (net)                              1                   0.00       6.54 r
-  RS_0/U6453/DIN2 (and3s1)                                0.35      0.00       6.54 r
-  RS_0/U6453/Q (and3s1)                                   0.28      0.22       6.76 r
-  RS_0/n5768 (net)                              2                   0.00       6.76 r
-  RS_0/U5160/DIN1 (and2s2)                                0.28      0.00       6.76 r
-  RS_0/U5160/Q (and2s2)                                   0.14      0.13       6.90 r
-  RS_0/n5764 (net)                              3                   0.00       6.90 r
-  RS_0/U6466/DIN1 (and2s1)                                0.14      0.00       6.90 r
-  RS_0/U6466/Q (and2s1)                                   0.24      0.17       7.07 r
-  RS_0/n5766 (net)                              2                   0.00       7.07 r
-  RS_0/U5158/DIN1 (nnd2s2)                                0.24      0.00       7.07 r
-  RS_0/U5158/Q (nnd2s2)                                   0.43      0.20       7.27 f
-  RS_0/n3865 (net)                              6                   0.00       7.27 f
-  RS_0/U6977/DIN (ib1s1)                                  0.43      0.00       7.27 f
-  RS_0/U6977/Q (ib1s1)                                    0.45      0.23       7.50 r
-  RS_0/n6354 (net)                              7                   0.00       7.50 r
-  RS_0/U5151/DIN1 (oai211s2)                              0.45      0.00       7.50 r
-  RS_0/U5151/Q (oai211s2)                                 0.43      0.22       7.72 f
-  RS_0/n5699 (net)                              2                   0.00       7.72 f
-  RS_0/U11183/DIN (i1s2)                                  0.43      0.00       7.72 f
-  RS_0/U11183/Q (i1s2)                                    0.21      0.10       7.83 r
-  RS_0/n8215 (net)                              2                   0.00       7.83 r
-  RS_0/U11177/DIN1 (oai1112s2)                            0.21      0.00       7.83 r
-  RS_0/U11177/Q (oai1112s2)                               0.24      0.06       7.88 f
-  RS_0/n5759 (net)                              1                   0.00       7.88 f
-  RS_0/U6458/DIN (ib1s1)                                  0.24      0.00       7.88 f
-  RS_0/U6458/Q (ib1s1)                                    0.14      0.07       7.95 r
-  RS_0/n8211 (net)                              1                   0.00       7.95 r
-  RS_0/U6457/DIN2 (nor2s1)                                0.14      0.00       7.95 r
-  RS_0/U6457/Q (nor2s1)                                   0.39      0.14       8.09 f
-  RS_0/n5698 (net)                              2                   0.00       8.09 f
-  RS_0/U4586/DIN1 (nnd2s2)                                0.39      0.00       8.09 f
-  RS_0/U4586/Q (nnd2s2)                                   0.26      0.12       8.22 r
-  RS_0/n5654 (net)                              3                   0.00       8.22 r
-  RS_0/U6723/DIN (i1s1)                                   0.26      0.00       8.22 r
-  RS_0/U6723/Q (i1s1)                                     0.25      0.13       8.35 f
-  RS_0/n8208 (net)                              2                   0.00       8.35 f
-  RS_0/U4585/DIN3 (nnd3s2)                                0.25      0.00       8.35 f
-  RS_0/U4585/Q (nnd3s2)                                   0.52      0.24       8.59 r
-  RS_0/n4777 (net)                              9                   0.00       8.59 r
-  RS_0/U6925/DIN (ib1s1)                                  0.52      0.00       8.59 r
-  RS_0/U6925/Q (ib1s1)                                    0.80      0.41       9.00 f
-  RS_0/n6342 (net)                             18                   0.00       9.00 f
-  RS_0/U6706/DIN1 (nnd2s2)                                0.80      0.00       9.00 f
-  RS_0/U6706/Q (nnd2s2)                                   0.24      0.12       9.12 r
-  RS_0/n6126 (net)                              1                   0.00       9.12 r
-  RS_0/U6709/DIN1 (and3s1)                                0.24      0.00       9.12 r
-  RS_0/U6709/Q (and3s1)                                   0.21      0.18       9.30 r
-  RS_0/n5405 (net)                              1                   0.00       9.30 r
-  RS_0/U8229/DIN3 (nnd4s2)                                0.21      0.00       9.31 r
-  RS_0/U8229/Q (nnd4s2)                                   0.72      0.30       9.61 f
-  RS_0/issue_insts[0][NPC][31] (net)            2                   0.00       9.61 f
-  RS_0/issue_insts[0][NPC][31] (RS)                                 0.00       9.61 f
-  rs_out_display[0][NPC][31] (net)                                  0.00       9.61 f
-  is_packet_in_reg[0][NPC][31]/CLRB (dffcs1)              0.72      0.00       9.61 f
-  data arrival time                                                            9.61
+  is_packet_in_reg[2][fu_sel][2]/QN (dffcs2)              0.18      0.15       0.15 r
+  n328 (net)                                    2                   0.00       0.15 r
+  is_packet_in_reg[2][fu_sel][2]/Q (dffcs2)               0.30      0.16       0.31 f
+  is_in_display[2][fu_sel][2] (net)             6                   0.00       0.31 f
+  U5314/DIN1 (and4s1)                                     0.30      0.00       0.31 f
+  U5314/Q (and4s1)                                        0.20      0.24       0.54 f
+  issue_0/mult_fifo_in[2][valid] (net)          2                   0.00       0.54 f
+  issue_0/mult_fifo/fu_pckt_in[2][valid] (fu_FIFO_3)                0.00       0.54 f
+  issue_0/mult_fifo/fu_pckt_in[2][valid] (net)                      0.00       0.54 f
+  issue_0/mult_fifo/U24494/DIN (i1s3)                     0.20      0.00       0.55 f
+  issue_0/mult_fifo/U24494/Q (i1s3)                       0.36      0.16       0.71 r
+  issue_0/mult_fifo/n22750 (net)               10                   0.00       0.71 r
+  issue_0/mult_fifo/U29127/DIN (i1s3)                     0.36      0.00       0.71 r
+  issue_0/mult_fifo/U29127/Q (i1s3)                       0.65      0.33       1.04 f
+  issue_0/mult_fifo/n22749 (net)               32                   0.00       1.04 f
+  issue_0/mult_fifo/U36875/DIN2 (xor2s1)                  0.65      0.00       1.04 f
+  issue_0/mult_fifo/U36875/Q (xor2s1)                     0.25      0.31       1.36 r
+  issue_0/mult_fifo/n28631 (net)                2                   0.00       1.36 r
+  issue_0/mult_fifo/U36879/DIN2 (xor2s1)                  0.25      0.00       1.36 r
+  issue_0/mult_fifo/U36879/Q (xor2s1)                     0.22      0.17       1.53 f
+  issue_0/mult_fifo/wr_count[0] (net)           2                   0.00       1.53 f
+  issue_0/mult_fifo/U47269/DIN1 (and2s1)                  0.22      0.00       1.53 f
+  issue_0/mult_fifo/U47269/Q (and2s1)                     0.16      0.21       1.74 f
+  issue_0/mult_fifo/add_61/carry[1] (net)       1                   0.00       1.74 f
+  issue_0/mult_fifo/U47247/CIN (fadd1s1)                  0.16      0.00       1.74 f
+  issue_0/mult_fifo/U47247/OUTC (fadd1s1)                 0.21      0.28       2.02 f
+  issue_0/mult_fifo/add_61/carry[2] (net)       2                   0.00       2.02 f
+  issue_0/mult_fifo/U47267/DIN1 (and2s1)                  0.21      0.00       2.02 f
+  issue_0/mult_fifo/U47267/Q (and2s1)                     0.17      0.21       2.23 f
+  issue_0/mult_fifo/add_61/carry[3] (net)       2                   0.00       2.23 f
+  issue_0/mult_fifo/U47265/DIN1 (and2s1)                  0.17      0.00       2.23 f
+  issue_0/mult_fifo/U47265/Q (and2s1)                     0.21      0.22       2.46 f
+  issue_0/mult_fifo/add_61/carry[4] (net)       2                   0.00       2.46 f
+  issue_0/mult_fifo/U47264/DIN1 (xor2s1)                  0.21      0.00       2.46 f
+  issue_0/mult_fifo/U47264/Q (xor2s1)                     0.18      0.24       2.70 f
+  issue_0/mult_fifo/tail_next[4] (net)          3                   0.00       2.70 f
+  issue_0/mult_fifo/U47271/DIN2 (oai1112s1)               0.18      0.00       2.70 f
+  issue_0/mult_fifo/U47271/Q (oai1112s1)                  0.63      0.22       2.92 r
+  issue_0/mult_fifo/n22751 (net)                1                   0.00       2.92 r
+  issue_0/mult_fifo/U29155/DIN (ib1s1)                    0.63      0.00       2.92 r
+  issue_0/mult_fifo/U29155/Q (ib1s1)                      0.24      0.10       3.02 f
+  issue_0/mult_fifo/n22752 (net)                2                   0.00       3.02 f
+  issue_0/mult_fifo/U47257/DIN2 (and2s1)                  0.24      0.00       3.02 f
+  issue_0/mult_fifo/U47257/Q (and2s1)                     0.14      0.22       3.24 f
+  issue_0/mult_fifo/N115 (net)                  1                   0.00       3.24 f
+  issue_0/mult_fifo/U358/DIN2 (or2s2)                     0.14      0.00       3.24 f
+  issue_0/mult_fifo/U358/Q (or2s2)                        0.23      0.23       3.48 f
+  issue_0/mult_fifo/almost_full (net)           2                   0.00       3.48 f
+  issue_0/mult_fifo/almost_full (fu_FIFO_3)                         0.00       3.48 f
+  fu_fifo_stall_display[mult] (net)                                 0.00       3.48 f
+  RS_0/fu_fifo_stall[mult] (RS)                                     0.00       3.48 f
+  RS_0/fu_fifo_stall[mult] (net)                                    0.00       3.48 f
+  RS_0/U6285/DIN (ib1s1)                                  0.23      0.00       3.48 f
+  RS_0/U6285/Q (ib1s1)                                    0.79      0.33       3.80 r
+  RS_0/n7922 (net)                             16                   0.00       3.80 r
+  RS_0/U10135/DIN4 (aoi22s2)                              0.79      0.00       3.80 r
+  RS_0/U10135/Q (aoi22s2)                                 0.41      0.17       3.98 f
+  RS_0/n7745 (net)                              1                   0.00       3.98 f
+  RS_0/U10136/DIN5 (oai322s1)                             0.41      0.00       3.98 f
+  RS_0/U10136/Q (oai322s1)                                1.00      0.37       4.35 r
+  RS_0/n7746 (net)                              2                   0.00       4.35 r
+  RS_0/U7215/DIN3 (nnd4s2)                                1.00      0.00       4.35 r
+  RS_0/U7215/Q (nnd4s2)                                   0.49      0.18       4.53 f
+  RS_0/n8001 (net)                              3                   0.00       4.53 f
+  RS_0/U8085/DIN1 (and4s3)                                0.49      0.00       4.54 f
+  RS_0/U8085/Q (and4s3)                                   0.14      0.22       4.76 f
+  RS_0/n6068 (net)                              4                   0.00       4.76 f
+  RS_0/U7217/DIN1 (nnd2s3)                                0.14      0.00       4.76 f
+  RS_0/U7217/Q (nnd2s3)                                   0.23      0.06       4.82 r
+  RS_0/n8002 (net)                              2                   0.00       4.82 r
+  RS_0/U9732/DIN2 (nor2s2)                                0.23      0.00       4.83 r
+  RS_0/U9732/Q (nor2s2)                                   0.21      0.07       4.90 f
+  RS_0/n7983 (net)                              1                   0.00       4.90 f
+  RS_0/U10196/DIN2 (nnd2s2)                               0.21      0.00       4.90 f
+  RS_0/U10196/Q (nnd2s2)                                  0.21      0.10       5.01 r
+  RS_0/n7991 (net)                              2                   0.00       5.01 r
+  RS_0/U6905/DIN1 (and4s3)                                0.21      0.00       5.01 r
+  RS_0/U6905/Q (and4s3)                                   0.20      0.18       5.19 r
+  RS_0/n6222 (net)                              7                   0.00       5.19 r
+  RS_0/U7115/DIN2 (nnd2s1)                                0.20      0.00       5.19 r
+  RS_0/U7115/Q (nnd2s1)                                   0.21      0.10       5.29 f
+  RS_0/n11080 (net)                             2                   0.00       5.29 f
+  RS_0/U9485/DIN (i1s2)                                   0.21      0.00       5.29 f
+  RS_0/U9485/Q (i1s2)                                     0.21      0.10       5.39 r
+  RS_0/n6201 (net)                              3                   0.00       5.39 r
+  RS_0/U7111/DIN2 (oai21s3)                               0.21      0.00       5.39 r
+  RS_0/U7111/Q (oai21s3)                                  0.33      0.12       5.51 f
+  RS_0/n8021 (net)                              2                   0.00       5.51 f
+  RS_0/U6907/DIN (i1s3)                                   0.33      0.00       5.52 f
+  RS_0/U6907/Q (i1s3)                                     0.15      0.07       5.59 r
+  RS_0/n8014 (net)                              2                   0.00       5.59 r
+  RS_0/U8025/DIN1 (and3s2)                                0.15      0.00       5.59 r
+  RS_0/U8025/Q (and3s2)                                   0.14      0.13       5.72 r
+  RS_0/n6066 (net)                              2                   0.00       5.72 r
+  RS_0/U7103/DIN2 (nnd2s2)                                0.14      0.00       5.72 r
+  RS_0/U7103/Q (nnd2s2)                                   0.14      0.07       5.79 f
+  RS_0/n8009 (net)                              1                   0.00       5.79 f
+  RS_0/U10206/DIN2 (oai21s3)                              0.14      0.00       5.79 f
+  RS_0/U10206/Q (oai21s3)                                 0.28      0.11       5.91 r
+  RS_0/n8010 (net)                              1                   0.00       5.91 r
+  RS_0/U7102/DIN2 (nor2s2)                                0.28      0.00       5.91 r
+  RS_0/U7102/Q (nor2s2)                                   0.24      0.10       6.01 f
+  RS_0/n8076 (net)                              2                   0.00       6.01 f
+  RS_0/U6889/DIN1 (nnd2s2)                                0.24      0.00       6.01 f
+  RS_0/U6889/Q (nnd2s2)                                   0.22      0.10       6.12 r
+  RS_0/n8012 (net)                              1                   0.00       6.12 r
+  RS_0/U6888/DIN (i1s4)                                   0.22      0.01       6.12 r
+  RS_0/U6888/Q (i1s4)                                     0.13      0.06       6.18 f
+  RS_0/n8019 (net)                              4                   0.00       6.18 f
+  RS_0/U6906/DIN3 (nnd3s1)                                0.13      0.00       6.18 f
+  RS_0/U6906/Q (nnd3s1)                                   0.32      0.15       6.33 r
+  RS_0/n10159 (net)                             2                   0.00       6.33 r
+  RS_0/U7996/DIN2 (nnd3s2)                                0.32      0.00       6.33 r
+  RS_0/U7996/Q (nnd3s2)                                   0.38      0.11       6.44 f
+  RS_0/n8072 (net)                              2                   0.00       6.44 f
+  RS_0/U6266/DIN2 (nnd2s2)                                0.38      0.00       6.44 f
+  RS_0/U6266/Q (nnd2s2)                                   0.29      0.16       6.60 r
+  RS_0/n8038 (net)                              2                   0.00       6.60 r
+  RS_0/U7743/DIN (i1s4)                                   0.29      0.01       6.60 r
+  RS_0/U7743/Q (i1s4)                                     0.15      0.07       6.67 f
+  RS_0/n8046 (net)                              4                   0.00       6.67 f
+  RS_0/U6308/DIN2 (nnd2s2)                                0.15      0.00       6.67 f
+  RS_0/U6308/Q (nnd2s2)                                   0.16      0.08       6.75 r
+  RS_0/n8069 (net)                              1                   0.00       6.75 r
+  RS_0/U6572/DIN2 (nnd2s2)                                0.16      0.00       6.75 r
+  RS_0/U6572/Q (nnd2s2)                                   0.16      0.07       6.83 f
+  RS_0/n8023 (net)                              1                   0.00       6.83 f
+  RS_0/U6900/DIN (i1s3)                                   0.16      0.00       6.83 f
+  RS_0/U6900/Q (i1s3)                                     0.19      0.08       6.92 r
+  RS_0/n8111 (net)                              4                   0.00       6.92 r
+  RS_0/U8027/DIN1 (and4s3)                                0.19      0.00       6.92 r
+  RS_0/U8027/Q (and4s3)                                   0.34      0.25       7.17 r
+  RS_0/n6067 (net)                             10                   0.00       7.17 r
+  RS_0/U6897/DIN (i1s4)                                   0.34      0.01       7.18 r
+  RS_0/U6897/Q (i1s4)                                     0.20      0.09       7.27 f
+  RS_0/n6687 (net)                             10                   0.00       7.27 f
+  RS_0/U6323/DIN (ib1s1)                                  0.20      0.00       7.27 f
+  RS_0/U6323/Q (ib1s1)                                    0.45      0.19       7.47 r
+  RS_0/n6684 (net)                              8                   0.00       7.47 r
+  RS_0/U12175/DIN2 (aoi222s1)                             0.45      0.00       7.47 r
+  RS_0/U12175/Q (aoi222s1)                                0.49      0.12       7.59 f
+  RS_0/n8804 (net)                              1                   0.00       7.59 f
+  RS_0/U9355/DIN2 (oai1112s2)                             0.49      0.00       7.59 f
+  RS_0/U9355/Q (oai1112s2)                                0.54      0.26       7.84 r
+  RS_0/n11404 (net)                             1                   0.00       7.84 r
+  RS_0/U8271/DIN (nb1s2)                                  0.54      0.00       7.85 r
+  RS_0/U8271/Q (nb1s2)                                    0.32      0.23       8.07 r
+  RS_0/issue_insts[0][PC][20] (net)             2                   0.00       8.07 r
+  RS_0/issue_insts[0][PC][20] (RS)                                  0.00       8.07 r
+  rs_out_display[0][PC][20] (net)                                   0.00       8.07 r
+  is_packet_in_reg[0][PC][20]/CLRB (dffcs1)               0.32      0.00       8.07 r
+  data arrival time                                                            8.07
 
-  clock clock (rise edge)                                           9.50       9.50
-  clock network delay (ideal)                                       0.00       9.50
-  clock uncertainty                                                -0.10       9.40
-  is_packet_in_reg[0][NPC][31]/CLK (dffcs1)                         0.00       9.40 r
-  library setup time                                               -0.38       9.02
-  data required time                                                           9.02
+  clock clock (rise edge)                                           8.50       8.50
+  clock network delay (ideal)                                       0.00       8.50
+  clock uncertainty                                                -0.10       8.40
+  is_packet_in_reg[0][PC][20]/CLK (dffcs1)                          0.00       8.40 r
+  library setup time                                               -0.31       8.09
+  data required time                                                           8.09
   ------------------------------------------------------------------------------------
-  data required time                                                           9.02
-  data arrival time                                                           -9.61
+  data required time                                                           8.09
+  data arrival time                                                           -8.07
   ------------------------------------------------------------------------------------
-  slack (VIOLATED)                                                            -0.59
+  slack (MET)                                                                  0.02
 
 
   Startpoint: is_packet_in_reg[2][fu_sel][2]
               (rising edge-triggered flip-flop clocked by clock)
-  Endpoint: is_packet_in_reg[0][reg1_pr][2]
+  Endpoint: is_packet_in_reg[0][NPC][13]
             (rising edge-triggered flip-flop clocked by clock)
   Path Group: clock
   Path Type: max
@@ -341,170 +331,175 @@ Wire Load Model Mode: top
   clock clock (rise edge)                                           0.00       0.00
   clock network delay (ideal)                                       0.00       0.00
   is_packet_in_reg[2][fu_sel][2]/CLK (dffcs2)             0.00      0.00 #     0.00 r
-  is_packet_in_reg[2][fu_sel][2]/QN (dffcs2)              0.17      0.17       0.17 f
-  n328 (net)                                    1                   0.00       0.17 f
-  U2724/DIN (ib1s2)                                       0.17      0.00       0.17 f
-  U2724/Q (ib1s2)                                         0.10      0.04       0.22 r
-  n2272 (net)                                   1                   0.00       0.22 r
-  U5480/DIN3 (nor4s1)                                     0.10      0.00       0.22 r
-  U5480/Q (nor4s1)                                        0.39      0.15       0.37 f
-  issue_0/ls_fifo_in[2][valid] (net)            1                   0.00       0.37 f
-  issue_0/ls_fifo/fu_pckt_in[2][valid] (fu_FIFO_3)                  0.00       0.37 f
-  issue_0/ls_fifo/fu_pckt_in[2][valid] (net)                        0.00       0.37 f
-  issue_0/ls_fifo/U25380/DIN (ib1s1)                      0.39      0.00       0.37 f
-  issue_0/ls_fifo/U25380/Q (ib1s1)                        0.81      0.36       0.72 r
-  issue_0/ls_fifo/n22749 (net)                  9                   0.00       0.72 r
-  issue_0/ls_fifo/U29079/DIN (i1s3)                       0.81      0.00       0.73 r
-  issue_0/ls_fifo/U29079/Q (i1s3)                         0.62      0.34       1.06 f
-  issue_0/ls_fifo/n22743 (net)                 25                   0.00       1.06 f
-  issue_0/ls_fifo/U37029/DIN2 (xor2s1)                    0.62      0.00       1.07 f
-  issue_0/ls_fifo/U37029/Q (xor2s1)                       0.22      0.32       1.38 r
-  issue_0/ls_fifo/n28629 (net)                  2                   0.00       1.38 r
-  issue_0/ls_fifo/U37030/DIN2 (xor2s1)                    0.22      0.00       1.39 r
-  issue_0/ls_fifo/U37030/Q (xor2s1)                       0.23      0.17       1.55 f
-  issue_0/ls_fifo/wr_count[0] (net)             2                   0.00       1.55 f
-  issue_0/ls_fifo/U47254/DIN1 (and2s1)                    0.23      0.00       1.55 f
-  issue_0/ls_fifo/U47254/Q (and2s1)                       0.16      0.21       1.76 f
-  issue_0/ls_fifo/add_61/carry[1] (net)         1                   0.00       1.76 f
-  issue_0/ls_fifo/U47238/CIN (fadd1s1)                    0.16      0.00       1.77 f
-  issue_0/ls_fifo/U47238/OUTC (fadd1s1)                   0.21      0.28       2.05 f
-  issue_0/ls_fifo/add_61/carry[2] (net)         2                   0.00       2.05 f
-  issue_0/ls_fifo/U47252/DIN1 (and2s1)                    0.21      0.00       2.05 f
-  issue_0/ls_fifo/U47252/Q (and2s1)                       0.17      0.21       2.26 f
-  issue_0/ls_fifo/add_61/carry[3] (net)         2                   0.00       2.26 f
-  issue_0/ls_fifo/U47250/DIN1 (and2s1)                    0.17      0.00       2.26 f
-  issue_0/ls_fifo/U47250/Q (and2s1)                       0.20      0.22       2.48 f
-  issue_0/ls_fifo/add_61/carry[4] (net)         2                   0.00       2.48 f
-  issue_0/ls_fifo/U47249/DIN1 (xor2s1)                    0.20      0.00       2.48 f
-  issue_0/ls_fifo/U47249/Q (xor2s1)                       0.17      0.23       2.72 f
-  issue_0/ls_fifo/tail_next[4] (net)            3                   0.00       2.72 f
-  issue_0/ls_fifo/U47256/DIN2 (oai1112s1)                 0.17      0.00       2.72 f
-  issue_0/ls_fifo/U47256/Q (oai1112s1)                    0.63      0.22       2.94 r
-  issue_0/ls_fifo/n22750 (net)                  1                   0.00       2.94 r
-  issue_0/ls_fifo/U29259/DIN (ib1s1)                      0.63      0.00       2.94 r
-  issue_0/ls_fifo/U29259/Q (ib1s1)                        0.24      0.10       3.04 f
-  issue_0/ls_fifo/n22751 (net)                  2                   0.00       3.04 f
-  issue_0/ls_fifo/U47240/DIN2 (and2s1)                    0.24      0.00       3.04 f
-  issue_0/ls_fifo/U47240/Q (and2s1)                       0.14      0.22       3.26 f
-  issue_0/ls_fifo/N115 (net)                    1                   0.00       3.26 f
-  issue_0/ls_fifo/U358/DIN2 (or2s2)                       0.14      0.00       3.26 f
-  issue_0/ls_fifo/U358/Q (or2s2)                          0.09      0.14       3.41 f
-  issue_0/ls_fifo/almost_full (net)             2                   0.00       3.41 f
-  issue_0/ls_fifo/almost_full (fu_FIFO_3)                           0.00       3.41 f
-  n2703 (net)                                                       0.00       3.41 f
-  RS_0/fu_fifo_stall[ls] (RS)                                       0.00       3.41 f
-  RS_0/fu_fifo_stall[ls] (net)                                      0.00       3.41 f
-  RS_0/U6593/DIN (i1s1)                                   0.09      0.00       3.41 f
-  RS_0/U6593/Q (i1s1)                                     0.11      0.05       3.46 r
-  RS_0/n6009 (net)                              1                   0.00       3.46 r
-  RS_0/U6594/DIN (i1s1)                                   0.11      0.00       3.46 r
-  RS_0/U6594/Q (i1s1)                                     0.80      0.37       3.82 f
-  RS_0/n6010 (net)                             16                   0.00       3.82 f
-  RS_0/U8424/DIN3 (oai322s1)                              0.80      0.00       3.82 f
-  RS_0/U8424/Q (oai322s1)                                 0.81      0.40       4.22 r
-  RS_0/n5849 (net)                              1                   0.00       4.22 r
-  RS_0/U6442/DIN (ib1s1)                                  0.81      0.00       4.23 r
-  RS_0/U6442/Q (ib1s1)                                    0.27      0.10       4.33 f
-  RS_0/n8258 (net)                              1                   0.00       4.33 f
-  RS_0/U6506/DIN2 (or4s3)                                 0.27      0.00       4.33 f
-  RS_0/U6506/Q (or4s3)                                    0.15      0.18       4.51 f
-  RS_0/n5957 (net)                              3                   0.00       4.51 f
-  RS_0/U7521/DIN (i1s3)                                   0.15      0.00       4.51 f
-  RS_0/U7521/Q (i1s3)                                     0.70      0.28       4.79 r
-  RS_0/n6793 (net)                             28                   0.00       4.79 r
-  RS_0/U6824/DIN1 (nor2s3)                                0.70      0.01       4.80 r
-  RS_0/U6824/Q (nor2s3)                                   0.32      0.17       4.96 f
-  RS_0/n5818 (net)                              3                   0.00       4.96 f
-  RS_0/U7506/DIN3 (nnd3s2)                                0.32      0.00       4.97 f
-  RS_0/U7506/Q (nnd3s2)                                   0.30      0.16       5.13 r
-  RS_0/n5792 (net)                              3                   0.00       5.13 r
-  RS_0/U11178/DIN2 (nnd2s1)                               0.30      0.00       5.13 r
-  RS_0/U11178/Q (nnd2s1)                                  0.22      0.10       5.23 f
-  RS_0/n5817 (net)                              2                   0.00       5.23 f
-  RS_0/U6832/DIN (i1s1)                                   0.22      0.00       5.23 f
-  RS_0/U6832/Q (i1s1)                                     0.18      0.08       5.31 r
-  RS_0/n8251 (net)                              1                   0.00       5.31 r
-  RS_0/U5223/DIN1 (nnd2s2)                                0.18      0.00       5.32 r
-  RS_0/U5223/Q (nnd2s2)                                   0.44      0.20       5.51 f
-  RS_0/n5579 (net)                              6                   0.00       5.51 f
-  RS_0/U7180/DIN (i1s3)                                   0.44      0.00       5.52 f
-  RS_0/U7180/Q (i1s3)                                     0.76      0.34       5.86 r
-  RS_0/n6403 (net)                             31                   0.00       5.86 r
-  RS_0/U6463/DIN2 (nor2s1)                                0.76      0.00       5.86 r
-  RS_0/U6463/Q (nor2s1)                                   0.35      0.20       6.06 f
-  RS_0/n5777 (net)                              2                   0.00       6.06 f
-  RS_0/U6459/DIN3 (or3s2)                                 0.35      0.00       6.06 f
-  RS_0/U6459/Q (or3s2)                                    0.13      0.20       6.27 f
-  RS_0/n5780 (net)                              2                   0.00       6.27 f
-  RS_0/U6462/DIN (ib1s1)                                  0.13      0.00       6.27 f
-  RS_0/U6462/Q (ib1s1)                                    0.14      0.06       6.33 r
-  RS_0/n8249 (net)                              2                   0.00       6.33 r
-  RS_0/U6472/DIN1 (nor2s1)                                0.14      0.00       6.33 r
-  RS_0/U6472/Q (nor2s1)                                   0.36      0.16       6.49 f
-  RS_0/n5779 (net)                              2                   0.00       6.49 f
-  RS_0/U6518/DIN1 (nnd2s2)                                0.36      0.00       6.50 f
-  RS_0/U6518/Q (nnd2s2)                                   0.71      0.31       6.81 r
-  RS_0/n3863 (net)                             17                   0.00       6.81 r
-  RS_0/U6780/DIN (ib1s1)                                  0.71      0.00       6.81 r
-  RS_0/U6780/Q (ib1s1)                                    0.44      0.23       7.04 f
-  RS_0/n6747 (net)                              6                   0.00       7.04 f
-  RS_0/U6500/DIN (i1s3)                                   0.44      0.00       7.05 f
-  RS_0/U6500/Q (i1s3)                                     0.51      0.25       7.29 r
-  RS_0/n6746 (net)                             22                   0.00       7.29 r
-  RS_0/U6807/DIN1 (aoi21s1)                               0.51      0.00       7.29 r
-  RS_0/U6807/Q (aoi21s1)                                  0.48      0.25       7.54 f
-  RS_0/n5583 (net)                              4                   0.00       7.54 f
-  RS_0/U6736/DIN1 (oai1112s1)                             0.48      0.00       7.54 f
-  RS_0/U6736/Q (oai1112s1)                                0.73      0.27       7.81 r
-  RS_0/n5642 (net)                              1                   0.00       7.81 r
-  RS_0/U4025/DIN2 (nnd2s2)                                0.73      0.00       7.81 r
-  RS_0/U4025/Q (nnd2s2)                                   0.29      0.10       7.91 f
-  RS_0/n5597 (net)                              3                   0.00       7.91 f
-  RS_0/U6712/DIN (ib1s1)                                  0.29      0.00       7.91 f
-  RS_0/U6712/Q (ib1s1)                                    0.21      0.10       8.01 r
-  RS_0/n8237 (net)                              2                   0.00       8.01 r
-  RS_0/U6558/DIN3 (nnd3s1)                                0.21      0.00       8.02 r
-  RS_0/U6558/Q (nnd3s1)                                   0.39      0.17       8.19 f
-  RS_0/n4782 (net)                              4                   0.00       8.19 f
-  RS_0/U6559/DIN (ib1s1)                                  0.39      0.00       8.19 f
-  RS_0/U6559/Q (ib1s1)                                    0.42      0.21       8.39 r
-  RS_0/n6687 (net)                              7                   0.00       8.39 r
-  RS_0/U6931/DIN (ib1s1)                                  0.42      0.00       8.40 r
-  RS_0/U6931/Q (ib1s1)                                    0.84      0.42       8.82 f
-  RS_0/n6681 (net)                             22                   0.00       8.82 f
-  RS_0/U7641/DIN2 (oai22s2)                               0.84      0.00       8.82 f
-  RS_0/U7641/Q (oai22s2)                                  0.40      0.19       9.01 r
-  RS_0/n4844 (net)                              1                   0.00       9.01 r
-  RS_0/U7640/DIN5 (aoi221s1)                              0.40      0.00       9.01 r
-  RS_0/U7640/Q (aoi221s1)                                 0.70      0.19       9.20 f
-  RS_0/n4840 (net)                              1                   0.00       9.20 f
-  RS_0/U6331/DIN2 (nnd4s3)                                0.70      0.00       9.20 f
-  RS_0/U6331/Q (nnd4s3)                                   0.24      0.41       9.61 r
-  RS_0/issue_insts[0][reg1_pr][2] (net)         2                   0.00       9.61 r
-  RS_0/issue_insts[0][reg1_pr][2] (RS)                              0.00       9.61 r
-  rs_out_display[0][reg1_pr][2] (net)                               0.00       9.61 r
-  U2910/DIN1 (and2s1)                                     0.24      0.00       9.61 r
-  U2910/Q (and2s1)                                        0.28      0.19       9.80 r
-  n1668 (net)                                   1                   0.00       9.80 r
-  is_packet_in_reg[0][reg1_pr][2]/DIN (dffs1)             0.28      0.01       9.81 r
-  data arrival time                                                            9.81
+  is_packet_in_reg[2][fu_sel][2]/QN (dffcs2)              0.18      0.15       0.15 r
+  n328 (net)                                    2                   0.00       0.15 r
+  is_packet_in_reg[2][fu_sel][2]/Q (dffcs2)               0.30      0.16       0.31 f
+  is_in_display[2][fu_sel][2] (net)             6                   0.00       0.31 f
+  U5314/DIN1 (and4s1)                                     0.30      0.00       0.31 f
+  U5314/Q (and4s1)                                        0.20      0.24       0.54 f
+  issue_0/mult_fifo_in[2][valid] (net)          2                   0.00       0.54 f
+  issue_0/mult_fifo/fu_pckt_in[2][valid] (fu_FIFO_3)                0.00       0.54 f
+  issue_0/mult_fifo/fu_pckt_in[2][valid] (net)                      0.00       0.54 f
+  issue_0/mult_fifo/U24494/DIN (i1s3)                     0.20      0.00       0.55 f
+  issue_0/mult_fifo/U24494/Q (i1s3)                       0.36      0.16       0.71 r
+  issue_0/mult_fifo/n22750 (net)               10                   0.00       0.71 r
+  issue_0/mult_fifo/U29127/DIN (i1s3)                     0.36      0.00       0.71 r
+  issue_0/mult_fifo/U29127/Q (i1s3)                       0.65      0.33       1.04 f
+  issue_0/mult_fifo/n22749 (net)               32                   0.00       1.04 f
+  issue_0/mult_fifo/U36875/DIN2 (xor2s1)                  0.65      0.00       1.04 f
+  issue_0/mult_fifo/U36875/Q (xor2s1)                     0.25      0.31       1.36 r
+  issue_0/mult_fifo/n28631 (net)                2                   0.00       1.36 r
+  issue_0/mult_fifo/U36879/DIN2 (xor2s1)                  0.25      0.00       1.36 r
+  issue_0/mult_fifo/U36879/Q (xor2s1)                     0.22      0.17       1.53 f
+  issue_0/mult_fifo/wr_count[0] (net)           2                   0.00       1.53 f
+  issue_0/mult_fifo/U47269/DIN1 (and2s1)                  0.22      0.00       1.53 f
+  issue_0/mult_fifo/U47269/Q (and2s1)                     0.16      0.21       1.74 f
+  issue_0/mult_fifo/add_61/carry[1] (net)       1                   0.00       1.74 f
+  issue_0/mult_fifo/U47247/CIN (fadd1s1)                  0.16      0.00       1.74 f
+  issue_0/mult_fifo/U47247/OUTC (fadd1s1)                 0.21      0.28       2.02 f
+  issue_0/mult_fifo/add_61/carry[2] (net)       2                   0.00       2.02 f
+  issue_0/mult_fifo/U47267/DIN1 (and2s1)                  0.21      0.00       2.02 f
+  issue_0/mult_fifo/U47267/Q (and2s1)                     0.17      0.21       2.23 f
+  issue_0/mult_fifo/add_61/carry[3] (net)       2                   0.00       2.23 f
+  issue_0/mult_fifo/U47265/DIN1 (and2s1)                  0.17      0.00       2.23 f
+  issue_0/mult_fifo/U47265/Q (and2s1)                     0.21      0.22       2.46 f
+  issue_0/mult_fifo/add_61/carry[4] (net)       2                   0.00       2.46 f
+  issue_0/mult_fifo/U47264/DIN1 (xor2s1)                  0.21      0.00       2.46 f
+  issue_0/mult_fifo/U47264/Q (xor2s1)                     0.18      0.24       2.70 f
+  issue_0/mult_fifo/tail_next[4] (net)          3                   0.00       2.70 f
+  issue_0/mult_fifo/U47271/DIN2 (oai1112s1)               0.18      0.00       2.70 f
+  issue_0/mult_fifo/U47271/Q (oai1112s1)                  0.63      0.22       2.92 r
+  issue_0/mult_fifo/n22751 (net)                1                   0.00       2.92 r
+  issue_0/mult_fifo/U29155/DIN (ib1s1)                    0.63      0.00       2.92 r
+  issue_0/mult_fifo/U29155/Q (ib1s1)                      0.24      0.10       3.02 f
+  issue_0/mult_fifo/n22752 (net)                2                   0.00       3.02 f
+  issue_0/mult_fifo/U47257/DIN2 (and2s1)                  0.24      0.00       3.02 f
+  issue_0/mult_fifo/U47257/Q (and2s1)                     0.14      0.22       3.24 f
+  issue_0/mult_fifo/N115 (net)                  1                   0.00       3.24 f
+  issue_0/mult_fifo/U358/DIN2 (or2s2)                     0.14      0.00       3.24 f
+  issue_0/mult_fifo/U358/Q (or2s2)                        0.23      0.23       3.48 f
+  issue_0/mult_fifo/almost_full (net)           2                   0.00       3.48 f
+  issue_0/mult_fifo/almost_full (fu_FIFO_3)                         0.00       3.48 f
+  fu_fifo_stall_display[mult] (net)                                 0.00       3.48 f
+  RS_0/fu_fifo_stall[mult] (RS)                                     0.00       3.48 f
+  RS_0/fu_fifo_stall[mult] (net)                                    0.00       3.48 f
+  RS_0/U6285/DIN (ib1s1)                                  0.23      0.00       3.48 f
+  RS_0/U6285/Q (ib1s1)                                    0.79      0.33       3.80 r
+  RS_0/n7922 (net)                             16                   0.00       3.80 r
+  RS_0/U10135/DIN4 (aoi22s2)                              0.79      0.00       3.80 r
+  RS_0/U10135/Q (aoi22s2)                                 0.41      0.17       3.98 f
+  RS_0/n7745 (net)                              1                   0.00       3.98 f
+  RS_0/U10136/DIN5 (oai322s1)                             0.41      0.00       3.98 f
+  RS_0/U10136/Q (oai322s1)                                1.00      0.37       4.35 r
+  RS_0/n7746 (net)                              2                   0.00       4.35 r
+  RS_0/U7215/DIN3 (nnd4s2)                                1.00      0.00       4.35 r
+  RS_0/U7215/Q (nnd4s2)                                   0.49      0.18       4.53 f
+  RS_0/n8001 (net)                              3                   0.00       4.53 f
+  RS_0/U8085/DIN1 (and4s3)                                0.49      0.00       4.54 f
+  RS_0/U8085/Q (and4s3)                                   0.14      0.22       4.76 f
+  RS_0/n6068 (net)                              4                   0.00       4.76 f
+  RS_0/U7217/DIN1 (nnd2s3)                                0.14      0.00       4.76 f
+  RS_0/U7217/Q (nnd2s3)                                   0.23      0.06       4.82 r
+  RS_0/n8002 (net)                              2                   0.00       4.82 r
+  RS_0/U9732/DIN2 (nor2s2)                                0.23      0.00       4.83 r
+  RS_0/U9732/Q (nor2s2)                                   0.21      0.07       4.90 f
+  RS_0/n7983 (net)                              1                   0.00       4.90 f
+  RS_0/U10196/DIN2 (nnd2s2)                               0.21      0.00       4.90 f
+  RS_0/U10196/Q (nnd2s2)                                  0.21      0.10       5.01 r
+  RS_0/n7991 (net)                              2                   0.00       5.01 r
+  RS_0/U6905/DIN1 (and4s3)                                0.21      0.00       5.01 r
+  RS_0/U6905/Q (and4s3)                                   0.20      0.18       5.19 r
+  RS_0/n6222 (net)                              7                   0.00       5.19 r
+  RS_0/U7115/DIN2 (nnd2s1)                                0.20      0.00       5.19 r
+  RS_0/U7115/Q (nnd2s1)                                   0.21      0.10       5.29 f
+  RS_0/n11080 (net)                             2                   0.00       5.29 f
+  RS_0/U9485/DIN (i1s2)                                   0.21      0.00       5.29 f
+  RS_0/U9485/Q (i1s2)                                     0.21      0.10       5.39 r
+  RS_0/n6201 (net)                              3                   0.00       5.39 r
+  RS_0/U7111/DIN2 (oai21s3)                               0.21      0.00       5.39 r
+  RS_0/U7111/Q (oai21s3)                                  0.33      0.12       5.51 f
+  RS_0/n8021 (net)                              2                   0.00       5.51 f
+  RS_0/U6907/DIN (i1s3)                                   0.33      0.00       5.52 f
+  RS_0/U6907/Q (i1s3)                                     0.15      0.07       5.59 r
+  RS_0/n8014 (net)                              2                   0.00       5.59 r
+  RS_0/U8025/DIN1 (and3s2)                                0.15      0.00       5.59 r
+  RS_0/U8025/Q (and3s2)                                   0.14      0.13       5.72 r
+  RS_0/n6066 (net)                              2                   0.00       5.72 r
+  RS_0/U7103/DIN2 (nnd2s2)                                0.14      0.00       5.72 r
+  RS_0/U7103/Q (nnd2s2)                                   0.14      0.07       5.79 f
+  RS_0/n8009 (net)                              1                   0.00       5.79 f
+  RS_0/U10206/DIN2 (oai21s3)                              0.14      0.00       5.79 f
+  RS_0/U10206/Q (oai21s3)                                 0.28      0.11       5.91 r
+  RS_0/n8010 (net)                              1                   0.00       5.91 r
+  RS_0/U7102/DIN2 (nor2s2)                                0.28      0.00       5.91 r
+  RS_0/U7102/Q (nor2s2)                                   0.24      0.10       6.01 f
+  RS_0/n8076 (net)                              2                   0.00       6.01 f
+  RS_0/U6889/DIN1 (nnd2s2)                                0.24      0.00       6.01 f
+  RS_0/U6889/Q (nnd2s2)                                   0.22      0.10       6.12 r
+  RS_0/n8012 (net)                              1                   0.00       6.12 r
+  RS_0/U6888/DIN (i1s4)                                   0.22      0.01       6.12 r
+  RS_0/U6888/Q (i1s4)                                     0.13      0.06       6.18 f
+  RS_0/n8019 (net)                              4                   0.00       6.18 f
+  RS_0/U6906/DIN3 (nnd3s1)                                0.13      0.00       6.18 f
+  RS_0/U6906/Q (nnd3s1)                                   0.32      0.15       6.33 r
+  RS_0/n10159 (net)                             2                   0.00       6.33 r
+  RS_0/U7996/DIN2 (nnd3s2)                                0.32      0.00       6.33 r
+  RS_0/U7996/Q (nnd3s2)                                   0.38      0.11       6.44 f
+  RS_0/n8072 (net)                              2                   0.00       6.44 f
+  RS_0/U6266/DIN2 (nnd2s2)                                0.38      0.00       6.44 f
+  RS_0/U6266/Q (nnd2s2)                                   0.29      0.16       6.60 r
+  RS_0/n8038 (net)                              2                   0.00       6.60 r
+  RS_0/U7743/DIN (i1s4)                                   0.29      0.01       6.60 r
+  RS_0/U7743/Q (i1s4)                                     0.15      0.07       6.67 f
+  RS_0/n8046 (net)                              4                   0.00       6.67 f
+  RS_0/U6308/DIN2 (nnd2s2)                                0.15      0.00       6.67 f
+  RS_0/U6308/Q (nnd2s2)                                   0.16      0.08       6.75 r
+  RS_0/n8069 (net)                              1                   0.00       6.75 r
+  RS_0/U6572/DIN2 (nnd2s2)                                0.16      0.00       6.75 r
+  RS_0/U6572/Q (nnd2s2)                                   0.16      0.07       6.83 f
+  RS_0/n8023 (net)                              1                   0.00       6.83 f
+  RS_0/U6900/DIN (i1s3)                                   0.16      0.00       6.83 f
+  RS_0/U6900/Q (i1s3)                                     0.19      0.08       6.92 r
+  RS_0/n8111 (net)                              4                   0.00       6.92 r
+  RS_0/U8027/DIN1 (and4s3)                                0.19      0.00       6.92 r
+  RS_0/U8027/Q (and4s3)                                   0.34      0.25       7.17 r
+  RS_0/n6067 (net)                             10                   0.00       7.17 r
+  RS_0/U6897/DIN (i1s4)                                   0.34      0.01       7.18 r
+  RS_0/U6897/Q (i1s4)                                     0.20      0.09       7.27 f
+  RS_0/n6687 (net)                             10                   0.00       7.27 f
+  RS_0/U6323/DIN (ib1s1)                                  0.20      0.00       7.27 f
+  RS_0/U6323/Q (ib1s1)                                    0.45      0.19       7.47 r
+  RS_0/n6684 (net)                              8                   0.00       7.47 r
+  RS_0/U12288/DIN2 (aoi222s1)                             0.45      0.00       7.47 r
+  RS_0/U12288/Q (aoi222s1)                                0.49      0.12       7.59 f
+  RS_0/n8954 (net)                              1                   0.00       7.59 f
+  RS_0/U9410/DIN2 (oai1112s2)                             0.49      0.00       7.59 f
+  RS_0/U9410/Q (oai1112s2)                                0.54      0.26       7.84 r
+  RS_0/n11380 (net)                             1                   0.00       7.84 r
+  RS_0/U8305/DIN (nb1s2)                                  0.54      0.00       7.85 r
+  RS_0/U8305/Q (nb1s2)                                    0.32      0.23       8.07 r
+  RS_0/issue_insts[0][NPC][13] (net)            2                   0.00       8.07 r
+  RS_0/issue_insts[0][NPC][13] (RS)                                 0.00       8.07 r
+  rs_out_display[0][NPC][13] (net)                                  0.00       8.07 r
+  is_packet_in_reg[0][NPC][13]/CLRB (dffcs1)              0.32      0.00       8.07 r
+  data arrival time                                                            8.07
 
-  clock clock (rise edge)                                           9.50       9.50
-  clock network delay (ideal)                                       0.00       9.50
-  clock uncertainty                                                -0.10       9.40
-  is_packet_in_reg[0][reg1_pr][2]/CLK (dffs1)                       0.00       9.40 r
-  library setup time                                               -0.14       9.26
-  data required time                                                           9.26
+  clock clock (rise edge)                                           8.50       8.50
+  clock network delay (ideal)                                       0.00       8.50
+  clock uncertainty                                                -0.10       8.40
+  is_packet_in_reg[0][NPC][13]/CLK (dffcs1)                         0.00       8.40 r
+  library setup time                                               -0.31       8.09
+  data required time                                                           8.09
   ------------------------------------------------------------------------------------
-  data required time                                                           9.26
-  data arrival time                                                           -9.81
+  data required time                                                           8.09
+  data arrival time                                                           -8.07
   ------------------------------------------------------------------------------------
-  slack (VIOLATED)                                                            -0.54
+  slack (MET)                                                                  0.02
 
 
-  Startpoint: cdb_t_debug[t1][0]
+  Startpoint: cdb_t_debug[t1][1]
               (input port clocked by clock)
-  Endpoint: is_packet_in_reg[0][NPC][31]
+  Endpoint: is_packet_in_reg[1][reg2_pr][0]
             (rising edge-triggered flip-flop clocked by clock)
   Path Group: input_grp
   Path Type: max
@@ -518,151 +513,115 @@ Wire Load Model Mode: top
   clock clock (rise edge)                                           0.00       0.00
   clock network delay (ideal)                                       0.00       0.00
   input external delay                                              0.10       0.10 f
-  cdb_t_debug[t1][0] (in)                                 0.18      0.01       0.11 f
-  cdb_t_debug[t1][0] (net)                      1                   0.00       0.11 f
-  U2861/DIN (hi1s1)                                       0.18      0.00       0.11 f
-  U2861/Q (hi1s1)                                         0.21      0.11       0.22 r
-  n1615 (net)                                   1                   0.00       0.22 r
-  U2862/DIN (hi1s1)                                       0.21      0.00       0.22 r
-  U2862/Q (hi1s1)                                         2.22      0.92       1.14 f
-  cdb_t_display[t1][0] (net)                    4                   0.00       1.14 f
-  RS_0/cdb_t[t1][0] (RS)                                            0.00       1.14 f
-  RS_0/cdb_t[t1][0] (net)                                           0.00       1.14 f
-  RS_0/U6448/DIN (ib1s1)                                  2.22      0.00       1.14 f
-  RS_0/U6448/Q (ib1s1)                                    0.65      0.30       1.44 r
-  RS_0/n6851 (net)                              3                   0.00       1.44 r
-  RS_0/U7523/DIN (ib1s1)                                  0.65      0.00       1.44 r
-  RS_0/U7523/Q (ib1s1)                                    0.65      0.35       1.79 f
-  RS_0/n6849 (net)                             20                   0.00       1.79 f
-  RS_0/U11195/DIN1 (and2s1)                               0.65      0.00       1.79 f
-  RS_0/U11195/Q (and2s1)                                  0.16      0.28       2.08 f
-  RS_0/n6895 (net)                              2                   0.00       2.08 f
-  RS_0/U11196/DIN4 (oai22s1)                              0.16      0.00       2.08 f
-  RS_0/U11196/Q (oai22s1)                                 0.48      0.17       2.25 r
-  RS_0/n6897 (net)                              1                   0.00       2.25 r
-  RS_0/U11198/DIN2 (nnd3s1)                               0.48      0.00       2.25 r
-  RS_0/U11198/Q (nnd3s1)                                  0.29      0.12       2.37 f
-  RS_0/n6902 (net)                              1                   0.00       2.37 f
-  RS_0/U6874/DIN1 (or4s3)                                 0.29      0.00       2.37 f
-  RS_0/U6874/Q (or4s3)                                    0.09      0.16       2.53 f
-  RS_0/n6145 (net)                              1                   0.00       2.53 f
-  RS_0/U6484/DIN1 (and4s1)                                0.09      0.00       2.53 f
-  RS_0/U6484/Q (and4s1)                                   0.18      0.18       2.71 f
-  RS_0/n5557 (net)                              2                   0.00       2.71 f
-  RS_0/U6506/DIN3 (or4s3)                                 0.18      0.00       2.71 f
-  RS_0/U6506/Q (or4s3)                                    0.15      0.19       2.90 f
-  RS_0/n5957 (net)                              3                   0.00       2.90 f
-  RS_0/U7521/DIN (i1s3)                                   0.15      0.00       2.90 f
-  RS_0/U7521/Q (i1s3)                                     0.70      0.28       3.18 r
-  RS_0/n6793 (net)                             28                   0.00       3.18 r
-  RS_0/U6824/DIN1 (nor2s3)                                0.70      0.01       3.19 r
-  RS_0/U6824/Q (nor2s3)                                   0.32      0.17       3.35 f
-  RS_0/n5818 (net)                              3                   0.00       3.35 f
-  RS_0/U7506/DIN3 (nnd3s2)                                0.32      0.00       3.35 f
-  RS_0/U7506/Q (nnd3s2)                                   0.30      0.16       3.51 r
-  RS_0/n5792 (net)                              3                   0.00       3.51 r
-  RS_0/U6710/DIN (ib1s1)                                  0.30      0.00       3.52 r
-  RS_0/U6710/Q (ib1s1)                                    0.18      0.09       3.60 f
-  RS_0/n8248 (net)                              2                   0.00       3.60 f
-  RS_0/U7509/DIN1 (nnd3s2)                                0.18      0.00       3.61 f
-  RS_0/U7509/Q (nnd3s2)                                   0.23      0.09       3.69 r
-  RS_0/n5809 (net)                              2                   0.00       3.69 r
-  RS_0/U6810/DIN (i1s1)                                   0.23      0.00       3.70 r
-  RS_0/U6810/Q (i1s1)                                     0.21      0.11       3.80 f
-  RS_0/n8224 (net)                              2                   0.00       3.80 f
-  RS_0/U6808/DIN3 (nnd3s1)                                0.21      0.00       3.81 f
-  RS_0/U6808/Q (nnd3s1)                                   0.32      0.16       3.96 r
-  RS_0/n5812 (net)                              2                   0.00       3.96 r
-  RS_0/U6705/DIN1 (or2s2)                                 0.32      0.00       3.97 r
-  RS_0/U6705/Q (or2s2)                                    0.34      0.27       4.23 r
-  RS_0/n6132 (net)                              5                   0.00       4.23 r
-  RS_0/U7201/DIN (i1s3)                                   0.34      0.00       4.24 r
-  RS_0/U7201/Q (i1s3)                                     0.34      0.18       4.42 f
-  RS_0/n6771 (net)                             15                   0.00       4.42 f
-  RS_0/U6703/DIN2 (or2s1)                                 0.34      0.00       4.42 f
-  RS_0/U6703/Q (or2s1)                                    0.18      0.23       4.66 f
-  RS_0/n5761 (net)                              2                   0.00       4.66 f
-  RS_0/U7321/DIN1 (nnd3s2)                                0.18      0.00       4.66 f
-  RS_0/U7321/Q (nnd3s2)                                   0.29      0.11       4.77 r
-  RS_0/n5769 (net)                              2                   0.00       4.77 r
-  RS_0/U6726/DIN (ib1s2)                                  0.29      0.00       4.78 r
-  RS_0/U6726/Q (ib1s2)                                    0.13      0.06       4.84 f
-  RS_0/n8218 (net)                              2                   0.00       4.84 f
-  RS_0/U11174/DIN1 (nnd4s1)                               0.13      0.00       4.84 f
-  RS_0/U11174/Q (nnd4s1)                                  0.35      0.09       4.93 r
-  RS_0/n5788 (net)                              1                   0.00       4.93 r
-  RS_0/U6453/DIN2 (and3s1)                                0.35      0.00       4.93 r
-  RS_0/U6453/Q (and3s1)                                   0.28      0.22       5.15 r
-  RS_0/n5768 (net)                              2                   0.00       5.15 r
-  RS_0/U5160/DIN1 (and2s2)                                0.28      0.00       5.15 r
-  RS_0/U5160/Q (and2s2)                                   0.14      0.13       5.28 r
-  RS_0/n5764 (net)                              3                   0.00       5.28 r
-  RS_0/U6466/DIN1 (and2s1)                                0.14      0.00       5.29 r
-  RS_0/U6466/Q (and2s1)                                   0.24      0.17       5.46 r
-  RS_0/n5766 (net)                              2                   0.00       5.46 r
-  RS_0/U5158/DIN1 (nnd2s2)                                0.24      0.00       5.46 r
-  RS_0/U5158/Q (nnd2s2)                                   0.43      0.20       5.66 f
-  RS_0/n3865 (net)                              6                   0.00       5.66 f
-  RS_0/U6977/DIN (ib1s1)                                  0.43      0.00       5.66 f
-  RS_0/U6977/Q (ib1s1)                                    0.45      0.23       5.89 r
-  RS_0/n6354 (net)                              7                   0.00       5.89 r
-  RS_0/U5151/DIN1 (oai211s2)                              0.45      0.00       5.89 r
-  RS_0/U5151/Q (oai211s2)                                 0.43      0.22       6.11 f
-  RS_0/n5699 (net)                              2                   0.00       6.11 f
-  RS_0/U11183/DIN (i1s2)                                  0.43      0.00       6.11 f
-  RS_0/U11183/Q (i1s2)                                    0.21      0.10       6.21 r
-  RS_0/n8215 (net)                              2                   0.00       6.21 r
-  RS_0/U11177/DIN1 (oai1112s2)                            0.21      0.00       6.22 r
-  RS_0/U11177/Q (oai1112s2)                               0.24      0.06       6.27 f
-  RS_0/n5759 (net)                              1                   0.00       6.27 f
-  RS_0/U6458/DIN (ib1s1)                                  0.24      0.00       6.27 f
-  RS_0/U6458/Q (ib1s1)                                    0.14      0.07       6.34 r
-  RS_0/n8211 (net)                              1                   0.00       6.34 r
-  RS_0/U6457/DIN2 (nor2s1)                                0.14      0.00       6.34 r
-  RS_0/U6457/Q (nor2s1)                                   0.39      0.14       6.48 f
-  RS_0/n5698 (net)                              2                   0.00       6.48 f
-  RS_0/U4586/DIN1 (nnd2s2)                                0.39      0.00       6.48 f
-  RS_0/U4586/Q (nnd2s2)                                   0.26      0.12       6.60 r
-  RS_0/n5654 (net)                              3                   0.00       6.60 r
-  RS_0/U6723/DIN (i1s1)                                   0.26      0.00       6.61 r
-  RS_0/U6723/Q (i1s1)                                     0.25      0.13       6.73 f
-  RS_0/n8208 (net)                              2                   0.00       6.73 f
-  RS_0/U4585/DIN3 (nnd3s2)                                0.25      0.00       6.74 f
-  RS_0/U4585/Q (nnd3s2)                                   0.52      0.24       6.97 r
-  RS_0/n4777 (net)                              9                   0.00       6.97 r
-  RS_0/U6925/DIN (ib1s1)                                  0.52      0.00       6.98 r
-  RS_0/U6925/Q (ib1s1)                                    0.80      0.41       7.39 f
-  RS_0/n6342 (net)                             18                   0.00       7.39 f
-  RS_0/U6706/DIN1 (nnd2s2)                                0.80      0.00       7.39 f
-  RS_0/U6706/Q (nnd2s2)                                   0.24      0.12       7.51 r
-  RS_0/n6126 (net)                              1                   0.00       7.51 r
-  RS_0/U6709/DIN1 (and3s1)                                0.24      0.00       7.51 r
-  RS_0/U6709/Q (and3s1)                                   0.21      0.18       7.69 r
-  RS_0/n5405 (net)                              1                   0.00       7.69 r
-  RS_0/U8229/DIN3 (nnd4s2)                                0.21      0.00       7.70 r
-  RS_0/U8229/Q (nnd4s2)                                   0.72      0.30       7.99 f
-  RS_0/issue_insts[0][NPC][31] (net)            2                   0.00       7.99 f
-  RS_0/issue_insts[0][NPC][31] (RS)                                 0.00       7.99 f
-  rs_out_display[0][NPC][31] (net)                                  0.00       7.99 f
-  is_packet_in_reg[0][NPC][31]/CLRB (dffcs1)              0.72      0.00       8.00 f
-  data arrival time                                                            8.00
+  cdb_t_debug[t1][1] (in)                                 0.18      0.01       0.11 f
+  cdb_t_debug[t1][1] (net)                      1                   0.00       0.11 f
+  U2676/DIN (hi1s1)                                       0.18      0.00       0.11 f
+  U2676/Q (hi1s1)                                         0.21      0.11       0.22 r
+  n1447 (net)                                   1                   0.00       0.22 r
+  U2677/DIN (hi1s1)                                       0.21      0.00       0.22 r
+  U2677/Q (hi1s1)                                         2.19      0.91       1.13 f
+  cdb_t_display[t1][1] (net)                    2                   0.00       1.13 f
+  RS_0/cdb_t[t1][1] (RS)                                            0.00       1.13 f
+  RS_0/cdb_t[t1][1] (net)                                           0.00       1.13 f
+  RS_0/U6563/DIN (i1s3)                                   2.19      0.00       1.13 f
+  RS_0/U6563/Q (i1s3)                                     0.86      0.45       1.58 r
+  RS_0/n6265 (net)                             15                   0.00       1.58 r
+  RS_0/U8117/DIN (i1s5)                                   0.86      0.01       1.59 r
+  RS_0/U8117/Q (i1s5)                                     0.43      0.20       1.79 f
+  RS_0/n6264 (net)                             18                   0.00       1.79 f
+  RS_0/U8564/DIN2 (xor2s1)                                0.43      0.00       1.79 f
+  RS_0/U8564/Q (xor2s1)                                   0.16      0.26       2.05 r
+  RS_0/n7635 (net)                              1                   0.00       2.05 r
+  RS_0/U10085/DIN6 (nor6s1)                               0.16      0.00       2.05 r
+  RS_0/U10085/Q (nor6s1)                                  0.12      0.24       2.29 f
+  RS_0/n7658 (net)                              1                   0.00       2.29 f
+  RS_0/U10091/DIN2 (or3s1)                                0.12      0.00       2.30 f
+  RS_0/U10091/Q (or3s1)                                   0.16      0.21       2.51 f
+  RS_0/n7799 (net)                              2                   0.00       2.51 f
+  RS_0/U10155/DIN2 (nnd4s1)                               0.16      0.00       2.51 f
+  RS_0/U10155/Q (nnd4s1)                                  0.47      0.17       2.67 r
+  RS_0/n8003 (net)                              3                   0.00       2.67 r
+  RS_0/U6289/DIN (ib1s1)                                  0.47      0.00       2.68 r
+  RS_0/U6289/Q (ib1s1)                                    0.32      0.17       2.85 f
+  RS_0/n7994 (net)                              3                   0.00       2.85 f
+  RS_0/U8081/DIN2 (nor2s2)                                0.32      0.00       2.85 f
+  RS_0/U8081/Q (nor2s2)                                   0.20      0.08       2.93 r
+  RS_0/n7984 (net)                              1                   0.00       2.93 r
+  RS_0/U10196/DIN1 (nnd2s2)                               0.20      0.00       2.94 r
+  RS_0/U10196/Q (nnd2s2)                                  0.17      0.07       3.01 f
+  RS_0/n7991 (net)                              2                   0.00       3.01 f
+  RS_0/U6905/DIN1 (and4s3)                                0.17      0.00       3.01 f
+  RS_0/U6905/Q (and4s3)                                   0.15      0.19       3.20 f
+  RS_0/n6222 (net)                              7                   0.00       3.20 f
+  RS_0/U7115/DIN2 (nnd2s1)                                0.15      0.00       3.20 f
+  RS_0/U7115/Q (nnd2s1)                                   0.24      0.12       3.31 r
+  RS_0/n11080 (net)                             2                   0.00       3.31 r
+  RS_0/U9485/DIN (i1s2)                                   0.24      0.00       3.32 r
+  RS_0/U9485/Q (i1s2)                                     0.20      0.10       3.42 f
+  RS_0/n6201 (net)                              3                   0.00       3.42 f
+  RS_0/U7111/DIN2 (oai21s3)                               0.20      0.00       3.42 f
+  RS_0/U7111/Q (oai21s3)                                  0.37      0.14       3.56 r
+  RS_0/n8021 (net)                              2                   0.00       3.56 r
+  RS_0/U6907/DIN (i1s3)                                   0.37      0.00       3.57 r
+  RS_0/U6907/Q (i1s3)                                     0.14      0.06       3.62 f
+  RS_0/n8014 (net)                              2                   0.00       3.62 f
+  RS_0/U8025/DIN1 (and3s2)                                0.14      0.00       3.62 f
+  RS_0/U8025/Q (and3s2)                                   0.11      0.14       3.77 f
+  RS_0/n6066 (net)                              2                   0.00       3.77 f
+  RS_0/U7103/DIN2 (nnd2s2)                                0.11      0.00       3.77 f
+  RS_0/U7103/Q (nnd2s2)                                   0.17      0.08       3.85 r
+  RS_0/n8009 (net)                              1                   0.00       3.85 r
+  RS_0/U10206/DIN2 (oai21s3)                              0.17      0.00       3.85 r
+  RS_0/U10206/Q (oai21s3)                                 0.26      0.10       3.95 f
+  RS_0/n8010 (net)                              1                   0.00       3.95 f
+  RS_0/U7102/DIN2 (nor2s2)                                0.26      0.00       3.96 f
+  RS_0/U7102/Q (nor2s2)                                   0.23      0.09       4.05 r
+  RS_0/n8076 (net)                              2                   0.00       4.05 r
+  RS_0/U7084/DIN (i1s2)                                   0.23      0.00       4.05 r
+  RS_0/U7084/Q (i1s2)                                     0.15      0.07       4.13 f
+  RS_0/n6048 (net)                              1                   0.00       4.13 f
+  RS_0/U6262/DIN (i1s3)                                   0.15      0.00       4.13 f
+  RS_0/U6262/Q (i1s3)                                     0.14      0.06       4.19 r
+  RS_0/n6049 (net)                              4                   0.00       4.19 r
+  RS_0/U6314/DIN1 (and4s1)                                0.14      0.00       4.19 r
+  RS_0/U6314/Q (and4s1)                                   0.27      0.22       4.41 r
+  RS_0/n6307 (net)                              2                   0.00       4.41 r
+  RS_0/U6239/DIN (i1s1)                                   0.27      0.00       4.41 r
+  RS_0/U6239/Q (i1s1)                                     0.22      0.11       4.53 f
+  RS_0/n10141 (net)                             1                   0.00       4.53 f
+  RS_0/U6280/DIN (i1s3)                                   0.22      0.00       4.53 f
+  RS_0/U6280/Q (i1s3)                                     0.26      0.12       4.65 r
+  RS_0/n6725 (net)                             14                   0.00       4.65 r
+  RS_0/U7156/DIN (hi1s1)                                  0.26      0.00       4.65 r
+  RS_0/U7156/Q (hi1s1)                                    1.48      0.64       5.29 f
+  RS_0/n6719 (net)                             11                   0.00       5.29 f
+  RS_0/U9655/DIN2 (oai2222s1)                             1.48      0.00       5.29 f
+  RS_0/U9655/Q (oai2222s1)                                0.17      0.49       5.78 r
+  RS_0/n9125 (net)                              1                   0.00       5.78 r
+  RS_0/U6351/DIN2 (or3s2)                                 0.17      0.00       5.78 r
+  RS_0/U6351/Q (or3s2)                                    0.36      0.29       6.08 r
+  RS_0/issue_insts[1][reg2_pr][0] (net)         2                   0.00       6.08 r
+  RS_0/issue_insts[1][reg2_pr][0] (RS)                              0.00       6.08 r
+  rs_out_display[1][reg2_pr][0] (net)                               0.00       6.08 r
+  is_packet_in_reg[1][reg2_pr][0]/CLRB (dffcs1)           0.36      0.00       6.08 r
+  data arrival time                                                            6.08
 
-  clock clock (rise edge)                                           9.50       9.50
-  clock network delay (ideal)                                       0.00       9.50
-  clock uncertainty                                                -0.10       9.40
-  is_packet_in_reg[0][NPC][31]/CLK (dffcs1)                         0.00       9.40 r
-  library setup time                                               -0.38       9.02
-  data required time                                                           9.02
+  clock clock (rise edge)                                           8.50       8.50
+  clock network delay (ideal)                                       0.00       8.50
+  clock uncertainty                                                -0.10       8.40
+  is_packet_in_reg[1][reg2_pr][0]/CLK (dffcs1)                      0.00       8.40 r
+  library setup time                                               -0.31       8.09
+  data required time                                                           8.09
   ------------------------------------------------------------------------------------
-  data required time                                                           9.02
-  data arrival time                                                           -8.00
+  data required time                                                           8.09
+  data arrival time                                                           -6.08
   ------------------------------------------------------------------------------------
-  slack (MET)                                                                  1.02
+  slack (MET)                                                                  2.01
 
 
-  Startpoint: cdb_t_debug[t1][0]
+  Startpoint: cdb_t_debug[t1][1]
               (input port clocked by clock)
-  Endpoint: is_packet_in_reg[0][reg1_pr][2]
+  Endpoint: is_packet_in_reg[1][reg1_pr][4]
             (rising edge-triggered flip-flop clocked by clock)
   Path Group: input_grp
   Path Type: max
@@ -676,163 +635,115 @@ Wire Load Model Mode: top
   clock clock (rise edge)                                           0.00       0.00
   clock network delay (ideal)                                       0.00       0.00
   input external delay                                              0.10       0.10 f
-  cdb_t_debug[t1][0] (in)                                 0.18      0.01       0.11 f
-  cdb_t_debug[t1][0] (net)                      1                   0.00       0.11 f
-  U2861/DIN (hi1s1)                                       0.18      0.00       0.11 f
-  U2861/Q (hi1s1)                                         0.21      0.11       0.22 r
-  n1615 (net)                                   1                   0.00       0.22 r
-  U2862/DIN (hi1s1)                                       0.21      0.00       0.22 r
-  U2862/Q (hi1s1)                                         2.22      0.92       1.14 f
-  cdb_t_display[t1][0] (net)                    4                   0.00       1.14 f
-  RS_0/cdb_t[t1][0] (RS)                                            0.00       1.14 f
-  RS_0/cdb_t[t1][0] (net)                                           0.00       1.14 f
-  RS_0/U6448/DIN (ib1s1)                                  2.22      0.00       1.14 f
-  RS_0/U6448/Q (ib1s1)                                    0.65      0.30       1.44 r
-  RS_0/n6851 (net)                              3                   0.00       1.44 r
-  RS_0/U7541/DIN (ib1s1)                                  0.65      0.00       1.44 r
-  RS_0/U7541/Q (ib1s1)                                    0.62      0.33       1.78 f
-  RS_0/n6850 (net)                             19                   0.00       1.78 f
-  RS_0/U11648/DIN1 (and2s1)                               0.62      0.00       1.78 f
-  RS_0/U11648/Q (and2s1)                                  0.26      0.34       2.11 f
-  RS_0/n7387 (net)                              2                   0.00       2.11 f
-  RS_0/U6866/DIN4 (oai22s3)                               0.26      0.00       2.11 f
-  RS_0/U6866/Q (oai22s3)                                  0.28      0.12       2.23 r
-  RS_0/n7389 (net)                              1                   0.00       2.23 r
-  RS_0/U11140/DIN2 (nnd3s2)                               0.28      0.00       2.24 r
-  RS_0/U11140/Q (nnd3s2)                                  0.26      0.09       2.32 f
-  RS_0/n7394 (net)                              1                   0.00       2.32 f
-  RS_0/U11653/DIN1 (nor4s1)                               0.26      0.00       2.33 f
-  RS_0/U11653/Q (nor4s1)                                  0.43      0.21       2.54 r
-  RS_0/N361 (net)                               1                   0.00       2.54 r
-  RS_0/U6485/DIN1 (nor4s1)                                0.43      0.00       2.54 r
-  RS_0/U6485/Q (nor4s1)                                   0.56      0.33       2.87 f
-  RS_0/n5657 (net)                              2                   0.00       2.87 f
-  RS_0/U6851/DIN4 (nor4s2)                                0.56      0.01       2.87 f
-  RS_0/U6851/Q (nor4s2)                                   0.42      0.13       3.00 r
-  RS_0/n5808 (net)                              3                   0.00       3.00 r
-  RS_0/U7505/DIN1 (nor2s1)                                0.42      0.00       3.00 r
-  RS_0/U7505/Q (nor2s1)                                   0.37      0.22       3.23 f
-  RS_0/n5810 (net)                              3                   0.00       3.23 f
-  RS_0/U7507/DIN3 (nnd3s2)                                0.37      0.00       3.23 f
-  RS_0/U7507/Q (nnd3s2)                                   0.32      0.18       3.41 r
-  RS_0/n5814 (net)                              2                   0.00       3.41 r
-  RS_0/U6811/DIN (i1s3)                                   0.32      0.00       3.41 r
-  RS_0/U6811/Q (i1s3)                                     0.13      0.05       3.46 f
-  RS_0/n8231 (net)                              2                   0.00       3.46 f
-  RS_0/U7511/DIN1 (nnd4s1)                                0.13      0.00       3.46 f
-  RS_0/U7511/Q (nnd4s1)                                   0.40      0.11       3.58 r
-  RS_0/n5820 (net)                              1                   0.00       3.58 r
-  RS_0/U7509/DIN2 (nnd3s2)                                0.40      0.00       3.58 r
-  RS_0/U7509/Q (nnd3s2)                                   0.22      0.09       3.67 f
-  RS_0/n5809 (net)                              2                   0.00       3.67 f
-  RS_0/U6810/DIN (i1s1)                                   0.22      0.00       3.67 f
-  RS_0/U6810/Q (i1s1)                                     0.23      0.11       3.78 r
-  RS_0/n8224 (net)                              2                   0.00       3.78 r
-  RS_0/U5231/DIN1 (nnd2s2)                                0.23      0.00       3.78 r
-  RS_0/U5231/Q (nnd2s2)                                   0.16      0.07       3.85 f
-  RS_0/n5804 (net)                              2                   0.00       3.85 f
-  RS_0/U6456/DIN1 (nor2s1)                                0.16      0.00       3.85 f
-  RS_0/U6456/Q (nor2s1)                                   0.36      0.14       3.99 r
-  RS_0/n5802 (net)                              2                   0.00       3.99 r
-  RS_0/U6501/DIN1 (and2s2)                                0.36      0.00       3.99 r
-  RS_0/U6501/Q (and2s2)                                   0.21      0.17       4.16 r
-  RS_0/n5955 (net)                              6                   0.00       4.16 r
-  RS_0/U6725/DIN (ib1s1)                                  0.21      0.00       4.16 r
-  RS_0/U6725/Q (ib1s1)                                    0.40      0.20       4.36 f
-  RS_0/n6792 (net)                             13                   0.00       4.36 f
-  RS_0/U5204/DIN2 (nnd2s2)                                0.40      0.00       4.36 f
-  RS_0/U5204/Q (nnd2s2)                                   0.25      0.14       4.50 r
-  RS_0/n5786 (net)                              2                   0.00       4.50 r
-  RS_0/U6464/DIN2 (nnd2s2)                                0.25      0.00       4.51 r
-  RS_0/U6464/Q (nnd2s2)                                   0.22      0.09       4.60 f
-  RS_0/n5787 (net)                              3                   0.00       4.60 f
-  RS_0/U7327/DIN (ib1s1)                                  0.22      0.00       4.60 f
-  RS_0/U7327/Q (ib1s1)                                    0.14      0.06       4.66 r
-  RS_0/n8222 (net)                              1                   0.00       4.66 r
-  RS_0/U11174/DIN2 (nnd4s1)                               0.14      0.00       4.67 r
-  RS_0/U11174/Q (nnd4s1)                                  0.22      0.10       4.76 f
-  RS_0/n5788 (net)                              1                   0.00       4.76 f
-  RS_0/U6453/DIN2 (and3s1)                                0.22      0.00       4.76 f
-  RS_0/U6453/Q (and3s1)                                   0.20      0.26       5.02 f
-  RS_0/n5768 (net)                              2                   0.00       5.02 f
-  RS_0/U5160/DIN1 (and2s2)                                0.20      0.00       5.03 f
-  RS_0/U5160/Q (and2s2)                                   0.12      0.16       5.18 f
-  RS_0/n5764 (net)                              3                   0.00       5.18 f
-  RS_0/U6466/DIN1 (and2s1)                                0.12      0.00       5.18 f
-  RS_0/U6466/Q (and2s1)                                   0.20      0.21       5.39 f
-  RS_0/n5766 (net)                              2                   0.00       5.39 f
-  RS_0/U5158/DIN1 (nnd2s2)                                0.20      0.00       5.39 f
-  RS_0/U5158/Q (nnd2s2)                                   0.51      0.21       5.60 r
-  RS_0/n3865 (net)                              6                   0.00       5.60 r
-  RS_0/U6977/DIN (ib1s1)                                  0.51      0.00       5.61 r
-  RS_0/U6977/Q (ib1s1)                                    0.41      0.23       5.83 f
-  RS_0/n6354 (net)                              7                   0.00       5.83 f
-  RS_0/U5151/DIN1 (oai211s2)                              0.41      0.00       5.83 f
-  RS_0/U5151/Q (oai211s2)                                 0.52      0.22       6.06 r
-  RS_0/n5699 (net)                              2                   0.00       6.06 r
-  RS_0/U11183/DIN (i1s2)                                  0.52      0.00       6.06 r
-  RS_0/U11183/Q (i1s2)                                    0.21      0.09       6.15 f
-  RS_0/n8215 (net)                              2                   0.00       6.15 f
-  RS_0/U11177/DIN1 (oai1112s2)                            0.21      0.00       6.15 f
-  RS_0/U11177/Q (oai1112s2)                               0.55      0.16       6.31 r
-  RS_0/n5759 (net)                              1                   0.00       6.31 r
-  RS_0/U6458/DIN (ib1s1)                                  0.55      0.00       6.31 r
-  RS_0/U6458/Q (ib1s1)                                    0.20      0.08       6.39 f
-  RS_0/n8211 (net)                              1                   0.00       6.39 f
-  RS_0/U6457/DIN2 (nor2s1)                                0.20      0.00       6.39 f
-  RS_0/U6457/Q (nor2s1)                                   0.35      0.14       6.53 r
-  RS_0/n5698 (net)                              2                   0.00       6.53 r
-  RS_0/U5148/DIN1 (nnd2s2)                                0.35      0.00       6.54 r
-  RS_0/U5148/Q (nnd2s2)                                   0.23      0.10       6.64 f
-  RS_0/n5730 (net)                              2                   0.00       6.64 f
-  RS_0/U11138/DIN (i1s3)                                  0.23      0.00       6.64 f
-  RS_0/U11138/Q (i1s3)                                    0.17      0.08       6.72 r
-  RS_0/n8206 (net)                              3                   0.00       6.72 r
-  RS_0/U6324/DIN1 (nnd3s1)                                0.17      0.00       6.72 r
-  RS_0/U6324/Q (nnd3s1)                                   0.37      0.13       6.85 f
-  RS_0/n4773 (net)                              4                   0.00       6.85 f
-  RS_0/U6326/DIN (i1s1)                                   0.37      0.00       6.86 f
-  RS_0/U6326/Q (i1s1)                                     0.19      0.09       6.95 r
-  RS_0/n6695 (net)                              1                   0.00       6.95 r
-  RS_0/U6317/DIN (ib1s1)                                  0.19      0.00       6.95 r
-  RS_0/U6317/Q (ib1s1)                                    0.12      0.06       7.01 f
-  RS_0/n5932 (net)                              1                   0.00       7.01 f
-  RS_0/U6318/DIN (nb1s2)                                  0.12      0.00       7.01 f
-  RS_0/U6318/Q (nb1s2)                                    0.30      0.23       7.24 f
-  RS_0/n5933 (net)                             18                   0.00       7.24 f
-  RS_0/U8249/DIN4 (oai22s2)                               0.30      0.00       7.24 f
-  RS_0/U8249/Q (oai22s2)                                  0.43      0.17       7.41 r
-  RS_0/n4843 (net)                              1                   0.00       7.41 r
-  RS_0/U7893/DIN5 (aoi221s1)                              0.43      0.00       7.41 r
-  RS_0/U7893/Q (aoi221s1)                                 0.71      0.20       7.61 f
-  RS_0/n4842 (net)                              1                   0.00       7.61 f
-  RS_0/U6331/DIN4 (nnd4s3)                                0.71      0.00       7.61 f
-  RS_0/U6331/Q (nnd4s3)                                   0.24      0.39       8.00 r
-  RS_0/issue_insts[0][reg1_pr][2] (net)         2                   0.00       8.00 r
-  RS_0/issue_insts[0][reg1_pr][2] (RS)                              0.00       8.00 r
-  rs_out_display[0][reg1_pr][2] (net)                               0.00       8.00 r
-  U2910/DIN1 (and2s1)                                     0.24      0.00       8.00 r
-  U2910/Q (and2s1)                                        0.28      0.19       8.19 r
-  n1668 (net)                                   1                   0.00       8.19 r
-  is_packet_in_reg[0][reg1_pr][2]/DIN (dffs1)             0.28      0.01       8.20 r
-  data arrival time                                                            8.20
+  cdb_t_debug[t1][1] (in)                                 0.18      0.01       0.11 f
+  cdb_t_debug[t1][1] (net)                      1                   0.00       0.11 f
+  U2676/DIN (hi1s1)                                       0.18      0.00       0.11 f
+  U2676/Q (hi1s1)                                         0.21      0.11       0.22 r
+  n1447 (net)                                   1                   0.00       0.22 r
+  U2677/DIN (hi1s1)                                       0.21      0.00       0.22 r
+  U2677/Q (hi1s1)                                         2.19      0.91       1.13 f
+  cdb_t_display[t1][1] (net)                    2                   0.00       1.13 f
+  RS_0/cdb_t[t1][1] (RS)                                            0.00       1.13 f
+  RS_0/cdb_t[t1][1] (net)                                           0.00       1.13 f
+  RS_0/U6563/DIN (i1s3)                                   2.19      0.00       1.13 f
+  RS_0/U6563/Q (i1s3)                                     0.86      0.45       1.58 r
+  RS_0/n6265 (net)                             15                   0.00       1.58 r
+  RS_0/U8117/DIN (i1s5)                                   0.86      0.01       1.59 r
+  RS_0/U8117/Q (i1s5)                                     0.43      0.20       1.79 f
+  RS_0/n6264 (net)                             18                   0.00       1.79 f
+  RS_0/U8564/DIN2 (xor2s1)                                0.43      0.00       1.79 f
+  RS_0/U8564/Q (xor2s1)                                   0.16      0.26       2.05 r
+  RS_0/n7635 (net)                              1                   0.00       2.05 r
+  RS_0/U10085/DIN6 (nor6s1)                               0.16      0.00       2.05 r
+  RS_0/U10085/Q (nor6s1)                                  0.12      0.24       2.29 f
+  RS_0/n7658 (net)                              1                   0.00       2.29 f
+  RS_0/U10091/DIN2 (or3s1)                                0.12      0.00       2.30 f
+  RS_0/U10091/Q (or3s1)                                   0.16      0.21       2.51 f
+  RS_0/n7799 (net)                              2                   0.00       2.51 f
+  RS_0/U10155/DIN2 (nnd4s1)                               0.16      0.00       2.51 f
+  RS_0/U10155/Q (nnd4s1)                                  0.47      0.17       2.67 r
+  RS_0/n8003 (net)                              3                   0.00       2.67 r
+  RS_0/U6289/DIN (ib1s1)                                  0.47      0.00       2.68 r
+  RS_0/U6289/Q (ib1s1)                                    0.32      0.17       2.85 f
+  RS_0/n7994 (net)                              3                   0.00       2.85 f
+  RS_0/U8081/DIN2 (nor2s2)                                0.32      0.00       2.85 f
+  RS_0/U8081/Q (nor2s2)                                   0.20      0.08       2.93 r
+  RS_0/n7984 (net)                              1                   0.00       2.93 r
+  RS_0/U10196/DIN1 (nnd2s2)                               0.20      0.00       2.94 r
+  RS_0/U10196/Q (nnd2s2)                                  0.17      0.07       3.01 f
+  RS_0/n7991 (net)                              2                   0.00       3.01 f
+  RS_0/U6905/DIN1 (and4s3)                                0.17      0.00       3.01 f
+  RS_0/U6905/Q (and4s3)                                   0.15      0.19       3.20 f
+  RS_0/n6222 (net)                              7                   0.00       3.20 f
+  RS_0/U7115/DIN2 (nnd2s1)                                0.15      0.00       3.20 f
+  RS_0/U7115/Q (nnd2s1)                                   0.24      0.12       3.31 r
+  RS_0/n11080 (net)                             2                   0.00       3.31 r
+  RS_0/U9485/DIN (i1s2)                                   0.24      0.00       3.32 r
+  RS_0/U9485/Q (i1s2)                                     0.20      0.10       3.42 f
+  RS_0/n6201 (net)                              3                   0.00       3.42 f
+  RS_0/U7111/DIN2 (oai21s3)                               0.20      0.00       3.42 f
+  RS_0/U7111/Q (oai21s3)                                  0.37      0.14       3.56 r
+  RS_0/n8021 (net)                              2                   0.00       3.56 r
+  RS_0/U6907/DIN (i1s3)                                   0.37      0.00       3.57 r
+  RS_0/U6907/Q (i1s3)                                     0.14      0.06       3.62 f
+  RS_0/n8014 (net)                              2                   0.00       3.62 f
+  RS_0/U8025/DIN1 (and3s2)                                0.14      0.00       3.62 f
+  RS_0/U8025/Q (and3s2)                                   0.11      0.14       3.77 f
+  RS_0/n6066 (net)                              2                   0.00       3.77 f
+  RS_0/U7103/DIN2 (nnd2s2)                                0.11      0.00       3.77 f
+  RS_0/U7103/Q (nnd2s2)                                   0.17      0.08       3.85 r
+  RS_0/n8009 (net)                              1                   0.00       3.85 r
+  RS_0/U10206/DIN2 (oai21s3)                              0.17      0.00       3.85 r
+  RS_0/U10206/Q (oai21s3)                                 0.26      0.10       3.95 f
+  RS_0/n8010 (net)                              1                   0.00       3.95 f
+  RS_0/U7102/DIN2 (nor2s2)                                0.26      0.00       3.96 f
+  RS_0/U7102/Q (nor2s2)                                   0.23      0.09       4.05 r
+  RS_0/n8076 (net)                              2                   0.00       4.05 r
+  RS_0/U7084/DIN (i1s2)                                   0.23      0.00       4.05 r
+  RS_0/U7084/Q (i1s2)                                     0.15      0.07       4.13 f
+  RS_0/n6048 (net)                              1                   0.00       4.13 f
+  RS_0/U6262/DIN (i1s3)                                   0.15      0.00       4.13 f
+  RS_0/U6262/Q (i1s3)                                     0.14      0.06       4.19 r
+  RS_0/n6049 (net)                              4                   0.00       4.19 r
+  RS_0/U6314/DIN1 (and4s1)                                0.14      0.00       4.19 r
+  RS_0/U6314/Q (and4s1)                                   0.27      0.22       4.41 r
+  RS_0/n6307 (net)                              2                   0.00       4.41 r
+  RS_0/U6239/DIN (i1s1)                                   0.27      0.00       4.41 r
+  RS_0/U6239/Q (i1s1)                                     0.22      0.11       4.53 f
+  RS_0/n10141 (net)                             1                   0.00       4.53 f
+  RS_0/U6280/DIN (i1s3)                                   0.22      0.00       4.53 f
+  RS_0/U6280/Q (i1s3)                                     0.26      0.12       4.65 r
+  RS_0/n6725 (net)                             14                   0.00       4.65 r
+  RS_0/U7155/DIN (hi1s1)                                  0.26      0.00       4.65 r
+  RS_0/U7155/Q (hi1s1)                                    1.48      0.64       5.29 f
+  RS_0/n6718 (net)                             11                   0.00       5.29 f
+  RS_0/U9647/DIN2 (oai2222s1)                             1.48      0.00       5.29 f
+  RS_0/U9647/Q (oai2222s1)                                0.17      0.49       5.78 r
+  RS_0/n9187 (net)                              1                   0.00       5.78 r
+  RS_0/U6361/DIN2 (or3s2)                                 0.17      0.00       5.78 r
+  RS_0/U6361/Q (or3s2)                                    0.36      0.29       6.08 r
+  RS_0/issue_insts[1][reg1_pr][4] (net)         2                   0.00       6.08 r
+  RS_0/issue_insts[1][reg1_pr][4] (RS)                              0.00       6.08 r
+  rs_out_display[1][reg1_pr][4] (net)                               0.00       6.08 r
+  is_packet_in_reg[1][reg1_pr][4]/CLRB (dffcs1)           0.36      0.00       6.08 r
+  data arrival time                                                            6.08
 
-  clock clock (rise edge)                                           9.50       9.50
-  clock network delay (ideal)                                       0.00       9.50
-  clock uncertainty                                                -0.10       9.40
-  is_packet_in_reg[0][reg1_pr][2]/CLK (dffs1)                       0.00       9.40 r
-  library setup time                                               -0.14       9.26
-  data required time                                                           9.26
+  clock clock (rise edge)                                           8.50       8.50
+  clock network delay (ideal)                                       0.00       8.50
+  clock uncertainty                                                -0.10       8.40
+  is_packet_in_reg[1][reg1_pr][4]/CLK (dffcs1)                      0.00       8.40 r
+  library setup time                                               -0.31       8.09
+  data required time                                                           8.09
   ------------------------------------------------------------------------------------
-  data required time                                                           9.26
-  data arrival time                                                           -8.20
+  data required time                                                           8.09
+  data arrival time                                                           -6.08
   ------------------------------------------------------------------------------------
-  slack (MET)                                                                  1.07
+  slack (MET)                                                                  2.01
 
 
   Startpoint: is_packet_in_reg[2][fu_sel][2]
               (rising edge-triggered flip-flop clocked by clock)
-  Endpoint: rs_out_display[0][reg1_pr][2]
+  Endpoint: rs_out_display[0][reg2_pr][1]
             (output port clocked by clock)
   Path Group: output_grp
   Path Type: max
@@ -844,165 +755,167 @@ Wire Load Model Mode: top
   Point                                       Fanout     Trans      Incr       Path
   ------------------------------------------------------------------------------------
   is_packet_in_reg[2][fu_sel][2]/CLK (dffcs2)             0.00      0.00 #     0.00 r
-  is_packet_in_reg[2][fu_sel][2]/QN (dffcs2)              0.17      0.17       0.17 f
-  n328 (net)                                    1                   0.00       0.17 f
-  U2724/DIN (ib1s2)                                       0.17      0.00       0.17 f
-  U2724/Q (ib1s2)                                         0.10      0.04       0.22 r
-  n2272 (net)                                   1                   0.00       0.22 r
-  U5480/DIN3 (nor4s1)                                     0.10      0.00       0.22 r
-  U5480/Q (nor4s1)                                        0.39      0.15       0.37 f
-  issue_0/ls_fifo_in[2][valid] (net)            1                   0.00       0.37 f
-  issue_0/ls_fifo/fu_pckt_in[2][valid] (fu_FIFO_3)                  0.00       0.37 f
-  issue_0/ls_fifo/fu_pckt_in[2][valid] (net)                        0.00       0.37 f
-  issue_0/ls_fifo/U25380/DIN (ib1s1)                      0.39      0.00       0.37 f
-  issue_0/ls_fifo/U25380/Q (ib1s1)                        0.81      0.36       0.72 r
-  issue_0/ls_fifo/n22749 (net)                  9                   0.00       0.72 r
-  issue_0/ls_fifo/U29079/DIN (i1s3)                       0.81      0.00       0.73 r
-  issue_0/ls_fifo/U29079/Q (i1s3)                         0.62      0.34       1.06 f
-  issue_0/ls_fifo/n22743 (net)                 25                   0.00       1.06 f
-  issue_0/ls_fifo/U37029/DIN2 (xor2s1)                    0.62      0.00       1.07 f
-  issue_0/ls_fifo/U37029/Q (xor2s1)                       0.22      0.32       1.38 r
-  issue_0/ls_fifo/n28629 (net)                  2                   0.00       1.38 r
-  issue_0/ls_fifo/U37030/DIN2 (xor2s1)                    0.22      0.00       1.39 r
-  issue_0/ls_fifo/U37030/Q (xor2s1)                       0.23      0.17       1.55 f
-  issue_0/ls_fifo/wr_count[0] (net)             2                   0.00       1.55 f
-  issue_0/ls_fifo/U47254/DIN1 (and2s1)                    0.23      0.00       1.55 f
-  issue_0/ls_fifo/U47254/Q (and2s1)                       0.16      0.21       1.76 f
-  issue_0/ls_fifo/add_61/carry[1] (net)         1                   0.00       1.76 f
-  issue_0/ls_fifo/U47238/CIN (fadd1s1)                    0.16      0.00       1.77 f
-  issue_0/ls_fifo/U47238/OUTC (fadd1s1)                   0.21      0.28       2.05 f
-  issue_0/ls_fifo/add_61/carry[2] (net)         2                   0.00       2.05 f
-  issue_0/ls_fifo/U47252/DIN1 (and2s1)                    0.21      0.00       2.05 f
-  issue_0/ls_fifo/U47252/Q (and2s1)                       0.17      0.21       2.26 f
-  issue_0/ls_fifo/add_61/carry[3] (net)         2                   0.00       2.26 f
-  issue_0/ls_fifo/U47250/DIN1 (and2s1)                    0.17      0.00       2.26 f
-  issue_0/ls_fifo/U47250/Q (and2s1)                       0.20      0.22       2.48 f
-  issue_0/ls_fifo/add_61/carry[4] (net)         2                   0.00       2.48 f
-  issue_0/ls_fifo/U47249/DIN1 (xor2s1)                    0.20      0.00       2.48 f
-  issue_0/ls_fifo/U47249/Q (xor2s1)                       0.17      0.23       2.72 f
-  issue_0/ls_fifo/tail_next[4] (net)            3                   0.00       2.72 f
-  issue_0/ls_fifo/U47256/DIN2 (oai1112s1)                 0.17      0.00       2.72 f
-  issue_0/ls_fifo/U47256/Q (oai1112s1)                    0.63      0.22       2.94 r
-  issue_0/ls_fifo/n22750 (net)                  1                   0.00       2.94 r
-  issue_0/ls_fifo/U29259/DIN (ib1s1)                      0.63      0.00       2.94 r
-  issue_0/ls_fifo/U29259/Q (ib1s1)                        0.24      0.10       3.04 f
-  issue_0/ls_fifo/n22751 (net)                  2                   0.00       3.04 f
-  issue_0/ls_fifo/U47240/DIN2 (and2s1)                    0.24      0.00       3.04 f
-  issue_0/ls_fifo/U47240/Q (and2s1)                       0.14      0.22       3.26 f
-  issue_0/ls_fifo/N115 (net)                    1                   0.00       3.26 f
-  issue_0/ls_fifo/U358/DIN2 (or2s2)                       0.14      0.00       3.26 f
-  issue_0/ls_fifo/U358/Q (or2s2)                          0.09      0.14       3.41 f
-  issue_0/ls_fifo/almost_full (net)             2                   0.00       3.41 f
-  issue_0/ls_fifo/almost_full (fu_FIFO_3)                           0.00       3.41 f
-  n2703 (net)                                                       0.00       3.41 f
-  RS_0/fu_fifo_stall[ls] (RS)                                       0.00       3.41 f
-  RS_0/fu_fifo_stall[ls] (net)                                      0.00       3.41 f
-  RS_0/U6593/DIN (i1s1)                                   0.09      0.00       3.41 f
-  RS_0/U6593/Q (i1s1)                                     0.11      0.05       3.46 r
-  RS_0/n6009 (net)                              1                   0.00       3.46 r
-  RS_0/U6594/DIN (i1s1)                                   0.11      0.00       3.46 r
-  RS_0/U6594/Q (i1s1)                                     0.80      0.37       3.82 f
-  RS_0/n6010 (net)                             16                   0.00       3.82 f
-  RS_0/U8424/DIN3 (oai322s1)                              0.80      0.00       3.82 f
-  RS_0/U8424/Q (oai322s1)                                 0.81      0.40       4.22 r
-  RS_0/n5849 (net)                              1                   0.00       4.22 r
-  RS_0/U6442/DIN (ib1s1)                                  0.81      0.00       4.23 r
-  RS_0/U6442/Q (ib1s1)                                    0.27      0.10       4.33 f
-  RS_0/n8258 (net)                              1                   0.00       4.33 f
-  RS_0/U6506/DIN2 (or4s3)                                 0.27      0.00       4.33 f
-  RS_0/U6506/Q (or4s3)                                    0.15      0.18       4.51 f
-  RS_0/n5957 (net)                              3                   0.00       4.51 f
-  RS_0/U7521/DIN (i1s3)                                   0.15      0.00       4.51 f
-  RS_0/U7521/Q (i1s3)                                     0.70      0.28       4.79 r
-  RS_0/n6793 (net)                             28                   0.00       4.79 r
-  RS_0/U6824/DIN1 (nor2s3)                                0.70      0.01       4.80 r
-  RS_0/U6824/Q (nor2s3)                                   0.32      0.17       4.96 f
-  RS_0/n5818 (net)                              3                   0.00       4.96 f
-  RS_0/U7506/DIN3 (nnd3s2)                                0.32      0.00       4.97 f
-  RS_0/U7506/Q (nnd3s2)                                   0.30      0.16       5.13 r
-  RS_0/n5792 (net)                              3                   0.00       5.13 r
-  RS_0/U11178/DIN2 (nnd2s1)                               0.30      0.00       5.13 r
-  RS_0/U11178/Q (nnd2s1)                                  0.22      0.10       5.23 f
-  RS_0/n5817 (net)                              2                   0.00       5.23 f
-  RS_0/U6832/DIN (i1s1)                                   0.22      0.00       5.23 f
-  RS_0/U6832/Q (i1s1)                                     0.18      0.08       5.31 r
-  RS_0/n8251 (net)                              1                   0.00       5.31 r
-  RS_0/U5223/DIN1 (nnd2s2)                                0.18      0.00       5.32 r
-  RS_0/U5223/Q (nnd2s2)                                   0.44      0.20       5.51 f
-  RS_0/n5579 (net)                              6                   0.00       5.51 f
-  RS_0/U7180/DIN (i1s3)                                   0.44      0.00       5.52 f
-  RS_0/U7180/Q (i1s3)                                     0.76      0.34       5.86 r
-  RS_0/n6403 (net)                             31                   0.00       5.86 r
-  RS_0/U6463/DIN2 (nor2s1)                                0.76      0.00       5.86 r
-  RS_0/U6463/Q (nor2s1)                                   0.35      0.20       6.06 f
-  RS_0/n5777 (net)                              2                   0.00       6.06 f
-  RS_0/U6459/DIN3 (or3s2)                                 0.35      0.00       6.06 f
-  RS_0/U6459/Q (or3s2)                                    0.13      0.20       6.27 f
-  RS_0/n5780 (net)                              2                   0.00       6.27 f
-  RS_0/U6462/DIN (ib1s1)                                  0.13      0.00       6.27 f
-  RS_0/U6462/Q (ib1s1)                                    0.14      0.06       6.33 r
-  RS_0/n8249 (net)                              2                   0.00       6.33 r
-  RS_0/U6472/DIN1 (nor2s1)                                0.14      0.00       6.33 r
-  RS_0/U6472/Q (nor2s1)                                   0.36      0.16       6.49 f
-  RS_0/n5779 (net)                              2                   0.00       6.49 f
-  RS_0/U6518/DIN1 (nnd2s2)                                0.36      0.00       6.50 f
-  RS_0/U6518/Q (nnd2s2)                                   0.71      0.31       6.81 r
-  RS_0/n3863 (net)                             17                   0.00       6.81 r
-  RS_0/U6780/DIN (ib1s1)                                  0.71      0.00       6.81 r
-  RS_0/U6780/Q (ib1s1)                                    0.44      0.23       7.04 f
-  RS_0/n6747 (net)                              6                   0.00       7.04 f
-  RS_0/U6500/DIN (i1s3)                                   0.44      0.00       7.05 f
-  RS_0/U6500/Q (i1s3)                                     0.51      0.25       7.29 r
-  RS_0/n6746 (net)                             22                   0.00       7.29 r
-  RS_0/U6807/DIN1 (aoi21s1)                               0.51      0.00       7.29 r
-  RS_0/U6807/Q (aoi21s1)                                  0.48      0.25       7.54 f
-  RS_0/n5583 (net)                              4                   0.00       7.54 f
-  RS_0/U6736/DIN1 (oai1112s1)                             0.48      0.00       7.54 f
-  RS_0/U6736/Q (oai1112s1)                                0.73      0.27       7.81 r
-  RS_0/n5642 (net)                              1                   0.00       7.81 r
-  RS_0/U4025/DIN2 (nnd2s2)                                0.73      0.00       7.81 r
-  RS_0/U4025/Q (nnd2s2)                                   0.29      0.10       7.91 f
-  RS_0/n5597 (net)                              3                   0.00       7.91 f
-  RS_0/U6712/DIN (ib1s1)                                  0.29      0.00       7.91 f
-  RS_0/U6712/Q (ib1s1)                                    0.21      0.10       8.01 r
-  RS_0/n8237 (net)                              2                   0.00       8.01 r
-  RS_0/U6558/DIN3 (nnd3s1)                                0.21      0.00       8.02 r
-  RS_0/U6558/Q (nnd3s1)                                   0.39      0.17       8.19 f
-  RS_0/n4782 (net)                              4                   0.00       8.19 f
-  RS_0/U6559/DIN (ib1s1)                                  0.39      0.00       8.19 f
-  RS_0/U6559/Q (ib1s1)                                    0.42      0.21       8.39 r
-  RS_0/n6687 (net)                              7                   0.00       8.39 r
-  RS_0/U6931/DIN (ib1s1)                                  0.42      0.00       8.40 r
-  RS_0/U6931/Q (ib1s1)                                    0.84      0.42       8.82 f
-  RS_0/n6681 (net)                             22                   0.00       8.82 f
-  RS_0/U7641/DIN2 (oai22s2)                               0.84      0.00       8.82 f
-  RS_0/U7641/Q (oai22s2)                                  0.40      0.19       9.01 r
-  RS_0/n4844 (net)                              1                   0.00       9.01 r
-  RS_0/U7640/DIN5 (aoi221s1)                              0.40      0.00       9.01 r
-  RS_0/U7640/Q (aoi221s1)                                 0.70      0.19       9.20 f
-  RS_0/n4840 (net)                              1                   0.00       9.20 f
-  RS_0/U6331/DIN2 (nnd4s3)                                0.70      0.00       9.20 f
-  RS_0/U6331/Q (nnd4s3)                                   0.24      0.41       9.61 r
-  RS_0/issue_insts[0][reg1_pr][2] (net)         2                   0.00       9.61 r
-  RS_0/issue_insts[0][reg1_pr][2] (RS)                              0.00       9.61 r
-  rs_out_display[0][reg1_pr][2] (net)                               0.00       9.61 r
-  rs_out_display[0][reg1_pr][2] (out)                     0.24      0.02       9.63 r
-  data arrival time                                                            9.63
+  is_packet_in_reg[2][fu_sel][2]/QN (dffcs2)              0.18      0.15       0.15 r
+  n328 (net)                                    2                   0.00       0.15 r
+  is_packet_in_reg[2][fu_sel][2]/Q (dffcs2)               0.30      0.16       0.31 f
+  is_in_display[2][fu_sel][2] (net)             6                   0.00       0.31 f
+  U5314/DIN1 (and4s1)                                     0.30      0.00       0.31 f
+  U5314/Q (and4s1)                                        0.20      0.24       0.54 f
+  issue_0/mult_fifo_in[2][valid] (net)          2                   0.00       0.54 f
+  issue_0/mult_fifo/fu_pckt_in[2][valid] (fu_FIFO_3)                0.00       0.54 f
+  issue_0/mult_fifo/fu_pckt_in[2][valid] (net)                      0.00       0.54 f
+  issue_0/mult_fifo/U24494/DIN (i1s3)                     0.20      0.00       0.55 f
+  issue_0/mult_fifo/U24494/Q (i1s3)                       0.36      0.16       0.71 r
+  issue_0/mult_fifo/n22750 (net)               10                   0.00       0.71 r
+  issue_0/mult_fifo/U29127/DIN (i1s3)                     0.36      0.00       0.71 r
+  issue_0/mult_fifo/U29127/Q (i1s3)                       0.65      0.33       1.04 f
+  issue_0/mult_fifo/n22749 (net)               32                   0.00       1.04 f
+  issue_0/mult_fifo/U36875/DIN2 (xor2s1)                  0.65      0.00       1.04 f
+  issue_0/mult_fifo/U36875/Q (xor2s1)                     0.25      0.31       1.36 r
+  issue_0/mult_fifo/n28631 (net)                2                   0.00       1.36 r
+  issue_0/mult_fifo/U36879/DIN2 (xor2s1)                  0.25      0.00       1.36 r
+  issue_0/mult_fifo/U36879/Q (xor2s1)                     0.22      0.17       1.53 f
+  issue_0/mult_fifo/wr_count[0] (net)           2                   0.00       1.53 f
+  issue_0/mult_fifo/U47269/DIN1 (and2s1)                  0.22      0.00       1.53 f
+  issue_0/mult_fifo/U47269/Q (and2s1)                     0.16      0.21       1.74 f
+  issue_0/mult_fifo/add_61/carry[1] (net)       1                   0.00       1.74 f
+  issue_0/mult_fifo/U47247/CIN (fadd1s1)                  0.16      0.00       1.74 f
+  issue_0/mult_fifo/U47247/OUTC (fadd1s1)                 0.21      0.28       2.02 f
+  issue_0/mult_fifo/add_61/carry[2] (net)       2                   0.00       2.02 f
+  issue_0/mult_fifo/U47267/DIN1 (and2s1)                  0.21      0.00       2.02 f
+  issue_0/mult_fifo/U47267/Q (and2s1)                     0.17      0.21       2.23 f
+  issue_0/mult_fifo/add_61/carry[3] (net)       2                   0.00       2.23 f
+  issue_0/mult_fifo/U47265/DIN1 (and2s1)                  0.17      0.00       2.23 f
+  issue_0/mult_fifo/U47265/Q (and2s1)                     0.21      0.22       2.46 f
+  issue_0/mult_fifo/add_61/carry[4] (net)       2                   0.00       2.46 f
+  issue_0/mult_fifo/U47264/DIN1 (xor2s1)                  0.21      0.00       2.46 f
+  issue_0/mult_fifo/U47264/Q (xor2s1)                     0.18      0.24       2.70 f
+  issue_0/mult_fifo/tail_next[4] (net)          3                   0.00       2.70 f
+  issue_0/mult_fifo/U47271/DIN2 (oai1112s1)               0.18      0.00       2.70 f
+  issue_0/mult_fifo/U47271/Q (oai1112s1)                  0.63      0.22       2.92 r
+  issue_0/mult_fifo/n22751 (net)                1                   0.00       2.92 r
+  issue_0/mult_fifo/U29155/DIN (ib1s1)                    0.63      0.00       2.92 r
+  issue_0/mult_fifo/U29155/Q (ib1s1)                      0.24      0.10       3.02 f
+  issue_0/mult_fifo/n22752 (net)                2                   0.00       3.02 f
+  issue_0/mult_fifo/U47257/DIN2 (and2s1)                  0.24      0.00       3.02 f
+  issue_0/mult_fifo/U47257/Q (and2s1)                     0.14      0.22       3.24 f
+  issue_0/mult_fifo/N115 (net)                  1                   0.00       3.24 f
+  issue_0/mult_fifo/U358/DIN2 (or2s2)                     0.14      0.00       3.24 f
+  issue_0/mult_fifo/U358/Q (or2s2)                        0.23      0.23       3.48 f
+  issue_0/mult_fifo/almost_full (net)           2                   0.00       3.48 f
+  issue_0/mult_fifo/almost_full (fu_FIFO_3)                         0.00       3.48 f
+  fu_fifo_stall_display[mult] (net)                                 0.00       3.48 f
+  RS_0/fu_fifo_stall[mult] (RS)                                     0.00       3.48 f
+  RS_0/fu_fifo_stall[mult] (net)                                    0.00       3.48 f
+  RS_0/U6285/DIN (ib1s1)                                  0.23      0.00       3.48 f
+  RS_0/U6285/Q (ib1s1)                                    0.79      0.33       3.80 r
+  RS_0/n7922 (net)                             16                   0.00       3.80 r
+  RS_0/U10135/DIN4 (aoi22s2)                              0.79      0.00       3.80 r
+  RS_0/U10135/Q (aoi22s2)                                 0.41      0.17       3.98 f
+  RS_0/n7745 (net)                              1                   0.00       3.98 f
+  RS_0/U10136/DIN5 (oai322s1)                             0.41      0.00       3.98 f
+  RS_0/U10136/Q (oai322s1)                                1.00      0.37       4.35 r
+  RS_0/n7746 (net)                              2                   0.00       4.35 r
+  RS_0/U7215/DIN3 (nnd4s2)                                1.00      0.00       4.35 r
+  RS_0/U7215/Q (nnd4s2)                                   0.49      0.18       4.53 f
+  RS_0/n8001 (net)                              3                   0.00       4.53 f
+  RS_0/U8085/DIN1 (and4s3)                                0.49      0.00       4.54 f
+  RS_0/U8085/Q (and4s3)                                   0.14      0.22       4.76 f
+  RS_0/n6068 (net)                              4                   0.00       4.76 f
+  RS_0/U7217/DIN1 (nnd2s3)                                0.14      0.00       4.76 f
+  RS_0/U7217/Q (nnd2s3)                                   0.23      0.06       4.82 r
+  RS_0/n8002 (net)                              2                   0.00       4.82 r
+  RS_0/U9732/DIN2 (nor2s2)                                0.23      0.00       4.83 r
+  RS_0/U9732/Q (nor2s2)                                   0.21      0.07       4.90 f
+  RS_0/n7983 (net)                              1                   0.00       4.90 f
+  RS_0/U10196/DIN2 (nnd2s2)                               0.21      0.00       4.90 f
+  RS_0/U10196/Q (nnd2s2)                                  0.21      0.10       5.01 r
+  RS_0/n7991 (net)                              2                   0.00       5.01 r
+  RS_0/U6905/DIN1 (and4s3)                                0.21      0.00       5.01 r
+  RS_0/U6905/Q (and4s3)                                   0.20      0.18       5.19 r
+  RS_0/n6222 (net)                              7                   0.00       5.19 r
+  RS_0/U7115/DIN2 (nnd2s1)                                0.20      0.00       5.19 r
+  RS_0/U7115/Q (nnd2s1)                                   0.21      0.10       5.29 f
+  RS_0/n11080 (net)                             2                   0.00       5.29 f
+  RS_0/U9485/DIN (i1s2)                                   0.21      0.00       5.29 f
+  RS_0/U9485/Q (i1s2)                                     0.21      0.10       5.39 r
+  RS_0/n6201 (net)                              3                   0.00       5.39 r
+  RS_0/U7111/DIN2 (oai21s3)                               0.21      0.00       5.39 r
+  RS_0/U7111/Q (oai21s3)                                  0.33      0.12       5.51 f
+  RS_0/n8021 (net)                              2                   0.00       5.51 f
+  RS_0/U6907/DIN (i1s3)                                   0.33      0.00       5.52 f
+  RS_0/U6907/Q (i1s3)                                     0.15      0.07       5.59 r
+  RS_0/n8014 (net)                              2                   0.00       5.59 r
+  RS_0/U8025/DIN1 (and3s2)                                0.15      0.00       5.59 r
+  RS_0/U8025/Q (and3s2)                                   0.14      0.13       5.72 r
+  RS_0/n6066 (net)                              2                   0.00       5.72 r
+  RS_0/U7103/DIN2 (nnd2s2)                                0.14      0.00       5.72 r
+  RS_0/U7103/Q (nnd2s2)                                   0.14      0.07       5.79 f
+  RS_0/n8009 (net)                              1                   0.00       5.79 f
+  RS_0/U10206/DIN2 (oai21s3)                              0.14      0.00       5.79 f
+  RS_0/U10206/Q (oai21s3)                                 0.28      0.11       5.91 r
+  RS_0/n8010 (net)                              1                   0.00       5.91 r
+  RS_0/U7102/DIN2 (nor2s2)                                0.28      0.00       5.91 r
+  RS_0/U7102/Q (nor2s2)                                   0.24      0.10       6.01 f
+  RS_0/n8076 (net)                              2                   0.00       6.01 f
+  RS_0/U7084/DIN (i1s2)                                   0.24      0.00       6.01 f
+  RS_0/U7084/Q (i1s2)                                     0.17      0.08       6.09 r
+  RS_0/n6048 (net)                              1                   0.00       6.09 r
+  RS_0/U6262/DIN (i1s3)                                   0.17      0.00       6.09 r
+  RS_0/U6262/Q (i1s3)                                     0.12      0.06       6.15 f
+  RS_0/n6049 (net)                              4                   0.00       6.15 f
+  RS_0/U6314/DIN1 (and4s1)                                0.12      0.00       6.15 f
+  RS_0/U6314/Q (and4s1)                                   0.19      0.19       6.34 f
+  RS_0/n6307 (net)                              2                   0.00       6.34 f
+  RS_0/U6902/DIN1 (oai21s3)                               0.19      0.00       6.35 f
+  RS_0/U6902/Q (oai21s3)                                  0.34      0.15       6.49 r
+  RS_0/n8093 (net)                              3                   0.00       6.49 r
+  RS_0/U6240/DIN1 (nor2s2)                                0.34      0.00       6.50 r
+  RS_0/U6240/Q (nor2s2)                                   0.22      0.13       6.63 f
+  RS_0/n8074 (net)                              1                   0.00       6.63 f
+  RS_0/U10253/DIN1 (and4s3)                               0.22      0.00       6.63 f
+  RS_0/U10253/Q (and4s3)                                  0.11      0.16       6.79 f
+  RS_0/n8099 (net)                              2                   0.00       6.79 f
+  RS_0/U10255/DIN1 (aoi21s3)                              0.11      0.00       6.79 f
+  RS_0/U10255/Q (aoi21s3)                                 0.25      0.13       6.92 r
+  RS_0/n8100 (net)                              2                   0.00       6.92 r
+  RS_0/U6865/DIN2 (and2s2)                                0.25      0.00       6.92 r
+  RS_0/U6865/Q (and2s2)                                   0.19      0.15       7.07 r
+  RS_0/n6016 (net)                              5                   0.00       7.07 r
+  RS_0/U6252/DIN1 (nnd4s2)                                0.19      0.00       7.08 r
+  RS_0/U6252/Q (nnd4s2)                                   0.45      0.10       7.18 f
+  RS_0/n6184 (net)                              2                   0.00       7.18 f
+  RS_0/U9466/DIN (i1s8)                                   0.45      0.00       7.18 f
+  RS_0/U9466/Q (i1s8)                                     0.15      0.22       7.41 r
+  RS_0/n6188 (net)                             22                   0.00       7.41 r
+  RS_0/U6867/DIN3 (aoi22s3)                               0.15      0.00       7.41 r
+  RS_0/U6867/Q (aoi22s3)                                  0.59      0.13       7.53 f
+  RS_0/n8333 (net)                              1                   0.00       7.53 f
+  RS_0/U9373/DIN3 (oai1112s2)                             0.59      0.00       7.54 f
+  RS_0/U9373/Q (oai1112s2)                                0.59      0.34       7.87 r
+  RS_0/n11480 (net)                             1                   0.00       7.87 r
+  RS_0/U6254/DIN (nb1s4)                                  0.59      0.00       7.88 r
+  RS_0/U6254/Q (nb1s4)                                    0.25      0.20       8.07 r
+  RS_0/issue_insts[0][reg2_pr][1] (net)         2                   0.00       8.07 r
+  RS_0/issue_insts[0][reg2_pr][1] (RS)                              0.00       8.07 r
+  rs_out_display[0][reg2_pr][1] (net)                               0.00       8.07 r
+  rs_out_display[0][reg2_pr][1] (out)                     0.25      0.02       8.09 r
+  data arrival time                                                            8.09
 
-  max_delay                                                         9.50       9.50
-  clock uncertainty                                                -0.10       9.40
-  output external delay                                            -0.10       9.30
-  data required time                                                           9.30
+  max_delay                                                         8.50       8.50
+  clock uncertainty                                                -0.10       8.40
+  output external delay                                            -0.10       8.30
+  data required time                                                           8.30
   ------------------------------------------------------------------------------------
-  data required time                                                           9.30
-  data arrival time                                                           -9.63
+  data required time                                                           8.30
+  data arrival time                                                           -8.09
   ------------------------------------------------------------------------------------
-  slack (VIOLATED)                                                            -0.33
+  slack (MET)                                                                  0.21
 
 
   Startpoint: is_packet_in_reg[2][fu_sel][2]
               (rising edge-triggered flip-flop clocked by clock)
-  Endpoint: rs_out_display[0][reg2_pr][3]
+  Endpoint: rs_out_display[0][PC][20]
             (output port clocked by clock)
   Path Group: output_grp
   Path Type: max
@@ -1014,160 +927,168 @@ Wire Load Model Mode: top
   Point                                       Fanout     Trans      Incr       Path
   ------------------------------------------------------------------------------------
   is_packet_in_reg[2][fu_sel][2]/CLK (dffcs2)             0.00      0.00 #     0.00 r
-  is_packet_in_reg[2][fu_sel][2]/QN (dffcs2)              0.17      0.17       0.17 f
-  n328 (net)                                    1                   0.00       0.17 f
-  U2724/DIN (ib1s2)                                       0.17      0.00       0.17 f
-  U2724/Q (ib1s2)                                         0.10      0.04       0.22 r
-  n2272 (net)                                   1                   0.00       0.22 r
-  U5480/DIN3 (nor4s1)                                     0.10      0.00       0.22 r
-  U5480/Q (nor4s1)                                        0.39      0.15       0.37 f
-  issue_0/ls_fifo_in[2][valid] (net)            1                   0.00       0.37 f
-  issue_0/ls_fifo/fu_pckt_in[2][valid] (fu_FIFO_3)                  0.00       0.37 f
-  issue_0/ls_fifo/fu_pckt_in[2][valid] (net)                        0.00       0.37 f
-  issue_0/ls_fifo/U25380/DIN (ib1s1)                      0.39      0.00       0.37 f
-  issue_0/ls_fifo/U25380/Q (ib1s1)                        0.81      0.36       0.72 r
-  issue_0/ls_fifo/n22749 (net)                  9                   0.00       0.72 r
-  issue_0/ls_fifo/U29079/DIN (i1s3)                       0.81      0.00       0.73 r
-  issue_0/ls_fifo/U29079/Q (i1s3)                         0.62      0.34       1.06 f
-  issue_0/ls_fifo/n22743 (net)                 25                   0.00       1.06 f
-  issue_0/ls_fifo/U37029/DIN2 (xor2s1)                    0.62      0.00       1.07 f
-  issue_0/ls_fifo/U37029/Q (xor2s1)                       0.22      0.32       1.38 r
-  issue_0/ls_fifo/n28629 (net)                  2                   0.00       1.38 r
-  issue_0/ls_fifo/U37030/DIN2 (xor2s1)                    0.22      0.00       1.39 r
-  issue_0/ls_fifo/U37030/Q (xor2s1)                       0.23      0.17       1.55 f
-  issue_0/ls_fifo/wr_count[0] (net)             2                   0.00       1.55 f
-  issue_0/ls_fifo/U47254/DIN1 (and2s1)                    0.23      0.00       1.55 f
-  issue_0/ls_fifo/U47254/Q (and2s1)                       0.16      0.21       1.76 f
-  issue_0/ls_fifo/add_61/carry[1] (net)         1                   0.00       1.76 f
-  issue_0/ls_fifo/U47238/CIN (fadd1s1)                    0.16      0.00       1.77 f
-  issue_0/ls_fifo/U47238/OUTC (fadd1s1)                   0.21      0.28       2.05 f
-  issue_0/ls_fifo/add_61/carry[2] (net)         2                   0.00       2.05 f
-  issue_0/ls_fifo/U47252/DIN1 (and2s1)                    0.21      0.00       2.05 f
-  issue_0/ls_fifo/U47252/Q (and2s1)                       0.17      0.21       2.26 f
-  issue_0/ls_fifo/add_61/carry[3] (net)         2                   0.00       2.26 f
-  issue_0/ls_fifo/U47250/DIN1 (and2s1)                    0.17      0.00       2.26 f
-  issue_0/ls_fifo/U47250/Q (and2s1)                       0.20      0.22       2.48 f
-  issue_0/ls_fifo/add_61/carry[4] (net)         2                   0.00       2.48 f
-  issue_0/ls_fifo/U47249/DIN1 (xor2s1)                    0.20      0.00       2.48 f
-  issue_0/ls_fifo/U47249/Q (xor2s1)                       0.17      0.23       2.72 f
-  issue_0/ls_fifo/tail_next[4] (net)            3                   0.00       2.72 f
-  issue_0/ls_fifo/U47256/DIN2 (oai1112s1)                 0.17      0.00       2.72 f
-  issue_0/ls_fifo/U47256/Q (oai1112s1)                    0.63      0.22       2.94 r
-  issue_0/ls_fifo/n22750 (net)                  1                   0.00       2.94 r
-  issue_0/ls_fifo/U29259/DIN (ib1s1)                      0.63      0.00       2.94 r
-  issue_0/ls_fifo/U29259/Q (ib1s1)                        0.24      0.10       3.04 f
-  issue_0/ls_fifo/n22751 (net)                  2                   0.00       3.04 f
-  issue_0/ls_fifo/U47240/DIN2 (and2s1)                    0.24      0.00       3.04 f
-  issue_0/ls_fifo/U47240/Q (and2s1)                       0.14      0.22       3.26 f
-  issue_0/ls_fifo/N115 (net)                    1                   0.00       3.26 f
-  issue_0/ls_fifo/U358/DIN2 (or2s2)                       0.14      0.00       3.26 f
-  issue_0/ls_fifo/U358/Q (or2s2)                          0.09      0.14       3.41 f
-  issue_0/ls_fifo/almost_full (net)             2                   0.00       3.41 f
-  issue_0/ls_fifo/almost_full (fu_FIFO_3)                           0.00       3.41 f
-  n2703 (net)                                                       0.00       3.41 f
-  RS_0/fu_fifo_stall[ls] (RS)                                       0.00       3.41 f
-  RS_0/fu_fifo_stall[ls] (net)                                      0.00       3.41 f
-  RS_0/U6593/DIN (i1s1)                                   0.09      0.00       3.41 f
-  RS_0/U6593/Q (i1s1)                                     0.11      0.05       3.46 r
-  RS_0/n6009 (net)                              1                   0.00       3.46 r
-  RS_0/U6594/DIN (i1s1)                                   0.11      0.00       3.46 r
-  RS_0/U6594/Q (i1s1)                                     0.80      0.37       3.82 f
-  RS_0/n6010 (net)                             16                   0.00       3.82 f
-  RS_0/U8424/DIN3 (oai322s1)                              0.80      0.00       3.82 f
-  RS_0/U8424/Q (oai322s1)                                 0.81      0.40       4.22 r
-  RS_0/n5849 (net)                              1                   0.00       4.22 r
-  RS_0/U6442/DIN (ib1s1)                                  0.81      0.00       4.23 r
-  RS_0/U6442/Q (ib1s1)                                    0.27      0.10       4.33 f
-  RS_0/n8258 (net)                              1                   0.00       4.33 f
-  RS_0/U6506/DIN2 (or4s3)                                 0.27      0.00       4.33 f
-  RS_0/U6506/Q (or4s3)                                    0.15      0.18       4.51 f
-  RS_0/n5957 (net)                              3                   0.00       4.51 f
-  RS_0/U7521/DIN (i1s3)                                   0.15      0.00       4.51 f
-  RS_0/U7521/Q (i1s3)                                     0.70      0.28       4.79 r
-  RS_0/n6793 (net)                             28                   0.00       4.79 r
-  RS_0/U6824/DIN1 (nor2s3)                                0.70      0.01       4.80 r
-  RS_0/U6824/Q (nor2s3)                                   0.32      0.17       4.96 f
-  RS_0/n5818 (net)                              3                   0.00       4.96 f
-  RS_0/U7506/DIN3 (nnd3s2)                                0.32      0.00       4.97 f
-  RS_0/U7506/Q (nnd3s2)                                   0.30      0.16       5.13 r
-  RS_0/n5792 (net)                              3                   0.00       5.13 r
-  RS_0/U11178/DIN2 (nnd2s1)                               0.30      0.00       5.13 r
-  RS_0/U11178/Q (nnd2s1)                                  0.22      0.10       5.23 f
-  RS_0/n5817 (net)                              2                   0.00       5.23 f
-  RS_0/U6832/DIN (i1s1)                                   0.22      0.00       5.23 f
-  RS_0/U6832/Q (i1s1)                                     0.18      0.08       5.31 r
-  RS_0/n8251 (net)                              1                   0.00       5.31 r
-  RS_0/U5223/DIN1 (nnd2s2)                                0.18      0.00       5.32 r
-  RS_0/U5223/Q (nnd2s2)                                   0.44      0.20       5.51 f
-  RS_0/n5579 (net)                              6                   0.00       5.51 f
-  RS_0/U7180/DIN (i1s3)                                   0.44      0.00       5.52 f
-  RS_0/U7180/Q (i1s3)                                     0.76      0.34       5.86 r
-  RS_0/n6403 (net)                             31                   0.00       5.86 r
-  RS_0/U6463/DIN2 (nor2s1)                                0.76      0.00       5.86 r
-  RS_0/U6463/Q (nor2s1)                                   0.35      0.20       6.06 f
-  RS_0/n5777 (net)                              2                   0.00       6.06 f
-  RS_0/U6459/DIN3 (or3s2)                                 0.35      0.00       6.06 f
-  RS_0/U6459/Q (or3s2)                                    0.13      0.20       6.27 f
-  RS_0/n5780 (net)                              2                   0.00       6.27 f
-  RS_0/U6462/DIN (ib1s1)                                  0.13      0.00       6.27 f
-  RS_0/U6462/Q (ib1s1)                                    0.14      0.06       6.33 r
-  RS_0/n8249 (net)                              2                   0.00       6.33 r
-  RS_0/U6472/DIN1 (nor2s1)                                0.14      0.00       6.33 r
-  RS_0/U6472/Q (nor2s1)                                   0.36      0.16       6.49 f
-  RS_0/n5779 (net)                              2                   0.00       6.49 f
-  RS_0/U6518/DIN1 (nnd2s2)                                0.36      0.00       6.50 f
-  RS_0/U6518/Q (nnd2s2)                                   0.71      0.31       6.81 r
-  RS_0/n3863 (net)                             17                   0.00       6.81 r
-  RS_0/U6780/DIN (ib1s1)                                  0.71      0.00       6.81 r
-  RS_0/U6780/Q (ib1s1)                                    0.44      0.23       7.04 f
-  RS_0/n6747 (net)                              6                   0.00       7.04 f
-  RS_0/U6500/DIN (i1s3)                                   0.44      0.00       7.05 f
-  RS_0/U6500/Q (i1s3)                                     0.51      0.25       7.29 r
-  RS_0/n6746 (net)                             22                   0.00       7.29 r
-  RS_0/U6807/DIN1 (aoi21s1)                               0.51      0.00       7.29 r
-  RS_0/U6807/Q (aoi21s1)                                  0.48      0.25       7.54 f
-  RS_0/n5583 (net)                              4                   0.00       7.54 f
-  RS_0/U6736/DIN1 (oai1112s1)                             0.48      0.00       7.54 f
-  RS_0/U6736/Q (oai1112s1)                                0.73      0.27       7.81 r
-  RS_0/n5642 (net)                              1                   0.00       7.81 r
-  RS_0/U4025/DIN2 (nnd2s2)                                0.73      0.00       7.81 r
-  RS_0/U4025/Q (nnd2s2)                                   0.29      0.10       7.91 f
-  RS_0/n5597 (net)                              3                   0.00       7.91 f
-  RS_0/U6712/DIN (ib1s1)                                  0.29      0.00       7.91 f
-  RS_0/U6712/Q (ib1s1)                                    0.21      0.10       8.01 r
-  RS_0/n8237 (net)                              2                   0.00       8.01 r
-  RS_0/U6558/DIN3 (nnd3s1)                                0.21      0.00       8.02 r
-  RS_0/U6558/Q (nnd3s1)                                   0.39      0.17       8.19 f
-  RS_0/n4782 (net)                              4                   0.00       8.19 f
-  RS_0/U6559/DIN (ib1s1)                                  0.39      0.00       8.19 f
-  RS_0/U6559/Q (ib1s1)                                    0.42      0.21       8.39 r
-  RS_0/n6687 (net)                              7                   0.00       8.39 r
-  RS_0/U6931/DIN (ib1s1)                                  0.42      0.00       8.40 r
-  RS_0/U6931/Q (ib1s1)                                    0.84      0.42       8.82 f
-  RS_0/n6681 (net)                             22                   0.00       8.82 f
-  RS_0/U7637/DIN2 (oai22s2)                               0.84      0.00       8.82 f
-  RS_0/U7637/Q (oai22s2)                                  0.40      0.19       9.01 r
-  RS_0/n4802 (net)                              1                   0.00       9.01 r
-  RS_0/U7636/DIN5 (aoi221s1)                              0.40      0.00       9.01 r
-  RS_0/U7636/Q (aoi221s1)                                 0.70      0.19       9.20 f
-  RS_0/n4798 (net)                              1                   0.00       9.20 f
-  RS_0/U6328/DIN2 (nnd4s3)                                0.70      0.00       9.20 f
-  RS_0/U6328/Q (nnd4s3)                                   0.24      0.41       9.61 r
-  RS_0/issue_insts[0][reg2_pr][3] (net)         2                   0.00       9.61 r
-  RS_0/issue_insts[0][reg2_pr][3] (RS)                              0.00       9.61 r
-  rs_out_display[0][reg2_pr][3] (net)                               0.00       9.61 r
-  rs_out_display[0][reg2_pr][3] (out)                     0.24      0.02       9.63 r
-  data arrival time                                                            9.63
+  is_packet_in_reg[2][fu_sel][2]/QN (dffcs2)              0.18      0.15       0.15 r
+  n328 (net)                                    2                   0.00       0.15 r
+  is_packet_in_reg[2][fu_sel][2]/Q (dffcs2)               0.30      0.16       0.31 f
+  is_in_display[2][fu_sel][2] (net)             6                   0.00       0.31 f
+  U5314/DIN1 (and4s1)                                     0.30      0.00       0.31 f
+  U5314/Q (and4s1)                                        0.20      0.24       0.54 f
+  issue_0/mult_fifo_in[2][valid] (net)          2                   0.00       0.54 f
+  issue_0/mult_fifo/fu_pckt_in[2][valid] (fu_FIFO_3)                0.00       0.54 f
+  issue_0/mult_fifo/fu_pckt_in[2][valid] (net)                      0.00       0.54 f
+  issue_0/mult_fifo/U24494/DIN (i1s3)                     0.20      0.00       0.55 f
+  issue_0/mult_fifo/U24494/Q (i1s3)                       0.36      0.16       0.71 r
+  issue_0/mult_fifo/n22750 (net)               10                   0.00       0.71 r
+  issue_0/mult_fifo/U29127/DIN (i1s3)                     0.36      0.00       0.71 r
+  issue_0/mult_fifo/U29127/Q (i1s3)                       0.65      0.33       1.04 f
+  issue_0/mult_fifo/n22749 (net)               32                   0.00       1.04 f
+  issue_0/mult_fifo/U36875/DIN2 (xor2s1)                  0.65      0.00       1.04 f
+  issue_0/mult_fifo/U36875/Q (xor2s1)                     0.25      0.31       1.36 r
+  issue_0/mult_fifo/n28631 (net)                2                   0.00       1.36 r
+  issue_0/mult_fifo/U36879/DIN2 (xor2s1)                  0.25      0.00       1.36 r
+  issue_0/mult_fifo/U36879/Q (xor2s1)                     0.22      0.17       1.53 f
+  issue_0/mult_fifo/wr_count[0] (net)           2                   0.00       1.53 f
+  issue_0/mult_fifo/U47269/DIN1 (and2s1)                  0.22      0.00       1.53 f
+  issue_0/mult_fifo/U47269/Q (and2s1)                     0.16      0.21       1.74 f
+  issue_0/mult_fifo/add_61/carry[1] (net)       1                   0.00       1.74 f
+  issue_0/mult_fifo/U47247/CIN (fadd1s1)                  0.16      0.00       1.74 f
+  issue_0/mult_fifo/U47247/OUTC (fadd1s1)                 0.21      0.28       2.02 f
+  issue_0/mult_fifo/add_61/carry[2] (net)       2                   0.00       2.02 f
+  issue_0/mult_fifo/U47267/DIN1 (and2s1)                  0.21      0.00       2.02 f
+  issue_0/mult_fifo/U47267/Q (and2s1)                     0.17      0.21       2.23 f
+  issue_0/mult_fifo/add_61/carry[3] (net)       2                   0.00       2.23 f
+  issue_0/mult_fifo/U47265/DIN1 (and2s1)                  0.17      0.00       2.23 f
+  issue_0/mult_fifo/U47265/Q (and2s1)                     0.21      0.22       2.46 f
+  issue_0/mult_fifo/add_61/carry[4] (net)       2                   0.00       2.46 f
+  issue_0/mult_fifo/U47264/DIN1 (xor2s1)                  0.21      0.00       2.46 f
+  issue_0/mult_fifo/U47264/Q (xor2s1)                     0.18      0.24       2.70 f
+  issue_0/mult_fifo/tail_next[4] (net)          3                   0.00       2.70 f
+  issue_0/mult_fifo/U47271/DIN2 (oai1112s1)               0.18      0.00       2.70 f
+  issue_0/mult_fifo/U47271/Q (oai1112s1)                  0.63      0.22       2.92 r
+  issue_0/mult_fifo/n22751 (net)                1                   0.00       2.92 r
+  issue_0/mult_fifo/U29155/DIN (ib1s1)                    0.63      0.00       2.92 r
+  issue_0/mult_fifo/U29155/Q (ib1s1)                      0.24      0.10       3.02 f
+  issue_0/mult_fifo/n22752 (net)                2                   0.00       3.02 f
+  issue_0/mult_fifo/U47257/DIN2 (and2s1)                  0.24      0.00       3.02 f
+  issue_0/mult_fifo/U47257/Q (and2s1)                     0.14      0.22       3.24 f
+  issue_0/mult_fifo/N115 (net)                  1                   0.00       3.24 f
+  issue_0/mult_fifo/U358/DIN2 (or2s2)                     0.14      0.00       3.24 f
+  issue_0/mult_fifo/U358/Q (or2s2)                        0.23      0.23       3.48 f
+  issue_0/mult_fifo/almost_full (net)           2                   0.00       3.48 f
+  issue_0/mult_fifo/almost_full (fu_FIFO_3)                         0.00       3.48 f
+  fu_fifo_stall_display[mult] (net)                                 0.00       3.48 f
+  RS_0/fu_fifo_stall[mult] (RS)                                     0.00       3.48 f
+  RS_0/fu_fifo_stall[mult] (net)                                    0.00       3.48 f
+  RS_0/U6285/DIN (ib1s1)                                  0.23      0.00       3.48 f
+  RS_0/U6285/Q (ib1s1)                                    0.79      0.33       3.80 r
+  RS_0/n7922 (net)                             16                   0.00       3.80 r
+  RS_0/U10135/DIN4 (aoi22s2)                              0.79      0.00       3.80 r
+  RS_0/U10135/Q (aoi22s2)                                 0.41      0.17       3.98 f
+  RS_0/n7745 (net)                              1                   0.00       3.98 f
+  RS_0/U10136/DIN5 (oai322s1)                             0.41      0.00       3.98 f
+  RS_0/U10136/Q (oai322s1)                                1.00      0.37       4.35 r
+  RS_0/n7746 (net)                              2                   0.00       4.35 r
+  RS_0/U7215/DIN3 (nnd4s2)                                1.00      0.00       4.35 r
+  RS_0/U7215/Q (nnd4s2)                                   0.49      0.18       4.53 f
+  RS_0/n8001 (net)                              3                   0.00       4.53 f
+  RS_0/U8085/DIN1 (and4s3)                                0.49      0.00       4.54 f
+  RS_0/U8085/Q (and4s3)                                   0.14      0.22       4.76 f
+  RS_0/n6068 (net)                              4                   0.00       4.76 f
+  RS_0/U7217/DIN1 (nnd2s3)                                0.14      0.00       4.76 f
+  RS_0/U7217/Q (nnd2s3)                                   0.23      0.06       4.82 r
+  RS_0/n8002 (net)                              2                   0.00       4.82 r
+  RS_0/U9732/DIN2 (nor2s2)                                0.23      0.00       4.83 r
+  RS_0/U9732/Q (nor2s2)                                   0.21      0.07       4.90 f
+  RS_0/n7983 (net)                              1                   0.00       4.90 f
+  RS_0/U10196/DIN2 (nnd2s2)                               0.21      0.00       4.90 f
+  RS_0/U10196/Q (nnd2s2)                                  0.21      0.10       5.01 r
+  RS_0/n7991 (net)                              2                   0.00       5.01 r
+  RS_0/U6905/DIN1 (and4s3)                                0.21      0.00       5.01 r
+  RS_0/U6905/Q (and4s3)                                   0.20      0.18       5.19 r
+  RS_0/n6222 (net)                              7                   0.00       5.19 r
+  RS_0/U7115/DIN2 (nnd2s1)                                0.20      0.00       5.19 r
+  RS_0/U7115/Q (nnd2s1)                                   0.21      0.10       5.29 f
+  RS_0/n11080 (net)                             2                   0.00       5.29 f
+  RS_0/U9485/DIN (i1s2)                                   0.21      0.00       5.29 f
+  RS_0/U9485/Q (i1s2)                                     0.21      0.10       5.39 r
+  RS_0/n6201 (net)                              3                   0.00       5.39 r
+  RS_0/U7111/DIN2 (oai21s3)                               0.21      0.00       5.39 r
+  RS_0/U7111/Q (oai21s3)                                  0.33      0.12       5.51 f
+  RS_0/n8021 (net)                              2                   0.00       5.51 f
+  RS_0/U6907/DIN (i1s3)                                   0.33      0.00       5.52 f
+  RS_0/U6907/Q (i1s3)                                     0.15      0.07       5.59 r
+  RS_0/n8014 (net)                              2                   0.00       5.59 r
+  RS_0/U8025/DIN1 (and3s2)                                0.15      0.00       5.59 r
+  RS_0/U8025/Q (and3s2)                                   0.14      0.13       5.72 r
+  RS_0/n6066 (net)                              2                   0.00       5.72 r
+  RS_0/U7103/DIN2 (nnd2s2)                                0.14      0.00       5.72 r
+  RS_0/U7103/Q (nnd2s2)                                   0.14      0.07       5.79 f
+  RS_0/n8009 (net)                              1                   0.00       5.79 f
+  RS_0/U10206/DIN2 (oai21s3)                              0.14      0.00       5.79 f
+  RS_0/U10206/Q (oai21s3)                                 0.28      0.11       5.91 r
+  RS_0/n8010 (net)                              1                   0.00       5.91 r
+  RS_0/U7102/DIN2 (nor2s2)                                0.28      0.00       5.91 r
+  RS_0/U7102/Q (nor2s2)                                   0.24      0.10       6.01 f
+  RS_0/n8076 (net)                              2                   0.00       6.01 f
+  RS_0/U6889/DIN1 (nnd2s2)                                0.24      0.00       6.01 f
+  RS_0/U6889/Q (nnd2s2)                                   0.22      0.10       6.12 r
+  RS_0/n8012 (net)                              1                   0.00       6.12 r
+  RS_0/U6888/DIN (i1s4)                                   0.22      0.01       6.12 r
+  RS_0/U6888/Q (i1s4)                                     0.13      0.06       6.18 f
+  RS_0/n8019 (net)                              4                   0.00       6.18 f
+  RS_0/U6906/DIN3 (nnd3s1)                                0.13      0.00       6.18 f
+  RS_0/U6906/Q (nnd3s1)                                   0.32      0.15       6.33 r
+  RS_0/n10159 (net)                             2                   0.00       6.33 r
+  RS_0/U7996/DIN2 (nnd3s2)                                0.32      0.00       6.33 r
+  RS_0/U7996/Q (nnd3s2)                                   0.38      0.11       6.44 f
+  RS_0/n8072 (net)                              2                   0.00       6.44 f
+  RS_0/U6266/DIN2 (nnd2s2)                                0.38      0.00       6.44 f
+  RS_0/U6266/Q (nnd2s2)                                   0.29      0.16       6.60 r
+  RS_0/n8038 (net)                              2                   0.00       6.60 r
+  RS_0/U7743/DIN (i1s4)                                   0.29      0.01       6.60 r
+  RS_0/U7743/Q (i1s4)                                     0.15      0.07       6.67 f
+  RS_0/n8046 (net)                              4                   0.00       6.67 f
+  RS_0/U6308/DIN2 (nnd2s2)                                0.15      0.00       6.67 f
+  RS_0/U6308/Q (nnd2s2)                                   0.16      0.08       6.75 r
+  RS_0/n8069 (net)                              1                   0.00       6.75 r
+  RS_0/U6572/DIN2 (nnd2s2)                                0.16      0.00       6.75 r
+  RS_0/U6572/Q (nnd2s2)                                   0.16      0.07       6.83 f
+  RS_0/n8023 (net)                              1                   0.00       6.83 f
+  RS_0/U6900/DIN (i1s3)                                   0.16      0.00       6.83 f
+  RS_0/U6900/Q (i1s3)                                     0.19      0.08       6.92 r
+  RS_0/n8111 (net)                              4                   0.00       6.92 r
+  RS_0/U8027/DIN1 (and4s3)                                0.19      0.00       6.92 r
+  RS_0/U8027/Q (and4s3)                                   0.34      0.25       7.17 r
+  RS_0/n6067 (net)                             10                   0.00       7.17 r
+  RS_0/U6897/DIN (i1s4)                                   0.34      0.01       7.18 r
+  RS_0/U6897/Q (i1s4)                                     0.20      0.09       7.27 f
+  RS_0/n6687 (net)                             10                   0.00       7.27 f
+  RS_0/U6323/DIN (ib1s1)                                  0.20      0.00       7.27 f
+  RS_0/U6323/Q (ib1s1)                                    0.45      0.19       7.47 r
+  RS_0/n6684 (net)                              8                   0.00       7.47 r
+  RS_0/U12175/DIN2 (aoi222s1)                             0.45      0.00       7.47 r
+  RS_0/U12175/Q (aoi222s1)                                0.49      0.12       7.59 f
+  RS_0/n8804 (net)                              1                   0.00       7.59 f
+  RS_0/U9355/DIN2 (oai1112s2)                             0.49      0.00       7.59 f
+  RS_0/U9355/Q (oai1112s2)                                0.54      0.26       7.84 r
+  RS_0/n11404 (net)                             1                   0.00       7.84 r
+  RS_0/U8271/DIN (nb1s2)                                  0.54      0.00       7.85 r
+  RS_0/U8271/Q (nb1s2)                                    0.32      0.23       8.07 r
+  RS_0/issue_insts[0][PC][20] (net)             2                   0.00       8.07 r
+  RS_0/issue_insts[0][PC][20] (RS)                                  0.00       8.07 r
+  rs_out_display[0][PC][20] (net)                                   0.00       8.07 r
+  rs_out_display[0][PC][20] (out)                         0.32      0.02       8.09 r
+  data arrival time                                                            8.09
 
-  max_delay                                                         9.50       9.50
-  clock uncertainty                                                -0.10       9.40
-  output external delay                                            -0.10       9.30
-  data required time                                                           9.30
+  max_delay                                                         8.50       8.50
+  clock uncertainty                                                -0.10       8.40
+  output external delay                                            -0.10       8.30
+  data required time                                                           8.30
   ------------------------------------------------------------------------------------
-  data required time                                                           9.30
-  data arrival time                                                           -9.63
+  data required time                                                           8.30
+  data arrival time                                                           -8.09
   ------------------------------------------------------------------------------------
-  slack (VIOLATED)                                                            -0.33
+  slack (MET)                                                                  0.21
 
 
 1
@@ -1178,13 +1099,13 @@ Report : constraint
         -max_delay
 Design : pipeline
 Version: O-2018.06
-Date   : Sun Mar 21 13:38:29 2021
+Date   : Mon Mar 22 13:24:49 2021
 ****************************************
 
 
   Startpoint: is_packet_in_reg[2][fu_sel][2]
               (rising edge-triggered flip-flop clocked by clock)
-  Endpoint: is_packet_in_reg[0][NPC][31]
+  Endpoint: is_packet_in_reg[0][PC][20]
             (rising edge-triggered flip-flop clocked by clock)
   Path Group: clock
   Path Type: max
@@ -1198,76 +1119,73 @@ Date   : Sun Mar 21 13:38:29 2021
   clock clock (rise edge)                                 0.00       0.00
   clock network delay (ideal)                             0.00       0.00
   is_packet_in_reg[2][fu_sel][2]/CLK (dffcs2)             0.00 #     0.00 r
-  is_packet_in_reg[2][fu_sel][2]/QN (dffcs2)              0.17       0.17 f
-  U2724/Q (ib1s2)                                         0.05       0.22 r
-  U5480/Q (nor4s1)                                        0.15       0.37 f
-  issue_0/ls_fifo/U25380/Q (ib1s1)                        0.36       0.72 r
-  issue_0/ls_fifo/U29079/Q (i1s3)                         0.34       1.06 f
-  issue_0/ls_fifo/U37029/Q (xor2s1)                       0.32       1.38 r
-  issue_0/ls_fifo/U37030/Q (xor2s1)                       0.17       1.55 f
-  issue_0/ls_fifo/U47254/Q (and2s1)                       0.21       1.76 f
-  issue_0/ls_fifo/U47238/OUTC (fadd1s1)                   0.29       2.05 f
-  issue_0/ls_fifo/U47252/Q (and2s1)                       0.21       2.26 f
-  issue_0/ls_fifo/U47250/Q (and2s1)                       0.22       2.48 f
-  issue_0/ls_fifo/U47249/Q (xor2s1)                       0.24       2.72 f
-  issue_0/ls_fifo/U47256/Q (oai1112s1)                    0.22       2.94 r
-  issue_0/ls_fifo/U29259/Q (ib1s1)                        0.10       3.04 f
-  issue_0/ls_fifo/U47240/Q (and2s1)                       0.22       3.26 f
-  issue_0/ls_fifo/U358/Q (or2s2)                          0.14       3.41 f
-  RS_0/U6593/Q (i1s1)                                     0.05       3.46 r
-  RS_0/U6594/Q (i1s1)                                     0.37       3.82 f
-  RS_0/U8424/Q (oai322s1)                                 0.40       4.22 r
-  RS_0/U6442/Q (ib1s1)                                    0.10       4.33 f
-  RS_0/U6506/Q (or4s3)                                    0.18       4.51 f
-  RS_0/U7521/Q (i1s3)                                     0.28       4.79 r
-  RS_0/U6824/Q (nor2s3)                                   0.17       4.96 f
-  RS_0/U7506/Q (nnd3s2)                                   0.16       5.13 r
-  RS_0/U6710/Q (ib1s1)                                    0.09       5.22 f
-  RS_0/U7509/Q (nnd3s2)                                   0.09       5.31 r
-  RS_0/U6810/Q (i1s1)                                     0.11       5.42 f
-  RS_0/U6808/Q (nnd3s1)                                   0.16       5.58 r
-  RS_0/U6705/Q (or2s2)                                    0.27       5.84 r
-  RS_0/U7201/Q (i1s3)                                     0.19       6.03 f
-  RS_0/U6703/Q (or2s1)                                    0.24       6.27 f
-  RS_0/U7321/Q (nnd3s2)                                   0.12       6.38 r
-  RS_0/U6726/Q (ib1s2)                                    0.06       6.45 f
-  RS_0/U11174/Q (nnd4s1)                                  0.09       6.54 r
-  RS_0/U6453/Q (and3s1)                                   0.22       6.76 r
-  RS_0/U5160/Q (and2s2)                                   0.14       6.90 r
-  RS_0/U6466/Q (and2s1)                                   0.17       7.07 r
-  RS_0/U5158/Q (nnd2s2)                                   0.20       7.27 f
-  RS_0/U6977/Q (ib1s1)                                    0.23       7.50 r
-  RS_0/U5151/Q (oai211s2)                                 0.22       7.72 f
-  RS_0/U11183/Q (i1s2)                                    0.11       7.83 r
-  RS_0/U11177/Q (oai1112s2)                               0.06       7.88 f
-  RS_0/U6458/Q (ib1s1)                                    0.07       7.95 r
-  RS_0/U6457/Q (nor2s1)                                   0.14       8.09 f
-  RS_0/U4586/Q (nnd2s2)                                   0.13       8.22 r
-  RS_0/U6723/Q (i1s1)                                     0.13       8.35 f
-  RS_0/U4585/Q (nnd3s2)                                   0.24       8.59 r
-  RS_0/U6925/Q (ib1s1)                                    0.41       9.00 f
-  RS_0/U6706/Q (nnd2s2)                                   0.12       9.12 r
-  RS_0/U6709/Q (and3s1)                                   0.18       9.30 r
-  RS_0/U8229/Q (nnd4s2)                                   0.30       9.61 f
-  is_packet_in_reg[0][NPC][31]/CLRB (dffcs1)              0.00       9.61 f
-  data arrival time                                                  9.61
+  is_packet_in_reg[2][fu_sel][2]/QN (dffcs2)              0.15       0.15 r
+  is_packet_in_reg[2][fu_sel][2]/Q (dffcs2)               0.16       0.31 f
+  U5314/Q (and4s1)                                        0.24       0.54 f
+  issue_0/mult_fifo/U24494/Q (i1s3)                       0.16       0.71 r
+  issue_0/mult_fifo/U29127/Q (i1s3)                       0.33       1.04 f
+  issue_0/mult_fifo/U36875/Q (xor2s1)                     0.32       1.36 r
+  issue_0/mult_fifo/U36879/Q (xor2s1)                     0.17       1.53 f
+  issue_0/mult_fifo/U47269/Q (and2s1)                     0.21       1.74 f
+  issue_0/mult_fifo/U47247/OUTC (fadd1s1)                 0.29       2.02 f
+  issue_0/mult_fifo/U47267/Q (and2s1)                     0.21       2.23 f
+  issue_0/mult_fifo/U47265/Q (and2s1)                     0.22       2.46 f
+  issue_0/mult_fifo/U47264/Q (xor2s1)                     0.24       2.70 f
+  issue_0/mult_fifo/U47271/Q (oai1112s1)                  0.22       2.92 r
+  issue_0/mult_fifo/U29155/Q (ib1s1)                      0.10       3.02 f
+  issue_0/mult_fifo/U47257/Q (and2s1)                     0.22       3.24 f
+  issue_0/mult_fifo/U358/Q (or2s2)                        0.23       3.48 f
+  RS_0/U6285/Q (ib1s1)                                    0.33       3.80 r
+  RS_0/U10135/Q (aoi22s2)                                 0.18       3.98 f
+  RS_0/U10136/Q (oai322s1)                                0.37       4.35 r
+  RS_0/U7215/Q (nnd4s2)                                   0.19       4.53 f
+  RS_0/U8085/Q (and4s3)                                   0.22       4.76 f
+  RS_0/U7217/Q (nnd2s3)                                   0.07       4.82 r
+  RS_0/U9732/Q (nor2s2)                                   0.07       4.90 f
+  RS_0/U10196/Q (nnd2s2)                                  0.11       5.01 r
+  RS_0/U6905/Q (and4s3)                                   0.18       5.19 r
+  RS_0/U7115/Q (nnd2s1)                                   0.10       5.29 f
+  RS_0/U9485/Q (i1s2)                                     0.10       5.39 r
+  RS_0/U7111/Q (oai21s3)                                  0.12       5.51 f
+  RS_0/U6907/Q (i1s3)                                     0.07       5.59 r
+  RS_0/U8025/Q (and3s2)                                   0.13       5.72 r
+  RS_0/U7103/Q (nnd2s2)                                   0.07       5.79 f
+  RS_0/U10206/Q (oai21s3)                                 0.12       5.91 r
+  RS_0/U7102/Q (nor2s2)                                   0.10       6.01 f
+  RS_0/U6889/Q (nnd2s2)                                   0.11       6.12 r
+  RS_0/U6888/Q (i1s4)                                     0.06       6.18 f
+  RS_0/U6906/Q (nnd3s1)                                   0.15       6.33 r
+  RS_0/U7996/Q (nnd3s2)                                   0.11       6.44 f
+  RS_0/U6266/Q (nnd2s2)                                   0.16       6.60 r
+  RS_0/U7743/Q (i1s4)                                     0.07       6.67 f
+  RS_0/U6308/Q (nnd2s2)                                   0.08       6.75 r
+  RS_0/U6572/Q (nnd2s2)                                   0.07       6.83 f
+  RS_0/U6900/Q (i1s3)                                     0.09       6.92 r
+  RS_0/U8027/Q (and4s3)                                   0.26       7.17 r
+  RS_0/U6897/Q (i1s4)                                     0.10       7.27 f
+  RS_0/U6323/Q (ib1s1)                                    0.20       7.47 r
+  RS_0/U12175/Q (aoi222s1)                                0.12       7.59 f
+  RS_0/U9355/Q (oai1112s2)                                0.26       7.84 r
+  RS_0/U8271/Q (nb1s2)                                    0.23       8.07 r
+  is_packet_in_reg[0][PC][20]/CLRB (dffcs1)               0.00       8.07 r
+  data arrival time                                                  8.07
 
-  clock clock (rise edge)                                 9.50       9.50
-  clock network delay (ideal)                             0.00       9.50
-  clock uncertainty                                      -0.10       9.40
-  is_packet_in_reg[0][NPC][31]/CLK (dffcs1)               0.00       9.40 r
-  library setup time                                     -0.38       9.02
-  data required time                                                 9.02
+  clock clock (rise edge)                                 8.50       8.50
+  clock network delay (ideal)                             0.00       8.50
+  clock uncertainty                                      -0.10       8.40
+  is_packet_in_reg[0][PC][20]/CLK (dffcs1)                0.00       8.40 r
+  library setup time                                     -0.31       8.09
+  data required time                                                 8.09
   --------------------------------------------------------------------------
-  data required time                                                 9.02
-  data arrival time                                                 -9.61
+  data required time                                                 8.09
+  data arrival time                                                 -8.07
   --------------------------------------------------------------------------
-  slack (VIOLATED)                                                  -0.59
+  slack (MET)                                                        0.02
 
 
-  Startpoint: cdb_t_debug[t1][0]
+  Startpoint: cdb_t_debug[t1][1]
               (input port clocked by clock)
-  Endpoint: is_packet_in_reg[0][NPC][31]
+  Endpoint: is_packet_in_reg[1][reg2_pr][0]
             (rising edge-triggered flip-flop clocked by clock)
   Path Group: input_grp
   Path Type: max
@@ -1281,66 +1199,54 @@ Date   : Sun Mar 21 13:38:29 2021
   clock clock (rise edge)                                 0.00       0.00
   clock network delay (ideal)                             0.00       0.00
   input external delay                                    0.10       0.10 f
-  cdb_t_debug[t1][0] (in)                                 0.01       0.11 f
-  U2861/Q (hi1s1)                                         0.11       0.22 r
-  U2862/Q (hi1s1)                                         0.92       1.14 f
-  RS_0/U6448/Q (ib1s1)                                    0.30       1.44 r
-  RS_0/U7523/Q (ib1s1)                                    0.35       1.79 f
-  RS_0/U11195/Q (and2s1)                                  0.28       2.08 f
-  RS_0/U11196/Q (oai22s1)                                 0.17       2.25 r
-  RS_0/U11198/Q (nnd3s1)                                  0.12       2.37 f
-  RS_0/U6874/Q (or4s3)                                    0.16       2.53 f
-  RS_0/U6484/Q (and4s1)                                   0.18       2.71 f
-  RS_0/U6506/Q (or4s3)                                    0.19       2.90 f
-  RS_0/U7521/Q (i1s3)                                     0.28       3.18 r
-  RS_0/U6824/Q (nor2s3)                                   0.17       3.35 f
-  RS_0/U7506/Q (nnd3s2)                                   0.16       3.51 r
-  RS_0/U6710/Q (ib1s1)                                    0.09       3.60 f
-  RS_0/U7509/Q (nnd3s2)                                   0.09       3.69 r
-  RS_0/U6810/Q (i1s1)                                     0.11       3.80 f
-  RS_0/U6808/Q (nnd3s1)                                   0.16       3.96 r
-  RS_0/U6705/Q (or2s2)                                    0.27       4.23 r
-  RS_0/U7201/Q (i1s3)                                     0.19       4.42 f
-  RS_0/U6703/Q (or2s1)                                    0.24       4.66 f
-  RS_0/U7321/Q (nnd3s2)                                   0.12       4.77 r
-  RS_0/U6726/Q (ib1s2)                                    0.06       4.84 f
-  RS_0/U11174/Q (nnd4s1)                                  0.09       4.93 r
-  RS_0/U6453/Q (and3s1)                                   0.22       5.15 r
-  RS_0/U5160/Q (and2s2)                                   0.14       5.28 r
-  RS_0/U6466/Q (and2s1)                                   0.17       5.46 r
-  RS_0/U5158/Q (nnd2s2)                                   0.20       5.66 f
-  RS_0/U6977/Q (ib1s1)                                    0.23       5.89 r
-  RS_0/U5151/Q (oai211s2)                                 0.22       6.11 f
-  RS_0/U11183/Q (i1s2)                                    0.11       6.21 r
-  RS_0/U11177/Q (oai1112s2)                               0.06       6.27 f
-  RS_0/U6458/Q (ib1s1)                                    0.07       6.34 r
-  RS_0/U6457/Q (nor2s1)                                   0.14       6.48 f
-  RS_0/U4586/Q (nnd2s2)                                   0.13       6.60 r
-  RS_0/U6723/Q (i1s1)                                     0.13       6.73 f
-  RS_0/U4585/Q (nnd3s2)                                   0.24       6.97 r
-  RS_0/U6925/Q (ib1s1)                                    0.41       7.39 f
-  RS_0/U6706/Q (nnd2s2)                                   0.12       7.51 r
-  RS_0/U6709/Q (and3s1)                                   0.18       7.69 r
-  RS_0/U8229/Q (nnd4s2)                                   0.30       7.99 f
-  is_packet_in_reg[0][NPC][31]/CLRB (dffcs1)              0.00       8.00 f
-  data arrival time                                                  8.00
+  cdb_t_debug[t1][1] (in)                                 0.01       0.11 f
+  U2676/Q (hi1s1)                                         0.11       0.22 r
+  U2677/Q (hi1s1)                                         0.91       1.13 f
+  RS_0/U6563/Q (i1s3)                                     0.45       1.58 r
+  RS_0/U8117/Q (i1s5)                                     0.21       1.79 f
+  RS_0/U8564/Q (xor2s1)                                   0.26       2.05 r
+  RS_0/U10085/Q (nor6s1)                                  0.24       2.29 f
+  RS_0/U10091/Q (or3s1)                                   0.21       2.51 f
+  RS_0/U10155/Q (nnd4s1)                                  0.17       2.67 r
+  RS_0/U6289/Q (ib1s1)                                    0.18       2.85 f
+  RS_0/U8081/Q (nor2s2)                                   0.08       2.93 r
+  RS_0/U10196/Q (nnd2s2)                                  0.08       3.01 f
+  RS_0/U6905/Q (and4s3)                                   0.19       3.20 f
+  RS_0/U7115/Q (nnd2s1)                                   0.12       3.31 r
+  RS_0/U9485/Q (i1s2)                                     0.10       3.42 f
+  RS_0/U7111/Q (oai21s3)                                  0.15       3.56 r
+  RS_0/U6907/Q (i1s3)                                     0.06       3.62 f
+  RS_0/U8025/Q (and3s2)                                   0.15       3.77 f
+  RS_0/U7103/Q (nnd2s2)                                   0.08       3.85 r
+  RS_0/U10206/Q (oai21s3)                                 0.11       3.95 f
+  RS_0/U7102/Q (nor2s2)                                   0.10       4.05 r
+  RS_0/U7084/Q (i1s2)                                     0.08       4.13 f
+  RS_0/U6262/Q (i1s3)                                     0.06       4.19 r
+  RS_0/U6314/Q (and4s1)                                   0.22       4.41 r
+  RS_0/U6239/Q (i1s1)                                     0.11       4.53 f
+  RS_0/U6280/Q (i1s3)                                     0.12       4.65 r
+  RS_0/U7156/Q (hi1s1)                                    0.64       5.29 f
+  RS_0/U9655/Q (oai2222s1)                                0.49       5.78 r
+  RS_0/U6351/Q (or3s2)                                    0.30       6.08 r
+  is_packet_in_reg[1][reg2_pr][0]/CLRB (dffcs1)           0.00       6.08 r
+  data arrival time                                                  6.08
 
-  clock clock (rise edge)                                 9.50       9.50
-  clock network delay (ideal)                             0.00       9.50
-  clock uncertainty                                      -0.10       9.40
-  is_packet_in_reg[0][NPC][31]/CLK (dffcs1)               0.00       9.40 r
-  library setup time                                     -0.38       9.02
-  data required time                                                 9.02
+  clock clock (rise edge)                                 8.50       8.50
+  clock network delay (ideal)                             0.00       8.50
+  clock uncertainty                                      -0.10       8.40
+  is_packet_in_reg[1][reg2_pr][0]/CLK (dffcs1)            0.00       8.40 r
+  library setup time                                     -0.31       8.09
+  data required time                                                 8.09
   --------------------------------------------------------------------------
-  data required time                                                 9.02
-  data arrival time                                                 -8.00
+  data required time                                                 8.09
+  data arrival time                                                 -6.08
   --------------------------------------------------------------------------
-  slack (MET)                                                        1.02
+  slack (MET)                                                        2.01
 
 
   Startpoint: is_packet_in_reg[2][fu_sel][2]
               (rising edge-triggered flip-flop clocked by clock)
-  Endpoint: rs_out_display[0][reg1_pr][2]
+  Endpoint: rs_out_display[0][reg2_pr][1]
             (output port clocked by clock)
   Path Group: output_grp
   Path Type: max
@@ -1352,63 +1258,64 @@ Date   : Sun Mar 21 13:38:29 2021
   Point                                                   Incr       Path
   --------------------------------------------------------------------------
   is_packet_in_reg[2][fu_sel][2]/CLK (dffcs2)             0.00 #     0.00 r
-  is_packet_in_reg[2][fu_sel][2]/QN (dffcs2)              0.17       0.17 f
-  U2724/Q (ib1s2)                                         0.05       0.22 r
-  U5480/Q (nor4s1)                                        0.15       0.37 f
-  issue_0/ls_fifo/U25380/Q (ib1s1)                        0.36       0.72 r
-  issue_0/ls_fifo/U29079/Q (i1s3)                         0.34       1.06 f
-  issue_0/ls_fifo/U37029/Q (xor2s1)                       0.32       1.38 r
-  issue_0/ls_fifo/U37030/Q (xor2s1)                       0.17       1.55 f
-  issue_0/ls_fifo/U47254/Q (and2s1)                       0.21       1.76 f
-  issue_0/ls_fifo/U47238/OUTC (fadd1s1)                   0.29       2.05 f
-  issue_0/ls_fifo/U47252/Q (and2s1)                       0.21       2.26 f
-  issue_0/ls_fifo/U47250/Q (and2s1)                       0.22       2.48 f
-  issue_0/ls_fifo/U47249/Q (xor2s1)                       0.24       2.72 f
-  issue_0/ls_fifo/U47256/Q (oai1112s1)                    0.22       2.94 r
-  issue_0/ls_fifo/U29259/Q (ib1s1)                        0.10       3.04 f
-  issue_0/ls_fifo/U47240/Q (and2s1)                       0.22       3.26 f
-  issue_0/ls_fifo/U358/Q (or2s2)                          0.14       3.41 f
-  RS_0/U6593/Q (i1s1)                                     0.05       3.46 r
-  RS_0/U6594/Q (i1s1)                                     0.37       3.82 f
-  RS_0/U8424/Q (oai322s1)                                 0.40       4.22 r
-  RS_0/U6442/Q (ib1s1)                                    0.10       4.33 f
-  RS_0/U6506/Q (or4s3)                                    0.18       4.51 f
-  RS_0/U7521/Q (i1s3)                                     0.28       4.79 r
-  RS_0/U6824/Q (nor2s3)                                   0.17       4.96 f
-  RS_0/U7506/Q (nnd3s2)                                   0.16       5.13 r
-  RS_0/U11178/Q (nnd2s1)                                  0.10       5.23 f
-  RS_0/U6832/Q (i1s1)                                     0.09       5.31 r
-  RS_0/U5223/Q (nnd2s2)                                   0.20       5.51 f
-  RS_0/U7180/Q (i1s3)                                     0.35       5.86 r
-  RS_0/U6463/Q (nor2s1)                                   0.20       6.06 f
-  RS_0/U6459/Q (or3s2)                                    0.21       6.27 f
-  RS_0/U6462/Q (ib1s1)                                    0.06       6.33 r
-  RS_0/U6472/Q (nor2s1)                                   0.16       6.49 f
-  RS_0/U6518/Q (nnd2s2)                                   0.32       6.81 r
-  RS_0/U6780/Q (ib1s1)                                    0.23       7.04 f
-  RS_0/U6500/Q (i1s3)                                     0.25       7.29 r
-  RS_0/U6807/Q (aoi21s1)                                  0.25       7.54 f
-  RS_0/U6736/Q (oai1112s1)                                0.27       7.81 r
-  RS_0/U4025/Q (nnd2s2)                                   0.10       7.91 f
-  RS_0/U6712/Q (ib1s1)                                    0.10       8.01 r
-  RS_0/U6558/Q (nnd3s1)                                   0.17       8.19 f
-  RS_0/U6559/Q (ib1s1)                                    0.21       8.39 r
-  RS_0/U6931/Q (ib1s1)                                    0.42       8.82 f
-  RS_0/U7641/Q (oai22s2)                                  0.19       9.01 r
-  RS_0/U7640/Q (aoi221s1)                                 0.19       9.20 f
-  RS_0/U6331/Q (nnd4s3)                                   0.41       9.61 r
-  rs_out_display[0][reg1_pr][2] (out)                     0.02       9.63 r
-  data arrival time                                                  9.63
+  is_packet_in_reg[2][fu_sel][2]/QN (dffcs2)              0.15       0.15 r
+  is_packet_in_reg[2][fu_sel][2]/Q (dffcs2)               0.16       0.31 f
+  U5314/Q (and4s1)                                        0.24       0.54 f
+  issue_0/mult_fifo/U24494/Q (i1s3)                       0.16       0.71 r
+  issue_0/mult_fifo/U29127/Q (i1s3)                       0.33       1.04 f
+  issue_0/mult_fifo/U36875/Q (xor2s1)                     0.32       1.36 r
+  issue_0/mult_fifo/U36879/Q (xor2s1)                     0.17       1.53 f
+  issue_0/mult_fifo/U47269/Q (and2s1)                     0.21       1.74 f
+  issue_0/mult_fifo/U47247/OUTC (fadd1s1)                 0.29       2.02 f
+  issue_0/mult_fifo/U47267/Q (and2s1)                     0.21       2.23 f
+  issue_0/mult_fifo/U47265/Q (and2s1)                     0.22       2.46 f
+  issue_0/mult_fifo/U47264/Q (xor2s1)                     0.24       2.70 f
+  issue_0/mult_fifo/U47271/Q (oai1112s1)                  0.22       2.92 r
+  issue_0/mult_fifo/U29155/Q (ib1s1)                      0.10       3.02 f
+  issue_0/mult_fifo/U47257/Q (and2s1)                     0.22       3.24 f
+  issue_0/mult_fifo/U358/Q (or2s2)                        0.23       3.48 f
+  RS_0/U6285/Q (ib1s1)                                    0.33       3.80 r
+  RS_0/U10135/Q (aoi22s2)                                 0.18       3.98 f
+  RS_0/U10136/Q (oai322s1)                                0.37       4.35 r
+  RS_0/U7215/Q (nnd4s2)                                   0.19       4.53 f
+  RS_0/U8085/Q (and4s3)                                   0.22       4.76 f
+  RS_0/U7217/Q (nnd2s3)                                   0.07       4.82 r
+  RS_0/U9732/Q (nor2s2)                                   0.07       4.90 f
+  RS_0/U10196/Q (nnd2s2)                                  0.11       5.01 r
+  RS_0/U6905/Q (and4s3)                                   0.18       5.19 r
+  RS_0/U7115/Q (nnd2s1)                                   0.10       5.29 f
+  RS_0/U9485/Q (i1s2)                                     0.10       5.39 r
+  RS_0/U7111/Q (oai21s3)                                  0.12       5.51 f
+  RS_0/U6907/Q (i1s3)                                     0.07       5.59 r
+  RS_0/U8025/Q (and3s2)                                   0.13       5.72 r
+  RS_0/U7103/Q (nnd2s2)                                   0.07       5.79 f
+  RS_0/U10206/Q (oai21s3)                                 0.12       5.91 r
+  RS_0/U7102/Q (nor2s2)                                   0.10       6.01 f
+  RS_0/U7084/Q (i1s2)                                     0.08       6.09 r
+  RS_0/U6262/Q (i1s3)                                     0.06       6.15 f
+  RS_0/U6314/Q (and4s1)                                   0.19       6.34 f
+  RS_0/U6902/Q (oai21s3)                                  0.15       6.49 r
+  RS_0/U6240/Q (nor2s2)                                   0.13       6.63 f
+  RS_0/U10253/Q (and4s3)                                  0.16       6.79 f
+  RS_0/U10255/Q (aoi21s3)                                 0.13       6.92 r
+  RS_0/U6865/Q (and2s2)                                   0.16       7.07 r
+  RS_0/U6252/Q (nnd4s2)                                   0.11       7.18 f
+  RS_0/U9466/Q (i1s8)                                     0.22       7.41 r
+  RS_0/U6867/Q (aoi22s3)                                  0.13       7.53 f
+  RS_0/U9373/Q (oai1112s2)                                0.34       7.87 r
+  RS_0/U6254/Q (nb1s4)                                    0.20       8.07 r
+  rs_out_display[0][reg2_pr][1] (out)                     0.02       8.09 r
+  data arrival time                                                  8.09
 
-  max_delay                                               9.50       9.50
-  clock uncertainty                                      -0.10       9.40
-  output external delay                                  -0.10       9.30
-  data required time                                                 9.30
+  max_delay                                               8.50       8.50
+  clock uncertainty                                      -0.10       8.40
+  output external delay                                  -0.10       8.30
+  data required time                                                 8.30
   --------------------------------------------------------------------------
-  data required time                                                 9.30
-  data arrival time                                                 -9.63
+  data required time                                                 8.30
+  data arrival time                                                 -8.09
   --------------------------------------------------------------------------
-  slack (VIOLATED)                                                  -0.33
+  slack (MET)                                                        0.21
 
 
 1
@@ -1419,7 +1326,7 @@ Warning: Design 'pipeline' contains 2 high-fanout nets. A fanout number of 1000 
 Report : reference
 Design : pipeline
 Version: O-2018.06
-Date   : Sun Mar 21 13:38:43 2021
+Date   : Mon Mar 22 13:25:03 2021
 ****************************************
 
 Attributes:
@@ -1435,50 +1342,44 @@ Attributes:
 
 Reference          Library       Unit Area   Count    Total Area   Attributes
 -----------------------------------------------------------------------------
-RS                            984818.297573       1 984818.297573 h, n
-and2s1             lec25dscc25_TT    49.766399    1400 69672.959137
-and2s2             lec25dscc25_TT    58.060799      25  1451.519966
-and3s1             lec25dscc25_TT    66.355202      48  3185.049683
+RS                            999999.123035       1 999999.123035 h, n
+and2s1             lec25dscc25_TT    49.766399    1394 69374.360741
+and2s2             lec25dscc25_TT    58.060799      22  1277.337570
+and3s1             lec25dscc25_TT    66.355202      51  3384.115288
 and3s2             lec25dscc25_TT    99.532799      28  2786.918365
 and3s3             lec25dscc25_TT   174.182007      15  2612.730103
-and4s1             lec25dscc25_TT    74.649597       6   447.897583
-and4s3             lec25dscc25_TT   124.416000       1   124.416000
+and4s1             lec25dscc25_TT    74.649597       8   597.196777
 aoai1112s1         lec25dscc25_TT    66.355202       3   199.065605
 aoi13s1            lec25dscc25_TT    58.060799      11   638.668785
 aoi13s2            lec25dscc25_TT    58.060799       1    58.060799
 aoi21s1            lec25dscc25_TT    49.766399      12   597.196793
 aoi21s2            lec25dscc25_TT    49.766399       3   149.299198
-aoi22s1            lec25dscc25_TT    58.060799      29  1683.763161
-aoi22s2            lec25dscc25_TT    58.060799     132  7664.025421
+aoi22s1            lec25dscc25_TT    58.060799      30  1741.823959
+aoi22s2            lec25dscc25_TT    58.060799     131  7605.964622
 aoi211s1           lec25dscc25_TT    58.060799       6   348.364792
 aoi221s1           lec25dscc25_TT    74.649597       8   597.196777
-dffacs1            lec25dscc25_TT   165.888000       5   829.440002 n
-dffcs1             lec25dscc25_TT   165.888000    1788 296607.744873 n
-dffcs2             lec25dscc25_TT   182.477005       9  1642.293045 n
-dffs1              lec25dscc25_TT   157.593994       8  1260.751953 n
-dffs2              lec25dscc25_TT   174.182007     279 48596.779907 n
-dffss2             lec25dscc25_TT   207.360001       5  1036.800003 n
-fu_FIFO_3                     2898968.502403       4 11595874.009613 h, n
-hi1s1              lec25dscc25_TT    33.177601     217  7199.539387
-hnb1s1             lec25dscc25_TT    58.060799      10   580.607986
-i1s1               lec25dscc25_TT    33.177601      27   895.795223
-i1s3               lec25dscc25_TT    41.472000       3   124.416000
-i1s5               lec25dscc25_TT    49.766399       2    99.532799
-i1s6               lec25dscc25_TT    58.060799       1    58.060799
-ib1s1              lec25dscc25_TT    33.177601     485 16091.136417
-ib1s2              lec25dscc25_TT    41.472000       1    41.472000
+dffcs1             lec25dscc25_TT   165.888000    1796 297934.848877 n
+dffcs2             lec25dscc25_TT   182.477005       7  1277.339035 n
+dffs1              lec25dscc25_TT   157.593994       7  1103.157959 n
+dffs2              lec25dscc25_TT   174.182007     278 48422.597900 n
+dffss2             lec25dscc25_TT   207.360001       6  1244.160004 n
+fu_FIFO_3                     2900270.723396       4 11601082.893585 h, n
+hi1s1              lec25dscc25_TT    33.177601     192  6370.099365
+hnb1s1             lec25dscc25_TT    58.060799       7   406.425591
+i1s1               lec25dscc25_TT    33.177601      30   995.328026
+i1s3               lec25dscc25_TT    41.472000       1    41.472000
+i1s5               lec25dscc25_TT    49.766399       3   149.299198
+ib1s1              lec25dscc25_TT    33.177601     488 16190.669220
 nb1s1              lec25dscc25_TT    41.472000       2    82.944000
-nb1s2              lec25dscc25_TT    49.766399     306 15228.518211
-nb1s4              lec25dscc25_TT    74.649597     128  9555.148438
-nb1s5              lec25dscc25_TT    82.944000       1    82.944000
+nb1s2              lec25dscc25_TT    49.766399     302 15029.452614
 nnd2s1             lec25dscc25_TT    41.472000       2    82.944000
 nnd2s2             lec25dscc25_TT    41.472000      71  2944.512009
-nnd3s1             lec25dscc25_TT    49.766399       3   149.299198
+nnd3s1             lec25dscc25_TT    49.766399       1    49.766399
 nnd3s2             lec25dscc25_TT    49.766399      23  1144.627186
-nnd3s3             lec25dscc25_TT    82.944000       1    82.944000
 nnd4s1             lec25dscc25_TT    58.060799      10   580.607986
 nnd4s3             lec25dscc25_TT   182.477005       3   547.431015
-nor2s1             lec25dscc25_TT    41.472000      52  2156.544006
+nor2s1             lec25dscc25_TT    41.472000      51  2115.072006
+nor2s2             lec25dscc25_TT    58.060799       2   116.121597
 nor3s1             lec25dscc25_TT    82.944000       2   165.888000
 nor4s1             lec25dscc25_TT    82.944000       1    82.944000
 nor5s1             lec25dscc25_TT    99.532799       9   895.795189
@@ -1492,5 +1393,5 @@ or2s1              lec25dscc25_TT    49.766399       3   149.299198
 or5s1              lec25dscc25_TT    91.238403       9   821.145630
 or5s3              lec25dscc25_TT   182.477005       3   547.431015
 -----------------------------------------------------------------------------
-Total 56 references                                 13113101.389420
+Total 50 references                                 13122368.308403
 1

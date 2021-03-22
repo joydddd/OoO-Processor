@@ -31,7 +31,7 @@ read_file -f sverilog [list ${headers} ${sources}]
 set design_name [getenv PIPELINE_NAME]
 set clock_name clock
 set reset_name reset
-set CLK_PERIOD 9.5
+set CLK_PERIOD 8.5
 
 
 #/***********************************************************/
