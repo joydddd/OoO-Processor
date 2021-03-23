@@ -18,7 +18,9 @@ module complete_stage(
     output  [2:0][`XLEN-1:0]            wb_value,
 
     output  [2:0]                       complete_valid,
-	output  [2:0][`ROB-1:0]             complete_entry
+	output  [2:0][`ROB-1:0]             complete_entry,
+    output  [2:0]                       precise_state_valid,
+	output  [2:0][`XLEN-1:0]            target_pc
 );
 
     wire [7:0]      sel_1, sel_2, sel_3;
@@ -43,23 +45,41 @@ module complete_stage(
     always_comb begin
         complete_valid[2] = 0;
         complete_entry[2] = 0;
+        precise_state_valid[2] = 0;
+        target_pc[2] = 0;
         if (sel_1[i] != 0) begin
             complete_valid[2] = 1'b1;
             complete_entry[2] = fu_c_in[2].rob_entry;
+            if (fu_c_in[2].if_take_branch) begin
+                precise_state_valid = 1'b1;
+                target_pc[2] = fu_c_in[2].target_pc;
+            end
         end
 
         complete_valid[1] = 0;
         complete_entry[1] = 0;
+        precise_state_valid[1] = 0;
+        target_pc[1] = 0;
         if (sel_2[i] != 0) begin
             complete_valid[1] = 1'b1;
             complete_entry[1] = fu_c_in[1].rob_entry;
+            if (fu_c_in[1].if_take_branch) begin
+                precise_state_valid = 1'b1;
+                target_pc[1] = fu_c_in[1].target_pc;
+            end
         end
 
         complete_valid[0] = 0;
         complete_entry[0] = 0;
+        precise_state_valid[0] = 0;
+        target_pc[0] = 0;
         if (sel_3[i] != 0) begin
             complete_valid[0] = 1'b1;
             complete_entry[0] = fu_c_in[0].rob_entry;
+            if (fu_c_in[0].if_take_branch) begin
+                precise_state_valid = 1'b1;
+                target_pc[0] = fu_c_in[0].target_pc;
+            end
         end
     end
 
