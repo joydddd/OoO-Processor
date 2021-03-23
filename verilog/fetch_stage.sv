@@ -30,11 +30,11 @@ module fetch_stage (
     assign next_PC[1] = next_PC[2] + 4;
     assign next_PC[0] = next_PC[1] + 4;
 
-    assign count_down_shift = take_branch     ? 2'd0 :
-                              ~cache_valid[2] ? 2'd0 :
-                              ~cache_valid[1] ? 2'd1 :
-                              ~cache_valid[0] ? 2'd2 :
-                              2'd0;
+    assign shift = take_branch     ? 2'd0 :
+                    ~cache_valid[2] ? 2'd0 :
+                    ~cache_valid[1] ? 2'd1 :
+                    ~cache_valid[0] ? 2'd2 :
+                    2'd0;
 
     // Pass PC and NPC down pipeline w/instruction
 	assign if_packet_out[2].NPC = PC_reg[2] + 4;

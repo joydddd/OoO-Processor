@@ -79,6 +79,11 @@ ROBFILES = verilog/rob.sv
 
 FREELISTTESTBENCH = testbench/freelist_test.sv
 FREELISTFILES = verilog/freelist.sv
+
+# fetch stage
+FSTESTBENCH = testbench/fetch_test.sv
+FSFILES = verilog/pipeline_fetch.sv verilog/fetch_stage.sv cache/icache.sv cache/cachemem.sv
+
 # SIMULATION CONFIG
 
 HEADERS     = $(wildcard *.svh)
@@ -98,6 +103,7 @@ export CACHEFILES
 export RSFILES
 export DFILES
 export ISFIFOFILE
+export FSFILES
 
 
 export CACHE_NAME = cache
@@ -140,6 +146,11 @@ mt: mt_simv
 mt_simv: $(HEADERS) $(MTFILES) $(MTTESTBENCH)
 	$(VCS) $^ -o rs_simv
 
+# fetch stage:
+fs: fs_simv
+	./fs_simv | tee fs_sim_program.out
+fs_simv: $(HEADERS) $(FSFILES) $(FSTESTBENCH)
+	$(VCS) $^ -o fs_simv
 
 #dispatch
 #dis-pipeline
