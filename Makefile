@@ -98,6 +98,7 @@ export ISFIFOFILE
 export CACHE_NAME = cache
 export PIPELINE_NAME = pipeline
 export RS_NAME = RS
+export MAP_TABLE_NAME = map_table
 export IS_FIFO_NAME = fu_FIFO_3
 
 export RSFILES

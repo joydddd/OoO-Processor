@@ -19,10 +19,11 @@ suppress_message {"VER-130"}
 lappend search_path ../
 
 set rs_module [getenv RS_NAME]
+set mt_module [getenv MAP_TABLE_NAME]
 set is_fifo_module [getenv IS_FIFO_NAME]
 
-read_file -f ddc [list ${rs_module}.ddc ${is_fifo_module}.ddc]
-set_dont_touch [list ${rs_module} ${is_fifo_module}]
+read_file -f ddc [list ${rs_module}.ddc ${is_fifo_module}.ddc ${mt_module}.ddc]
+set_dont_touch [list ${rs_module} ${is_fifo_module} ${mt_module}]
 
 set headers [getenv HEADERS]
 set sources [getenv DFILES]
