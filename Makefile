@@ -80,7 +80,7 @@ FSFILES = verilog/pipeline_fetch.sv verilog/fetch_stage.sv cache/icache.sv cache
 
 # retire stage
 REFILES = verilog/re_stage.sv
-RETESTBENCH = 
+RETESTBENCH = testbench/retire_test.sv
 RESYNFILES = synth/retire_stage.vg
 
 
