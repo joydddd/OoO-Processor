@@ -50,7 +50,6 @@ LIB = /afs/umich.edu/class/eecs470/lib/verilog/lec25dscc25.v
 RSTESTBENCH = testbench/rs_test.sv testbench/rs_print.c
 RSFILES = verilog/rs.sv verilog/ps.sv
 RSSYNFILES = synth/RS.vg
-<<<<<<< HEAD
 
 #issue
 ISFIFOFILE = verilog/issue_fifo.sv
@@ -62,7 +61,6 @@ DFILES = verilog/dispatch.sv verilog/issue.sv verilog/pipeline.sv
 DSYNFILES = synth/pipeline.vg
 
 
-=======
 ROBSYNFILES = synth/ROB.vg
 FREELISTSYNFILES = synth/Freelist.vg
 
@@ -71,7 +69,6 @@ ROBFILES = verilog/rob.sv
 
 FREELISTTESTBENCH = testbench/freelist_test.sv
 FREELISTFILES = verilog/freelist.sv
->>>>>>> ROB
 # SIMULATION CONFIG
 
 HEADERS     = $(wildcard *.svh)
@@ -95,15 +92,12 @@ export ISFIFOFILE
 
 export CACHE_NAME = cache
 export PIPELINE_NAME = pipeline
-<<<<<<< HEAD
 export RS_NAME = RS
 export IS_FIFO_NAME = fu_FIFO_3
 
-=======
 export RSFILES
 export ROBFILES
 export FREELISTFILES
->>>>>>> ROB
 PIPELINE  = $(SYNTH_DIR)/$(PIPELINE_NAME).vg 
 SYNFILES  = $(PIPELINE) $(SYNTH_DIR)/$(PIPELINE_NAME)_svsim.sv
 CACHE     = $(SYNTH_DIR)/$(CACHE_NAME).vg
@@ -130,13 +124,11 @@ rs: rs_simv
 rs_simv: $(HEADERS) $(RSFILES) $(RSTESTBENCH)
 	$(VCS) $^ -o rs_simv
 
-<<<<<<< HEAD
 #dis-pipeline
 dis: dis_simv
 	./dis_simv | tee dis_sim_program.out
 dis_simv: $(HEADERS) $(DFILES) $(RSFILES) $(ISFIFOFILE) $(DTESTBENCH)
 	$(VCS) $^ -o dis_simv
-=======
 rob: rob_simv
 	./rob_simv | tee rob_sim_program.out
 rob_simv: $(HEADERS) $(ROBFILES) $(ROBTESTBENCH)
@@ -146,7 +138,6 @@ freelist: freelist_simv
 	./freelist_simv | tee freelist_sim_program.out
 freelist_simv: $(HEADERS) $(FREELISTFILES) $(FREELISTTESTBENCH)
 	$(VCS) $^ -o freelist_simv
->>>>>>> ROB
 
 sim:	simv
 	./simv | tee sim_program.out

@@ -348,16 +348,11 @@ typedef union packed{
 	BR_SELECT br;
 } OP_SELECT;
 
-<<<<<<< HEAD
-
-
-=======
 typedef enum logic[1:0]{
 		EMPTY = 0,
 		INUSED = 1,
 		COMPLETE = 2
 } ROB_STATE;
->>>>>>> ROB
 
 typedef struct packed{
 	logic alu_1; 
