@@ -417,9 +417,12 @@ typedef struct packed{
 
  typedef struct packed {
 	logic 			valid;
+	logic           rob_entry;
 	logic [`PR-1:0] 	Tnew;
 	logic [`PR-1:0] 	Told;
 	logic [4:0] 		arch_reg;
+	logic 			precise_state_need;
+	logic 			target_pc;
 	logic 			completed;
 } ROB_ENTRY_PACKET;
 

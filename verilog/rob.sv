@@ -15,7 +15,9 @@ module ROB(
 
 	input [2:0] complete_valid,
 	input [2:0][`ROB-1:0] complete_entry,  // which ROB entry is done
-	
+	input [2:0] precise_state_valid,
+	input [2:0][`XLEN`-1:0] target_pc,
+	output [2:0][`ROB-1:0] dispatch_index,
 	output ROB_ENTRY_PACKET [2:0]  retire_entry,  // which ENTRY to be retired
 
 	output logic [2:0] struct_stall
@@ -269,6 +271,7 @@ always_comb begin
 		if (complete_valid[i]) begin
 			rob_states_next[complete_entry[i]] = COMPLETE;
 			rob_entries_next[complete_entry[i]].completed = 1;
+			rob_entries_next[complete_entry[i]].precise_state_need = (precise_state_valid[i]) ? 1 : 0;
 		end
 	end	
 end

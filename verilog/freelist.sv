@@ -65,7 +65,7 @@ assign head_incre3 = head + 3;
 assign input_start_incre1 = input_start + 1;
 assign input_start_incre2 = input_start + 2;
 assign input_start_incre3 = input_start + 3;
-assign Head = array_next[head_next];
+assign Head = head;
 
 assign retire_first = RetireEN & 3'b001;
 assign retire_second = (RetireEN & 3'b010) >> 1;
