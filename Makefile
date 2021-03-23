@@ -201,6 +201,9 @@ assembly: assemble disassemble hex
 $(RSSYNFILES): $(RSFILES) $(SYNTH_DIR)/rs.tcl
 	cd $(SYNTH_DIR) && dc_shell-t -f ./rs.tcl | tee rs_synth.out
 
+$(MTSYNFILES): $(MTFILES) $(SYNTH_DIR)/maptables.tcl
+	cd $(SYNTH_DIR) && dc_shell-t -f ./maptables.tcl | tee maptable_synth.out
+
 $(ROBSYNFILES): $(ROBFILES) $(SYNTH_DIR)/rob.tcl
 	cd $(SYNTH_DIR) && dc_shell-t -f ./rob.tcl | tee rob_synth.out
 
@@ -212,6 +215,12 @@ rs_syn:	rs_syn_simv
 
 rs_syn_simv:	$(HEADERS) $(RSSYNFILES) $(RSTESTBENCH)
 	$(VCS) $^ $(LIB) +define+SYNTH_TEST +error+20 -o rs_syn_simv
+
+mt_syn:	mt_syn_simv 
+	./mt_syn_simv | tee mt_syn_program.out
+
+mt_syn_simv:	$(HEADERS) $(MTSYNFILES) $(MTTESTBENCH)
+	$(VCS) $^ $(LIB) +define+SYNTH_TEST +error+20 -o mt_syn_simv
 
 rob_syn:	rob_syn_simv 
 	./rob_syn_simv | tee rob_syn_program.out
