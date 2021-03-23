@@ -95,6 +95,7 @@ SYNTH_DIR = ./synth
 export HEADERS
 export PIPEFILES
 export CACHEFILES
+export MTFILES
 export RSFILES
 export DFILES
 export ISFIFOFILE

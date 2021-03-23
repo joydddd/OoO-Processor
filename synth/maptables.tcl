@@ -22,10 +22,10 @@ set headers [getenv HEADERS]
 set sources [getenv MTFILES]
 
 read_file -f sverilog [list ${headers} ${sources}]
-set design_name maptable
+set design_name map_table
 set clock_name clock
 set reset_name reset
-set CLK_PERIOD 10
+set CLK_PERIOD 8
 
 
 #/***********************************************************/
