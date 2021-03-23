@@ -16,8 +16,9 @@ module ROB(
 	input [2:0] complete_valid,
 	input [2:0][`ROB-1:0] complete_entry,  // which ROB entry is done
 	input [2:0] precise_state_valid,
-	input [2:0][`XLEN`-1:0] target_pc,
-	output [2:0][`ROB-1:0] dispatch_index,
+	input [2:0][`XLEN-1:0] target_pc,
+	input BPRecoverEN,
+	output logic [2:0][`ROB-1:0] dispatch_index,
 	output ROB_ENTRY_PACKET [2:0]  retire_entry,  // which ENTRY to be retired
 
 	output logic [2:0] struct_stall
@@ -145,6 +146,7 @@ end
 always_comb begin
 	tail_next = tail + tail_incre;
 	input_start = tail + 1;
+	struct_stall = 3'b000;
 	if (tail == head_next) begin
 		if (rob_states[tail] == EMPTY || output_end == tail + 1 ) begin
 			input_start = tail;
@@ -215,6 +217,7 @@ always_comb begin
 	rob_states_next = rob_states;
 	rob_entries_next = rob_entries;
 	retire_entry = 0;
+	dispatch_index = 0;
 	priority case (output_diff)
 		3: begin
 			retire_entry[2] = rob_entries[head];
@@ -248,20 +251,26 @@ always_comb begin
 		3: begin
 			rob_entries_next[input_start] = rob_in[2];
 			rob_states_next[input_start] = INUSED;
+			dispatch_index[2] = input_start;
 			rob_entries_next[input_start_incre1] = rob_in[1];
-			rob_states_next[input_start_incre1] = INUSED;	
+			rob_states_next[input_start_incre1] = INUSED;
+			dispatch_index[1] = input_start_incre1;	
 			rob_entries_next[input_start_incre2] = rob_in[0];
-			rob_states_next[input_start_incre2] = INUSED;		
+			rob_states_next[input_start_incre2] = INUSED;	
+			dispatch_index[0] = input_start_incre2;	
 		end
 		2: begin
 			rob_entries_next[input_start] = rob_in[2];
 			rob_states_next[input_start] = INUSED;
+			dispatch_index[2] = input_start;
 			rob_entries_next[input_start_incre1] = rob_in[1];
-			rob_states_next[input_start_incre1] = INUSED;		
+			rob_states_next[input_start_incre1] = INUSED;	
+			dispatch_index[1] = input_start_incre1;	
 		end
 		1: begin
 			rob_entries_next[input_start] = rob_in[2];
-			rob_states_next[input_start] = INUSED;	
+			rob_states_next[input_start] = INUSED;
+			dispatch_index[2] = input_start;	
 		end
 		0: begin
 			
@@ -272,12 +281,13 @@ always_comb begin
 			rob_states_next[complete_entry[i]] = COMPLETE;
 			rob_entries_next[complete_entry[i]].completed = 1;
 			rob_entries_next[complete_entry[i]].precise_state_need = (precise_state_valid[i]) ? 1 : 0;
+			rob_entries_next[complete_entry[i]].target_pc = (precise_state_valid[i]) ? target_pc[i] : 0;
 		end
 	end	
 end
 
 always_ff @(posedge clock) begin
-    if (reset) begin
+    if (reset | BPRecoverEN) begin
 		head <= `SD 0;
 		tail <= `SD 0;
 		rob_states <= `SD 0;
