@@ -19,10 +19,10 @@ suppress_message {"VER-130"}
 lappend search_path ../
 
 set headers [getenv HEADERS]
-set sources [getenv RSFILES]
+set sources [getenv ISFIFOFILE]
 
 read_file -f sverilog [list ${headers} ${sources}]
-set design_name RS
+set design_name fu_FIFO_3
 set clock_name clock
 set reset_name reset
 set CLK_PERIOD 5

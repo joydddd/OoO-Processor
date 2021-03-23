@@ -269,10 +269,10 @@ void print_stage(char* div, int inst, int npc, int valid_inst) {
     if (ppfile != NULL) printf( "%s%4d:%-8s", div, npc, str);
 }
 
-void print_select(int index, int valid, int inst, int npc, int fu_select,
+void print_select(int index, int valid, int inst, int pc, int fu_select,
                   int op_select) {
     printf("|  %1d  |", index);
-    print_stage("", inst, npc, valid);
+    print_stage("", inst, pc, valid);
     char* fu;
     char* op;
     switch (fu_select) {
