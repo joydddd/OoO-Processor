@@ -230,7 +230,7 @@ freelist_syn_simv:	$(HEADERS) $(FREELISTSYNFILES) $(FREELISTTESTBENCH)
 	$(VCS) $^ $(LIB) +define+SYNTH_TEST +error+20 -o freelist_syn_simv   
 
 # dispatch pipeline test
-$(DSYNFILES): $(RSSYNFILES) $(ISFIFOSYN) $(SYNTH_DIR)/dis.tcl $(DFILES) 
+$(DSYNFILES): $(MTSYNFILES) $(RSSYNFILES) $(ISFIFOSYN) $(SYNTH_DIR)/dis.tcl $(DFILES) 
 	cd $(SYNTH_DIR) && dc_shell-t -f ./dis.tcl | tee dis_synth.out
 
 is_fifo_syn_simv: $(ISFIFOSYN)
