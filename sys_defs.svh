@@ -423,6 +423,7 @@ typedef struct packed{
 	logic if_take_branch;
 	logic [`PR-1:0] dest_pr;
 	logic [`XLEN-1:0] dest_value;
+	logic [`ROB-1:0] rob_entry;
 } FU_COMPLETE_PACKET;
 
 typedef struct packed{

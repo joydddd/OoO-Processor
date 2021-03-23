@@ -15,7 +15,10 @@ module complete_stage(
     output  FU_STATE_PACKET             fu_c_stall, // stall on complete hazard
     /* write physical register */
     output  CDB_T_PACKET                cdb_t,      // destination pr
-    output  [2:0][`XLEN-1:0]            wb_value
+    output  [2:0][`XLEN-1:0]            wb_value,
+
+    output  [2:0]                       complete_valid,
+	output  [2:0][`ROB-1:0]             complete_entry
 );
 
     wire [7:0]      sel_1, sel_2, sel_3;
@@ -36,5 +39,28 @@ module complete_stage(
     assign wb_value[0] = fu_c_in[0].dest_value;
     assign wb_value[1] = fu_c_in[1].dest_value;
     assign wb_value[2] = fu_c_in[2].dest_value;
+
+    always_comb begin
+        complete_valid[2] = 0;
+        complete_entry[2] = 0;
+        if (sel_1[i] != 0) begin
+            complete_valid[2] = 1'b1;
+            complete_entry[2] = fu_c_in[2].rob_entry;
+        end
+
+        complete_valid[1] = 0;
+        complete_entry[1] = 0;
+        if (sel_2[i] != 0) begin
+            complete_valid[1] = 1'b1;
+            complete_entry[1] = fu_c_in[1].rob_entry;
+        end
+
+        complete_valid[0] = 0;
+        complete_entry[0] = 0;
+        if (sel_3[i] != 0) begin
+            complete_valid[0] = 1'b1;
+            complete_entry[0] = fu_c_in[0].rob_entry;
+        end
+    end
 
 endmodule
