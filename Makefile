@@ -78,6 +78,12 @@ FREELISTFILES = verilog/freelist.sv
 FSTESTBENCH = testbench/fetch_test.sv
 FSFILES = verilog/pipeline_fetch.sv verilog/fetch_stage.sv cache/icache.sv cache/cachemem.sv
 
+# retire stage
+REFILES = verilog/re_stage.sv
+RETESTBENCH = 
+RESYNFILES = synth/retire_stage.vg
+
+
 # SIMULATION CONFIG
 
 HEADERS     = $(wildcard *.svh)
@@ -99,6 +105,7 @@ export RSFILES
 export DFILES
 export ISFIFOFILE
 export FSFILES
+export REFILES
 
 
 export CACHE_NAME = cache
@@ -138,9 +145,9 @@ rs_simv: $(HEADERS) $(RSFILES) $(RSTESTBENCH)
 
 # map_table:
 mt: mt_simv
-	./rs_simv | tee rs_sim_program.out
+	./mt_simv | tee mt_sim_program.out
 mt_simv: $(HEADERS) $(MTFILES) $(MTTESTBENCH)
-	$(VCS) $^ -o rs_simv
+	$(VCS) $^ -o mt_simv
 
 # fetch stage:
 fs: fs_simv
@@ -163,6 +170,12 @@ freelist: freelist_simv
 	./freelist_simv | tee freelist_sim_program.out
 freelist_simv: $(HEADERS) $(FREELISTFILES) $(FREELISTTESTBENCH)
 	$(VCS) $^ -o freelist_simv
+
+# retire_stage:
+ret: ret_simv
+	./ret_simv | tee ret_sim_program.out
+ret_simv: $(HEADERS) $(REFILES) $(RETESTBENCH)
+	$(VCS) $^ -o ret_simv
 
 sim:	simv
 	./simv | tee sim_program.out
@@ -257,6 +270,15 @@ dis_syn: dis_syn_simv
 dis_syn_simv: $(HEADERS) $(DSYNFILES) $(DTESTBENCH) 
 	$(VCS) $^ $(LIB) +define+SYNTH_TEST +error+20 -o dis_syn_simv 
 
+
+$(RESYNFILES):	$(REFILES) $(SYNTH_DIR)/retire.tcl
+	cd $(SYNTH_DIR) && dc_shell-t -f ./retire.tcl | tee ret_synth.out
+
+ret_syn: ret_syn_simv
+	./ret_syn_simv | tee ret_syn_program.out
+
+ret_syn_simv: $(HEADERS) $(RESYNFILES) $(RETESTBENCH) 
+	$(VCS) $^ $(LIB) +define+SYNTH_TEST +error+20 -o dis_syn_simv 
 
 
 syn:	syn_simv 

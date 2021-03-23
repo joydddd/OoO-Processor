@@ -1,9 +1,10 @@
+/*
 module retire_stage (
 	input   ROB_ENTRY_PACKET[2:0] 	rob_head_entry, // connected to ROB::retire_entry
-	/* write Archi Map table */
+
 	output  [2:0][`PR-1:0]			map_ar_pr, 
 	output  [2:0][4:0]			    map_ar,
-	/*write Free list */
+
 	output  [2:0]				    Retire_EN,    // connect to arch map table and freelist the same time
     output  [2:0][`PR-1:0] 		    Tolds_out   //3 Tolds connected to Freelist
 );
@@ -34,24 +35,24 @@ always_comb begin
 end
 
 endmodule
+*/
 
-
-module retire_stage_ps (
-	input   ROB_ENTRY_PACKET[2:0] 	rob_head_entry, // connected to ROB::retire_entry
-    input   [`ROB-1:0]              fl_distance,  //connected to FL, how many reg-write insts are in ROB
-    output  BPRecoverEN,
-    output  target_pc,
+module retire_stage (
+	input           ROB_ENTRY_PACKET[2:0] 	rob_head_entry, // connected to ROB::retire_entry
+    input           [`ROB-1:0]              fl_distance,  //connected to FL, how many reg-write insts are in ROB
+    output  logic                           BPRecoverEN,
+    output  logic                           target_pc,
 	/* write Archi Map table */
-    input   [31:0][`PR-1:0]         archi_maptable,
-	output  [2:0][`PR-1:0]			map_ar_pr, 
-	output  [2:0][4:0]			    map_ar,
+    input           [31:0][`PR-1:0]         archi_maptable,
+	output          [2:0][`PR-1:0]			map_ar_pr, 
+	output          [2:0][4:0]			    map_ar,
     /* write Map table */
-    output  [31:0][`PR-1:0]         recover_maptable,
+    output  logic   [31:0][`PR-1:0]         recover_maptable,
 	/*write Free list */
-    input   [`ROB-1:0]              FreelistHead,
-	output  [2:0]				    Retire_EN,    // connect to arch map table and freelist the same time
-    output  [2:0][`PR-1:0] 		    Tolds_out,   //3 Tolds connected to Freelist,
-    output  [`ROB-1:0]              BPRecoverHead
+    input           [`ROB-1:0]              FreelistHead,
+	output  logic   [2:0]				    Retire_EN,    // connect to arch map table and freelist the same time
+    output          [2:0][`PR-1:0] 		    Tolds_out,   //3 Tolds connected to Freelist,
+    output  logic   [`ROB-1:0]              BPRecoverHead
 );
 
 logic [`ROB-1:0] fl_recover_dis;
@@ -91,8 +92,10 @@ always_comb begin
     BPRecoverEN = 1'b0;
     fl_recover_dis = fl_distance;
     recover_maptable = archi_maptable;
+    target_pc = 0;
     if (rob_head_entry[2].completed==1'b1 && rob_head_entry[2].precise_state_need==1'b1) begin
         BPRecoverEN = 1'b1;
+        target_pc = rob_head_entry[2].target_pc;
         recover_maptable[rob_head_entry[2].arch_reg] = rob_head_entry[2].Tnew;
         fl_recover_dis = fl_recover_dis_stage1;
         Retire_EN[2] = is_write_bit2;
@@ -102,6 +105,7 @@ always_comb begin
         Retire_EN[2] = is_write_bit2;
         if (rob_head_entry[1].completed==1'b1 && rob_head_entry[1].precise_state_need==1'b1) begin
             BPRecoverEN = 1'b1;
+            target_pc = rob_head_entry[1].target_pc;
             recover_maptable[rob_head_entry[1].arch_reg] = rob_head_entry[1].Tnew;
             Retire_EN[1] = is_write_bit1;
             fl_recover_dis = fl_recover_dis_stage2;
@@ -111,6 +115,7 @@ always_comb begin
             Retire_EN[1] = is_write_bit1;
             if (rob_head_entry[0].completed==1'b1 && rob_head_entry[1].precise_state_need==1'b1) begin
                 BPRecoverEN = 1'b1;
+                target_pc = rob_head_entry[0].target_pc;
                 recover_maptable[rob_head_entry[0].arch_reg] = rob_head_entry[0].Tnew;
                 Retire_EN[0] = is_write_bit0;
                 fl_recover_dis = fl_recover_dis_stage3;
