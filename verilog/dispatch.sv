@@ -372,6 +372,7 @@ module dispatch_stage (
 
 	/* allocate new ROB */
 	input [2:0]					rob_stall, // rob expect structural stall
+	input [2:0][`ROB-1:0]		rob_index,
 	output ROB_ENTRY_PACKET[2:0] rob_in,
 
 	/* allocate new PR */
@@ -400,56 +401,6 @@ logic [2:0] valid_one_to_two;
 logic [2:0] valid_two_to_three;
 assign d_stall = rs_stall | rob_stall | ~free_reg_valid; 
 
-/* reorder valid instructions */
-// always_comb begin
-// 	for (int i=0; i<3; i++) begin
-// 		valid_og[i] = if_id_packet_in[i].valid;
-// 	end
-// end
-
-// always_comb begin
-// 	valid_one_to_two = valid_og;
-// 	dis_packet[2] = 0;
-// 	/* entry 2 */
-// 	if (!d_stall[2])
-// 		if (valid_og[0]) begin
-// 			dis_packet[2] = if_id_packet_in[2];
-// 			dis_packet[2].valid = 1;
-// 		end else if (if_id_packet_in[1].valid) begin
-// 			valid_one_to_two[1] = 0;
-// 			dis_packet[2] = if_id_packet_in[1];
-// 			dis_packet[2].valid = 1;
-// 		end else if (if_id_packet_in[0].valid) begin
-// 			valid_one_to_two[0] = 0;
-// 			dis_packet[2] = if_id_packet_in[0];
-// 			dis_packet[2].valid = 1;
-// 		end
-// end;
-
-// always_comb begin
-// /* entry 1*/
-// 	valid_two_to_three = valid_one_to_two;
-// 	dis_packet[1] = 0;
-// 	if (!d_stall[1]) begin
-// 		if(valid_one_to_two[1]) begin
-// 			dis_packet[1] = if_id_packet_in[1];
-// 			dis_packet[1].valid = 1;
-// 		end else if (valid_one_to_two[0]) begin
-// 			valid_two_to_three[0] = 0;
-// 			dis_packet[1] = if_id_packet_in[1];
-// 			dis_packet[1].valid = 1;
-// 		end
-// 	end
-// end;
-
-// always_comb begin
-// 	/* entry 0 */
-// 	dis_packet[0] = 0;
-// 	if (!d_stall[0] && valid_two_to_three[0]) begin
-// 		dis_packet[0] = if_id_packet_in[0];
-// 		dis_packet[0].valid = 1;
-// 	end
-// end
 
 always_comb begin
 	dis_packet = if_id_packet_in;
@@ -534,6 +485,7 @@ always_comb begin
 		rob_in[i].valid = dis_packet[i].valid;
 		rob_in[i].Tnew = dest_pr[i];
 		rob_in[i].Told = maptable_old_pr[i];
+		rob_in[i].halt = halt[i];
 		rob_in[i].arch_reg = dest_arch[i];
 		rob_in[i].completed = 0;
 	end
@@ -551,6 +503,7 @@ always_comb begin
 		rs_in[i].opb_select = opb_select[i];
 		rs_in[i].inst = dis_packet[i].inst;
 		rs_in[i].halt = halt;
+		rs_in[i].rob_entry = rob_index[i];
 		rs_in[i].dest_pr = dest_pr[i];
 		rs_in[i].reg1_pr = reg1_pr[i];
 		rs_in[i].reg1_ready = reg1_ready[i];

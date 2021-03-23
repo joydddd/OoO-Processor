@@ -140,6 +140,8 @@ assign pr2_read = 0;
 
 /* Reorder Buffer */
 logic [2:0]             rob_stall;
+logic [2:0][`ROB-1:0]   new_rob_index;
+assign new_rob_index = 5; // TODO: plug in new rob index
 
 /* functional unit */
 FU_STATE_PACKET         fu_ready;
@@ -253,6 +255,7 @@ dispatch_stage dipatch_0(
 
     // allocate new ROB 
     .rob_stall(rob_stall),
+    .rob_index(new_rob_index),
     .rob_in(dis_rob_packet),
 
     // allocate new PR 
