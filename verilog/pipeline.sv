@@ -122,12 +122,17 @@ RS_S_PACKET [2:0]       rs_is_packet;
 logic [2:0]             free_pr_valid;
 logic [2:0][`PR-1:0]    free_pr;
 
-/* map table output */
+/* map table */
+logic BPRecoverEN;
+logic [31:0][`PR-1:0] 	archi_maptable;
 logic [2:0][`PR-1:0]    maptable_old_pr;
 logic [2:0][`PR-1:0]    maptable_reg1_pr;
 logic [2:0][`PR-1:0]    maptable_reg2_pr;
 logic [2:0]             maptable_reg1_ready;
 logic [2:0]             maptable_reg2_ready;
+
+assign BPRecoverEN = 1'b0;
+assign archi_maptable = 0;
 
 /* Issue stage */
 RS_S_PACKET [2:0]       is_packet_in;
@@ -286,11 +291,11 @@ dispatch_stage dipatch_0(
 //                                              //
 //////////////////////////////////////////////////
 
-map_table mtb(
+map_table map_table_0(
     .clock(clock),
     .reset(reset),
-    .archi_maptable(0),
-    .BPRecoverEN(1'b0),
+    .archi_maptable(archi_maptable),
+    .BPRecoverEN(BPRecoverEN),
     .cdb_t_in(cdb_t),
     .maptable_new_ar(maptable_allocate_ar),
     .maptable_new_pr(maptable_allocate_pr),

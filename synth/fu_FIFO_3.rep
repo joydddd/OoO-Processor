@@ -5,7 +5,7 @@ Warning: Design 'fu_FIFO_3' contains 1 high-fanout nets. A fanout number of 1000
 Report : design
 Design : fu_FIFO_3
 Version: O-2018.06
-Date   : Mon Mar 22 13:22:02 2021
+Date   : Tue Mar 23 07:42:21 2021
 ****************************************
 
 Design allows ideal nets on clock nets.
@@ -87,7 +87,7 @@ Design Parameters:
 Report : area
 Design : fu_FIFO_3
 Version: O-2018.06
-Date   : Mon Mar 22 13:22:02 2021
+Date   : Tue Mar 23 07:42:21 2021
 ****************************************
 
 Library(s) Used:
@@ -123,7 +123,7 @@ Report : timing
         -transition_time
 Design : fu_FIFO_3
 Version: O-2018.06
-Date   : Mon Mar 22 13:22:02 2021
+Date   : Tue Mar 23 07:42:21 2021
 ****************************************
 
  * Some/all delay information is back-annotated.
@@ -591,7 +591,7 @@ Report : constraint
         -max_delay
 Design : fu_FIFO_3
 Version: O-2018.06
-Date   : Mon Mar 22 13:22:02 2021
+Date   : Tue Mar 23 07:42:21 2021
 ****************************************
 
 
@@ -741,7 +741,7 @@ Warning: Design 'fu_FIFO_3' contains 1 high-fanout nets. A fanout number of 1000
 Report : reference
 Design : fu_FIFO_3
 Version: O-2018.06
-Date   : Mon Mar 22 13:22:05 2021
+Date   : Tue Mar 23 07:42:24 2021
 ****************************************
 
 Attributes:
