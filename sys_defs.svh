@@ -284,10 +284,13 @@ typedef struct packed {
 `define PR 6  // 64 Physical registers (32AR+32ROB)
 `define ZERO_PR 0  // PR[0] = AR[0], always read 0 and don't write.
 `define ROB 5     // 32 reorder buffer entries
+`define ROBW 32
 `define FU 3 // how many fus in total? Assume 8
 `define RS 4// 16 RS
 `define RSW 16 // = 2**`RS, change ps width in RS as well!! 
 `define OP 4
+
+`define IS_FIFO_DEPTH 32
 
 //FU: 3 * Int ALU(+,-,bitwise), 2* load/store, 2* int multi, 1* branch
 
@@ -339,27 +342,40 @@ typedef enum logic[`OP-1:0]{
 }LS_SELECT;
 
 typedef union packed{
-	
 	ALU_SELECT alu;
 	MULT_SELECT mult;
-	BR_SELECT br;
 	LS_SELECT ls;
-
+	BR_SELECT br;
 } OP_SELECT;
 
+<<<<<<< HEAD
 
 
+=======
+typedef enum logic[1:0]{
+		EMPTY = 0,
+		INUSED = 1,
+		COMPLETE = 2
+} ROB_STATE;
+>>>>>>> ROB
 
 typedef struct packed{
-	logic alu_1;
+	logic alu_1; 
 	logic alu_2;
 	logic alu_3;
-	logic storeload_1;
-	logic storeload_2;
+	logic loadstore_1;
+	logic loadstore_2;
 	logic mult_1;
 	logic mult_2;
 	logic branch;
 } FU_STATE_PACKET;
+
+typedef struct packed{
+	logic alu;
+	logic ls;
+	logic mult;
+	logic branch;
+} FU_FIFO_PACKET;
 
 
 typedef struct packed {
@@ -396,10 +412,16 @@ typedef struct packed {
 } RS_S_PACKET;
 
 typedef struct packed{
-	logic 			OP_SELECT;
-	logic	[`PR-1:0] 	dest_pr;
-	logic	[`XLEN-1:0]	r1_value;
-	logic	[`XLEN-1:0] 	r2_value;
+	logic 				valid;
+	OP_SELECT			op_sel;
+	logic [`XLEN-1:0]   NPC;   // PC + 4
+    logic [`XLEN-1:0]   PC;    // PC
+	ALU_OPA_SELECT      opa_select; // ALU opa mux select (ALU_OPA_xxx *)
+    ALU_OPB_SELECT      opb_select; // ALU opb mux select (ALU_OPB_xxx *)
+	INST          		inst;
+	logic [`PR-1:0] 	dest_pr;
+	logic [`XLEN-1:0]	r1_value;
+	logic [`XLEN-1:0] 	r2_value;
 } ISSUE_FU_PACKET;
 
 typedef struct packed{
@@ -416,9 +438,12 @@ typedef struct packed{
 
  typedef struct packed {
 	logic 			valid;
+	logic           rob_entry;
 	logic [`PR-1:0] 	Tnew;
 	logic [`PR-1:0] 	Told;
 	logic [4:0] 		arch_reg;
+	logic 			precise_state_need;
+	logic 			target_pc;
 	logic 			completed;
 } ROB_ENTRY_PACKET;
 

@@ -1,134 +1,8 @@
 `define TEST_MODE
-// `define RS_ALLOCATE_DEBUG
+// `define RS_ALLOCAfTE_DEBUG
 // `define IS_DEBUG
 `ifndef __RS_V__
 `define __RS_V__
-
-`timescale 1ns/100ps
-
-module Issue_Select
-(
-    input RS_IN_PACKET [`RSW-1:0]   rs_entries,
-    input FU_STATE_PACKET           fu_ready,
-    output FU_STATE_PACKET          fu_ready_next,
-    
-    /* if the entry is using alu & ready */
-    input [`RSW-1:0]                alu_ready_in, 
-    input [`RSW-1:0]                mult_ready_in,
-    input [`RSW-1:0]                ls_ready_in,
-    input [`RSW-1:0]                br_ready_in,
-    output logic [`RSW-1:0]         alu_ready_next,
-    output logic [`RSW-1:0]         mult_ready_next,
-    output logic [`RSW-1:0]         ls_ready_next,
-    output logic [`RSW-1:0]         br_ready_next,
-    output RS_IN_PACKET             issue_pckt,
-    output logic [`RSW-1:0]         tag_issue // one hot coding
-);
-/* if there is fu available */
-logic [`RSW-1:0] alu_ready;
-logic [`RSW-1:0] mult_ready;
-logic [`RSW-1:0] ls_ready;
-logic [`RSW-1:0] br_ready;
-logic alu_av, mult_av, ls_av, br_av;
-assign alu_av = fu_ready.alu_1 | fu_ready.alu_2 | fu_ready.alu_3;
-assign mult_av = fu_ready.mult_1 | fu_ready.mult_2;
-assign ls_av = fu_ready.storeload_1 | fu_ready.storeload_2;
-assign br_av = fu_ready.branch;
-always_comb begin
-    for(int i=0; i<`RSW; i++) begin
-        alu_ready[i] = alu_ready_in[i] & alu_av;
-        mult_ready[i] = mult_ready_in[i] & mult_av;
-        ls_ready[i] = ls_ready_in[i] & ls_av;
-        br_ready[i] = br_ready_in[i] & br_av;
-    end
-end
-
-/* select entry to issue */
-logic yes_issue;
-logic [`RSW-1:0]            tag_ready;
-logic [`RSW-1:0][`XLEN-1:0] pc_comb;
-logic [`XLEN-1:0]           pc_up_waste;
-always_comb begin
-    for (int i = 0; i < `RSW; i++) begin
-        pc_comb[i] = rs_entries[i].PC;
-    end
-end
-assign tag_ready = alu_ready | mult_ready | ls_ready | br_ready;
-// pc_sel16 sel_small_pc(.pc(pc_comb), .req(tag_ready), .en(1'b1), .gnt(tag_issue), .req_up(yes_issue), .pc_up(pc_up_waste));
-ps16 sel_ps(.req(tag_ready), .en(1'b1), .gnt(tag_issue), .req_up(yes_issue));
-
-/* update ready entries for each fu */
-assign alu_ready_next = alu_ready_in & ~tag_issue;
-assign mult_ready_next = mult_ready_in & ~tag_issue;
-assign ls_ready_next = ls_ready_in & ~tag_issue;
-assign br_ready_next = br_ready_in & ~tag_issue;
-
-/* assign the selected entry to output */
-RS_IN_PACKET issue_pckt_temp;
-
-always_comb begin
-    issue_pckt_temp = 0;
-    for (int i=0; i<`RSW; i++) begin
-        if(tag_issue[i]==1'b1)
-            issue_pckt_temp = rs_entries[i];
-    end
-end
-
-
-/* select fu for issue and upadte fu_ready */ 
-FU_SELECT issue_fu;
-always_comb begin
-    fu_ready_next = fu_ready;
-    issue_fu = ALU_1;
-    if (yes_issue) begin 
-    priority case(issue_pckt_temp.fu_sel)
-        ALU_1: begin
-            if (fu_ready.alu_1) begin
-                fu_ready_next.alu_1 = 1'b0;
-                issue_fu = ALU_1;
-            end else if (fu_ready.alu_2) begin
-                fu_ready_next.alu_2 = 1'b0;
-                issue_fu = ALU_2;
-            end else if (fu_ready.alu_3) begin
-                fu_ready_next.alu_3 = 1'b0;
-                issue_fu = ALU_3;
-            end
-        end
-        LS_1: begin
-            if (fu_ready.storeload_1) begin
-                fu_ready_next.storeload_1 = 1'b0;
-                issue_fu = LS_1;
-            end else if (fu_ready.storeload_2 == 1'b1) begin
-                fu_ready_next.storeload_2 = 1'b0;
-                issue_fu = LS_2;
-            end
-        end
-        MULT_1: begin
-            if (fu_ready.mult_1 == 1'b1) begin
-                fu_ready_next.mult_1 = 1'b0;
-                issue_fu = MULT_1;
-            end else if (fu_ready.mult_2 == 1'b1) begin
-                fu_ready_next.mult_2 = 1'b0;
-                issue_fu = MULT_2;
-            end
-        end
-        BRANCH: begin
-            if (fu_ready.branch == 1'b1) begin
-                fu_ready_next.branch = 1'b0;
-                issue_fu = BRANCH;
-            end
-        end
-    endcase
-    end
-end
-
-/* output issue pckt */
-always_comb begin
-    issue_pckt = issue_pckt_temp;
-    issue_pckt.fu_sel = issue_fu;
-end
-
-endmodule
 
 `timescale 1ns/100ps
 
@@ -137,7 +11,7 @@ module RS(
     input                       reset,
     input RS_IN_PACKET [2:0]    rs_in,
     input CDB_T_PACKET          cdb_t,
-    input FU_STATE_PACKET       fu_ready,       // high if fu is ready to issue to
+    input FU_FIFO_PACKET        fu_fifo_stall,  // high if fu FIFO has < 3 available
     output RS_S_PACKET [2:0]    issue_insts,
     output logic [2:0]           struct_stall    // if high, stall corresponding dispatch, dependent on fu_req
 `ifdef TEST_MODE
@@ -227,51 +101,56 @@ end
 
 /***********End of allocate logic***********/
 
-RS_S_PACKET [2:0]   issue_insts_temp;
-
 /*****NEW*****/
-FU_STATE_PACKET fu_ready_one_to_two;
-FU_STATE_PACKET fu_ready_two_to_three;
-
-logic [`RSW-1:0] alu_ready_init;
-logic [`RSW-1:0] alu_ready_one_to_two;
-logic [`RSW-1:0] alu_ready_two_to_three;
-logic [`RSW-1:0] ls_ready_init;
-logic [`RSW-1:0] ls_ready_one_to_two;
-logic [`RSW-1:0] ls_ready_two_to_three;
-logic [`RSW-1:0] br_ready_init;
-logic [`RSW-1:0] br_ready_one_to_two;
-logic [`RSW-1:0] br_ready_two_to_three;
-logic [`RSW-1:0] mult_ready_init;
-logic [`RSW-1:0] mult_ready_one_to_two;
-logic [`RSW-1:0] mult_ready_two_to_three;
-
-logic [2:0][`RSW-1:0] tag_issue_separate;
-RS_IN_PACKET [2:0] issue_pckts;
 
 
 logic [`RSW-1:0] tag_ready;
+logic [`RSW-1:0] entry_fu_ready;
+logic [`RSW-1:0] entry_ready;
+logic [`RSW-1:0] entry_ready_two2one;
+logic [`RSW-1:0] entry_ready_one2zero;
+
+logic [2:0][`RSW-1:0] tag_issue_separate;
+
+
+/* determine which entries are ready */
 always_comb begin
     for(int i=0; i<`RSW; i++) begin
         tag_ready[i] = reg1_ready_next[i] & reg2_ready_next[i] & rs_entries[i].valid;
     end
 end
 always_comb begin
+    entry_fu_ready = 0;
     for(int i=0; i<`RSW; i++) begin
-        alu_ready_init[i] = tag_ready[i] && rs_entries[i].fu_sel == ALU_1;
-        mult_ready_init[i] = tag_ready[i] && rs_entries[i].fu_sel == MULT_1;
-        ls_ready_init[i] = tag_ready[i] && rs_entries[i].fu_sel == LS_1;
-        br_ready_init[i] = tag_ready[i] && rs_entries[i].fu_sel == BRANCH;
+        priority case (rs_entries[i].fu_sel)
+            ALU_1: entry_fu_ready[i] = ~fu_fifo_stall.alu;
+            LS_1: entry_fu_ready[i] = ~fu_fifo_stall.ls;
+            MULT_1: entry_fu_ready[i] = ~fu_fifo_stall.mult;
+            BRANCH: entry_fu_ready[i] = ~fu_fifo_stall.branch;
+        endcase
     end
 end
+assign entry_ready = tag_ready & entry_fu_ready;
 
-Issue_Select issue_first(.rs_entries(rs_entries), .fu_ready(fu_ready), .fu_ready_next(fu_ready_one_to_two), .alu_ready_in(alu_ready_init), .mult_ready_in(mult_ready_init), .ls_ready_in(ls_ready_init), .br_ready_in(br_ready_init), .alu_ready_next(alu_ready_one_to_two), .mult_ready_next(mult_ready_one_to_two), .ls_ready_next(ls_ready_one_to_two), .br_ready_next(br_ready_one_to_two), .issue_pckt(issue_pckts[2]), .tag_issue(tag_issue_separate[2]));
+/* select which entry to issue */
 
-Issue_Select issue_sec(.rs_entries(rs_entries), .fu_ready(fu_ready_one_to_two), .fu_ready_next(fu_ready_two_to_three), .alu_ready_in(alu_ready_one_to_two), .mult_ready_in(mult_ready_one_to_two), .ls_ready_in(ls_ready_one_to_two), .br_ready_in(br_ready_one_to_two), .alu_ready_next(alu_ready_two_to_three), .mult_ready_next(mult_ready_two_to_three), .ls_ready_next(ls_ready_two_to_three), .br_ready_next(br_ready_two_to_three), .issue_pckt(issue_pckts[1]), .tag_issue(tag_issue_separate[1]));
+ps16 is_ps_2(.req(entry_ready), .en(1'b1), .gnt(tag_issue_separate[2]));
+assign entry_ready_two2one = entry_ready & ~tag_issue_separate[2];
+ps16 is_ps_1(.req(entry_ready_two2one), .en(1'b1), .gnt(tag_issue_separate[1]));
+assign entry_ready_one2zero = entry_ready_two2one & ~tag_issue_separate[1];
+ps16 is_ps_0(.req(entry_ready_one2zero), .en(1'b1), .gnt(tag_issue_separate[0]));
 
-Issue_Select issue_third(.rs_entries(rs_entries), .fu_ready(fu_ready_two_to_three), .fu_ready_next(), .alu_ready_in(alu_ready_two_to_three), .mult_ready_in(mult_ready_two_to_three), .ls_ready_in(ls_ready_two_to_three), .br_ready_in(br_ready_two_to_three), .alu_ready_next(), .mult_ready_next(), .ls_ready_next(), .br_ready_next(), .issue_pckt(issue_pckts[0]), .tag_issue(tag_issue_separate[0]));
 
-
+/* assign issue packet */
+RS_IN_PACKET [2:0] issue_pckts;
+always_comb begin
+    issue_pckts = 0;
+    for(int i=0; i<`RSW; i++) begin
+        if (tag_issue_separate[2][i]) issue_pckts[2] = rs_entries[i];
+        if (tag_issue_separate[1][i]) issue_pckts[1] = rs_entries[i];
+        if (tag_issue_separate[0][i]) issue_pckts[0] = rs_entries[i];
+    end
+end
 
 `ifdef RS_ALLOCATE_DEBUG
     assign issue_EN = 0;

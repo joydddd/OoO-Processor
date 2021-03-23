@@ -37,17 +37,34 @@ module pipeline(
 
 `ifdef TEST_MODE
     // IF to Dispatch 
-    , output IF_ID_PACKET [2:0]         if_d_packet_display
     
-    // ID stage output
-    , output RS_IN_PACKET [2:0]         dis_rs_packet_display
+    
+    // ID 
+    , output IF_ID_PACKET [2:0]         dis_in_display
     , output ROB_ENTRY_PACKET [2:0]     dis_rob_packet_display
     , output logic [2:0]                dis_stall_display
 
     // RS
+    , output RS_IN_PACKET [2:0]         dis_rs_packet_display
     , output RS_IN_PACKET [`RSW-1:0]    rs_entries_display
-    , output RS_S_PACKET [2:0]          rs_is_packet_display
+    , output RS_S_PACKET [2:0]          rs_out_display
     , output logic [2:0]                rs_stall_display
+
+    // IS
+    , output RS_S_PACKET [2:0]          is_in_display
+    , output FU_FIFO_PACKET             fu_fifo_stall_display
+    , output ISSUE_FU_PACKET [`IS_FIFO_DEPTH-1:0] alu_fifo_display
+    , output ISSUE_FU_PACKET [`IS_FIFO_DEPTH-1:0] mult_fifo_display
+    , output ISSUE_FU_PACKET [`IS_FIFO_DEPTH-1:0] br_fifo_display
+    , output ISSUE_FU_PACKET [`IS_FIFO_DEPTH-1:0] ls_fifo_display
+
+
+    // FU
+    , output ISSUE_FU_PACKET [2**`FU-1:0] fu_in_display
+    , output FU_STATE_PACKET            fu_ready_display
+    
+    // Complete
+    , output CDB_T_PACKET               cdb_t_display
 
 `endif
 
@@ -66,8 +83,8 @@ module pipeline(
     , input [2:0][`PR-1:0]              maptable_old_pr_debug
     , input [2:0][`PR-1:0]              maptable_reg1_pr_debug
     , input [2:0][`PR-1:0]              maptable_reg2_pr_debug
-    , input [2:0][`PR-1:0]              maptable_reg1_ready_debug
-    , input [2:0][`PR-1:0]              maptable_reg2_ready_debug
+    , input [2:0]                       maptable_reg1_ready_debug
+    , input [2:0]                       maptable_reg2_ready_debug
 
     , input [2:0]                       rob_stall_debug
     , input FU_STATE_PACKET             fu_ready_debug
@@ -109,7 +126,16 @@ logic [2:0]             maptable_reg2_ready;
 
 /* Issue stage */
 RS_S_PACKET [2:0]       is_packet_in;
+ISSUE_FU_PACKET [2**`FU-1:0] is_fu_packet;
+FU_FIFO_PACKET          fu_fifo_stall;
+logic [2:0][`PR-1:0]    is_pr1_idx, is_pr2_idx; // access pr
 
+
+/* physical register */
+logic [2:0][`XLEN-1:0]  pr1_read, pr2_read;
+// TODO: plug in pr
+assign pr1_read = 0;
+assign pr2_read = 0;
 
 
 /* Reorder Buffer */
@@ -117,6 +143,7 @@ logic [2:0]             rob_stall;
 
 /* functional unit */
 FU_STATE_PACKET         fu_ready;
+ISSUE_FU_PACKET [2**`FU-1:0] fu_packet_in;
 
 
 /* Complete Stage */
@@ -126,16 +153,27 @@ CDB_T_PACKET            cdb_t;
 //          DEBUG  IN/OUTPUT                
 ////////////////////////////////////////////////////////
 `ifdef TEST_MODE
-assign if_d_packet_display = if_d_packet;
     
 // ID stage output
-assign dis_rs_packet_display = dis_rs_packet;
+assign dis_in_display = dis_packet_in;
 assign dis_rob_packet_display = dis_rob_packet;
 assign dis_stall_display = dis_stall;
 
 // RS
-assign rs_is_packet_display = rs_is_packet;
+assign dis_rs_packet_display = dis_rs_packet;
 assign rs_stall_display = rs_stall;
+assign rs_out_display = rs_is_packet;
+
+// IS
+assign is_in_display = is_packet_in;
+assign fu_in_display = fu_packet_in;
+assign fu_fifo_stall_display = fu_fifo_stall;
+
+// FU
+assign fu_ready_display = fu_ready;
+
+// Complete
+assign cdb_t_display = cdb_t;
 
 `endif
 
@@ -249,7 +287,7 @@ RS RS_0(
     .reset(reset),
     .rs_in(dis_rs_packet),
     .cdb_t(cdb_t),
-    .fu_ready(fu_ready),
+    .fu_fifo_stall(fu_fifo_stall),
     
     // Outputs
     .issue_insts(rs_is_packet),
@@ -258,6 +296,57 @@ RS RS_0(
     , .rs_entries_display(rs_entries_display)
     `endif
 );
+
+
+//////////////////////////////////////////////////
+//                                              //
+//                RS-IS-Register                //
+//                                              //
+//////////////////////////////////////////////////
+
+always_ff @(posedge clock) begin
+    if (reset) is_packet_in <= `SD 0;
+    else is_packet_in <= `SD rs_is_packet;
+end
+
+
+//////////////////////////////////////////////////
+//                                              //
+//                  ISSUE-Stage                 //
+//                                              //
+//////////////////////////////////////////////////
+
+issue_stage issue_0(
+    // Input
+    .clock(clock),
+    .reset(reset),
+    .rs_out(is_packet_in),
+    .read_rda(pr1_read),
+    .read_rdb(pr2_read),
+    .fu_ready(fu_ready),
+    // Output
+    .rda_idx(is_pr1_idx),
+    .rdb_idx(is_pr2_idx),
+    .issue_2_fu(is_fu_packet),
+    .fu_fifo_stall(fu_fifo_stall)
+    `ifdef TEST_MODE
+    , .alu_fifo_display(alu_fifo_display)
+    , .ls_fifo_display(ls_fifo_display)
+    , .mult_fifo_display(mult_fifo_display)
+    , .br_fifo_display(br_fifo_display)
+    `endif
+);
+
+//////////////////////////////////////////////////
+//                                              //
+//                IS-FU-Register                //
+//                                              //
+//////////////////////////////////////////////////
+
+always_ff @(posedge clock) begin
+    if (reset) fu_packet_in <= `SD 0;
+    else fu_packet_in <= `SD is_fu_packet;
+end
 
 
 endmodule
