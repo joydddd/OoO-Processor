@@ -58,6 +58,9 @@ module pipeline(
     , output ISSUE_FU_PACKET [`IS_FIFO_DEPTH-1:0] br_fifo_display
     , output ISSUE_FU_PACKET [`IS_FIFO_DEPTH-1:0] ls_fifo_display
 
+    // Maptable
+    , output logic [31:0][`PR-1:0] map_array_disp
+    , output logic [31:0] ready_array_disp
 
     // FU
     , output ISSUE_FU_PACKET [2**`FU-1:0] fu_in_display
@@ -76,6 +79,7 @@ module pipeline(
     , input [2:0][`PR-1:0]              free_pr_debug
 
     /* maptable simulation */
+    /*
     , output logic [2:0] [4:0]          maptable_lookup_reg1_ar_out
     , output logic [2:0] [4:0]          maptable_lookup_reg2_ar_out
     , output logic [2:0] [4:0]          maptable_allocate_ar_out
@@ -85,6 +89,7 @@ module pipeline(
     , input [2:0][`PR-1:0]              maptable_reg2_pr_debug
     , input [2:0]                       maptable_reg1_ready_debug
     , input [2:0]                       maptable_reg2_ready_debug
+    */
 
     , input [2:0]                       rob_stall_debug
     , input FU_STATE_PACKET             fu_ready_debug
@@ -117,7 +122,7 @@ RS_S_PACKET [2:0]       rs_is_packet;
 logic [2:0]             free_pr_valid;
 logic [2:0][`PR-1:0]    free_pr;
 
-/* map table */
+/* map table output */
 logic [2:0][`PR-1:0]    maptable_old_pr;
 logic [2:0][`PR-1:0]    maptable_reg1_pr;
 logic [2:0][`PR-1:0]    maptable_reg2_pr;
@@ -184,6 +189,7 @@ assign dis_new_pr_en_out = dis_new_pr_en;
 assign free_pr_valid = free_pr_valid_debug;
 assign free_pr = free_pr_debug;
 /* maptable simulation */
+/*
 assign maptable_lookup_reg1_ar_out = maptable_lookup_reg1_ar;
 assign maptable_lookup_reg2_ar_out = maptable_lookup_reg2_ar;
 assign maptable_allocate_ar_out = maptable_allocate_ar;
@@ -193,7 +199,7 @@ assign maptable_reg1_pr = maptable_reg1_pr_debug;
 assign maptable_reg2_pr = maptable_reg2_pr_debug;
 assign maptable_reg1_ready = maptable_reg1_ready_debug;
 assign maptable_reg2_ready = maptable_reg2_ready_debug;
-
+*/
 assign rob_stall = rob_stall_debug;
 assign fu_ready = fu_ready_debug;
 assign cdb_t = cdb_t_debug;
@@ -273,6 +279,35 @@ dispatch_stage dipatch_0(
     .d_stall(dis_stall)
 
 );
+
+//////////////////////////////////////////////////
+//                                              //
+//               Maptable                       //
+//                                              //
+//////////////////////////////////////////////////
+
+map_table mtb(
+    .clock(clock),
+    .reset(reset),
+    .archi_maptable(0),
+    .BPRecoverEN(1'b0),
+    .cdb_t_in(cdb_t),
+    .maptable_new_ar(maptable_allocate_ar),
+    .maptable_new_pr(maptable_allocate_pr),
+    .reg1_ar(maptable_lookup_reg1_ar),
+    .reg2_ar(maptable_lookup_reg2_ar),
+    .reg1_tag(maptable_reg1_pr),
+    .reg2_tag(maptable_reg2_pr),
+    .reg1_ready(maptable_reg1_ready),
+    .reg2_ready(maptable_reg2_ready),
+    .Told_out(maptable_old_pr)
+    `ifdef TEST_MODE
+    , .map_array_disp(map_array_disp),
+    .ready_array_disp(ready_array_disp)
+    `endif
+);
+
+
 
 
 //////////////////////////////////////////////////

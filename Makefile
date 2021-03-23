@@ -61,7 +61,7 @@ DTESTBENCH = testbench/dis_test.sv testbench/mt-fl_sim.cpp testbench/pipe_print.
 DFILES = verilog/dispatch.sv verilog/issue.sv verilog/pipeline.sv 
 DSYNFILES = synth/pipeline.vg
 
-#issue
+#issue_fifo
 ISFIFOFILE = verilog/issue_fifo.sv
 ISFIFOSYN = syn/fu_FIFO_3.vg
 
@@ -140,7 +140,7 @@ mt_simv: $(HEADERS) $(MTFILES) $(MTTESTBENCH)
 #dis-pipeline
 dis: dis_simv
 	./dis_simv | tee dis_sim_program.out
-dis_simv: $(HEADERS) $(DFILES) $(RSFILES) $(ISFIFOFILE) $(DTESTBENCH)
+dis_simv: $(HEADERS) $(DFILES) $(RSFILES) $(MTFILES) $(ISFIFOFILE) $(DTESTBENCH)
 	$(VCS) $^ -o dis_simv
 rob: rob_simv
 	./rob_simv | tee rob_sim_program.out
