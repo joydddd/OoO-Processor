@@ -56,20 +56,14 @@ MTTESTBENCH = testbench/test_maptable.sv testbench/mt-fl_sim.cpp
 MTFILES = verilog/map_tables.sv
 MTSYNFILES = synth/map_table.vg
 
-# dis->is 
-DTESTBENCH = testbench/pipe_test.sv testbench/mt-fl_sim.cpp testbench/pipe_print.c
-DFILES = verilog/dispatch.sv verilog/pipeline.sv
-DFILES += $(RSFILES)
-DSYNFILES = synth/dispatch.vg
-#issue
-ISFIFOFILE = verilog/issue_fifo.sv
-ISFIFOSYN = syn/fu_FIFO_3.vg
-
 # dis
 DTESTBENCH = testbench/dis_test.sv testbench/mt-fl_sim.cpp testbench/pipe_print.c 
 DFILES = verilog/dispatch.sv verilog/issue.sv verilog/pipeline.sv 
 DSYNFILES = synth/pipeline.vg
 
+#issue_fifo
+ISFIFOFILE = verilog/issue_fifo.sv
+ISFIFOSYN = syn/fu_FIFO_3.vg
 
 ROBSYNFILES = synth/ROB.vg
 FREELISTSYNFILES = synth/Freelist.vg
@@ -100,6 +94,7 @@ SYNTH_DIR = ./synth
 export HEADERS
 export PIPEFILES
 export CACHEFILES
+export MTFILES
 export RSFILES
 export DFILES
 export ISFIFOFILE
@@ -109,6 +104,7 @@ export FSFILES
 export CACHE_NAME = cache
 export PIPELINE_NAME = pipeline
 export RS_NAME = RS
+export MAP_TABLE_NAME = map_table
 export IS_FIFO_NAME = fu_FIFO_3
 
 export RSFILES
@@ -156,7 +152,7 @@ fs_simv: $(HEADERS) $(FSFILES) $(FSTESTBENCH)
 #dis-pipeline
 dis: dis_simv
 	./dis_simv | tee dis_sim_program.out
-dis_simv: $(HEADERS) $(DFILES) $(RSFILES) $(ISFIFOFILE) $(DTESTBENCH)
+dis_simv: $(HEADERS) $(DFILES) $(RSFILES) $(MTFILES) $(ISFIFOFILE) $(DTESTBENCH)
 	$(VCS) $^ -o dis_simv
 rob: rob_simv
 	./rob_simv | tee rob_sim_program.out
@@ -212,6 +208,9 @@ assembly: assemble disassemble hex
 $(RSSYNFILES): $(RSFILES) $(SYNTH_DIR)/rs.tcl
 	cd $(SYNTH_DIR) && dc_shell-t -f ./rs.tcl | tee rs_synth.out
 
+$(MTSYNFILES): $(MTFILES) $(SYNTH_DIR)/maptables.tcl
+	cd $(SYNTH_DIR) && dc_shell-t -f ./maptables.tcl | tee maptable_synth.out
+
 $(ROBSYNFILES): $(ROBFILES) $(SYNTH_DIR)/rob.tcl
 	cd $(SYNTH_DIR) && dc_shell-t -f ./rob.tcl | tee rob_synth.out
 
@@ -223,6 +222,12 @@ rs_syn:	rs_syn_simv
 
 rs_syn_simv:	$(HEADERS) $(RSSYNFILES) $(RSTESTBENCH)
 	$(VCS) $^ $(LIB) +define+SYNTH_TEST +error+20 -o rs_syn_simv
+
+mt_syn:	mt_syn_simv 
+	./mt_syn_simv | tee mt_syn_program.out
+
+mt_syn_simv:	$(HEADERS) $(MTSYNFILES) $(MTTESTBENCH)
+	$(VCS) $^ $(LIB) +define+SYNTH_TEST +error+20 -o mt_syn_simv
 
 rob_syn:	rob_syn_simv 
 	./rob_syn_simv | tee rob_syn_program.out
@@ -237,7 +242,7 @@ freelist_syn_simv:	$(HEADERS) $(FREELISTSYNFILES) $(FREELISTTESTBENCH)
 	$(VCS) $^ $(LIB) +define+SYNTH_TEST +error+20 -o freelist_syn_simv   
 
 # dispatch pipeline test
-$(DSYNFILES): $(RSSYNFILES) $(ISFIFOSYN) $(SYNTH_DIR)/dis.tcl $(DFILES) 
+$(DSYNFILES):	$(RSSYNFILES) $(MTSYNFILES) $(ISFIFOSYN) $(DFILES) $(SYNTH_DIR)/dis.tcl  
 	cd $(SYNTH_DIR) && dc_shell-t -f ./dis.tcl | tee dis_synth.out
 
 is_fifo_syn_simv: $(ISFIFOSYN)

@@ -383,6 +383,7 @@ typedef struct packed {
     ALU_OPB_SELECT      opb_select; // ALU opb mux select (ALU_OPB_xxx *)
     INST          		inst;
     logic               halt;          // is this a halt?
+	logic [`ROB-1:0] 	rob_entry;
 
     logic [`PR-1:0]     dest_pr;
     logic [`PR-1:0]     reg1_pr;
@@ -401,6 +402,7 @@ typedef struct packed {
     ALU_OPB_SELECT      opb_select; // ALU opb mux select (ALU_OPB_xxx *)
     INST          		inst;
     logic               halt;          // is this a halt?
+	logic [`ROB-1:0] 	rob_entry;
     logic [`PR-1:0]     dest_pr;
     logic [`PR-1:0]     reg1_pr;
     logic [`PR-1:0]     reg2_pr;
@@ -414,6 +416,8 @@ typedef struct packed{
 	ALU_OPA_SELECT      opa_select; // ALU opa mux select (ALU_OPA_xxx *)
     ALU_OPB_SELECT      opb_select; // ALU opb mux select (ALU_OPB_xxx *)
 	INST          		inst;
+	logic 				halt;
+	logic [`ROB-1:0] 	rob_entry;
 	logic [`PR-1:0] 	dest_pr;
 	logic [`XLEN-1:0]	r1_value;
 	logic [`XLEN-1:0] 	r2_value;
@@ -421,6 +425,7 @@ typedef struct packed{
 
 typedef struct packed{
 	logic if_take_branch;
+	logic halt; // TODO: pass through halt
 	logic [`PR-1:0] dest_pr;
 	logic [`XLEN-1:0] dest_value;
 	logic [`ROB-1:0] rob_entry;
@@ -437,6 +442,7 @@ typedef struct packed{
 	logic           rob_entry;
 	logic [`PR-1:0] 	Tnew;
 	logic [`PR-1:0] 	Told;
+	logic 				halt;
 	logic [4:0] 		arch_reg;
 	logic 			precise_state_need;
 	logic 			target_pc;

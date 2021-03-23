@@ -41,6 +41,8 @@ always_comb begin
         issue[i].opa_select = rs_out[i].opa_select;
         issue[i].opb_select = rs_out[i].opb_select;
         issue[i].inst = rs_out[i].inst;
+        issue[i].halt = rs_out[i].halt;
+        issue[i].rob_entry = rs_out[i].rob_entry;
         issue[i].dest_pr = rs_out[i].dest_pr;
         issue[i].r1_value = read_rda[i];
         issue[i].r2_value = read_rdb[i];

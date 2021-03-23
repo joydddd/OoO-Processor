@@ -47,6 +47,10 @@ RS_IN_PACKET [`RSW-1:0]    rs_entries_display;
 RS_S_PACKET [2:0]          rs_out_display;
 logic [2:0]                rs_stall_display;
 
+// Maptable
+logic [31:0][`PR-1:0] map_array_display;
+logic [31:0] ready_array_display;
+
 // IS
 RS_S_PACKET [2:0]          is_in_display;
 FU_FIFO_PACKET             fu_fifo_stall_display;
@@ -73,6 +77,7 @@ logic [2:0]                 free_pr_valid_debug;
 logic [2:0][`PR-1:0]        free_pr_debug;
 
 /* maptable simulation */
+/*
 logic [2:0] [4:0]           maptable_lookup_reg1_ar_out;
 logic [2:0] [4:0]           maptable_lookup_reg2_ar_out;
 logic [2:0] [4:0]           maptable_allocate_ar_out;
@@ -82,6 +87,7 @@ logic [2:0][`PR-1:0]        maptable_reg1_pr_debug;
 logic [2:0][`PR-1:0]        maptable_reg2_pr_debug;
 logic [2:0]                 maptable_reg1_ready_debug;
 logic [2:0]                 maptable_reg2_ready_debug;
+*/
 
 logic [2:0]                 rob_stall_debug;
 FU_STATE_PACKET             fu_ready_debug;
@@ -101,6 +107,9 @@ pipeline tbd(
     , .rs_entries_display(rs_entries_display)
     , .rs_out_display(rs_out_display)
     , .rs_stall_display(rs_stall_display)
+    // Maptable
+    , .map_array_disp(map_array_display)
+    , .ready_array_disp(ready_array_display)
     // IS
     , .is_in_display(is_in_display)
     , .fu_fifo_stall_display(fu_fifo_stall_display)
@@ -122,6 +131,7 @@ pipeline tbd(
     , .free_pr_valid_debug(free_pr_valid_debug)
     , .free_pr_debug(free_pr_debug)
     /* maptable simulation */
+    /*
     , .maptable_lookup_reg1_ar_out(maptable_lookup_reg1_ar_out)
     , .maptable_lookup_reg2_ar_out(maptable_lookup_reg2_ar_out)
     , .maptable_allocate_ar_out(maptable_allocate_ar_out)
@@ -131,6 +141,7 @@ pipeline tbd(
     , .maptable_reg2_pr_debug(maptable_reg2_pr_debug)
     , .maptable_reg1_ready_debug(maptable_reg1_ready_debug)
     , .maptable_reg2_ready_debug(maptable_reg2_ready_debug)
+    */
 
     , .rob_stall_debug(rob_stall_debug)
     , .fu_ready_debug(fu_ready_debug)
@@ -167,6 +178,7 @@ always @(dis_new_pr_en_out, clock) begin
 end
 
 /* map table simulator */
+/*
 always @(posedge clock) begin
     if (reset) begin
         mt_init();
@@ -194,7 +206,7 @@ always @(maptable_lookup_reg2_ar_out) begin
     end
 end
 
-
+*/
 
 //////////////////////////////////////////////////////////////
 //////////////                  DISPLAY
@@ -365,106 +377,6 @@ initial begin
     set_if_d_packet(0, 32'h15600613, PC+8);
     `SD PC = PC + 12;
 
-        @(negedge clock)
-    reset = 1'b0;
-    set_if_d_packet(2, 32'h03f301b3, PC);
-    set_if_d_packet(1, 32'h00312023, PC+4);
-    set_if_d_packet(0, 32'h00012203, PC+8);
-    `SD PC = PC + 12;
-
-    @(negedge clock)
-    set_if_d_packet(2, 32'h10412023, PC);
-    set_if_d_packet(1, 32'h00810113, PC+4);
-    set_if_d_packet(0, 32'h00130313, PC+8);
-    `SD PC = PC + 12;
-
-    @(negedge clock)
-    set_if_d_packet(2, 32'h01032293, PC);
-    set_if_d_packet(1, 32'h00000013, PC+4);
-    set_if_d_packet(0, 32'h00000513, PC+8);
-    `SD PC = PC + 12;
-
-    @(negedge clock)
-    set_if_d_packet(2, 32'h000035b7, PC);
-    set_if_d_packet(1, 32'h01a58593, PC+4);
-    set_if_d_packet(0, 32'h15600613, PC+8);
-    `SD PC = PC + 12;
-
-        @(negedge clock)
-    reset = 1'b0;
-    set_if_d_packet(2, 32'h03f301b3, PC);
-    set_if_d_packet(1, 32'h00312023, PC+4);
-    set_if_d_packet(0, 32'h00012203, PC+8);
-    `SD PC = PC + 12;
-
-    @(negedge clock)
-    set_if_d_packet(2, 32'h10412023, PC);
-    set_if_d_packet(1, 32'h00810113, PC+4);
-    set_if_d_packet(0, 32'h00130313, PC+8);
-    `SD PC = PC + 12;
-
-    @(negedge clock)
-    set_if_d_packet(2, 32'h01032293, PC);
-    set_if_d_packet(1, 32'h00000013, PC+4);
-    set_if_d_packet(0, 32'h00000513, PC+8);
-    `SD PC = PC + 12;
-
-    @(negedge clock)
-    set_if_d_packet(2, 32'h000035b7, PC);
-    set_if_d_packet(1, 32'h01a58593, PC+4);
-    set_if_d_packet(0, 32'h15600613, PC+8);
-    `SD PC = PC + 12;
-
-        @(negedge clock)
-    reset = 1'b0;
-    set_if_d_packet(2, 32'h03f301b3, PC);
-    set_if_d_packet(1, 32'h00312023, PC+4);
-    set_if_d_packet(0, 32'h00012203, PC+8);
-    `SD PC = PC + 12;
-
-    @(negedge clock)
-    set_if_d_packet(2, 32'h10412023, PC);
-    set_if_d_packet(1, 32'h00810113, PC+4);
-    set_if_d_packet(0, 32'h00130313, PC+8);
-    `SD PC = PC + 12;
-
-    @(negedge clock)
-    set_if_d_packet(2, 32'h01032293, PC);
-    set_if_d_packet(1, 32'h00000013, PC+4);
-    set_if_d_packet(0, 32'h00000513, PC+8);
-    `SD PC = PC + 12;
-
-    @(negedge clock)
-    set_if_d_packet(2, 32'h000035b7, PC);
-    set_if_d_packet(1, 32'h01a58593, PC+4);
-    set_if_d_packet(0, 32'h15600613, PC+8);
-    `SD PC = PC + 12;
-
-        @(negedge clock)
-    reset = 1'b0;
-    set_if_d_packet(2, 32'h03f301b3, PC);
-    set_if_d_packet(1, 32'h00312023, PC+4);
-    set_if_d_packet(0, 32'h00012203, PC+8);
-    `SD PC = PC + 12;
-
-    @(negedge clock)
-    set_if_d_packet(2, 32'h10412023, PC);
-    set_if_d_packet(1, 32'h00810113, PC+4);
-    set_if_d_packet(0, 32'h00130313, PC+8);
-    `SD PC = PC + 12;
-
-    @(negedge clock)
-    set_if_d_packet(2, 32'h01032293, PC);
-    set_if_d_packet(1, 32'h00000013, PC+4);
-    set_if_d_packet(0, 32'h00000513, PC+8);
-    `SD PC = PC + 12;
-
-    @(negedge clock)
-    set_if_d_packet(2, 32'h000035b7, PC);
-    set_if_d_packet(1, 32'h01a58593, PC+4);
-    set_if_d_packet(0, 32'h15600613, PC+8);
-    `SD PC = PC + 12;
-    
     
 
     @(negedge clock)
