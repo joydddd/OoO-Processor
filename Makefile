@@ -61,6 +61,9 @@ DTESTBENCH = testbench/dis_test.sv testbench/mt-fl_sim.cpp testbench/pipe_print.
 DFILES = verilog/dispatch.sv verilog/issue.sv verilog/pipeline.sv 
 DSYNFILES = synth/pipeline.vg
 
+#issue
+ISFIFOFILE = verilog/issue_fifo.sv
+ISFIFOSYN = syn/fu_FIFO_3.vg
 
 ROBSYNFILES = synth/ROB.vg
 FREELISTSYNFILES = synth/Freelist.vg
