@@ -16,8 +16,9 @@ module Freelist(
     input 				            BPRecoverEN,  
     input 		[`ROB-1:0] 	        BPRecoverHead,
     output logic 	[2:0][`PR-1:0] 	FreeReg,
-    output logic 	[`PR-1:0] 	    Head,
-    output logic 	[2:0] 		    FreeRegValid
+    output logic 	[`ROB-1:0] 	    Head,
+    output logic 	[2:0] 		    FreeRegValid,
+	output logic    [4:0]              fl_distance,
     `ifdef TEST_MODE
     	, output [31:0][`PR-1:0] array_display
 		, output [4:0] head_display
@@ -66,6 +67,8 @@ assign input_start_incre1 = input_start + 1;
 assign input_start_incre2 = input_start + 2;
 assign input_start_incre3 = input_start + 3;
 assign Head = head;
+assign fl_distance = (head == tail && array_state[tail] == 0) ? 32 :
+					  head == tail && array_state[tail] == 1) ? 31 : 31 - tail + head;
 
 assign retire_first = RetireEN & 3'b001;
 assign retire_second = (RetireEN & 3'b010) >> 1;
@@ -271,7 +274,13 @@ always_ff @(posedge clock) begin
         for (int i = 0; i < 32; i++) begin
             array[i] <= `SD i + 32;
         end
-	end	 
+	end
+	else if (BPRecoverEN) begin
+		array <= `SD array_next;
+        array_state <= `SD array_state_next;
+		head <= `SD BPRecoverHead;
+		tail <= `SD tail_next;
+	end
     else begin 
         array <= `SD array_next;
         array_state <= `SD array_state_next;
