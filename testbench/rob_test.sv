@@ -48,6 +48,7 @@ module testbench;
     logic       [31:0][`PR-1:0]     array;
 	logic       [4:0]               fl_head;
 	logic       [4:0]               fl_tail;
+    logic                           empty;
 
     //retire
     logic       [31:0][`PR-1:0]         archi_maptable;
@@ -117,7 +118,8 @@ module testbench;
         .fl_distance(fl_distance),
         .array_display(array), 
         .head_display(fl_head), 
-        .tail_display(fl_tail)
+        .tail_display(fl_tail),
+        .empty_display(empty)
     );
 
     always begin
@@ -194,7 +196,7 @@ module testbench;
         for(int i=31; i>=0; i--) begin  // For RS entry, it allocates from 15-0
             $display("Index: %d        PR: %5d", i, array[i]);
         end
-        $display("head:%d tail:%d HEAD:%d", fl_head, fl_tail, FreelistHead);
+        $display("head:%d tail:%d empty:%d", fl_head, fl_tail, empty);
     endtask; // show_rs_table
 
     task show_free_reg;

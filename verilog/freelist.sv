@@ -22,6 +22,7 @@ module Freelist(
     	, output [31:0][`PR-1:0] array_display
 		, output [4:0] head_display
 		, output [4:0] tail_display
+		, output empty_display
 	`endif
 );
 
@@ -59,6 +60,7 @@ logic dispatch_third;
     assign array_display = array;
 	assign head_display = head;
 	assign tail_display = tail;
+	assign empty_display = empty;
 `endif
 
 assign head_incre1 = head + 1;
