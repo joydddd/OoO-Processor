@@ -574,7 +574,7 @@ retire_stage retire_0(
 Freelist fl_0(
     .clock(clock), 
     .reset(reset), 
-    .DispatchEN(DispatchEN),                    // <- TODO: ???
+    .DispatchEN(dis_new_pr_en),                    // <- TODO: ???
     .RetireEN(RetireEN),                        // <- retire.RetireEN
     .RetireReg(RetireReg),                      // <- retire.RetireReg
     .BPRecoverEN(BPRecoverEN),                  // <- retire.BPRecoverEN
