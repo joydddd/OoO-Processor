@@ -177,7 +177,7 @@ always_comb begin
 		end
 		default begin
 			head_next = head + dispatch_count;
-			FreeRegValid = 3'b000;
+			FreeRegValid = 3'b111;
 			empty_next = 0;
 		end
 	endcase

@@ -244,8 +244,8 @@ assign wb_value_display = wb_value;
 assign if_d_packet = if_d_packet_debug; 
 assign dis_new_pr_en_out = dis_new_pr_en;
 /* free list simulation */
-assign free_pr_valid = free_pr_valid_debug;
-assign free_pr = free_pr_debug;
+// assign free_pr_valid = free_pr_valid_debug;
+// assign free_pr = free_pr_debug;
 /* maptable simulation */
 /*
 assign maptable_lookup_reg1_ar_out = maptable_lookup_reg1_ar;
@@ -579,9 +579,9 @@ Freelist fl_0(
     .RetireReg(RetireReg),                      // <- retire.RetireReg
     .BPRecoverEN(BPRecoverEN),                  // <- retire.BPRecoverEN
     .BPRecoverHead(BPRecoverHead),              // <- retire.BPRecoverHead
-    .FreeReg(free_pr_temp),                          // -> dispatch.free_pr_in  TODO: has bugs
+    .FreeReg(free_pr),                          // -> dispatch.free_pr_in  TODO: has bugs
     .Head(FreelistHead),                        // -> retire.FreelistHead
-    .FreeRegValid(free_pr_valid_temp),               // -> dispatch.free_reg_valid  TODO:has bugs
+    .FreeRegValid(free_pr_valid),               // -> dispatch.free_reg_valid  TODO:has bugs
     .fl_distance(fl_distance)                   // -> retire.fl_distance
     `ifdef TEST_MODE
     , .array_display(fl_array_display)          // -> display
