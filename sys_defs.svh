@@ -316,7 +316,11 @@ typedef enum logic[`OP-1:0] {
 	ALU_XOR,
 	ALU_SLL,
 	ALU_SRL,
-	ALU_SRA
+	ALU_SRA,
+	ALU_MUL,  
+	ALU_MULH,   
+	ALU_MULHSU, 
+	ALU_MULHU  
 } ALU_SELECT;
 typedef enum logic[`OP-1:0]{
 	MULT,
@@ -355,6 +359,17 @@ typedef enum logic[1:0]{
 } ROB_STATE;
 
 typedef struct packed{
+	logic branch;
+	logic mult_2;
+	logic mult_1;
+	logic loadstore_2;
+	logic loadstore_1;
+	logic alu_3;
+	logic alu_2;
+	logic alu_1; 
+} FU_STATE_PACKET;
+
+/*	
 	logic alu_1; 
 	logic alu_2;
 	logic alu_3;
@@ -363,7 +378,7 @@ typedef struct packed{
 	logic mult_1;
 	logic mult_2;
 	logic branch;
-} FU_STATE_PACKET;
+*/
 
 typedef struct packed{
 	logic alu;
@@ -425,6 +440,7 @@ typedef struct packed{
 
 typedef struct packed{
 	logic if_take_branch;
+	logic valid;
 	logic halt; // TODO: pass through halt
 	logic [`XLEN-1:0] target_pc;
 	logic [`PR-1:0] dest_pr;

@@ -61,65 +61,71 @@ module testbench;
     ROB tbp(
         .clock(clock), 
         .reset(reset), 
-        .rob_in(rob_in), 
-        .complete_valid(complete_valid), 
-        .complete_entry(complete_entry), 
-        .precise_state_valid(precise_state_valid), 
-        .target_pc(target_pc),
-        .BPRecoverEN(BPRecoverEN),
-        .dispatch_index(dispatch_index), 
-        .retire_entry(retire_entry), 
-        .struct_stall(rob_stall),
-        .rob_entries_display(rob_entries), 
-        .head_display(head), 
-        .tail_display(tail), 
-        .rob_entries_debug(rob_debug)
+        .rob_in(rob_in),                            // <- dispatch.rob_in
+        .complete_valid(complete_valid),            // <- complete.complete_valid
+        .complete_entry(complete_entry),            // <- complete.complete_entry
+        .precise_state_valid(precise_state_valid),  // <- complete.precise_state_valid
+        .target_pc(target_pc),                      // <- complete.target_pc
+        .BPRecoverEN(BPRecoverEN),                  // <- retire.BPRecoverEN
+        .dispatch_index(dispatch_index),            // -> dispatch.rob_index
+        .retire_entry(retire_entry),                // -> retire.rob_head_entry
+        .struct_stall(rob_stall)                    // -> dispatch.rob_stall
+        `ifdef TEST_MODE
+        , .rob_entries_display(rob_entries)         // -> display entries
+        , .head_display(head)                       // -> display head
+        , .tail_display(tail)                       // -> display tail
+        `endif
+        `ifdef IS_DEBUG
+        , .rob_entries_debug(rob_debug)             // <- debug input
+        `endif
     );
 
     complete_stage cs(
-        .fu_finish(fu_finish), 
-        .fu_c_in(fu_c_in), 
-        .fu_c_stall(fu_c_stall), 
-        .cdb_t(cdb_t), 
-        .wb_value(wb_value),
-        .complete_valid(complete_valid),
-	    .complete_entry(complete_entry),
-        .precise_state_valid(precise_state_valid),
-	    .target_pc(target_pc)
+        .fu_finish(fu_finish),                      // <- TODO: fu_finish
+        .fu_c_in(fu_c_in),                          // <- TODO: fu_c_in
+        .fu_c_stall(fu_c_stall),                    // -> TODO: fu_c_stall
+        .cdb_t(cdb_t),                              // -> TODO: cdb broadcast
+        .wb_value(wb_value),                        // -> TODO: wb_value, to register file
+        .complete_valid(complete_valid),            // -> ROB.complete_valid
+	    .complete_entry(complete_entry),            // -> ROB.complete_entry
+        .precise_state_valid(precise_state_valid),  // -> ROB.precise_state_valid
+	    .target_pc(target_pc)                       // -> ROB.target_pc
     );
 
     retire_stage uut(
-        .rob_head_entry(retire_entry),
-        .fl_distance(fl_distance),
-        .BPRecoverEN(BPRecoverEN),
-        .target_pc(fetch_pc),
-        .archi_maptable(archi_maptable),
-        .map_ar_pr(map_ar_pr),
-        .map_ar(map_ar),
-        .recover_maptable(recover_maptable),
-        .FreelistHead(FreelistHead),
-        .Retire_EN(RetireEN),
-        .Tolds_out(RetireReg),
-        .BPRecoverHead(BPRecoverHead)
+        .rob_head_entry(retire_entry),              // <- ROB.retire_entry
+        .fl_distance(fl_distance),                  // <- Freelist.fl_distance
+        .BPRecoverEN(BPRecoverEN),                  // -> ROB.BPRecoverEN, Freelist.BPRecoverEN, fetch.take_branch
+        .target_pc(fetch_pc),                       // -> TODO: fetch.target_pc
+        .archi_maptable(archi_maptable),            // <- TODO: arch map
+        .map_ar_pr(map_ar_pr),                      // -> TODO: arch map
+        .map_ar(map_ar),                            // -> TODO: arch map
+        .recover_maptable(recover_maptable),        // -> TODO: map table
+        .FreelistHead(FreelistHead),                // <- Freelist.FreelistHead
+        .Retire_EN(RetireEN),                       // -> Freelist.RetireEN
+        .Tolds_out(RetireReg),                      // -> Freelist.RetireReg
+        .BPRecoverHead(BPRecoverHead)               // -> Freelist.BPRecoverHead
     );
 
 
     Freelist fl(
         .clock(clock), 
         .reset(reset), 
-        .DispatchEN(DispatchEN),  
-        .RetireEN(RetireEN), 
-        .RetireReg(RetireReg), 
-        .BPRecoverEN(BPRecoverEN), 
-        .BPRecoverHead(BPRecoverHead),
-        .FreeReg(FreeReg), 
-        .Head(FreelistHead), 
-        .FreeRegValid(FreeRegValid),
-        .fl_distance(fl_distance),
-        .array_display(array), 
-        .head_display(fl_head), 
-        .tail_display(fl_tail),
-        .empty_display(empty)
+        .DispatchEN(DispatchEN),                    // <- TODO: 
+        .RetireEN(RetireEN),                        // <- retire.RetireEN
+        .RetireReg(RetireReg),                      // <- retire.RetireReg
+        .BPRecoverEN(BPRecoverEN),                  // <- retire.BPRecoverEN
+        .BPRecoverHead(BPRecoverHead),              // <- retire.BPRecoverHead
+        .FreeReg(FreeReg),                          // -> TODO
+        .Head(FreelistHead),                        // -> retire.FreelistHead
+        .FreeRegValid(FreeRegValid),                // -> TODO
+        .fl_distance(fl_distance)                   // -> retire.fl_distance
+        `ifdef TEST_MODE
+        , .array_display(array)                     // -> display
+        , .head_display(fl_head)                    // -> display
+        , .tail_display(fl_tail)                    // -> display
+        , .empty_display(empty)                     // -> display
+        `endif
     );
 
     always begin

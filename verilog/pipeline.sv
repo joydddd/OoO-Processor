@@ -65,10 +65,23 @@ module pipeline(
     // FU
     , output ISSUE_FU_PACKET [2**`FU-1:0] fu_in_display
     , output FU_STATE_PACKET            fu_ready_display
+    , output FU_STATE_PACKET            fu_finish_display
+    , output FU_COMPLETE_PACKET         fu_packet_out_display
     
     // Complete
     , output CDB_T_PACKET               cdb_t_display
+    , output [2:0][`XLEN-1:0]           wb_value_display
 
+    // ROB
+    , output ROB_ENTRY_PACKET [`ROBW-1:0]   rob_entries_display
+	, output [`ROB-1:0]                     head_display
+	, output [`ROB-1:0]                     tail_display
+
+    // Freelist
+    , output [31:0][`PR-1:0]            fl_array_display
+    , output [4:0]                      fl_head_display
+    , output [4:0]                      fl_tail_display
+    , output                            fl_empty_display
 `endif
 
 `ifdef DIS_DEBUG
@@ -121,6 +134,12 @@ RS_S_PACKET [2:0]       rs_is_packet;
 /* free list */
 logic [2:0]             free_pr_valid;
 logic [2:0][`PR-1:0]    free_pr;
+logic [2:0]		        DispatchEN;
+logic [2:0] 		    RetireEN;
+logic [2:0][`PR-1:0] 	RetireReg;
+logic [`ROB-1:0] 	    BPRecoverHead;
+logic [`PR-1:0] 	    FreelistHead;
+logic [4:0]             fl_distance;
 
 /* map table */
 logic BPRecoverEN;
@@ -130,9 +149,14 @@ logic [2:0][`PR-1:0]    maptable_reg1_pr;
 logic [2:0][`PR-1:0]    maptable_reg2_pr;
 logic [2:0]             maptable_reg1_ready;
 logic [2:0]             maptable_reg2_ready;
+logic [31:0][`PR-1:0] 	archi_maptable_out;
 
-assign BPRecoverEN = 1'b0;
-assign archi_maptable = 0;
+//assign BPRecoverEN = 1'b0;
+//assign archi_maptable = 0;
+
+/* arch map table */
+logic 		    [2:0][`PR-1:0] 	Tnew_in;
+logic 		    [2:0][4:0] 		Retire_AR;
 
 /* Issue stage */
 RS_S_PACKET [2:0]       is_packet_in;
@@ -149,17 +173,41 @@ assign pr2_read = 0;
 
 
 /* Reorder Buffer */
-logic [2:0]             rob_stall;
-logic [2:0][`ROB-1:0]   new_rob_index;
-assign new_rob_index = 5; // TODO: plug in new rob index
+logic [2:0][`ROB-1:0]           new_rob_index;  // ROB.dispatch_index <-> dispatch.rob_index
+//assign new_rob_index = 5;
+//ROB_ENTRY_PACKET[2:0]           rob_in;       // rob_in = dis_rob_packet
+logic       [2:0]               complete_valid;
+logic       [2:0][`ROB-1:0]     complete_entry;  // which ROB entry is done
+ROB_ENTRY_PACKET [2:0]          rob_retire_entry;  // which ENTRY to be retired
+logic       [2:0]               rob_stall;
+ROB_ENTRY_PACKET [`ROBW-1:0]    rob_entries;
+ROB_ENTRY_PACKET [`ROBW-1:0]    rob_debug;
+logic       [`ROB-1:0]          head;
+logic       [`ROB-1:0]          tail;
 
 /* functional unit */
 FU_STATE_PACKET         fu_ready;
 ISSUE_FU_PACKET [2**`FU-1:0] fu_packet_in;
+FU_STATE_PACKET         complete_stall;
+FU_COMPLETE_PACKET [2:0]        fu_c_packet;
+FU_STATE_PACKET                 fu_finish_packet;
 
 
 /* Complete Stage */
-CDB_T_PACKET            cdb_t;
+CDB_T_PACKET                    cdb_t;
+FU_COMPLETE_PACKET [2:0]        fu_c_in;
+FU_STATE_PACKET                 fu_finish;
+logic       [2:0][`XLEN-1:0]    wb_value;
+logic       [2:0]               precise_state_valid;
+logic       [2:0][`XLEN-1:0]    target_pc;
+
+/* Retire Stage */
+logic       [2:0][`PR-1:0]			map_ar_pr;
+logic       [2:0][4:0]			    map_ar;
+logic       [31:0][`PR-1:0]         recover_maptable;
+logic       [`XLEN-1:0]             fetch_pc;
+logic 		[2:0] 			        RetireEN;
+ROB_ENTRY_PACKET [2:0]              retire_entry;
 
 /////////////////////////////////////////////////////////
 //          DEBUG  IN/OUTPUT                
@@ -183,9 +231,12 @@ assign fu_fifo_stall_display = fu_fifo_stall;
 
 // FU
 assign fu_ready_display = fu_ready;
+assign fu_finish_display = fu_finish;
+assign fu_packet_out_display = fu_c_in;
 
 // Complete
 assign cdb_t_display = cdb_t;
+assign wb_value_display = wb_value;
 
 `endif
 
@@ -206,10 +257,10 @@ assign maptable_reg1_pr = maptable_reg1_pr_debug;
 assign maptable_reg2_pr = maptable_reg2_pr_debug;
 assign maptable_reg1_ready = maptable_reg1_ready_debug;
 assign maptable_reg2_ready = maptable_reg2_ready_debug;
-*/
-assign rob_stall = rob_stall_debug;
 assign fu_ready = fu_ready_debug;
-assign cdb_t = cdb_t_debug;
+*/
+//assign rob_stall = rob_stall_debug;     // TODO: comment this line when ROB is added
+//assign cdb_t = cdb_t_debug;
 `endif
 
 //////////////////////////////////////////////////
@@ -315,7 +366,14 @@ map_table map_table_0(
     `endif
 );
 
-
+arch_maptable arch_maptable_0(
+    .clock(clock),
+    .reset(reset),
+	.Tnew_in(map_ar_pr),
+	.Retire_AR(map_ar),
+	.Retire_EN(RetireEN),
+	.archi_maptable(archi_maptable_out)
+);
 
 
 //////////////////////////////////////////////////
@@ -390,6 +448,148 @@ always_ff @(posedge clock) begin
     if (reset) fu_packet_in <= `SD 0;
     else fu_packet_in <= `SD is_fu_packet;
 end
+
+//////////////////////////////////////////////////
+//                                              //
+//                 EXECUTE-Stage                //
+//               (Functional Units)             //
+//////////////////////////////////////////////////
+
+alu_stage alus(
+	.clock(clock),                      // system clock
+	.reset(reset),                      // system reset
+    .complete_stall(complete_stall),    // <- complete.fu_c_stall
+	.fu_packet_in(is_fu_packet),        // <- issue.issue_2_fu
+    .fu_ready(fu_ready),                // -> issue.fu_ready
+    .want_to_complete(fu_finish_packet),// -> complete.fu_finish
+	.fu_packet_out(fu_c_packet)         // -> complete.fu_c_in
+);
+
+//////////////////////////////////////////////////
+//                                              //
+//                      ROB                     //
+//                                              //
+//////////////////////////////////////////////////
+
+ROB rob_0(
+    .clock(clock), 
+    .reset(reset), 
+    .rob_in(dis_rob_packet),                    // <- dispatch.rob_in
+    .complete_valid(complete_valid),            // <- complete.complete_valid
+    .complete_entry(complete_entry),            // <- complete.complete_entry
+    .precise_state_valid(precise_state_valid),  // <- complete.precise_state_valid
+    .target_pc(target_pc),                      // <- complete.target_pc
+    .BPRecoverEN(BPRecoverEN),                  // <- retire.BPRecoverEN
+    .dispatch_index(new_rob_index),             // -> dispatch.rob_index
+    .retire_entry(rob_retire_entry),                // -> retire.rob_head_entry
+    .struct_stall(rob_stall)                    // -> dispatch.rob_stall
+    `ifdef TEST_MODE
+    , .rob_entries_display(rob_entries_display) // -> display entries
+    , .head_display(head_display)               // -> display head
+    , .tail_display(tail_display)               // -> display tail
+    `endif
+    `ifdef ROB_DEBUG
+    , .rob_entries_debug(rob_debug)             // <- debug input
+    `endif
+);
+
+//////////////////////////////////////////////////
+//                                              //
+//                FU-C-Register                 //
+//                                              //
+//////////////////////////////////////////////////
+
+always_ff @(posedge clock) begin
+    if (reset) begin
+        fu_finish <= `SD 0;
+        fu_c_in   <= `SD 0;
+    end
+    else begin
+        fu_finish <= `SD fu_finish_packet;
+        fu_c_in   <= `SD fu_c_packet;
+    end
+end
+
+//////////////////////////////////////////////////
+//                                              //
+//                Complete Stage                //
+//                                              //
+//////////////////////////////////////////////////
+
+complete_stage cs(
+    .fu_finish(fu_finish),                      // <- fu.fu_finish
+    .fu_c_in(fu_c_in),                          // <- fu.fu_c_in
+    .fu_c_stall(complete_stall),                // -> fu.complete_stall
+    .cdb_t(cdb_t),                              // -> cdb_t broadcast
+    .wb_value(wb_value),                        // -> wb_value, to register file
+    .complete_valid(complete_valid),            // -> ROB.complete_valid
+    .complete_entry(complete_entry),            // -> ROB.complete_entry
+    .precise_state_valid(precise_state_valid),  // -> ROB.precise_state_valid
+    .target_pc(target_pc)                       // -> ROB.target_pc
+);
+
+//////////////////////////////////////////////////
+//                                              //
+//                C-RE-Register                 //
+//                                              //
+//////////////////////////////////////////////////
+
+// TODO: Not sure about this part - hc
+always_ff @(posedge clock) begin
+    if (reset) begin
+        retire_entry <= `SD 0;
+    end
+    else begin
+        retire_entry <= `SD rob_retire_entry;
+    end
+end
+
+//////////////////////////////////////////////////
+//                                              //
+//                 Retire Stage                 //
+//                                              //
+//////////////////////////////////////////////////
+    
+retire_stage retire_0(
+    .rob_head_entry(retire_entry),              // <- ROB.retire_entry
+    .fl_distance(fl_distance),                  // <- Freelist.fl_distance
+    .BPRecoverEN(BPRecoverEN),                  // -> ROB.BPRecoverEN, Freelist.BPRecoverEN, fetch.take_branch
+    .target_pc(fetch_pc),                       // -> TODO: fetch.target_pc
+    .archi_maptable(archi_maptable_out),        // <- arch map.archi_maptable
+    .map_ar_pr(map_ar_pr),                      // -> arch map.Tnew_in
+    .map_ar(map_ar),                            // -> arch map.Retire_AR
+    .recover_maptable(archi_maptable),          // -> map table.archi_maptable
+    .FreelistHead(FreelistHead),                // <- Freelist.FreelistHead
+    .Retire_EN(RetireEN),                       // -> Freelist.RetireEN
+    .Tolds_out(RetireReg),                      // -> Freelist.RetireReg
+    .BPRecoverHead(BPRecoverHead)               // -> Freelist.BPRecoverHead
+);
+
+//////////////////////////////////////////////////
+//                                              //
+//                   Free List                  //
+//                                              //
+//////////////////////////////////////////////////
+
+Freelist fl_0(
+    .clock(clock), 
+    .reset(reset), 
+    .DispatchEN(DispatchEN),                    // <- TODO: ???
+    .RetireEN(RetireEN),                        // <- retire.RetireEN
+    .RetireReg(RetireReg),                      // <- retire.RetireReg
+    .BPRecoverEN(BPRecoverEN),                  // <- retire.BPRecoverEN
+    .BPRecoverHead(BPRecoverHead),              // <- retire.BPRecoverHead
+    .FreeReg(free_pr_temp),                          // -> dispatch.free_pr_in  TODO: has bugs
+    .Head(FreelistHead),                        // -> retire.FreelistHead
+    .FreeRegValid(free_pr_valid_temp),               // -> dispatch.free_reg_valid  TODO:has bugs
+    .fl_distance(fl_distance)                   // -> retire.fl_distance
+    `ifdef TEST_MODE
+    , .array_display(fl_array_display)          // -> display
+    , .head_display(fl_head_display)            // -> display
+    , .tail_display(fl_tail_display)            // -> display
+    , .empty_display(fl_empty_display)          // -> display
+    `endif
+);
 
 
 endmodule

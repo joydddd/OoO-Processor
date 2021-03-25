@@ -46,6 +46,11 @@ endif
 VCS = vcs -V -sverilog +vc -Mupdate -line -full64 +vcs+vcdpluson -debug_pp
 LIB = /afs/umich.edu/class/eecs470/lib/verilog/lec25dscc25.v
 
+# Pipeline without fetch
+PLTESTBENCH = testbench/pipeline_test.sv testbench/mt-fl_sim.cpp testbench/pipe_print.c 
+PLFILES = verilog/alu_stage.sv verilog/dispatch.sv verilog/issue.sv verilog/pipeline.sv verilog/rs.sv verilog/ps.sv verilog/map_tables.sv verilog/issue_fifo.sv verilog/rob.sv verilog/complete_stage.sv verilog/re_stage.sv verilog/freelist.sv
+# DSYNFILES = synth/pipeline.vg
+
 # Reservation Station
 RSTESTBENCH = testbench/rs_test.sv testbench/rs_print.c
 RSFILES = verilog/rs.sv verilog/ps.sv
@@ -138,6 +143,13 @@ all:    simv
 .PHONY: all
 
 # Simulation:
+# pipeline(currently no fetch)
+pipeline: pl_simv
+	./pl_simv | tee pl_sim_program.out
+pl_simv: $(HEADERS) $(PLFILES) $(PLTESTBENCH)
+	$(VCS) $^ -o pl_simv
+
+# RS
 rs: rs_simv
 	./rs_simv | tee rs_sim_program.out
 rs_simv: $(HEADERS) $(RSFILES) $(RSTESTBENCH)
