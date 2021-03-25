@@ -26,7 +26,7 @@
 module alu(
 	input [`XLEN-1:0] opa,
 	input [`XLEN-1:0] opb,
-	ALU_FUNC     func,
+	ALU_SELECT     func,
 
 	output logic [`XLEN-1:0] result
 );
@@ -64,44 +64,47 @@ endmodule // alu
 
 
 module alu_stage(
-	input clock,               // system clock
-	input reset,               // system reset
+	input clock,               						// system clock
+	input reset,               						// system reset
+	input FU_STATE_PACKET complete_stall,			// complete stage structural hazard
 	input ISSUE_FU_PACKET [2:0]   fu_packet_in,
+	output FU_STATE_PACKET fu_ready,				// TODO: combine complete_stall and the FU currently running, forward to issue stage
+	output FU_STATE_PACKET want_to_complete,		// TODO: deal with this value when we have more FUs
 	output FU_COMPLETE_PACKET [2:0] fu_packet_out
 );
+
+	// TODO: change this assignment when we have more FUs
+	assign fu_ready = 8'b00011111;		// always ready for now, since we only have ALU
+
+	// TODO: also change this combinational block when we have more FUs
+	always_comb begin
+		want_to_complete = 0;
+		if (fu_packet_out[0].dest_value != `XLEN'hfacebeec) want_to_complete.alu_1 = 1'b1;
+		if (fu_packet_out[1].dest_value != `XLEN'hfacebeec) want_to_complete.alu_2 = 1'b1;
+		if (fu_packet_out[2].dest_value != `XLEN'hfacebeec) want_to_complete.alu_3 = 1'b1;
+	end
+
 	// Pass-throughs
-	assign fu_packet_out[2].NPC = fu_packet_in[2].NPC;
-	assign fu_packet_out[2].rs2_value = fu_packet_in[2].rs2_value;
-	assign fu_packet_out[2].rd_mem = fu_packet_in[2].rd_mem;
-	assign fu_packet_out[2].wr_mem = fu_packet_in[2].wr_mem;
-	assign fu_packet_out[2].dest_reg_idx = fu_packet_in[2].dest_reg_idx;
+	assign fu_packet_out[2].if_take_branch = 0;		// TODO: change this line when we have branch FU
+	assign fu_packet_out[2].target_pc = 0;			// TODO: change this line when we have branch FU
+	assign fu_packet_out[2].dest_pr = fu_packet_in[2].dest_pr;
+	assign fu_packet_out[2].rob_entry = fu_packet_in[2].rob_entry;
 	assign fu_packet_out[2].halt = fu_packet_in[2].halt;
-	assign fu_packet_out[2].illegal = fu_packet_in[2].illegal;
-	assign fu_packet_out[2].csr_op = fu_packet_in[2].csr_op;
 	assign fu_packet_out[2].valid = fu_packet_in[2].valid;
-	assign fu_packet_out[2].mem_size = fu_packet_in[2].inst.r.funct3;
 
-    assign fu_packet_out[1].NPC = fu_packet_in[1].NPC;
-	assign fu_packet_out[1].rs2_value = fu_packet_in[1].rs2_value;
-	assign fu_packet_out[1].rd_mem = fu_packet_in[1].rd_mem;
-	assign fu_packet_out[1].wr_mem = fu_packet_in[1].wr_mem;
-	assign fu_packet_out[1].dest_reg_idx = fu_packet_in[1].dest_reg_idx;
-	assign fu_packet_out[1].halt = fu_packet_in[1].halt;
-	assign fu_packet_out[1].illegal = fu_packet_in[1].illegal;
-	assign fu_packet_out[1].csr_op = fu_packet_in[1].csr_op;
-	assign fu_packet_out[1].valid = fu_packet_in[1].valid;
-	assign fu_packet_out[1].mem_size = fu_packet_in[1].inst.r.funct3;
+	assign fu_packet_out[1].if_take_branch = 0;		// TODO: change this line when we have branch FU
+	assign fu_packet_out[1].target_pc = 0;			// TODO: change this line when we have branch FU
+	assign fu_packet_out[1].dest_pr = fu_packet_in[2].dest_pr;
+	assign fu_packet_out[1].rob_entry = fu_packet_in[2].rob_entry;
+	assign fu_packet_out[1].halt = fu_packet_in[2].halt;
+	assign fu_packet_out[1].valid = fu_packet_in[2].valid;
 
-    assign fu_packet_out[0].NPC = fu_packet_in[0].NPC;
-	assign fu_packet_out[0].rs2_value = fu_packet_in[0].rs2_value;
-	assign fu_packet_out[0].rd_mem = fu_packet_in[0].rd_mem;
-	assign fu_packet_out[0].wr_mem = fu_packet_in[0].wr_mem;
-	assign fu_packet_out[0].dest_reg_idx = fu_packet_in[0].dest_reg_idx;
-	assign fu_packet_out[0].halt = fu_packet_in[0].halt;
-	assign fu_packet_out[0].illegal = fu_packet_in[0].illegal;
-	assign fu_packet_out[0].csr_op = fu_packet_in[0].csr_op;
-	assign fu_packet_out[0].valid = fu_packet_in[0].valid;
-	assign fu_packet_out[0].mem_size = fu_packet_in[0].inst.r.funct3;
+	assign fu_packet_out[0].if_take_branch = 0;		// TODO: change this line when we have branch FU
+	assign fu_packet_out[0].target_pc = 0;			// TODO: change this line when we have branch FU
+	assign fu_packet_out[0].dest_pr = fu_packet_in[2].dest_pr;
+	assign fu_packet_out[0].rob_entry = fu_packet_in[2].rob_entry;
+	assign fu_packet_out[0].halt = fu_packet_in[2].halt;
+	assign fu_packet_out[0].valid = fu_packet_in[2].valid;
 
 	logic [2:0][`XLEN-1:0] opa_mux_out, opb_mux_out;
 	//
@@ -110,7 +113,7 @@ module alu_stage(
 	always_comb begin
 		opa_mux_out[2] = `XLEN'hdeadfbac;
 		case (fu_packet_in[2].opa_select)
-			OPA_IS_RS1:  opa_mux_out[2] = fu_packet_in[2].rs1_value;
+			OPA_IS_RS1:  opa_mux_out[2] = fu_packet_in[2].r1_value;
 			OPA_IS_NPC:  opa_mux_out[2] = fu_packet_in[2].NPC;
 			OPA_IS_PC:   opa_mux_out[2] = fu_packet_in[2].PC;
 			OPA_IS_ZERO: opa_mux_out[2] = 0;
@@ -120,7 +123,7 @@ module alu_stage(
     always_comb begin
 		opa_mux_out[1] = `XLEN'hdeadfbac;
 		case (fu_packet_in[1].opa_select)
-			OPA_IS_RS1:  opa_mux_out[1] = fu_packet_in[1].rs1_value;
+			OPA_IS_RS1:  opa_mux_out[1] = fu_packet_in[1].r1_value;
 			OPA_IS_NPC:  opa_mux_out[1] = fu_packet_in[1].NPC;
 			OPA_IS_PC:   opa_mux_out[1] = fu_packet_in[1].PC;
 			OPA_IS_ZERO: opa_mux_out[1] = 0;
@@ -130,7 +133,7 @@ module alu_stage(
     always_comb begin
 		opa_mux_out[0] = `XLEN'hdeadfbac;
 		case (fu_packet_in[0].opa_select)
-			OPA_IS_RS1:  opa_mux_out[0] = fu_packet_in[0].rs1_value;
+			OPA_IS_RS1:  opa_mux_out[0] = fu_packet_in[0].r1_value;
 			OPA_IS_NPC:  opa_mux_out[0] = fu_packet_in[0].NPC;
 			OPA_IS_PC:   opa_mux_out[0] = fu_packet_in[0].PC;
 			OPA_IS_ZERO: opa_mux_out[0] = 0;
@@ -145,7 +148,7 @@ module alu_stage(
 		// value on the output of the mux you have an invalid opb_select
 		opb_mux_out[2] = `XLEN'hfacefeed;
 		case (fu_packet_in[2].opb_select)
-			OPB_IS_RS2:   opb_mux_out[2] = fu_packet_in[2].rs2_value;
+			OPB_IS_RS2:   opb_mux_out[2] = fu_packet_in[2].r2_value;
 			OPB_IS_I_IMM: opb_mux_out[2] = `RV32_signext_Iimm(fu_packet_in[2].inst);
 			OPB_IS_S_IMM: opb_mux_out[2] = `RV32_signext_Simm(fu_packet_in[2].inst);
 			OPB_IS_B_IMM: opb_mux_out[2] = `RV32_signext_Bimm(fu_packet_in[2].inst);
@@ -159,7 +162,7 @@ module alu_stage(
 		// value on the output of the mux you have an invalid opb_select
 		opb_mux_out[1] = `XLEN'hfacefeed;
 		case (fu_packet_in[1].opb_select)
-			OPB_IS_RS2:   opb_mux_out[1] = fu_packet_in[1].rs2_value;
+			OPB_IS_RS2:   opb_mux_out[1] = fu_packet_in[1].r2_value;
 			OPB_IS_I_IMM: opb_mux_out[1] = `RV32_signext_Iimm(fu_packet_in[1].inst);
 			OPB_IS_S_IMM: opb_mux_out[1] = `RV32_signext_Simm(fu_packet_in[1].inst);
 			OPB_IS_B_IMM: opb_mux_out[1] = `RV32_signext_Bimm(fu_packet_in[1].inst);
@@ -173,7 +176,7 @@ module alu_stage(
 		// value on the output of the mux you have an invalid opb_select
 		opb_mux_out[0] = `XLEN'hfacefeed;
 		case (fu_packet_in[0].opb_select)
-			OPB_IS_RS2:   opb_mux_out[0] = fu_packet_in[0].rs2_value;
+			OPB_IS_RS2:   opb_mux_out[0] = fu_packet_in[0].r2_value;
 			OPB_IS_I_IMM: opb_mux_out[0] = `RV32_signext_Iimm(fu_packet_in[0].inst);
 			OPB_IS_S_IMM: opb_mux_out[0] = `RV32_signext_Simm(fu_packet_in[0].inst);
 			OPB_IS_B_IMM: opb_mux_out[0] = `RV32_signext_Bimm(fu_packet_in[0].inst);
@@ -185,31 +188,31 @@ module alu_stage(
 	//
 	// instantiate the ALU
 	//
-	alu alu_2 (// Inputs
+	alu fu_alu_2 (// Inputs
 		.opa(opa_mux_out[2]),
 		.opb(opb_mux_out[2]),
-		.func(fu_packet_in[2].alu_func),
+		.func(fu_packet_in[2].op_sel.alu),
 
 		// Output
-		.result(fu_packet_out[2].alu_result)
+		.result(fu_packet_out[2].dest_value)
 	);
 
-    alu alu_1 (// Inputs
+    alu fu_alu_1 (// Inputs
 		.opa(opa_mux_out[1]),
 		.opb(opb_mux_out[1]),
-		.func(fu_packet_in[1].alu_func),
+		.func(fu_packet_in[1].op_sel.alu),
 
 		// Output
-		.result(fu_packet_out[1].alu_result)
+		.result(fu_packet_out[1].dest_value)
 	);
 
-    alu alu_0 (// Inputs
+    alu fu_alu_0 (// Inputs
 		.opa(opa_mux_out[0]),
 		.opb(opb_mux_out[0]),
-		.func(fu_packet_in[0].alu_func),
+		.func(fu_packet_in[0].op_sel.alu),
 
 		// Output
-		.result(fu_packet_out[0].alu_result)
+		.result(fu_packet_out[0].dest_value)
 	);
 endmodule // module ex_stage
 `endif // __EX_STAGE_V__
