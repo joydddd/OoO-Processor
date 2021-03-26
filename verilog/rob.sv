@@ -1,7 +1,6 @@
 
 `define TEST_MODE
 // `define RS_ALLOCATE_DEBUG
-`define IS_DEBUG
 `ifndef __ROB_V__
 `define __ROB_V__
 
@@ -26,10 +25,6 @@ module ROB(
     	, output ROB_ENTRY_PACKET [`ROBW-1:0] rob_entries_display
 		, output [`ROB-1:0] head_display
 		, output [`ROB-1:0] tail_display
-	`endif
-
-	`ifdef IS_DEBUG
-    	, input ROB_ENTRY_PACKET [`ROBW-1:0] rob_entries_debug
 	`endif
 );
 
@@ -291,11 +286,7 @@ always_ff @(posedge clock) begin
 		head <= `SD 0;
 		tail <= `SD 0;
 		rob_states <= `SD 0;
-		`ifndef IS_DEBUG
-        	rob_entries <= `SD 0; 
-    	`else
-        	rob_entries <= `SD rob_entries_debug;
-    	`endif
+        rob_entries <= `SD 0; 
 	end	 
     else begin 
         rob_entries <= `SD rob_entries_next;

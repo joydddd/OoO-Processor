@@ -69,6 +69,11 @@ FU_COMPLETE_PACKET [2:0]   fu_packet_out_display;
 // Complete
 CDB_T_PACKET               cdb_t_display;
 
+//ROB
+	ROB_ENTRY_PACKET [`ROBW-1:0]    rob_entries_display;
+    logic       [`ROB-1:0]          head_display;
+    logic       [`ROB-1:0]          tail_display;
+
 `endif
 
 `ifdef DIS_DEBUG
@@ -239,8 +244,8 @@ always @(negedge clock) begin
         // show_rs_in;
         show_rs_table;
         show_rs_out;
+        show_rob_table;
         show_rob_in;
-        
     end
 end
 
@@ -308,6 +313,13 @@ task show_rob_in;
         $display("| %1d |  %1d  |  %2d  |  %2d  |  %2d  |    %1d    |", i, dis_rob_packet_display[i].valid, dis_rob_packet_display[i].Tnew, dis_rob_packet_display[i].Told, dis_rob_packet_display[i].arch_reg, dis_rob_packet_display[i].completed);
     end
 endtask
+
+    task show_rob_table;
+        for(int i=2**`ROB-1; i>=0; i--) begin  
+            $display("valid: %d  Tnew: %d  Told: %d  arch_reg: %d  completed: %b  precise_state: %b  target_pc: %3d", rob_entries_display[i].valid, rob_entries_display[i].Tnew, rob_entries_display[i].Told, rob_entries_display[i].arch_reg, rob_entries_display[i].completed, rob_entries_display[i].precise_state_need, rob_entries_display[i].target_pc);
+        end
+        $display("head:%d tail:%d", head_display, tail_display);
+    endtask; // show_rs_table
 
 
 task print_pipeline;

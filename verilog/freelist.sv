@@ -26,18 +26,16 @@ module Freelist(
 	`endif
 );
 
-logic 	[2:0][`PR-1:0] 	FreeReg_next;
-logic 	[2:0] 		    FreeRegValid_next;
+logic [2:0] FreeRegValid_next;
 
 logic [31:0][`PR-1:0] array;
 logic [31:0][`PR-1:0] array_next;
-logic empty;
-logic empty_next;
 
 logic [4:0] head;
 logic [4:0] head_incre1;
 logic [4:0] head_incre2;
 logic [4:0] head_incre3;
+logic [4:0] head_incre4;
 logic [4:0] tail;
 logic [4:0] input_start;
 logic [4:0] input_start_incre1;
@@ -63,18 +61,19 @@ logic dispatch_third;
     assign array_display = array;
 	assign head_display = head;
 	assign tail_display = tail;
-	assign empty_display = empty;
+	assign empty_display = FreeRegValid == 3'b000;
 `endif
 
 assign head_incre1 = head + 1;
 assign head_incre2 = head + 2;
 assign head_incre3 = head + 3;
+assign head_incre4 = head + 4;
 assign input_start_incre1 = input_start + 1;
 assign input_start_incre2 = input_start + 2;
 assign input_start_incre3 = input_start + 3;
 assign Head = head;
-assign fl_distance = (head == tail && empty == 1) ? 32 :
-					  (head == tail && empty == 0) ? 31 : 31 - tail + head;
+assign fl_distance = (head == tail && FreeRegValid == 3'b000) ? 32 :
+					  (head == tail && FreeRegValid != 3'b000) ? 31 : 31 - tail + head;
 
 assign retire_first = RetireEN & 3'b001;
 assign retire_second = (RetireEN & 3'b010) >> 1;
@@ -89,7 +88,7 @@ assign dispatch_count =  dispatch_first + dispatch_second + dispatch_third;
 
 /* update tail */
 always_comb begin
-    if (head == tail && empty) begin
+    if (head == tail && FreeRegValid == 3'b000) begin
 	    tail_next = (retire_count > 0) ? tail + retire_count - 1 : tail;
         input_start = tail;
     end
@@ -105,83 +104,55 @@ end
 
 always_comb begin
     //$display("%d %d %d %d", head, tail, tail_next, RetireEN);
-	empty_next = empty;
 	priority case (dispatch_count)
 		3: begin
-            if (head == tail_next && retire_count == 0) begin
+            if (head == tail_next) begin
 				head_next = head;
 				FreeRegValid_next = 3'b000;
-				empty_next = 1;
-			end
-            else if (head == tail_next && retire_count > 0) begin
-				head_next = head;
-				FreeRegValid_next = 3'b001;
-				empty_next = 1;
 			end
 			else if (head_incre1 == tail_next) begin
 				head_next = head + 1;
-				FreeRegValid_next = 3'b011;
-				empty_next = 1;
+				FreeRegValid_next = 3'b000;
 			end
 			else if (head_incre2 == tail_next) begin
 				head_next = head + 2;
-				FreeRegValid_next = 3'b111;
-				empty_next = 1;
+				FreeRegValid_next = 3'b000;
 			end
 			else begin
 				head_next = head + 3;
-				FreeRegValid_next = 3'b111;
-				empty_next = 0;
+				FreeRegValid_next = (head_incre3 == tail_next) ? 3'b100:
+									(head_incre4 == tail_next) ? 3'b110: 3'b111;
 			end
 		end
 		2: begin
-            if (head == tail_next && retire_count == 0) begin
+            if (head == tail_next) begin
 				head_next = head;
 				FreeRegValid_next = 3'b000;
-				empty_next = 1;
-			end
-            else if (head == tail_next && retire_count > 0) begin
-				head_next = head;
-				FreeRegValid_next = 	(dispatch_first) ? 3'b001 : 
-								(dispatch_second) ? 3'b010 : 3'b100;
-				empty_next = 1;
 			end
 			else if (head_incre1 == tail_next) begin
 				head_next = head + 1;
-				FreeRegValid_next = 	(dispatch_first & dispatch_second) ? 3'b011 : 
-								(dispatch_first & dispatch_third) ? 3'b101 : 3'b110;
-				empty_next = 1;
+				FreeRegValid_next = 3'b000;
 			end
 			else begin
 				head_next = head + 2;
-				FreeRegValid_next = 	(dispatch_first & dispatch_second) ? 3'b011 : 
-								(dispatch_first & dispatch_third) ? 3'b101 : 3'b110;
-				empty_next = 0;
+				FreeRegValid_next = (head_incre2 == tail_next) ? 3'b100:
+									(head_incre3 == tail_next) ? 3'b110: 3'b111;
 			end
 		end
 		1: begin
-            if (head == tail_next && retire_count == 0) begin
+            if (head == tail_next) begin
 				head_next = head;
 				FreeRegValid_next = 3'b000;
-				empty_next = 1;
-			end
-            else if (head == tail_next && retire_count > 0) begin
-				head_next = head;
-				FreeRegValid_next = 	(dispatch_first) ? 3'b001 : 
-								(dispatch_second) ? 3'b010 : 3'b100;
-				empty_next = 1;				
 			end
 			else begin
 				head_next = head + 1;
-				FreeRegValid_next = 	(dispatch_first) ? 3'b001 : 
-								(dispatch_second) ? 3'b010 : 3'b100;
-				empty_next = 0;				
+				FreeRegValid_next = (head_incre1 == tail_next) ? 3'b100:
+									(head_incre2 == tail_next) ? 3'b110: 3'b111;	
 			end
 		end
 		default begin
 			head_next = head + dispatch_count;
 			FreeRegValid_next = FreeRegValid;
-			empty_next = 0;
 		end
 	endcase
 		//$display("%d %d %d#############", dispatch_count, tail, head);
@@ -191,7 +162,7 @@ end
 /* update Freelist */
 always_comb begin
 	array_next = array;
-    FreeReg_next = FreeReg;
+    FreeReg = 0;
     priority case (RetireEN) 
 		3'b111: begin
 			array_next[input_start] = RetireReg[2];
@@ -223,32 +194,32 @@ always_comb begin
 		end
 	endcase
 	
-	priority case (FreeRegValid_next)
+	priority case (DispatchEN)
 		3'b111: begin
-			FreeReg_next[2] = array_next[head];
-			FreeReg_next[1] = array_next[head_incre1];
-			FreeReg_next[0] = array_next[head_incre2];
+			FreeReg[2] = array_next[head];
+			FreeReg[1] = array_next[head_incre1];
+			FreeReg[0] = array_next[head_incre2];
 		end
 		3'b011: begin
-			FreeReg_next[1] = array_next[head];
-			FreeReg_next[0] = array_next[head_incre1];
+			FreeReg[1] = array_next[head];
+			FreeReg[0] = array_next[head_incre1];
 		end
 		3'b101: begin
-			FreeReg_next[2] = array_next[head];
-			FreeReg_next[0] = array_next[head_incre1];
+			FreeReg[2] = array_next[head];
+			FreeReg[0] = array_next[head_incre1];
 		end
 		3'b110: begin
-			FreeReg_next[2] = array_next[head];
-			FreeReg_next[1] = array_next[head_incre1];
+			FreeReg[2] = array_next[head];
+			FreeReg[1] = array_next[head_incre1];
 		end
 		3'b001: begin
-			FreeReg_next[0] = array_next[head];
+			FreeReg[0] = array_next[head];
 		end
 		3'b010: begin
-			FreeReg_next[1] = array_next[head];
+			FreeReg[1] = array_next[head];
 		end
 		3'b100: begin
-			FreeReg_next[2] = array_next[head];
+			FreeReg[2] = array_next[head];
 		end
 		3'b000: begin
 			
@@ -263,27 +234,19 @@ always_ff @(posedge clock) begin
     if (reset) begin
 		head <= `SD 0;
 		tail <= `SD 31;
-        empty <= `SD 0;
 		FreeRegValid <= `SD 3'b111;
-		FreeReg[2] <= `SD 32;
-		FreeReg[1] <= `SD 33;
-		FreeReg[0] <= `SD 34;
         for (int i = 0; i < 32; i++) begin
             array[i] <= `SD i + 32;
         end
 	end
 	else if (BPRecoverEN) begin
 		array <= `SD array_next;
-        empty <= `SD 0;
 		head <= `SD BPRecoverHead;
 		tail <= `SD tail_next;
-		FreeReg <= `SD FreeReg_next;
 		FreeRegValid <= `SD FreeRegValid_next;
 	end
     else begin 
         array <= `SD array_next;
-        empty <= `SD empty_next;
-		FreeReg <= `SD FreeReg_next;
 		FreeRegValid <= `SD FreeRegValid_next;
 		head <= `SD head_next;
 		tail <= `SD tail_next;
