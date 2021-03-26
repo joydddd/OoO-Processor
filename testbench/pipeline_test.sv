@@ -314,12 +314,12 @@ task show_rob_in;
     end
 endtask
 
-    task show_rob_table;
-        for(int i=2**`ROB-1; i>=0; i--) begin  
-            $display("valid: %d  Tnew: %d  Told: %d  arch_reg: %d  completed: %b  precise_state: %b  target_pc: %3d", rob_entries_display[i].valid, rob_entries_display[i].Tnew, rob_entries_display[i].Told, rob_entries_display[i].arch_reg, rob_entries_display[i].completed, rob_entries_display[i].precise_state_need, rob_entries_display[i].target_pc);
-        end
-        $display("head:%d tail:%d", head_display, tail_display);
-    endtask; // show_rs_table
+task show_rob_table;
+    for(int i=2**`ROB-1; i>=0; i--) begin  
+        $display("valid: %d  Tnew: %d  Told: %d  arch_reg: %d  completed: %b  precise_state: %b  target_pc: %3d", rob_entries_display[i].valid, rob_entries_display[i].Tnew, rob_entries_display[i].Told, rob_entries_display[i].arch_reg, rob_entries_display[i].completed, rob_entries_display[i].precise_state_need, rob_entries_display[i].target_pc);
+    end
+    $display("head:%d tail:%d", head_display, tail_display);
+endtask; // show_rs_table
 
 
 task print_pipeline;

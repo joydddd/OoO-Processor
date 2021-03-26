@@ -94,17 +94,17 @@ module alu_stage(
 
 	assign fu_packet_out[1].if_take_branch = 0;		// TODO: change this line when we have branch FU
 	assign fu_packet_out[1].target_pc = 0;			// TODO: change this line when we have branch FU
-	assign fu_packet_out[1].dest_pr = fu_packet_in[2].dest_pr;
-	assign fu_packet_out[1].rob_entry = fu_packet_in[2].rob_entry;
-	assign fu_packet_out[1].halt = fu_packet_in[2].halt;
-	assign fu_packet_out[1].valid = fu_packet_in[2].valid;
+	assign fu_packet_out[1].dest_pr = fu_packet_in[1].dest_pr;
+	assign fu_packet_out[1].rob_entry = fu_packet_in[1].rob_entry;
+	assign fu_packet_out[1].halt = fu_packet_in[1].halt;
+	assign fu_packet_out[1].valid = fu_packet_in[1].valid;
 
 	assign fu_packet_out[0].if_take_branch = 0;		// TODO: change this line when we have branch FU
 	assign fu_packet_out[0].target_pc = 0;			// TODO: change this line when we have branch FU
-	assign fu_packet_out[0].dest_pr = fu_packet_in[2].dest_pr;
-	assign fu_packet_out[0].rob_entry = fu_packet_in[2].rob_entry;
-	assign fu_packet_out[0].halt = fu_packet_in[2].halt;
-	assign fu_packet_out[0].valid = fu_packet_in[2].valid;
+	assign fu_packet_out[0].dest_pr = fu_packet_in[0].dest_pr;
+	assign fu_packet_out[0].rob_entry = fu_packet_in[0].rob_entry;
+	assign fu_packet_out[0].halt = fu_packet_in[0].halt;
+	assign fu_packet_out[0].valid = fu_packet_in[0].valid;
 
 	logic [2:0][`XLEN-1:0] opa_mux_out, opb_mux_out;
 	//

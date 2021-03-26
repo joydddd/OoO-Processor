@@ -128,6 +128,7 @@ logic [2:0][4:0]		maptable_lookup_reg1_ar;
 logic [2:0][4:0]		maptable_lookup_reg2_ar;
 
 /* Reservation Station */
+logic                   rs_reset;
 logic [2:0]             rs_stall;
 RS_S_PACKET [2:0]       rs_is_packet;
 
@@ -138,7 +139,7 @@ logic [2:0]		        DispatchEN;
 logic [2:0] 		    RetireEN;
 logic [2:0][`PR-1:0] 	RetireReg;
 logic [`ROB-1:0] 	    BPRecoverHead;
-logic [`PR-1:0] 	    FreelistHead;
+logic [`ROB-1:0] 	    FreelistHead;
 logic [4:0]             fl_distance;
 
 /* map table */
@@ -186,11 +187,11 @@ logic       [`ROB-1:0]          head;
 logic       [`ROB-1:0]          tail;
 
 /* functional unit */
-FU_STATE_PACKET         fu_ready;
-ISSUE_FU_PACKET [2**`FU-1:0] fu_packet_in;
-FU_STATE_PACKET         complete_stall;
-FU_COMPLETE_PACKET [2:0]        fu_c_packet;
-FU_STATE_PACKET                 fu_finish_packet;
+FU_STATE_PACKET                     fu_ready;
+ISSUE_FU_PACKET     [2**`FU-1:0]    fu_packet_in;
+FU_STATE_PACKET                     complete_stall;
+FU_COMPLETE_PACKET  [2:0]           fu_c_packet;
+FU_STATE_PACKET                     fu_finish_packet;
 
 
 /* Complete Stage */
@@ -206,8 +207,8 @@ logic       [2:0][`PR-1:0]			map_ar_pr;
 logic       [2:0][4:0]			    map_ar;
 logic       [31:0][`PR-1:0]         recover_maptable;
 logic       [`XLEN-1:0]             fetch_pc;
-logic 		[2:0] 			        RetireEN;
-ROB_ENTRY_PACKET [2:0]              retire_entry;
+//logic 		[2:0] 			        RetireEN;     
+//ROB_ENTRY_PACKET [2:0]              retire_entry;
 
 /////////////////////////////////////////////////////////
 //          DEBUG  IN/OUTPUT                
@@ -381,6 +382,8 @@ arch_maptable arch_maptable_0(
 //             Reservation Station              //
 //                                              //
 //////////////////////////////////////////////////
+assign rs_reset = reset | BPRecoverEN;
+
 
 RS RS_0(
     // Inputs
@@ -406,7 +409,7 @@ RS RS_0(
 //////////////////////////////////////////////////
 
 always_ff @(posedge clock) begin
-    if (reset) is_packet_in <= `SD 0;
+    if (reset | BPRecoverEN) is_packet_in <= `SD 0;
     else is_packet_in <= `SD rs_is_packet;
 end
 
@@ -445,7 +448,7 @@ issue_stage issue_0(
 //////////////////////////////////////////////////
 
 always_ff @(posedge clock) begin
-    if (reset) fu_packet_in <= `SD 0;
+    if (reset | BPRecoverEN) fu_packet_in <= `SD 0;
     else fu_packet_in <= `SD is_fu_packet;
 end
 
@@ -459,7 +462,7 @@ alu_stage alus(
 	.clock(clock),                      // system clock
 	.reset(reset),                      // system reset
     .complete_stall(complete_stall),    // <- complete.fu_c_stall
-	.fu_packet_in(is_fu_packet),        // <- issue.issue_2_fu
+	.fu_packet_in(is_fu_packet[2:0]),        // <- issue.issue_2_fu
     .fu_ready(fu_ready),                // -> issue.fu_ready
     .want_to_complete(fu_finish_packet),// -> complete.fu_finish
 	.fu_packet_out(fu_c_packet)         // -> complete.fu_c_in
@@ -528,9 +531,10 @@ complete_stage cs(
     .target_pc(target_pc)                       // -> ROB.target_pc
 );
 
+/*
 //////////////////////////////////////////////////
 //                                              //
-//                C-RE-Register                 //
+//                C-RE-Register (No-need)       //
 //                                              //
 //////////////////////////////////////////////////
 
@@ -543,7 +547,7 @@ always_ff @(posedge clock) begin
         retire_entry <= `SD rob_retire_entry;
     end
 end
-
+*/
 //////////////////////////////////////////////////
 //                                              //
 //                 Retire Stage                 //
@@ -551,7 +555,7 @@ end
 //////////////////////////////////////////////////
     
 retire_stage retire_0(
-    .rob_head_entry(retire_entry),              // <- ROB.retire_entry
+    .rob_head_entry(rob_retire_entry),          // <- ROB.retire_entry
     .fl_distance(fl_distance),                  // <- Freelist.fl_distance
     .BPRecoverEN(BPRecoverEN),                  // -> ROB.BPRecoverEN, Freelist.BPRecoverEN, fetch.take_branch
     .target_pc(fetch_pc),                       // -> TODO: fetch.target_pc

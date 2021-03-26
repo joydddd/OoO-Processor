@@ -49,7 +49,7 @@ LIB = /afs/umich.edu/class/eecs470/lib/verilog/lec25dscc25.v
 # Pipeline without fetch
 PLTESTBENCH = testbench/pipeline_test.sv testbench/mt-fl_sim.cpp testbench/pipe_print.c 
 PLFILES = verilog/alu_stage.sv verilog/dispatch.sv verilog/issue.sv verilog/pipeline.sv verilog/rs.sv verilog/ps.sv verilog/map_tables.sv verilog/issue_fifo.sv verilog/rob.sv verilog/complete_stage.sv verilog/re_stage.sv verilog/freelist.sv
-# DSYNFILES = synth/pipeline.vg
+PLSYNFILES = synth/pipeline.vg
 
 # Reservation Station
 RSTESTBENCH = testbench/rs_test.sv testbench/rs_print.c
@@ -111,6 +111,7 @@ export DFILES
 export ISFIFOFILE
 export FSFILES
 export REFILES
+export PLFILES
 
 
 export CACHE_NAME = cache
@@ -292,6 +293,15 @@ ret_syn: ret_syn_simv
 ret_syn_simv: $(HEADERS) $(RESYNFILES) $(RETESTBENCH) 
 	$(VCS) $^ $(LIB) +define+SYNTH_TEST +error+20 -o dis_syn_simv 
 
+
+$(PLSYNFILES):	$(PLFILES) $(SYNTH_DIR)/pl.tcl
+	cd $(SYNTH_DIR) && dc_shell-t -f ./pl.tcl | tee pl_synth.out
+
+pl_syn: pl_syn_simv
+	./pl_syn_simv | tee pl_syn_program.out
+
+pl_syn_simv: $(HEADERS) $(PLSYNFILES) $(PLTESTBENCH) 
+	$(VCS) $^ $(LIB) +define+SYNTH_TEST +error+20 -o pl_syn_simv
 
 syn:	syn_simv 
 	./syn_simv | tee syn_program.out
