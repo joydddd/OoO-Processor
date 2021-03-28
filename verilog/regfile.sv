@@ -10,7 +10,8 @@
 `ifndef __REGFILE_V__
 `define __REGFILE_V__
 
-`timescale 1ns/100ps
+
+
 
 module regfile(
         input   [4:0] rda_idx, rdb_idx, wr_idx,    // read/write index
@@ -25,7 +26,6 @@ module regfile(
 
   wire   [`XLEN-1:0] rda_reg = registers[rda_idx];
   wire   [`XLEN-1:0] rdb_reg = registers[rdb_idx];
-
   //
   // Read port A
   //
