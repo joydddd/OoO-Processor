@@ -82,6 +82,9 @@ module pipeline(
     , output [4:0]                      fl_head_display
     , output [4:0]                      fl_tail_display
     , output                            fl_empty_display
+
+    // PR
+    , output logic [2**`PR-1:0][`XLEN-1:0] pr_display
 `endif
 
 `ifdef DIS_DEBUG
@@ -440,6 +443,28 @@ issue_stage issue_0(
     , .br_fifo_display(br_fifo_display)
     `endif
 );
+
+//////////////////////////////////////////////////
+//                                              //
+//                Physical Reg                  //
+//                                              //
+//////////////////////////////////////////////////
+
+physical_regfile pr_0(
+    // Inputs
+    .rda_idx (is_pr1_idx),
+    .rdb_idx (is_pr2_idx),
+    .wr_data (wb_value),
+    .wr_idx (cdb_t),
+    .clock (clock),
+    .reset (reset),
+    // Output
+    .rda_out(pr1_read),
+    .rdb_out(pr2_read)
+`ifdef TEST_MODE
+    .pr_reg_display(pr_display)
+`endif
+)
 
 //////////////////////////////////////////////////
 //                                              //

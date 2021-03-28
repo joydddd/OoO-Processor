@@ -305,7 +305,7 @@ ret_syn_simv: $(HEADERS) $(RESYNFILES) $(RETESTBENCH)
 	$(VCS) $^ $(LIB) +define+SYNTH_TEST +error+20 -o dis_syn_simv 
 
 
-$(PLSYNFILES):	$(PLFILES) $(RSSYNFILES) $(MTSYNFILES) $(ISFIFOSYN) $(FREELISTSYNFILES) $(ROBSYNFILES) $(SYNTH_DIR)/pl.tcl 
+$(PLSYNFILES):	$(PLFILES) $(RSSYNFILES) $(MTSYNFILES) $(ISFIFOSYN) $(FREELISTSYNFILES) $(ROBSYNFILES) $(PRSYNFILES) $(SYNTH_DIR)/pl.tcl 
 	cd $(SYNTH_DIR) && dc_shell-t -f ./pl.tcl | tee pl_synth.out
 
 pl_syn: pl_syn_simv

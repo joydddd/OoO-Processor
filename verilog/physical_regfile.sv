@@ -13,7 +13,7 @@ module physical_regfile(
  
     output logic [2:0][`XLEN-1:0] rda_out, rdb_out    // read data
 `ifdef TEST_MODE
-    , output logic [2**`PR-1:0][`XLEN-1:0]pr_reg_display           
+    , output logic [2**`PR-1:0][`XLEN-1:0] pr_reg_display           
 `endif
 );
 
