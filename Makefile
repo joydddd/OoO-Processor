@@ -48,7 +48,7 @@ LIB = /afs/umich.edu/class/eecs470/lib/verilog/lec25dscc25.v
 
 # Pipeline without fetch
 PLTESTBENCH = testbench/pipeline_test.sv testbench/mt-fl_sim.cpp testbench/pipe_print.c 
-PLFILES = verilog/alu_stage.sv verilog/dispatch.sv verilog/issue.sv verilog/pipeline.sv verilog/rs.sv verilog/ps.sv verilog/map_tables.sv verilog/issue_fifo.sv verilog/rob.sv verilog/complete_stage.sv verilog/re_stage.sv verilog/freelist.sv
+PLFILES = verilog/alu_stage.sv verilog/dispatch.sv verilog/issue.sv verilog/pipeline.sv verilog/complete_stage.sv verilog/re_stage.sv
 PLSYNFILES = synth/pipeline.vg
 
 # Reservation Station
@@ -119,6 +119,8 @@ export PIPELINE_NAME = pipeline
 export RS_NAME = RS
 export MAP_TABLE_NAME = map_table
 export IS_FIFO_NAME = fu_FIFO_3
+export FREELIST_NAME = Freelist
+export ROB_NAME = ROB
 
 export RSFILES
 export ROBFILES
@@ -243,6 +245,9 @@ $(ROBSYNFILES): $(ROBFILES) $(SYNTH_DIR)/rob.tcl
 $(FREELISTSYNFILES): $(FREELISTFILES) $(SYNTH_DIR)/freelist.tcl
 	cd $(SYNTH_DIR) && dc_shell-t -f ./freelist.tcl | tee freelist_synth.out
 
+$(ISFIFOSYN): $(ISFIFOFILE) $(SYNTH_DIR)/is_fifo.tcl
+	cd $(SYNTH_DIR) && dc_shell-t -f ./is_fifo.tcl | tee is_fifo_synth.out
+
 rs_syn:	rs_syn_simv 
 	./rs_syn_simv | tee rs_syn_program.out
 
@@ -268,14 +273,9 @@ freelist_syn_simv:	$(HEADERS) $(FREELISTSYNFILES) $(FREELISTTESTBENCH)
 	$(VCS) $^ $(LIB) +define+SYNTH_TEST +error+20 -o freelist_syn_simv   
 
 # dispatch pipeline test
-$(DSYNFILES):	$(RSSYNFILES) $(MTSYNFILES) $(ISFIFOSYN) $(DFILES) $(SYNTH_DIR)/dis.tcl  
-	cd $(SYNTH_DIR) && dc_shell-t -f ./dis.tcl | tee dis_synth.out
+# $(DSYNFILES):	$(RSSYNFILES) $(MTSYNFILES) $(ISFIFOSYN) $(FREELISTSYNFILES) $(ROBSYNFILES) $(DFILES) $(SYNTH_DIR)/dis.tcl  
+# 	cd $(SYNTH_DIR) && dc_shell-t -f ./dis.tcl | tee dis_synth.out
 
-is_fifo_syn_simv: $(ISFIFOSYN)
-
-
-$(ISFIFOSYN): $(ISFIFOFILE) $(SYNTH_DIR)/is_fifo.tcl
-	cd $(SYNTH_DIR) && dc_shell-t -f ./is_fifo.tcl | tee is_fifo_synth.out
 
 dis_syn: dis_syn_simv
 	./dis_syn_simv | tee dis_syn_program.out
@@ -294,13 +294,13 @@ ret_syn_simv: $(HEADERS) $(RESYNFILES) $(RETESTBENCH)
 	$(VCS) $^ $(LIB) +define+SYNTH_TEST +error+20 -o dis_syn_simv 
 
 
-$(PLSYNFILES):	$(PLFILES) $(SYNTH_DIR)/pl.tcl
+$(PLSYNFILES):	$(PLFILES) $(RSSYNFILES) $(MTSYNFILES) $(ISFIFOSYN) $(FREELISTSYNFILES) $(ROBSYNFILES) $(SYNTH_DIR)/pl.tcl 
 	cd $(SYNTH_DIR) && dc_shell-t -f ./pl.tcl | tee pl_synth.out
 
 pl_syn: pl_syn_simv
 	./pl_syn_simv | tee pl_syn_program.out
 
-pl_syn_simv: $(HEADERS) $(PLSYNFILES) $(PLTESTBENCH) 
+pl_syn_simv: $(HEADERS) $(PLSYNFILES) $(PLTESTBENCH)
 	$(VCS) $^ $(LIB) +define+SYNTH_TEST +error+20 -o pl_syn_simv
 
 syn:	syn_simv 

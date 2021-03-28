@@ -21,8 +21,11 @@ lappend search_path ../
 set rs_module [getenv RS_NAME]
 set mt_module [getenv MAP_TABLE_NAME]
 set is_fifo_module [getenv IS_FIFO_NAME]
+set freelist_module [getenv FREELIST_NAME]
+set rob_module [getenv ROB_NAME]
 
-read_file -f ddc [list ${rs_module}.ddc ${is_fifo_module}.ddc ${mt_module}.ddc]
+
+read_file -f ddc [list ${rs_module}.ddc ${is_fifo_module}.ddc ${mt_module}.ddc ]
 set_dont_touch [list ${rs_module} ${is_fifo_module} ${mt_module}]
 
 
@@ -33,7 +36,7 @@ read_file -f sverilog [list ${headers} ${sources}]
 set design_name pipeline
 set clock_name clock
 set reset_name reset
-set CLK_PERIOD 8.5
+set CLK_PERIOD 10
 
 
 #/***********************************************************/

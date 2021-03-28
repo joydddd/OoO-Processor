@@ -111,7 +111,7 @@ module pipeline(
     
 );
 /* Fetch Stage */
-IF_ID_PACKET [2:0] if_d_packet;
+IF_ID_PACKET [2:0]      if_d_packet;
 
 /* Dispatch Stage */
 // Inputs
