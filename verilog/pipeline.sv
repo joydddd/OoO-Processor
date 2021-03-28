@@ -263,7 +263,7 @@ assign maptable_reg1_ready = maptable_reg1_ready_debug;
 assign maptable_reg2_ready = maptable_reg2_ready_debug;
 assign fu_ready = fu_ready_debug;
 */
-//assign rob_stall = rob_stall_debug;     // TODO: comment this line when ROB is added
+//assign rob_stall = rob_stall_debug;  
 //assign cdb_t = cdb_t_debug;
 `endif
 
@@ -556,23 +556,6 @@ complete_stage cs(
     .target_pc(target_pc)                       // -> ROB.target_pc
 );
 
-/*
-//////////////////////////////////////////////////
-//                                              //
-//                C-RE-Register (No-need)       //
-//                                              //
-//////////////////////////////////////////////////
-
-// TODO: Not sure about this part - hc
-always_ff @(posedge clock) begin
-    if (reset) begin
-        retire_entry <= `SD 0;
-    end
-    else begin
-        retire_entry <= `SD rob_retire_entry;
-    end
-end
-*/
 //////////////////////////////////////////////////
 //                                              //
 //                 Retire Stage                 //
