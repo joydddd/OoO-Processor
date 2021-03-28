@@ -51,6 +51,8 @@ logic [`ROB-1:0] head_next;
 logic [`ROB-1:0] tail_next;
 logic [2:0] head_incre;
 logic [2:0]  tail_incre;
+logic [`ROB-1:0] head_tail_diff;
+logic [`ROB-1:0] space_left;
 
 `ifdef TEST_MODE
     assign rob_entries_display = rob_entries;
@@ -70,6 +72,11 @@ assign input_start_incre3 = input_start + 3;
 assign tail_incre = (rob_in[0].valid & rob_in[1].valid & rob_in[2].valid) ? 3 :
 					(rob_in[1].valid & rob_in[2].valid) ? 2 :
 					(rob_in[2].valid) ? 1 : 0;
+assign head_tail_diff = tail - head;
+assign space_left = 31 - head_tail_diff + head_incre;
+assign struct_stall = 	(space_left == 0) ? 3'b111 :
+						(space_left == 1) ? 3'b011 :
+						(space_left == 2) ? 3'b001 : 3'b000;
 /* move head */
 
 always_comb begin
@@ -126,7 +133,6 @@ end
 always_comb begin
 	tail_next = tail + tail_incre;
 	input_start = tail + 1;
-	struct_stall = 3'b000;
 	empty_next = 0;
 	if (tail == head_next && empty_temp) begin
 		input_start = tail;
@@ -141,56 +147,46 @@ always_comb begin
 			3: begin
 				if (tail_incre1 == head_next) begin
 					tail_next = tail;
-					struct_stall = 3'b111;
 					input_num = 3'b000;
 				end
 				else if (tail_incre2 == head_next) begin
 					tail_next = tail + 1;
-					struct_stall = 3'b011;
 					input_num = 3'b100;
 				end
 				else if (tail_incre3 == head_next) begin
 					tail_next = tail + 2;
-					struct_stall = 3'b001;
 					input_num = 3'b110;
 				end
 				else begin
 					tail_next = tail + 3;
-					struct_stall = 3'b000;
 					input_num = 3'b111;
 				end
 			end
 			2: begin
 				if (tail_incre1 == head_next) begin
 					tail_next = tail;
-					struct_stall = 3'b110;
 					input_num = 3'b000;
 				end
 				else if (tail_incre2 == head_next) begin
 					tail_next = tail + 1;
-					struct_stall = 3'b100;
 					input_num = 3'b100;
 				end
 				else begin
 					tail_next = tail + 2;
-					struct_stall = 3'b000;
 					input_num = 3'b110;
 				end
 			end
 			1: begin
 				if (tail_incre1 == head_next) begin
 					tail_next = tail;
-					struct_stall = 3'b100;
 					input_num = 3'b000;
 				end
 				else begin
 					tail_next = tail + 1;
-					struct_stall = 3'b000;
 					input_num = 3'b100;
 				end
 			end
 			default begin
-				struct_stall = 3'b000;
 				input_num = 3'b000;
 				tail_next = tail;
 			end

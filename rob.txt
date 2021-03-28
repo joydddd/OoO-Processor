@@ -59,37 +59,37 @@ Running PRESTO HDLC
 Compiling source file /afs/umich.edu/user/b/r/brucewei/EECS470/Projects/Project4/group15w21/sys_defs.svh
 Compiling source file /afs/umich.edu/user/b/r/brucewei/EECS470/Projects/Project4/group15w21/ISA.svh
 Compiling source file /afs/umich.edu/user/b/r/brucewei/EECS470/Projects/Project4/group15w21/verilog/rob.sv
-Warning:  /afs/umich.edu/user/b/r/brucewei/EECS470/Projects/Project4/group15w21/verilog/rob.sv:70: signed to unsigned assignment occurs. (VER-318)
-Warning:  /afs/umich.edu/user/b/r/brucewei/EECS470/Projects/Project4/group15w21/verilog/rob.sv:137: signed to unsigned assignment occurs. (VER-318)
-Warning:  /afs/umich.edu/user/b/r/brucewei/EECS470/Projects/Project4/group15w21/verilog/rob.sv:255: signed to unsigned assignment occurs. (VER-318)
+Warning:  /afs/umich.edu/user/b/r/brucewei/EECS470/Projects/Project4/group15w21/verilog/rob.sv:72: signed to unsigned assignment occurs. (VER-318)
+Warning:  /afs/umich.edu/user/b/r/brucewei/EECS470/Projects/Project4/group15w21/verilog/rob.sv:143: signed to unsigned assignment occurs. (VER-318)
+Warning:  /afs/umich.edu/user/b/r/brucewei/EECS470/Projects/Project4/group15w21/verilog/rob.sv:251: signed to unsigned assignment occurs. (VER-318)
 
-Statistics for case statements in always block at line 75 in file
+Statistics for case statements in always block at line 82 in file
 	'/afs/umich.edu/user/b/r/brucewei/EECS470/Projects/Project4/group15w21/verilog/rob.sv'
 ===============================================
 |           Line           |  full/ parallel  |
 ===============================================
-|            87            |    user/auto     |
+|            94            |    user/auto     |
 ===============================================
 
-Statistics for case statements in always block at line 126 in file
+Statistics for case statements in always block at line 133 in file
 	'/afs/umich.edu/user/b/r/brucewei/EECS470/Projects/Project4/group15w21/verilog/rob.sv'
 ===============================================
 |           Line           |  full/ parallel  |
 ===============================================
-|           140            |    user/auto     |
+|           146            |    user/auto     |
 ===============================================
 
-Statistics for case statements in always block at line 202 in file
+Statistics for case statements in always block at line 198 in file
 	'/afs/umich.edu/user/b/r/brucewei/EECS470/Projects/Project4/group15w21/verilog/rob.sv'
 ===============================================
 |           Line           |  full/ parallel  |
 ===============================================
-|           206            |    user/auto     |
-|           229            |    user/auto     |
+|           202            |    user/auto     |
+|           225            |    user/auto     |
 ===============================================
 
 Inferred memory devices in process
-	in routine ROB line 261 in file
+	in routine ROB line 257 in file
 		'/afs/umich.edu/user/b/r/brucewei/EECS470/Projects/Project4/group15w21/verilog/rob.sv'.
 ===============================================================================
 |    Register Name    |   Type    | Width | Bus | MB | AR | AS | SR | SS | ST |
@@ -103,12 +103,12 @@ Statistics for MUX_OPs
 ======================================================
 | block name/line  | Inputs | Outputs | # sel inputs |
 ======================================================
-|      ROB/78      |   32   |    1    |      5       |
-|      ROB/80      |   32   |    1    |      5       |
-|      ROB/82      |   32   |    1    |      5       |
-|     ROB/208      |   32   |   53    |      5       |
-|     ROB/209      |   32   |   53    |      5       |
-|     ROB/210      |   32   |   53    |      5       |
+|      ROB/85      |   32   |    1    |      5       |
+|      ROB/87      |   32   |    1    |      5       |
+|      ROB/89      |   32   |    1    |      5       |
+|     ROB/204      |   32   |   53    |      5       |
+|     ROB/205      |   32   |   53    |      5       |
+|     ROB/206      |   32   |   53    |      5       |
 ======================================================
 Presto compilation completed successfully.
 Current design is now '/afs/umich.edu/user/b/r/brucewei/EECS470/Projects/Project4/group15w21/verilog/ROB.db:ROB'
@@ -121,8 +121,8 @@ set clock_name clock
 clock
 set reset_name reset
 reset
-set CLK_PERIOD 10
-10
+set CLK_PERIOD 9
+9
 #/***********************************************************/
 #/* The rest of this file may be left alone for most small  */
 #/* to moderate sized designs.  You may need to alter it    */
@@ -279,28 +279,34 @@ Information: Updating design information... (UID-85)
   Beginning Implementation Selection
   ----------------------------------
   Processing 'ROB_DW01_add_0'
+  Processing 'ROB_DW01_cmp6_0'
+  Processing 'ROB_DW01_cmp6_1'
+  Processing 'ROB_DW01_cmp6_2'
   Processing 'ROB_DW01_add_1'
   Processing 'ROB_DW01_inc_0'
   Processing 'ROB_DW01_add_2'
-  Processing 'ROB_DW01_cmp6_0'
+  Processing 'ROB_DW01_cmp6_3'
   Processing 'ROB_DW01_add_3'
   Processing 'ROB_DW01_inc_1'
-  Processing 'ROB_DW01_cmp6_1'
-  Processing 'ROB_DW01_add_4'
-  Processing 'ROB_DW01_cmp6_2'
-  Processing 'ROB_DW01_cmp6_3'
   Processing 'ROB_DW01_cmp6_4'
+  Processing 'ROB_DW01_add_4'
+  Processing 'ROB_DW01_cmp6_5'
+  Processing 'ROB_DW01_cmp6_6'
+  Processing 'ROB_DW01_cmp6_7'
   Processing 'ROB_DW01_inc_2'
   Processing 'ROB_DW01_add_5'
   Processing 'ROB_DW01_add_6'
-  Processing 'ROB_DW01_cmp6_5'
-  Processing 'ROB_DW01_cmp6_6'
+  Processing 'ROB_DW01_cmp6_8'
+  Processing 'ROB_DW01_cmp6_9'
   Processing 'ROB_DW01_add_7'
   Processing 'ROB_DW01_inc_3'
   Processing 'ROB_DW01_inc_4'
   Processing 'ROB_DW01_add_8'
   Processing 'ROB_DW01_dec_0'
   Processing 'ROB_DW01_add_9'
+  Processing 'ROB_DW01_add_10'
+  Processing 'ROB_DW01_sub_0'
+  Processing 'ROB_DW01_add_11'
   Processing 'DW02_mult_A_width2_B_width1'
 
   Beginning Mapping Optimizations  (Medium effort)
@@ -310,26 +316,33 @@ Information: Updating design information... (UID-85)
    ELAPSED            WORST NEG   SETUP    DESIGN                              MIN DELAY 
     TIME      AREA      SLACK     COST    RULE COST         ENDPOINT             COST    
   --------- --------- --------- --------- --------- ------------------------- -----------
-    0:00:31 1921706.8      3.68    5794.8    8055.5                                0.00  
-    0:00:31 1921706.8      3.68    5794.8    8055.5                                0.00  
-    0:00:32 2692471.7      3.22    5278.1    5462.6                                0.00  
-    0:00:38 2707129.0      0.00       0.0       2.8                                0.00  
-    0:00:38 2707129.0      0.00       0.0       2.8                                0.00  
-    0:00:38 2707129.0      0.00       0.0       2.8                                0.00  
-    0:00:38 2707129.0      0.00       0.0       2.8                                0.00  
-    0:00:39 2707129.0      0.00       0.0       2.8                                0.00  
-    0:00:45 1189660.5      0.04       9.8       0.7                                0.00  
-    0:00:47 1176314.8      0.00       0.0       0.3                                0.00  
-    0:00:48 1176099.1      0.00       0.0       0.3                                0.00  
-    0:00:49 1176099.1      0.00       0.0       0.3                                0.00  
-    0:00:49 1176099.1      0.00       0.0       0.3                                0.00  
-    0:00:49 1176099.1      0.00       0.0       0.3                                0.00  
-    0:00:49 1176099.1      0.00       0.0       0.3                                0.00  
-    0:00:49 1176132.3      0.00       0.0       0.1                                0.00  
-    0:00:49 1176182.1      0.00       0.0       0.0                                0.00  
-    0:00:49 1176182.1      0.00       0.0       0.0                                0.00  
-    0:00:49 1176182.1      0.00       0.0       0.0                                0.00  
-    0:00:49 1176182.1      0.00       0.0       0.0                                0.00  
+    0:00:35 1923246.9      4.64    7270.2    8031.7                                0.00  
+    0:00:35 1923246.9      4.64    7270.2    8031.7                                0.00  
+    0:00:36 2694011.7      4.02    6619.3    5462.6                                0.00  
+    0:00:45 2690869.3      0.00       0.0       2.0                                0.00  
+    0:00:45 2690869.3      0.00       0.0       2.0                                0.00  
+    0:00:45 2690869.3      0.00       0.0       2.0                                0.00  
+    0:00:45 2690869.3      0.00       0.0       2.0                                0.00  
+    0:00:46 2690869.3      0.00       0.0       2.0                                0.00  
+    0:00:53 1200161.2      0.74     555.9       0.6                                0.00  
+    0:00:55 1179914.6      0.02       2.7       0.5                                0.00  
+    0:00:57 1178786.5      0.05       1.5       0.4                                0.00  
+    0:00:58 1179093.4      0.00       0.0       0.4                                0.00  
+    0:00:58 1179043.7      0.04       1.1       0.4                                0.00  
+    0:00:59 1179110.0      0.00       0.0       0.4                                0.00  
+    0:00:59 1179052.0      0.03       0.6       0.4                                0.00  
+    0:01:00 1179101.7      0.00       0.0       0.4                                0.00  
+    0:01:00 1179052.0      0.03       0.6       0.4                                0.00  
+    0:01:01 1179209.5      0.00       0.0       0.4                                0.00  
+    0:01:01 1179209.5      0.00       0.0       0.4                                0.00  
+    0:01:01 1179209.5      0.00       0.0       0.4                                0.00  
+    0:01:01 1179209.5      0.00       0.0       0.4                                0.00  
+    0:01:01 1179284.2      0.00       0.0       0.2                                0.00  
+    0:01:01 1179281.4      0.00       0.0       0.0                                0.00  
+    0:01:02 1179264.9      0.00       0.0       0.0                                0.00  
+    0:01:02 1179264.9      0.00       0.0       0.0                                0.00  
+    0:01:02 1179264.9      0.00       0.0       0.0                                0.00  
+    0:01:02 1179264.9      0.00       0.0       0.0                                0.00  
 
 
 
@@ -340,9 +353,9 @@ Information: Updating design information... (UID-85)
    ELAPSED            WORST NEG   SETUP    DESIGN                              MIN DELAY 
     TIME      AREA      SLACK     COST    RULE COST         ENDPOINT             COST    
   --------- --------- --------- --------- --------- ------------------------- -----------
-    0:00:49 1176182.1      0.00       0.0       0.0                                0.00  
-    0:00:49 1176182.1      0.00       0.0       0.0                                0.00  
-    0:00:51 1175742.5      0.00       0.0       4.5                                0.00  
+    0:01:02 1179264.9      0.00       0.0       0.0                                0.00  
+    0:01:02 1179264.9      0.00       0.0       0.0                                0.00  
+    0:01:03 1179074.1      0.00       0.0       2.0                                0.00  
 
 
   Beginning Design Rule Fixing  (max_transition)
@@ -352,8 +365,8 @@ Information: Updating design information... (UID-85)
    ELAPSED            WORST NEG   SETUP    DESIGN                              MIN DELAY 
     TIME      AREA      SLACK     COST    RULE COST         ENDPOINT             COST    
   --------- --------- --------- --------- --------- ------------------------- -----------
-    0:00:52 1175742.5      0.00       0.0       4.5                                0.00  
-    0:00:53 1176381.2      0.00       0.0       0.0                                0.00  
+    0:01:04 1179074.1      0.00       0.0       2.0                                0.00  
+    0:01:05 1179281.4      0.00       0.0       0.0                                0.00  
 
 
   Beginning Critical Range Optimization
@@ -363,7 +376,7 @@ Information: Updating design information... (UID-85)
    ELAPSED            WORST NEG   SETUP    DESIGN                              MIN DELAY 
     TIME      AREA      SLACK     COST    RULE COST         ENDPOINT             COST    
   --------- --------- --------- --------- --------- ------------------------- -----------
-    0:00:53 1176381.2      0.00       0.0       0.0                                0.00  
+    0:01:05 1179281.4      0.00       0.0       0.0                                0.00  
 
 
   Beginning Area-Recovery Phase  (cleanup)
@@ -373,32 +386,34 @@ Information: Updating design information... (UID-85)
    ELAPSED            WORST NEG   SETUP    DESIGN                              MIN DELAY 
     TIME      AREA      SLACK     COST    RULE COST         ENDPOINT             COST    
   --------- --------- --------- --------- --------- ------------------------- -----------
-    0:00:53 1176381.2      0.00       0.0       0.0                                0.00  
-    0:00:53 1176381.2      0.00       0.0       0.0                                0.00  
-    0:00:54 1154716.2      0.22     156.3       0.0                                0.00  
-    0:00:56 1141544.7      0.00       0.0       0.0                                0.00  
-    0:00:58 1136169.9      0.00       0.0       0.0                                0.00  
-    0:00:59 1132396.0      0.00       0.0       0.0                                0.00  
-    0:01:00 1129277.3      0.00       0.0       0.0                                0.00  
-    0:01:00 1126291.3      0.00       0.0       0.0                                0.00  
-    0:01:01 1123968.8      0.00       0.0       0.0                                0.00  
-    0:01:02 1122467.6      0.00       0.0       0.0                                0.00  
-    0:01:02 1121273.2      0.00       0.0       0.0                                0.00  
-    0:01:02 1120078.8      0.00       0.0       0.0                                0.00  
-    0:01:03 1119481.6      0.00       0.0       0.0                                0.00  
-    0:01:03 1119348.9      0.00       0.0       0.0                                0.00  
-    0:01:03 1119216.1      0.00       0.0       0.0                                0.00  
-    0:01:03 1119116.6      0.00       0.0       0.0                                0.00  
-    0:01:03 1119017.1      0.00       0.0       0.0                                0.00  
-    0:01:03 1118909.3      0.00       0.0       0.0                                0.00  
-    0:01:03 1118909.3      0.00       0.0       0.0                                0.00  
-    0:01:04 1118909.3      0.00       0.0       0.0                                0.00  
-    0:01:04 1118699.2      0.00       0.0       0.0                                0.00  
-    0:01:04 1118699.2      0.00       0.0       0.0                                0.00  
-    0:01:04 1118699.2      0.00       0.0       0.0                                0.00  
-    0:01:04 1118699.2      0.00       0.0       0.0                                0.00  
-    0:01:04 1118699.2      0.00       0.0       0.0                                0.00  
-    0:01:04 1118699.2      0.00       0.0       0.0                                0.00  
+    0:01:05 1179281.4      0.00       0.0       0.0                                0.00  
+    0:01:05 1179281.4      0.00       0.0       0.0                                0.00  
+    0:01:06 1156709.6      0.18      55.2       0.0                                0.00  
+    0:01:08 1144782.3      0.05       0.3       0.0                                0.00  
+    0:01:09 1138320.9      0.03       0.2       0.0                                0.00  
+    0:01:10 1134654.8      0.02       0.1       0.0                                0.00  
+    0:01:11 1131279.0      0.01       0.0       0.0                                0.00  
+    0:01:12 1128334.5      0.01       0.0       0.0                                0.00  
+    0:01:13 1126509.7      0.02       0.2       0.0                                0.00  
+    0:01:14 1124942.1      0.02       0.2       0.0                                0.00  
+    0:01:14 1123747.7      0.02       0.2       0.0                                0.00  
+    0:01:14 1122553.3      0.03       0.2       0.0                                0.00  
+    0:01:14 1122221.5      0.03       0.2       0.0                                0.00  
+    0:01:15 1122088.8      0.03       0.2       0.0                                0.00  
+    0:01:15 1121956.1      0.03       0.2       0.0                                0.00  
+    0:01:15 1121856.6      0.03       0.2       0.0                                0.00  
+    0:01:15 1121757.0      0.03       0.2       0.0                                0.00  
+    0:01:15 1121657.5      0.03       0.2       0.0                                0.00  
+    0:01:15 1121657.5      0.03       0.2       0.0                                0.00  
+    0:01:16 1121693.4      0.00       0.0       0.0                                0.00  
+    0:01:16 1121212.3      0.09       7.7       0.0                                0.00  
+    0:01:16 1121054.8      0.13      26.6       0.0                                0.00  
+    0:01:16 1121054.8      0.13      26.6       0.0                                0.00  
+    0:01:16 1121054.8      0.13      26.6       0.0                                0.00  
+    0:01:16 1121054.8      0.13      26.6       0.0                                0.00  
+    0:01:16 1121054.8      0.13      26.6       0.0                                0.00  
+    0:01:16 1121054.8      0.13      26.6       0.0                                0.00  
+    0:01:17 1121262.1      0.00       0.0       0.0                                0.00  
 
 
   Beginning Critical Range Optimization
@@ -408,8 +423,8 @@ Information: Updating design information... (UID-85)
    ELAPSED            WORST NEG   SETUP    DESIGN                              MIN DELAY 
     TIME      AREA      SLACK     COST    RULE COST         ENDPOINT             COST    
   --------- --------- --------- --------- --------- ------------------------- -----------
-    0:01:04 1118699.2      0.00       0.0       0.0                                0.00  
-    0:01:04 1118699.2      0.00       0.0       0.0                                0.00  
+    0:01:17 1121262.1      0.00       0.0       0.0                                0.00  
+    0:01:17 1121262.1      0.00       0.0       0.0                                0.00  
 Loading db file '/afs/umich.edu/class/eecs470/lib/synopsys/lec25dscc25_TT.db'
 
 
@@ -421,7 +436,6 @@ Note: Symbol # after min delay cost means estimated hold TNS across all active s
 Warning: Design 'ROB' contains 1 high-fanout nets. A fanout number of 1000 will be used for delay calculations involving these nets. (TIM-134)
      Net 'clock': 1707 load(s), 1 driver(s)
 Writing verilog file '/afs/umich.edu/user/b/r/brucewei/EECS470/Projects/Project4/group15w21/synth/ROB.vg'.
-Warning: Verilog 'assign' or 'tran' statements are written out. (VO-4)
 Writing ddc file './ROB.ddc'.
 Removing design 'ROB'
 Removing library 'lec25dscc25_TT'
@@ -448,7 +462,7 @@ Thank you...
 vcs -V -sverilog +vc -Mupdate -line -full64 +vcs+vcdpluson -debug_pp sys_defs.svh ISA.svh synth/ROB.vg testbench/rob_test.sv /afs/umich.edu/class/eecs470/lib/verilog/lec25dscc25.v +define+SYNTH_TEST +error+20 -o rob_syn_simv
 /usr/caen/vcs-2017.12-SP2-1/linux64/bin/vcs1 -Mcc=gcc -Mcplusplus=g++ -Masflags= -Mcfl= -pipe -fPIC -O -I/usr/caen/vcs-2017.12-SP2-1/include  -Mxcflags= -pipe -fPIC -I/usr/caen/vcs-2017.12-SP2-1/include -Mldflags= -rdynamic  -Mout=rob_syn_simv -Mamsrun="" -Mvcsaceobjs="" -Mobjects=" /usr/caen/vcs-2017.12-SP2-1/linux64/lib/libvirsim.so /usr/caen/vcs-2017.12-SP2-1/linux64/lib/liberrorinf.so /usr/caen/vcs-2017.12-SP2-1/linux64/lib/libsnpsmalloc.so /usr/caen/vcs-2017.12-SP2-1/linux64/lib/libvfs.so " -Mexternalobj= -Msaverestoreobj=/usr/caen/vcs-2017.12-SP2-1/linux64/lib/vcs_save_restore_new.o -Mcrt0= -Mcrtn="" -Mcsrc="" -Mupdate -Msyslibs=-ldl  -V +vc -line -full64 +vcs+vcdpluson -Xcbug=0x1 -Xpiyushb1=0x80 +define+SYNTH_TEST +error+20 -o rob_syn_simv -picarchive +vcsd +itf+/usr/caen/vcs-2017.12-SP2-1/linux64/lib/vcsdp.tab +cli+1 -debug=4 +memcbk -sverilog +vpi -gen_obj sys_defs.svh ISA.svh synth/ROB.vg testbench/rob_test.sv /afs/umich.edu/class/eecs470/lib/verilog/lec25dscc25.v  
                          Chronologic VCS (TM)
-      Version N-2017.12-SP2-1_Full64 -- Sun Mar 28 00:15:18 2021
+      Version N-2017.12-SP2-1_Full64 -- Sun Mar 28 05:04:46 2021
                Copyright (c) 1991-2017 by Synopsys Inc.
                          ALL RIGHTS RESERVED
 
@@ -522,7 +536,6 @@ Top Level Modules:
        dffass2
        dffles1
        dffles2
-       dffs1
        dffscs1
        dffscs2
        dffss2
@@ -537,14 +550,12 @@ Top Level Modules:
        fadd1s3
        hib1s1
        hnb1s1
-       i1s2
-       i1s4
-       i1s5
        i1s6
        i1s7
        ib1s2
        ib1s3
        ib1s4
+       ib1s5
        lclks1
        lclks2
        lcs1
@@ -569,17 +580,15 @@ Top Level Modules:
        mxi41s1
        mxi41s2
        mxi41s3
-       nb1s1
+       nb1s2
        nb1s4
        nb1s5
        nb1s6
-       nnd2s3
        nnd3s3
        nnd4s2
        nnd4s3
        nnd5s3
        nnd6s3
-       nor2s2
        nor2s3
        nor3s1
        nor3s2
@@ -587,8 +596,6 @@ Top Level Modules:
        nor4s1
        nor4s2
        nor4s3
-       nor5s1
-       nor5s2
        nor5s3
        nor6s1
        nor6s2
@@ -607,8 +614,8 @@ Top Level Modules:
        oai1112s1
        oai1112s3
        oai211s1
+       oai211s2
        oai211s3
-       oai21s3
        oai221s1
        oai221s2
        oai221s3
@@ -628,7 +635,6 @@ Top Level Modules:
        oai32s3
        oai33s2
        oai33s3
-       or2s2
        or2s3
        or3s1
        or3s2
@@ -689,10 +695,8 @@ Top Level Modules:
        xnr3s1
        xnr3s2
        xnr3s3
-       xor2s3
        xor3s2
        xor3s3
-       and4s3
        aoai122s1
        aoai122s3
        clc2s1
@@ -711,7 +715,6 @@ Top Level Modules:
        i1s10
        i1s11
        i1s12
-       i1s8
        i1s9
        ib1s10
        ib1s11
@@ -747,312 +750,288 @@ Top Level Modules:
 TimeScale is 1 ns / 100 ps
 
 Warning-[TFIPC] Too few instance port connections
-synth/ROB.vg, 5303
-"dffs2 \rob_entries_reg[31][completed] ( .DIN (N22592),  .CLK (clock),  .Q (\rob_entries_display[31][completed] ));"
+synth/ROB.vg, 5311
+"dffs2 \rob_entries_reg[31][completed] ( .DIN (N22594),  .CLK (clock),  .Q (\rob_entries_display[31][completed] ));"
   The above instance has fewer port connections than the module definition.
   Please use '+lint=TFIPC-L' to print out detailed information of unconnected 
   ports.
 
 
 Warning-[TFIPC] Too few instance port connections
-synth/ROB.vg, 5409
-"dffs2 \rob_entries_reg[23][completed] ( .DIN (N22168),  .CLK (clock),  .Q (\rob_entries_display[23][completed] ));"
+synth/ROB.vg, 5417
+"dffs2 \rob_entries_reg[23][completed] ( .DIN (N22170),  .CLK (clock),  .Q (\rob_entries_display[23][completed] ));"
   The above instance has fewer port connections than the module definition.
   Please use '+lint=TFIPC-L' to print out detailed information of unconnected 
   ports.
 
 
 Warning-[TFIPC] Too few instance port connections
-synth/ROB.vg, 5515
-"dffs2 \rob_entries_reg[15][completed] ( .DIN (N21744),  .CLK (clock),  .Q (\rob_entries_display[15][completed] ));"
+synth/ROB.vg, 5523
+"dffs2 \rob_entries_reg[15][completed] ( .DIN (N21746),  .CLK (clock),  .Q (\rob_entries_display[15][completed] ));"
   The above instance has fewer port connections than the module definition.
   Please use '+lint=TFIPC-L' to print out detailed information of unconnected 
   ports.
 
 
 Warning-[TFIPC] Too few instance port connections
-synth/ROB.vg, 5621
-"dffs2 \rob_entries_reg[7][completed] ( .DIN (N21320),  .CLK (clock),  .Q (\rob_entries_display[7][completed] ));"
+synth/ROB.vg, 5629
+"dffs2 \rob_entries_reg[7][completed] ( .DIN (N21322),  .CLK (clock),  .Q (\rob_entries_display[7][completed] ));"
   The above instance has fewer port connections than the module definition.
   Please use '+lint=TFIPC-L' to print out detailed information of unconnected 
   ports.
 
 
 Warning-[TFIPC] Too few instance port connections
-synth/ROB.vg, 5727
-"dffs2 \rob_entries_reg[29][completed] ( .DIN (N22486),  .CLK (clock),  .Q (\rob_entries_display[29][completed] ));"
+synth/ROB.vg, 5735
+"dffs2 \rob_entries_reg[29][completed] ( .DIN (N22488),  .CLK (clock),  .Q (\rob_entries_display[29][completed] ));"
   The above instance has fewer port connections than the module definition.
   Please use '+lint=TFIPC-L' to print out detailed information of unconnected 
   ports.
 
 
 Warning-[TFIPC] Too few instance port connections
-synth/ROB.vg, 5833
-"dffs2 \rob_entries_reg[21][completed] ( .DIN (N22062),  .CLK (clock),  .Q (\rob_entries_display[21][completed] ));"
+synth/ROB.vg, 5841
+"dffs2 \rob_entries_reg[21][completed] ( .DIN (N22064),  .CLK (clock),  .Q (\rob_entries_display[21][completed] ));"
   The above instance has fewer port connections than the module definition.
   Please use '+lint=TFIPC-L' to print out detailed information of unconnected 
   ports.
 
 
 Warning-[TFIPC] Too few instance port connections
-synth/ROB.vg, 5939
-"dffs2 \rob_entries_reg[13][completed] ( .DIN (N21638),  .CLK (clock),  .Q (\rob_entries_display[13][completed] ));"
+synth/ROB.vg, 5947
+"dffs2 \rob_entries_reg[13][completed] ( .DIN (N21640),  .CLK (clock),  .Q (\rob_entries_display[13][completed] ));"
   The above instance has fewer port connections than the module definition.
   Please use '+lint=TFIPC-L' to print out detailed information of unconnected 
   ports.
 
 
 Warning-[TFIPC] Too few instance port connections
-synth/ROB.vg, 6045
-"dffs2 \rob_entries_reg[5][completed] ( .DIN (N21214),  .CLK (clock),  .Q (\rob_entries_display[5][completed] ));"
+synth/ROB.vg, 6053
+"dffs2 \rob_entries_reg[5][completed] ( .DIN (N21216),  .CLK (clock),  .Q (\rob_entries_display[5][completed] ));"
   The above instance has fewer port connections than the module definition.
   Please use '+lint=TFIPC-L' to print out detailed information of unconnected 
   ports.
 
 
 Warning-[TFIPC] Too few instance port connections
-synth/ROB.vg, 6151
-"dffs2 \rob_entries_reg[27][completed] ( .DIN (N22380),  .CLK (clock),  .Q (\rob_entries_display[27][completed] ));"
+synth/ROB.vg, 6159
+"dffs2 \rob_entries_reg[27][completed] ( .DIN (N22382),  .CLK (clock),  .Q (\rob_entries_display[27][completed] ));"
   The above instance has fewer port connections than the module definition.
   Please use '+lint=TFIPC-L' to print out detailed information of unconnected 
   ports.
 
 
 Warning-[TFIPC] Too few instance port connections
-synth/ROB.vg, 6257
-"dffs2 \rob_entries_reg[19][completed] ( .DIN (N21956),  .CLK (clock),  .Q (\rob_entries_display[19][completed] ));"
+synth/ROB.vg, 6265
+"dffs2 \rob_entries_reg[19][completed] ( .DIN (N21958),  .CLK (clock),  .Q (\rob_entries_display[19][completed] ));"
   The above instance has fewer port connections than the module definition.
   Please use '+lint=TFIPC-L' to print out detailed information of unconnected 
   ports.
 
 
 Warning-[TFIPC] Too few instance port connections
-synth/ROB.vg, 6363
-"dffs2 \rob_entries_reg[11][completed] ( .DIN (N21532),  .CLK (clock),  .Q (\rob_entries_display[11][completed] ));"
+synth/ROB.vg, 6371
+"dffs2 \rob_entries_reg[11][completed] ( .DIN (N21534),  .CLK (clock),  .Q (\rob_entries_display[11][completed] ));"
   The above instance has fewer port connections than the module definition.
   Please use '+lint=TFIPC-L' to print out detailed information of unconnected 
   ports.
 
 
 Warning-[TFIPC] Too few instance port connections
-synth/ROB.vg, 6469
-"dffs2 \rob_entries_reg[3][completed] ( .DIN (N21108),  .CLK (clock),  .Q (\rob_entries_display[3][completed] ));"
+synth/ROB.vg, 6477
+"dffs2 \rob_entries_reg[3][completed] ( .DIN (N21110),  .CLK (clock),  .Q (\rob_entries_display[3][completed] ));"
   The above instance has fewer port connections than the module definition.
   Please use '+lint=TFIPC-L' to print out detailed information of unconnected 
   ports.
 
 
 Warning-[TFIPC] Too few instance port connections
-synth/ROB.vg, 6575
-"dffs2 \rob_entries_reg[25][completed] ( .DIN (N22274),  .CLK (clock),  .Q (\rob_entries_display[25][completed] ));"
+synth/ROB.vg, 6583
+"dffs2 \rob_entries_reg[25][completed] ( .DIN (N22276),  .CLK (clock),  .Q (\rob_entries_display[25][completed] ));"
   The above instance has fewer port connections than the module definition.
   Please use '+lint=TFIPC-L' to print out detailed information of unconnected 
   ports.
 
 
 Warning-[TFIPC] Too few instance port connections
-synth/ROB.vg, 6681
-"dffs2 \rob_entries_reg[17][completed] ( .DIN (N21850),  .CLK (clock),  .Q (\rob_entries_display[17][completed] ));"
+synth/ROB.vg, 6689
+"dffs2 \rob_entries_reg[17][completed] ( .DIN (N21852),  .CLK (clock),  .Q (\rob_entries_display[17][completed] ));"
   The above instance has fewer port connections than the module definition.
   Please use '+lint=TFIPC-L' to print out detailed information of unconnected 
   ports.
 
 
 Warning-[TFIPC] Too few instance port connections
-synth/ROB.vg, 6787
-"dffs2 \rob_entries_reg[9][completed] ( .DIN (N21426),  .CLK (clock),  .Q (\rob_entries_display[9][completed] ));"
+synth/ROB.vg, 6795
+"dffs2 \rob_entries_reg[9][completed] ( .DIN (N21428),  .CLK (clock),  .Q (\rob_entries_display[9][completed] ));"
   The above instance has fewer port connections than the module definition.
   Please use '+lint=TFIPC-L' to print out detailed information of unconnected 
   ports.
 
 
 Warning-[TFIPC] Too few instance port connections
-synth/ROB.vg, 6893
-"dffs2 \rob_entries_reg[1][completed] ( .DIN (N21002),  .CLK (clock),  .Q (\rob_entries_display[1][completed] ));"
+synth/ROB.vg, 6901
+"dffs2 \rob_entries_reg[1][completed] ( .DIN (N21004),  .CLK (clock),  .Q (\rob_entries_display[1][completed] ));"
   The above instance has fewer port connections than the module definition.
   Please use '+lint=TFIPC-L' to print out detailed information of unconnected 
   ports.
 
 
 Warning-[TFIPC] Too few instance port connections
-synth/ROB.vg, 6999
-"dffs2 \rob_entries_reg[30][completed] ( .DIN (N22539),  .CLK (clock),  .Q (\rob_entries_display[30][completed] ));"
+synth/ROB.vg, 7007
+"dffs2 \rob_entries_reg[30][completed] ( .DIN (N22541),  .CLK (clock),  .Q (\rob_entries_display[30][completed] ));"
   The above instance has fewer port connections than the module definition.
   Please use '+lint=TFIPC-L' to print out detailed information of unconnected 
   ports.
 
 
 Warning-[TFIPC] Too few instance port connections
-synth/ROB.vg, 7105
-"dffs2 \rob_entries_reg[22][completed] ( .DIN (N22115),  .CLK (clock),  .Q (\rob_entries_display[22][completed] ));"
+synth/ROB.vg, 7113
+"dffs2 \rob_entries_reg[22][completed] ( .DIN (N22117),  .CLK (clock),  .Q (\rob_entries_display[22][completed] ));"
   The above instance has fewer port connections than the module definition.
   Please use '+lint=TFIPC-L' to print out detailed information of unconnected 
   ports.
 
 
 Warning-[TFIPC] Too few instance port connections
-synth/ROB.vg, 7211
-"dffs2 \rob_entries_reg[14][completed] ( .DIN (N21691),  .CLK (clock),  .Q (\rob_entries_display[14][completed] ));"
+synth/ROB.vg, 7219
+"dffs2 \rob_entries_reg[14][completed] ( .DIN (N21693),  .CLK (clock),  .Q (\rob_entries_display[14][completed] ));"
   The above instance has fewer port connections than the module definition.
   Please use '+lint=TFIPC-L' to print out detailed information of unconnected 
   ports.
 
 
 Warning-[TFIPC] Too few instance port connections
-synth/ROB.vg, 7317
-"dffs2 \rob_entries_reg[6][completed] ( .DIN (N21267),  .CLK (clock),  .Q (\rob_entries_display[6][completed] ));"
+synth/ROB.vg, 7325
+"dffs2 \rob_entries_reg[6][completed] ( .DIN (N21269),  .CLK (clock),  .Q (\rob_entries_display[6][completed] ));"
   The above instance has fewer port connections than the module definition.
   Please use '+lint=TFIPC-L' to print out detailed information of unconnected 
   ports.
 
 
 Warning-[TFIPC] Too few instance port connections
-synth/ROB.vg, 7423
-"dffs2 \rob_entries_reg[28][completed] ( .DIN (N22433),  .CLK (clock),  .Q (\rob_entries_display[28][completed] ));"
+synth/ROB.vg, 7431
+"dffs2 \rob_entries_reg[28][completed] ( .DIN (N22435),  .CLK (clock),  .Q (\rob_entries_display[28][completed] ));"
   The above instance has fewer port connections than the module definition.
   Please use '+lint=TFIPC-L' to print out detailed information of unconnected 
   ports.
 
 
 Warning-[TFIPC] Too few instance port connections
-synth/ROB.vg, 7529
-"dffs2 \rob_entries_reg[20][completed] ( .DIN (N22009),  .CLK (clock),  .Q (\rob_entries_display[20][completed] ));"
+synth/ROB.vg, 7537
+"dffs2 \rob_entries_reg[20][completed] ( .DIN (N22011),  .CLK (clock),  .Q (\rob_entries_display[20][completed] ));"
   The above instance has fewer port connections than the module definition.
   Please use '+lint=TFIPC-L' to print out detailed information of unconnected 
   ports.
 
 
 Warning-[TFIPC] Too few instance port connections
-synth/ROB.vg, 7635
-"dffs2 \rob_entries_reg[12][completed] ( .DIN (N21585),  .CLK (clock),  .Q (\rob_entries_display[12][completed] ));"
+synth/ROB.vg, 7643
+"dffs2 \rob_entries_reg[12][completed] ( .DIN (N21587),  .CLK (clock),  .Q (\rob_entries_display[12][completed] ));"
   The above instance has fewer port connections than the module definition.
   Please use '+lint=TFIPC-L' to print out detailed information of unconnected 
   ports.
 
 
 Warning-[TFIPC] Too few instance port connections
-synth/ROB.vg, 7741
-"dffs2 \rob_entries_reg[4][completed] ( .DIN (N21161),  .CLK (clock),  .Q (\rob_entries_display[4][completed] ));"
+synth/ROB.vg, 7749
+"dffs2 \rob_entries_reg[4][completed] ( .DIN (N21163),  .CLK (clock),  .Q (\rob_entries_display[4][completed] ));"
   The above instance has fewer port connections than the module definition.
   Please use '+lint=TFIPC-L' to print out detailed information of unconnected 
   ports.
 
 
 Warning-[TFIPC] Too few instance port connections
-synth/ROB.vg, 7847
-"dffs2 \rob_entries_reg[26][completed] ( .DIN (N22327),  .CLK (clock),  .Q (\rob_entries_display[26][completed] ));"
+synth/ROB.vg, 7855
+"dffs2 \rob_entries_reg[26][completed] ( .DIN (N22329),  .CLK (clock),  .Q (\rob_entries_display[26][completed] ));"
   The above instance has fewer port connections than the module definition.
   Please use '+lint=TFIPC-L' to print out detailed information of unconnected 
   ports.
 
 
 Warning-[TFIPC] Too few instance port connections
-synth/ROB.vg, 7953
-"dffs2 \rob_entries_reg[18][completed] ( .DIN (N21903),  .CLK (clock),  .Q (\rob_entries_display[18][completed] ));"
+synth/ROB.vg, 7961
+"dffs2 \rob_entries_reg[18][completed] ( .DIN (N21905),  .CLK (clock),  .Q (\rob_entries_display[18][completed] ));"
   The above instance has fewer port connections than the module definition.
   Please use '+lint=TFIPC-L' to print out detailed information of unconnected 
   ports.
 
 
 Warning-[TFIPC] Too few instance port connections
-synth/ROB.vg, 8059
-"dffs2 \rob_entries_reg[10][completed] ( .DIN (N21479),  .CLK (clock),  .Q (\rob_entries_display[10][completed] ));"
+synth/ROB.vg, 8067
+"dffs2 \rob_entries_reg[10][completed] ( .DIN (N21481),  .CLK (clock),  .Q (\rob_entries_display[10][completed] ));"
   The above instance has fewer port connections than the module definition.
   Please use '+lint=TFIPC-L' to print out detailed information of unconnected 
   ports.
 
 
 Warning-[TFIPC] Too few instance port connections
-synth/ROB.vg, 8165
-"dffs2 \rob_entries_reg[2][completed] ( .DIN (N21055),  .CLK (clock),  .Q (\rob_entries_display[2][completed] ));"
+synth/ROB.vg, 8173
+"dffs2 \rob_entries_reg[2][completed] ( .DIN (N21057),  .CLK (clock),  .Q (\rob_entries_display[2][completed] ));"
   The above instance has fewer port connections than the module definition.
   Please use '+lint=TFIPC-L' to print out detailed information of unconnected 
   ports.
 
 
 Warning-[TFIPC] Too few instance port connections
-synth/ROB.vg, 8271
-"dffs2 \rob_entries_reg[24][completed] ( .DIN (N22221),  .CLK (clock),  .Q (\rob_entries_display[24][completed] ));"
+synth/ROB.vg, 8279
+"dffs2 \rob_entries_reg[24][completed] ( .DIN (N22223),  .CLK (clock),  .Q (\rob_entries_display[24][completed] ));"
   The above instance has fewer port connections than the module definition.
   Please use '+lint=TFIPC-L' to print out detailed information of unconnected 
   ports.
 
 
 Warning-[TFIPC] Too few instance port connections
-synth/ROB.vg, 8377
-"dffs2 \rob_entries_reg[16][completed] ( .DIN (N21797),  .CLK (clock),  .Q (\rob_entries_display[16][completed] ));"
+synth/ROB.vg, 8385
+"dffs2 \rob_entries_reg[16][completed] ( .DIN (N21799),  .CLK (clock),  .Q (\rob_entries_display[16][completed] ));"
   The above instance has fewer port connections than the module definition.
   Please use '+lint=TFIPC-L' to print out detailed information of unconnected 
   ports.
 
 
 Warning-[TFIPC] Too few instance port connections
-synth/ROB.vg, 8483
-"dffs2 \rob_entries_reg[8][completed] ( .DIN (N21373),  .CLK (clock),  .Q (\rob_entries_display[8][completed] ));"
+synth/ROB.vg, 8491
+"dffs2 \rob_entries_reg[8][completed] ( .DIN (N21375),  .CLK (clock),  .Q (\rob_entries_display[8][completed] ));"
   The above instance has fewer port connections than the module definition.
   Please use '+lint=TFIPC-L' to print out detailed information of unconnected 
   ports.
 
 
 Warning-[TFIPC] Too few instance port connections
-synth/ROB.vg, 8589
-"dffs2 \rob_entries_reg[0][completed] ( .DIN (N20949),  .CLK (clock),  .Q (\rob_entries_display[0][completed] ));"
+synth/ROB.vg, 8597
+"dffs2 \rob_entries_reg[0][completed] ( .DIN (N20951),  .CLK (clock),  .Q (\rob_entries_display[0][completed] ));"
   The above instance has fewer port connections than the module definition.
   Please use '+lint=TFIPC-L' to print out detailed information of unconnected 
   ports.
 
 
 Warning-[TFIPC] Too few instance port connections
-synth/ROB.vg, 11364
-"dffss1 empty_reg( .DIN (n8644),  .SETB (n14072),  .CLK (clock),  .Q (empty));"
+synth/ROB.vg, 11370
+"dffss1 empty_reg( .DIN (n8646),  .SETB (n14105),  .CLK (clock),  .Q (empty));"
   The above instance has fewer port connections than the module definition.
   Please use '+lint=TFIPC-L' to print out detailed information of unconnected 
   ports.
 
 
 Warning-[TFIPC] Too few instance port connections
-synth/ROB.vg, 11365
-"dffcs1 \tail_reg[1] ( .CLRB (n14676),  .DIN (n14072),  .CLK (clock),  .QN (n14352));"
+synth/ROB.vg, 11378
+"dffs1 \head_reg[2] ( .DIN (n9020),  .CLK (clock),  .QN (n10346));"
   The above instance has fewer port connections than the module definition.
   Please use '+lint=TFIPC-L' to print out detailed information of unconnected 
   ports.
 
 
 Warning-[TFIPC] Too few instance port connections
-synth/ROB.vg, 11369
-"dffcs1 \tail_reg[3] ( .CLRB (n14674),  .DIN (n14072),  .CLK (clock),  .QN (n8898));"
+synth/ROB.vg, 11383
+"dffcs2 \tail_reg[0] ( .CLRB (n14715),  .DIN (n14105),  .CLK (clock),  .QN (n14385));"
   The above instance has fewer port connections than the module definition.
   Please use '+lint=TFIPC-L' to print out detailed information of unconnected 
   ports.
 
 
 Warning-[TFIPC] Too few instance port connections
-synth/ROB.vg, 11371
-"dffcs1 \tail_reg[2] ( .CLRB (n14675),  .DIN (n14072),  .CLK (clock),  .QN (n8897));"
-  The above instance has fewer port connections than the module definition.
-  Please use '+lint=TFIPC-L' to print out detailed information of unconnected 
-  ports.
-
-
-Warning-[TFIPC] Too few instance port connections
-synth/ROB.vg, 11373
-"dffcs1 \tail_reg[4] ( .CLRB (n14673),  .DIN (n14072),  .CLK (clock),  .QN (n8899));"
-  The above instance has fewer port connections than the module definition.
-  Please use '+lint=TFIPC-L' to print out detailed information of unconnected 
-  ports.
-
-
-Warning-[TFIPC] Too few instance port connections
-synth/ROB.vg, 11377
-"dffcs2 \head_reg[2] ( .CLRB (head_next[2]),  .DIN (n2504),  .CLK (clock),  .QN (n10326));"
-  The above instance has fewer port connections than the module definition.
-  Please use '+lint=TFIPC-L' to print out detailed information of unconnected 
-  ports.
-
-
-Warning-[TFIPC] Too few instance port connections
-synth/ROB.vg, 11381
-"dffcs2 \tail_reg[0] ( .CLRB (n14677),  .DIN (n14072),  .CLK (clock),  .QN (n14350));"
+synth/ROB.vg, 27927
+"fadd1s2 U17714( .AIN (head_display[4]),  .BIN (n9154),  .CIN (\add_1_root_add_0_root_add_76/carry [4]),  .OUTS (\head_tail_diff[4] ));"
   The above instance has fewer port connections than the module definition.
   Please use '+lint=TFIPC-L' to print out detailed information of unconnected 
   ports.
@@ -1062,62 +1041,353 @@ Starting vcs inline pass...
 recompiling module testbench
 recompiling module and2s1
 recompiling module and2s2
+recompiling module and2s3
 recompiling module and3s1
+recompiling module and3s2
+recompiling module and3s3
 recompiling module and4s1
+recompiling module and4s2
+recompiling module aoai1112s1
+recompiling module aoai1112s2
+recompiling module aoai1112s3
+recompiling module aoi123s1
+recompiling module aoi123s2
+recompiling module aoi123s3
+recompiling module aoi13s1
 recompiling module aoi13s2
+recompiling module aoi13s3
 recompiling module aoi211s1
+recompiling module aoi211s2
+recompiling module aoi211s3
+recompiling module aoi21s1
 recompiling module aoi21s2
+recompiling module aoi21s3
 recompiling module aoi221s1
+recompiling module aoi221s2
+recompiling module aoi221s3
+recompiling module aoi2221s1
+recompiling module aoi2221s2
+recompiling module aoi2221s3
 recompiling module aoi222s1
+recompiling module aoi222s2
+recompiling module aoi222s3
 recompiling module aoi22s1
 recompiling module aoi22s2
+recompiling module aoi22s3
+recompiling module aoi23s1
+recompiling module aoi23s2
+recompiling module aoi23s3
+recompiling module aoi33s1
+recompiling module aoi33s2
+recompiling module aoi33s3
+recompiling module aoi4111s1
+recompiling module aoi4111s2
+recompiling module aoi4111s3
+recompiling module aoi42s1
+recompiling module aoi42s2
+recompiling module aoi42s3
+recompiling module bshes1
+recompiling module bshes2
+50 of 328 modules done
+recompiling module bshes3
+recompiling module bsles1
+recompiling module bsles2
+recompiling module bsles3
+recompiling module dchei24s1
+recompiling module dchei24s2
+recompiling module dchei24s3
+recompiling module dci24s1
+recompiling module dci24s2
+recompiling module dci24s3
+recompiling module dclei24s1
+recompiling module dclei24s2
+recompiling module dclei24s3
+recompiling module dffacs1
+recompiling module dffacs2
+recompiling module dffascs1
+recompiling module dffascs2
+recompiling module dffass1
+recompiling module dffass2
+recompiling module dffcs1
 recompiling module dffcs2
+recompiling module dffles1
+recompiling module dffles2
+recompiling module dffs1
 recompiling module dffs2
 recompiling module dffscs1
 recompiling module dffscs2
+recompiling module dffss1
+recompiling module dffss2
+recompiling module di2s1
+recompiling module di2s2
+recompiling module di2s3
+recompiling module di2s4
+recompiling module di2s5
+recompiling module di2s6
+recompiling module dsmxc31s1
+recompiling module dsmxc31s2
+recompiling module fadd1s1
+recompiling module fadd1s2
+recompiling module fadd1s3
 recompiling module hi1s1
+recompiling module hib1s1
+recompiling module hnb1s1
+recompiling module i1s1
+recompiling module i1s2
 recompiling module i1s3
+recompiling module i1s4
+recompiling module i1s5
+recompiling module i1s6
+recompiling module i1s7
+100 of 328 modules done
 recompiling module ib1s1
+recompiling module ib1s2
+recompiling module ib1s3
+recompiling module ib1s4
+recompiling module ib1s5
+recompiling module lclks1
+recompiling module lclks2
+recompiling module lcs1
+recompiling module lcs2
+recompiling module lnnds1
+recompiling module lnnds2
+recompiling module lnors1
+recompiling module lnors2
+recompiling module lscs1
+recompiling module lscs2
+recompiling module lss1
+recompiling module lss2
+recompiling module mx21s1
+recompiling module mx21s2
+recompiling module mx21s3
+recompiling module mx41s1
+recompiling module mx41s2
+recompiling module mx41s3
+recompiling module mxi21s1
+recompiling module mxi21s2
+recompiling module mxi21s3
+recompiling module mxi41s1
+recompiling module mxi41s2
+recompiling module mxi41s3
+recompiling module nb1s1
 recompiling module nb1s2
+recompiling module nb1s3
+recompiling module nb1s4
+recompiling module nb1s5
+recompiling module nb1s6
 recompiling module nnd2s1
 recompiling module nnd2s2
 recompiling module nnd2s3
+recompiling module nnd3s1
 recompiling module nnd3s2
+recompiling module nnd3s3
+recompiling module nnd4s1
+recompiling module nnd4s2
+recompiling module nnd4s3
+recompiling module nnd5s3
+recompiling module nnd6s3
 recompiling module nor2s1
+recompiling module nor2s2
+recompiling module nor2s3
+recompiling module nor3s1
+150 of 328 modules done
+recompiling module nor3s2
+recompiling module nor3s3
+recompiling module nor4s1
+recompiling module nor4s2
+recompiling module nor4s3
+recompiling module nor5s1
+recompiling module nor5s2
+recompiling module nor5s3
+recompiling module nor6s1
+recompiling module nor6s2
+recompiling module nor6s3
+recompiling module npd1s1
+recompiling module npd1s2
+recompiling module npt1s1
+recompiling module npt1s2
+recompiling module npt1s3
+recompiling module npt1s4
+recompiling module npt1s5
+recompiling module npt1s6
+recompiling module oaaoi1123s1
+recompiling module oaaoi1123s2
+recompiling module oaaoi1123s3
+recompiling module oai1112s1
+recompiling module oai1112s2
+recompiling module oai1112s3
+recompiling module oai211s1
 recompiling module oai211s2
+recompiling module oai211s3
 recompiling module oai21s1
 recompiling module oai21s2
 recompiling module oai21s3
+recompiling module oai221s1
+recompiling module oai221s2
+recompiling module oai221s3
+recompiling module oai2222s1
+recompiling module oai2222s2
+recompiling module oai2222s3
 recompiling module oai222s1
+recompiling module oai222s2
+recompiling module oai222s3
 recompiling module oai22s1
 recompiling module oai22s2
+recompiling module oai24s1
+recompiling module oai24s2
+recompiling module oai24s3
+recompiling module oai322s1
+recompiling module oai322s2
+recompiling module oai322s3
+recompiling module oai32s1
+recompiling module oai32s2
+200 of 328 modules done
+recompiling module oai32s3
+recompiling module oai33s2
+recompiling module oai33s3
 recompiling module or2s1
+recompiling module or2s2
+recompiling module or2s3
+recompiling module or3s1
+recompiling module or3s2
+recompiling module or3s3
+recompiling module or4s1
+recompiling module or4s2
+recompiling module or4s3
+recompiling module or5s1
+recompiling module or5s2
+recompiling module or5s3
+recompiling module ppt1s1
+recompiling module ppt1s2
+recompiling module ppt1s3
+recompiling module ppt1s4
+recompiling module ppt1s5
+recompiling module ppt1s6
+recompiling module ppu1s1
+recompiling module ppu1s2
+recompiling module rpc1s1
+recompiling module rpc1s2
+recompiling module sdffacs1
+recompiling module sdffacs2
+recompiling module sdffascs1
+recompiling module sdffascs2
+recompiling module sdffass1
+recompiling module sdffass2
+recompiling module sdffcs1
+recompiling module sdffcs2
+recompiling module sdffles1
+recompiling module sdffles2
+recompiling module sdffs1
+recompiling module sdffs2
+recompiling module sdffscs1
+recompiling module sdffscs2
+recompiling module sdffss1
+recompiling module sdffss2
+recompiling module sub1s1
+recompiling module sub1s2
+recompiling module sub1s3
+recompiling module tibh1s1
+recompiling module tibh1s2
+recompiling module tibh1s3
+recompiling module tibh1s4
+recompiling module tibh1s5
+recompiling module tibl1s1
+250 of 328 modules done
+recompiling module tibl1s2
+recompiling module tibl1s3
+recompiling module tibl1s4
+recompiling module tibl1s5
+recompiling module tnbh1s1
+recompiling module tnbh1s2
+recompiling module tnbh1s3
+recompiling module tnbh1s4
+recompiling module tnbh1s5
+recompiling module tnbl1s1
 recompiling module xnr2s1
+recompiling module xnr2s2
+recompiling module xnr2s3
+recompiling module xnr3s1
+recompiling module xnr3s2
+recompiling module xnr3s3
 recompiling module xor2s1
 recompiling module xor2s2
+recompiling module xor2s3
+recompiling module xor3s1
+recompiling module xor3s2
+recompiling module xor3s3
 recompiling module and4s3
 recompiling module aoai122s1
 recompiling module aoai122s2
+recompiling module aoai122s3
+recompiling module clc2s1
+recompiling module clc2s2
+recompiling module clc2s3
+recompiling module di2s10
+recompiling module di2s11
+recompiling module di2s12
+recompiling module di2s7
+recompiling module di2s8
+recompiling module di2s9
+recompiling module faddpgs1
+recompiling module faddpgs2
+recompiling module faddpgs3
 recompiling module hadd1s1
 recompiling module hadd1s2
+recompiling module hadd1s3
+recompiling module i1s10
+recompiling module i1s11
+recompiling module i1s12
+recompiling module i1s8
+recompiling module i1s9
+recompiling module ib1s10
+recompiling module ib1s11
+recompiling module ib1s12
+recompiling module ib1s6
+300 of 328 modules done
+recompiling module ib1s7
+recompiling module ib1s8
+recompiling module ib1s9
+recompiling module nb1s10
+recompiling module nb1s11
+recompiling module nb1s12
+recompiling module nb1s7
+recompiling module nb1s8
+recompiling module nb1s9
+recompiling module nnd7s3
+recompiling module nnd8s3
+recompiling module nor7s3
+recompiling module oai13s1
 recompiling module oai13s2
-42 of 328 modules done
-	However, due to incremental compilation, only 42 modules need to be compiled. 
+recompiling module oai13s3
+recompiling module oai22s3
+recompiling module oai321s1
+recompiling module oai321s2
+recompiling module oai321s3
+recompiling module oai33s1
+recompiling module tibh1s6
+recompiling module tibl1s6
+recompiling module tnbh1s6
+recompiling module tnbl1s2
+recompiling module tnbl1s3
+recompiling module tnbl1s4
+recompiling module tnbl1s5
+recompiling module tnbl1s6
+All of 328 modules done
   /usr/caen/vcs-2017.12-SP2-1/linux64/bin/vcselab -o rob_syn_simv -nobanner 
 make[1]: Entering directory `/afs/umich.edu/user/b/r/brucewei/EECS470/Projects/Project4/group15w21/csrc'
 make[1]: Leaving directory `/afs/umich.edu/user/b/r/brucewei/EECS470/Projects/Project4/group15w21/csrc'
-( cd csrc ; make -f Makefile SNPS_VCS_TMPDIR=/tmp/vcs_20210328041517_9031 product )
+( cd csrc ; make -f Makefile SNPS_VCS_TMPDIR=/tmp/vcs_20210328090445_29026 product )
 make[1]: Entering directory `/afs/umich.edu/user/b/r/brucewei/EECS470/Projects/Project4/group15w21/csrc'
 rm -f _csrc*.so pre_vcsobj_*.so share_vcsobj_*.so
 if [ -x ../rob_syn_simv ]; then chmod -x ../rob_syn_simv; fi
-g++  -o ../rob_syn_simv    -Wl,-rpath-link=./ -Wl,-rpath='$ORIGIN'/rob_syn_simv.daidir/ -Wl,-rpath=./rob_syn_simv.daidir/ -Wl,-rpath='$ORIGIN'/rob_syn_simv.daidir//scsim.db.dir  -rdynamic  -Wl,-rpath=/usr/caen/vcs-2017.12-SP2-1/linux64/lib -L/usr/caen/vcs-2017.12-SP2-1/linux64/lib -lcmsg   objs/amcQw_d.o   _9516_archive_1.so _prev_archive_1.so objs/udps/guAtk.o objs/udps/hUcmi.o objs/udps/PjGxs.o objs/udps/F8ezs.o objs/udps/MzHq6.o objs/udps/aKVa7.o objs/udps/GLrQJ.o objs/udps/dKp3B.o  SIM_l.o       rmapats_mop.o rmapats.o rmar.o rmar_nd.o  rmar_llvm_0_1.o rmar_llvm_0_0.o          -lzerosoft_rt_stubs -lvirsim -lerrorinf -lsnpsmalloc -lvfs    -lvcsnew -lsimprofile -luclinative /usr/caen/vcs-2017.12-SP2-1/linux64/lib/vcs_tls.o   -Wl,-whole-archive -lvcsucli -Wl,-no-whole-archive          /usr/caen/vcs-2017.12-SP2-1/linux64/lib/vcs_save_restore_new.o -ldl  -lc -lm -lpthread -ldl 
+g++  -o ../rob_syn_simv    -Wl,-rpath-link=./ -Wl,-rpath='$ORIGIN'/rob_syn_simv.daidir/ -Wl,-rpath=./rob_syn_simv.daidir/ -Wl,-rpath='$ORIGIN'/rob_syn_simv.daidir//scsim.db.dir  -rdynamic  -Wl,-rpath=/usr/caen/vcs-2017.12-SP2-1/linux64/lib -L/usr/caen/vcs-2017.12-SP2-1/linux64/lib -lcmsg   objs/amcQw_d.o   _29518_archive_1.so _prev_archive_1.so objs/udps/GLrQJ.o objs/udps/guAtk.o objs/udps/MzHq6.o objs/udps/hUcmi.o objs/udps/PjGxs.o objs/udps/dKp3B.o objs/udps/aKVa7.o objs/udps/F8ezs.o  SIM_l.o       rmapats_mop.o rmapats.o rmar.o rmar_nd.o  rmar_llvm_0_1.o rmar_llvm_0_0.o          -lzerosoft_rt_stubs -lvirsim -lerrorinf -lsnpsmalloc -lvfs    -lvcsnew -lsimprofile -luclinative /usr/caen/vcs-2017.12-SP2-1/linux64/lib/vcs_tls.o   -Wl,-whole-archive -lvcsucli -Wl,-no-whole-archive          /usr/caen/vcs-2017.12-SP2-1/linux64/lib/vcs_save_restore_new.o -ldl  -lc -lm -lpthread -ldl 
 ../rob_syn_simv up to date
 make[1]: Leaving directory `/afs/umich.edu/user/b/r/brucewei/EECS470/Projects/Project4/group15w21/csrc'
-CPU time: 4.770 seconds to compile + 1.652 seconds to elab + 1.070 seconds to link
+CPU time: 5.579 seconds to compile + 1.723 seconds to elab + 1.059 seconds to link
 ./rob_syn_simv | tee rob_syn_program.out
 Chronologic VCS simulator copyright 1991-2017
 Contains Synopsys proprietary information.
-Compiler version N-2017.12-SP2-1_Full64; Runtime version N-2017.12-SP2-1_Full64;  Mar 28 00:15 2021
+Compiler version N-2017.12-SP2-1_Full64; Runtime version N-2017.12-SP2-1_Full64;  Mar 28 05:05 2021
 VCD+ Writer N-2017.12-SP2-1_Full64 Copyright (c) 1991-2017 by Synopsys Inc.
 ####### Cycle          0 ##########
 valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
@@ -1803,7 +2073,7 @@ valid: 1  Tnew: 34  Told:  3  arch_reg:  3  completed: 0  precise_state: 0  targ
 valid: 1  Tnew: 33  Told:  2  arch_reg:  2  completed: 0  precise_state: 0  target_pc:   0
 valid: 1  Tnew: 32  Told:  1  arch_reg:  1  completed: 0  precise_state: 0  target_pc:   0
 head: 0 tail:31
-structual_stall:000
+structual_stall:111
 =====   ROB_IN Packet   =====
 | WAY | valid |  Tnew | Told | arch_reg | completed | precise_state | target_pc |
 |  0  |     0 |   37  |    6 |      6   |     0     |       0       |      0    |
@@ -2353,7 +2623,7 @@ valid: 1  Tnew: 34  Told:  3  arch_reg:  3  completed: 0  precise_state: 0  targ
 valid: 1  Tnew: 33  Told:  2  arch_reg:  2  completed: 0  precise_state: 1  target_pc:  32
 valid: 1  Tnew: 32  Told:  1  arch_reg:  1  completed: 0  precise_state: 0  target_pc:   0
 head:30 tail:31
-structual_stall:000
+structual_stall:111
 =====   ROB_IN Packet   =====
 | WAY | valid |  Tnew | Told | arch_reg | completed | precise_state | target_pc |
 |  0  |     0 |   37  |    6 |      6   |     0     |       0       |      0    |
@@ -2573,5 +2843,5 @@ $finish called from file "testbench/rob_test.sv", line 256.
 $finish at simulation time                 2900
            V C S   S i m u l a t i o n   R e p o r t 
 Time: 290000 ps
-CPU Time:      0.980 seconds;       Data structure size:   4.2Mb
-Sun Mar 28 00:15:35 2021
+CPU Time:      1.050 seconds;       Data structure size:   4.2Mb
+Sun Mar 28 05:05:03 2021
