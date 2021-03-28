@@ -460,11 +460,11 @@ physical_regfile pr_0(
     .reset (reset),
     // Output
     .rda_out(pr1_read),
-    .rdb_out(pr2_read)
+    .rdb_out(pr2_read),
 `ifdef TEST_MODE
     .pr_reg_display(pr_display)
 `endif
-)
+);
 
 //////////////////////////////////////////////////
 //                                              //

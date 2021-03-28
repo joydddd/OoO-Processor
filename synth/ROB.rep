@@ -5,7 +5,7 @@ Warning: Design 'ROB' contains 1 high-fanout nets. A fanout number of 1000 will 
 Report : design
 Design : ROB
 Version: O-2018.06
-Date   : Sun Mar 28 07:59:30 2021
+Date   : Sun Mar 28 10:20:43 2021
 ****************************************
 
 Design allows ideal nets on clock nets.
@@ -87,7 +87,7 @@ Design Parameters:
 Report : area
 Design : ROB
 Version: O-2018.06
-Date   : Sun Mar 28 07:59:30 2021
+Date   : Sun Mar 28 10:20:43 2021
 ****************************************
 
 Library(s) Used:
@@ -123,7 +123,7 @@ Report : timing
         -transition_time
 Design : ROB
 Version: O-2018.06
-Date   : Sun Mar 28 07:59:30 2021
+Date   : Sun Mar 28 10:20:43 2021
 ****************************************
 
  * Some/all delay information is back-annotated.
@@ -883,7 +883,7 @@ Report : constraint
         -max_delay
 Design : ROB
 Version: O-2018.06
-Date   : Sun Mar 28 07:59:30 2021
+Date   : Sun Mar 28 10:20:43 2021
 ****************************************
 
 
@@ -1081,7 +1081,7 @@ Warning: Design 'ROB' contains 1 high-fanout nets. A fanout number of 1000 will 
 Report : reference
 Design : ROB
 Version: O-2018.06
-Date   : Sun Mar 28 07:59:32 2021
+Date   : Sun Mar 28 10:20:45 2021
 ****************************************
 
 Attributes:

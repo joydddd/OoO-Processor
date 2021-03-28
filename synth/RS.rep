@@ -5,7 +5,7 @@ Warning: Design 'RS' contains 1 high-fanout nets. A fanout number of 1000 will b
 Report : design
 Design : RS
 Version: O-2018.06
-Date   : Sun Mar 28 07:54:32 2021
+Date   : Sun Mar 28 10:15:36 2021
 ****************************************
 
 Design allows ideal nets on clock nets.
@@ -87,7 +87,7 @@ Design Parameters:
 Report : area
 Design : RS
 Version: O-2018.06
-Date   : Sun Mar 28 07:54:32 2021
+Date   : Sun Mar 28 10:15:36 2021
 ****************************************
 
 Library(s) Used:
@@ -123,7 +123,7 @@ Report : timing
         -transition_time
 Design : RS
 Version: O-2018.06
-Date   : Sun Mar 28 07:54:32 2021
+Date   : Sun Mar 28 10:15:36 2021
 ****************************************
 
  * Some/all delay information is back-annotated.
@@ -859,7 +859,7 @@ Report : constraint
         -max_delay
 Design : RS
 Version: O-2018.06
-Date   : Sun Mar 28 07:54:32 2021
+Date   : Sun Mar 28 10:15:36 2021
 ****************************************
 
 
@@ -1051,7 +1051,7 @@ Warning: Design 'RS' contains 1 high-fanout nets. A fanout number of 1000 will b
 Report : reference
 Design : RS
 Version: O-2018.06
-Date   : Sun Mar 28 07:54:33 2021
+Date   : Sun Mar 28 10:15:37 2021
 ****************************************
 
 Attributes:

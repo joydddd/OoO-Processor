@@ -5,7 +5,7 @@ Warning: Design 'physical_regfile' contains 1 high-fanout nets. A fanout number 
 Report : design
 Design : physical_regfile
 Version: O-2018.06
-Date   : Sun Mar 28 07:56:44 2021
+Date   : Sun Mar 28 10:21:52 2021
 ****************************************
 
 Design allows ideal nets on clock nets.
@@ -87,7 +87,7 @@ Design Parameters:
 Report : area
 Design : physical_regfile
 Version: O-2018.06
-Date   : Sun Mar 28 07:56:44 2021
+Date   : Sun Mar 28 10:21:52 2021
 ****************************************
 
 Library(s) Used:
@@ -123,7 +123,7 @@ Report : timing
         -transition_time
 Design : physical_regfile
 Version: O-2018.06
-Date   : Sun Mar 28 07:56:44 2021
+Date   : Sun Mar 28 10:21:52 2021
 ****************************************
 
  * Some/all delay information is back-annotated.
@@ -483,7 +483,7 @@ Report : constraint
         -max_delay
 Design : physical_regfile
 Version: O-2018.06
-Date   : Sun Mar 28 07:56:44 2021
+Date   : Sun Mar 28 10:21:52 2021
 ****************************************
 
 
@@ -613,7 +613,7 @@ Warning: Design 'physical_regfile' contains 3 high-fanout nets. A fanout number 
 Report : reference
 Design : physical_regfile
 Version: O-2018.06
-Date   : Sun Mar 28 07:56:45 2021
+Date   : Sun Mar 28 10:21:54 2021
 ****************************************
 
 Attributes:

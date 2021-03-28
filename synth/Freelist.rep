@@ -4,7 +4,7 @@ Information: Updating design information... (UID-85)
 Report : design
 Design : Freelist
 Version: O-2018.06
-Date   : Sun Mar 28 07:58:14 2021
+Date   : Sun Mar 28 10:19:27 2021
 ****************************************
 
 Design allows ideal nets on clock nets.
@@ -86,7 +86,7 @@ Design Parameters:
 Report : area
 Design : Freelist
 Version: O-2018.06
-Date   : Sun Mar 28 07:58:14 2021
+Date   : Sun Mar 28 10:19:27 2021
 ****************************************
 
 Library(s) Used:
@@ -122,7 +122,7 @@ Report : timing
         -transition_time
 Design : Freelist
 Version: O-2018.06
-Date   : Sun Mar 28 07:58:14 2021
+Date   : Sun Mar 28 10:19:27 2021
 ****************************************
 
  * Some/all delay information is back-annotated.
@@ -700,7 +700,7 @@ Report : constraint
         -max_delay
 Design : Freelist
 Version: O-2018.06
-Date   : Sun Mar 28 07:58:14 2021
+Date   : Sun Mar 28 10:19:27 2021
 ****************************************
 
 
@@ -867,7 +867,7 @@ Information: Updating graph... (UID-83)
 Report : reference
 Design : Freelist
 Version: O-2018.06
-Date   : Sun Mar 28 07:58:15 2021
+Date   : Sun Mar 28 10:19:28 2021
 ****************************************
 
 Attributes:

@@ -4,7 +4,7 @@ Information: Updating design information... (UID-85)
 Report : design
 Design : arch_maptable
 Version: O-2018.06
-Date   : Sun Mar 28 07:55:00 2021
+Date   : Sun Mar 28 10:16:03 2021
 ****************************************
 
 Design allows ideal nets on clock nets.
@@ -86,7 +86,7 @@ Design Parameters:
 Report : area
 Design : arch_maptable
 Version: O-2018.06
-Date   : Sun Mar 28 07:55:00 2021
+Date   : Sun Mar 28 10:16:03 2021
 ****************************************
 
 Library(s) Used:
@@ -122,7 +122,7 @@ Report : timing
         -transition_time
 Design : arch_maptable
 Version: O-2018.06
-Date   : Sun Mar 28 07:55:00 2021
+Date   : Sun Mar 28 10:16:03 2021
 ****************************************
 
  * Some/all delay information is back-annotated.
@@ -400,7 +400,7 @@ Report : constraint
         -max_delay
 Design : arch_maptable
 Version: O-2018.06
-Date   : Sun Mar 28 07:55:00 2021
+Date   : Sun Mar 28 10:16:03 2021
 ****************************************
 
 
@@ -517,7 +517,7 @@ Information: Updating graph... (UID-83)
 Report : reference
 Design : arch_maptable
 Version: O-2018.06
-Date   : Sun Mar 28 07:55:01 2021
+Date   : Sun Mar 28 10:16:04 2021
 ****************************************
 
 Attributes:
