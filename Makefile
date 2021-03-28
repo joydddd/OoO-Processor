@@ -48,7 +48,7 @@ LIB = /afs/umich.edu/class/eecs470/lib/verilog/lec25dscc25.v
 
 # Pipeline without fetch
 PLTESTBENCH = testbench/pipeline_test.sv testbench/mt-fl_sim.cpp testbench/pipe_print.c 
-PLFILES = verilog/alu_stage.sv verilog/dispatch.sv verilog/issue.sv verilog/pipeline.sv verilog/complete_stage.sv verilog/re_stage.sv
+PLFILES = verilog/alu_stage.sv verilog/dispatch.sv verilog/issue.sv verilog/pipeline.sv verilog/complete_stage.sv verilog/re_stage.sv verilog/ps.sv
 PLSYNFILES = synth/pipeline.vg
 
 # Reservation Station
@@ -60,6 +60,11 @@ RSSYNFILES = synth/RS.vg
 MTTESTBENCH = testbench/test_maptable.sv testbench/mt-fl_sim.cpp
 MTFILES = verilog/map_tables.sv
 MTSYNFILES = synth/map_table.vg
+
+# ArchMaptables
+ARCHMTTESTBENCH = testbench/test_maptable.sv
+ARCHMTFILES = verilog/map_tables.sv
+ARCHMTSYNFILES = synth/arch_maptable.vg
 
 # dis
 DTESTBENCH = testbench/dis_test.sv testbench/mt-fl_sim.cpp testbench/pipe_print.c 
@@ -112,6 +117,7 @@ export ISFIFOFILE
 export FSFILES
 export REFILES
 export PLFILES
+export ARCHMTFILES
 
 
 export CACHE_NAME = cache
@@ -239,6 +245,9 @@ $(RSSYNFILES): $(RSFILES) $(SYNTH_DIR)/rs.tcl
 $(MTSYNFILES): $(MTFILES) $(SYNTH_DIR)/maptables.tcl
 	cd $(SYNTH_DIR) && dc_shell-t -f ./maptables.tcl | tee maptable_synth.out
 
+$(ARCHMTSYNFILES): $(ARCHMTFILES) $(SYNTH_DIR)/archmaptables.tcl
+	cd $(SYNTH_DIR) && dc_shell-t -f ./archmaptables.tcl | tee archmaptable_synth.out
+
 $(ROBSYNFILES): $(ROBFILES) $(SYNTH_DIR)/rob.tcl
 	cd $(SYNTH_DIR) && dc_shell-t -f ./rob.tcl | tee rob_synth.out
 
@@ -259,6 +268,13 @@ mt_syn:	mt_syn_simv
 
 mt_syn_simv:	$(HEADERS) $(MTSYNFILES) $(MTTESTBENCH)
 	$(VCS) $^ $(LIB) +define+SYNTH_TEST +error+20 -o mt_syn_simv
+
+
+archmt_syn:	archmt_syn_simv 
+	./archmt_syn_simv | tee archmt_syn_program.out
+
+archmt_syn_simv:	$(HEADERS) $(ARCHMTSYNFILES) $(ARCHMTTESTBENCH)
+	$(VCS) $^ $(LIB) +define+SYNTH_TEST +error+20 -o archmt_syn_simv
 
 rob_syn:	rob_syn_simv 
 	./rob_syn_simv | tee rob_syn_program.out
@@ -294,7 +310,7 @@ ret_syn_simv: $(HEADERS) $(RESYNFILES) $(RETESTBENCH)
 	$(VCS) $^ $(LIB) +define+SYNTH_TEST +error+20 -o dis_syn_simv 
 
 
-$(PLSYNFILES):	$(PLFILES) $(RSSYNFILES) $(MTSYNFILES) $(ISFIFOSYN) $(FREELISTSYNFILES) $(ROBSYNFILES) $(SYNTH_DIR)/pl.tcl 
+$(PLSYNFILES):	$(PLFILES) $(RSSYNFILES) $(MTSYNFILES) $(ARCHMTSYNFILES) $(ISFIFOSYN) $(FREELISTSYNFILES) $(ROBSYNFILES) $(SYNTH_DIR)/pl.tcl 
 	cd $(SYNTH_DIR) && dc_shell-t -f ./pl.tcl | tee pl_synth.out
 
 pl_syn: pl_syn_simv
