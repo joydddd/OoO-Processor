@@ -1,0 +1,2577 @@
+cd ./synth && dc_shell-t -f ./rob.tcl | tee rob_synth.out
+
+                           Design Compiler Graphical 
+                                 DC Ultra (TM)
+                                  DFTMAX (TM)
+                              Power Compiler (TM)
+                                 DesignWare (R)
+                                 DC Expert (TM)
+                               Design Vision (TM)
+                               HDL Compiler (TM)
+                               VHDL Compiler (TM)
+                                  DFT Compiler
+                               Design Compiler(R)
+
+                 Version O-2018.06 for linux64 - May 21, 2018 
+
+                    Copyright (c) 1988 - 2018 Synopsys, Inc.
+   This software and the associated documentation are proprietary to Synopsys,
+ Inc. This software may only be used in accordance with the terms and conditions
+ of a written license agreement with Synopsys, Inc. All other use, reproduction,
+            or distribution of this software is strictly prohibited.
+Initializing...
+################################################################################
+## DO NOT EDIT THESE FILES BY HAND
+##
+## CONFIGURATION HAS BEEN MOVED TO THE MAKEFILE
+################################################################################
+set search_path [ list "./" "/afs/umich.edu/class/eecs470/lib/synopsys/" ]
+./ /afs/umich.edu/class/eecs470/lib/synopsys/
+set target_library "lec25dscc25_TT.db"
+lec25dscc25_TT.db
+set link_library [concat  "*" $target_library]
+* lec25dscc25_TT.db
+#/***********************************************************/
+#/* Set some flags to suppress warnings we don't care about */
+set suppress_errors [concat $suppress_errors "UID-401"]
+UID-401
+suppress_message {"VER-130"}
+#/***********************************************************/
+#/* The following lines are set from environment variables
+#/* automatically by the Makefile
+#/***********************************************************/
+lappend search_path ../
+./ /afs/umich.edu/class/eecs470/lib/synopsys/ ../
+set headers [getenv HEADERS]
+sys_defs.svh ISA.svh
+set sources [getenv ROBFILES]
+verilog/rob.sv
+read_file -f sverilog [list ${headers} ${sources}]
+Loading db file '/afs/umich.edu/class/eecs470/lib/synopsys/lec25dscc25_TT.db'
+Loading db file '/usr/caen/synopsys-synth-2018.06/libraries/syn/gtech.db'
+Loading db file '/usr/caen/synopsys-synth-2018.06/libraries/syn/standard.sldb'
+  Loading link library 'lec25dscc25_TT'
+  Loading link library 'gtech'
+Loading sverilog files: '/afs/umich.edu/user/b/r/brucewei/EECS470/Projects/Project4/group15w21/sys_defs.svh' '/afs/umich.edu/user/b/r/brucewei/EECS470/Projects/Project4/group15w21/ISA.svh' '/afs/umich.edu/user/b/r/brucewei/EECS470/Projects/Project4/group15w21/verilog/rob.sv' 
+Detecting input file type automatically (-rtl or -netlist).
+Reading with Presto HDL Compiler (equivalent to -rtl option).
+Running PRESTO HDLC
+Compiling source file /afs/umich.edu/user/b/r/brucewei/EECS470/Projects/Project4/group15w21/sys_defs.svh
+Compiling source file /afs/umich.edu/user/b/r/brucewei/EECS470/Projects/Project4/group15w21/ISA.svh
+Compiling source file /afs/umich.edu/user/b/r/brucewei/EECS470/Projects/Project4/group15w21/verilog/rob.sv
+Warning:  /afs/umich.edu/user/b/r/brucewei/EECS470/Projects/Project4/group15w21/verilog/rob.sv:70: signed to unsigned assignment occurs. (VER-318)
+Warning:  /afs/umich.edu/user/b/r/brucewei/EECS470/Projects/Project4/group15w21/verilog/rob.sv:137: signed to unsigned assignment occurs. (VER-318)
+Warning:  /afs/umich.edu/user/b/r/brucewei/EECS470/Projects/Project4/group15w21/verilog/rob.sv:255: signed to unsigned assignment occurs. (VER-318)
+
+Statistics for case statements in always block at line 75 in file
+	'/afs/umich.edu/user/b/r/brucewei/EECS470/Projects/Project4/group15w21/verilog/rob.sv'
+===============================================
+|           Line           |  full/ parallel  |
+===============================================
+|            87            |    user/auto     |
+===============================================
+
+Statistics for case statements in always block at line 126 in file
+	'/afs/umich.edu/user/b/r/brucewei/EECS470/Projects/Project4/group15w21/verilog/rob.sv'
+===============================================
+|           Line           |  full/ parallel  |
+===============================================
+|           140            |    user/auto     |
+===============================================
+
+Statistics for case statements in always block at line 202 in file
+	'/afs/umich.edu/user/b/r/brucewei/EECS470/Projects/Project4/group15w21/verilog/rob.sv'
+===============================================
+|           Line           |  full/ parallel  |
+===============================================
+|           206            |    user/auto     |
+|           229            |    user/auto     |
+===============================================
+
+Inferred memory devices in process
+	in routine ROB line 261 in file
+		'/afs/umich.edu/user/b/r/brucewei/EECS470/Projects/Project4/group15w21/verilog/rob.sv'.
+===============================================================================
+|    Register Name    |   Type    | Width | Bus | MB | AR | AS | SR | SS | ST |
+===============================================================================
+|   rob_entries_reg   | Flip-flop | 1696  |  Y  | N  | N  | N  | N  | N  | N  |
+|      head_reg       | Flip-flop |   5   |  Y  | N  | N  | N  | N  | N  | N  |
+|      tail_reg       | Flip-flop |   5   |  Y  | N  | N  | N  | N  | N  | N  |
+|      empty_reg      | Flip-flop |   1   |  N  | N  | N  | N  | N  | N  | N  |
+===============================================================================
+Statistics for MUX_OPs
+======================================================
+| block name/line  | Inputs | Outputs | # sel inputs |
+======================================================
+|      ROB/78      |   32   |    1    |      5       |
+|      ROB/80      |   32   |    1    |      5       |
+|      ROB/82      |   32   |    1    |      5       |
+|     ROB/208      |   32   |   53    |      5       |
+|     ROB/209      |   32   |   53    |      5       |
+|     ROB/210      |   32   |   53    |      5       |
+======================================================
+Presto compilation completed successfully.
+Current design is now '/afs/umich.edu/user/b/r/brucewei/EECS470/Projects/Project4/group15w21/verilog/ROB.db:ROB'
+Loaded 1 design.
+Current design is 'ROB'.
+ROB
+set design_name ROB
+ROB
+set clock_name clock
+clock
+set reset_name reset
+reset
+set CLK_PERIOD 10
+10
+#/***********************************************************/
+#/* The rest of this file may be left alone for most small  */
+#/* to moderate sized designs.  You may need to alter it    */
+#/* when synthesizing your final project.                   */
+#/***********************************************************/
+set SYN_DIR ./
+./
+#/***********************************************************/
+#/* Set some flags for optimisation */
+set compile_top_all_paths "true"
+true
+set auto_wire_load_selection "false"
+false
+set compile_seqmap_synchronous_extraction "true"
+true
+# uncomment this and change number appropriately if on multi-core machine
+#set_host_options -max_cores 2
+#/***********************************************************/
+#/*  Clk Periods/uncertainty/transition                     */
+set CLK_TRANSITION 0.1
+0.1
+set CLK_UNCERTAINTY 0.1
+0.1
+set CLK_LATENCY 0.1
+0.1
+#/* Input/output Delay values */
+set AVG_INPUT_DELAY 0.1
+0.1
+set AVG_OUTPUT_DELAY 0.1
+0.1
+#/* Critical Range (ns) */
+set CRIT_RANGE 1.0
+1.0
+#/***********************************************************/
+#/* Design Constrains: Not all used                         */
+set MAX_TRANSITION 1.0
+1.0
+set FAST_TRANSITION 0.1
+0.1
+set MAX_FANOUT 32
+32
+set MID_FANOUT 8
+8
+set LOW_FANOUT 1
+1
+set HIGH_DRIVE 0
+0
+set HIGH_LOAD 1.0
+1.0
+set AVG_LOAD 0.1
+0.1
+set AVG_FANOUT_LOAD 10
+10
+#/***********************************************************/
+#/*BASIC_INPUT = cb18os120_tsmc_max/nd02d1/A1
+#BASIC_OUTPUT = cb18os120_tsmc_max/nd02d1/ZN*/
+set DRIVING_CELL dffacs1
+dffacs1
+#/* DONT_USE_LIST = {   } */
+#/*************operation cons**************/
+#/*OP_WCASE = WCCOM;
+#OP_BCASE = BCCOM;*/
+set WIRE_LOAD "tsmcwire"
+tsmcwire
+set LOGICLIB lec25dscc25_TT
+lec25dscc25_TT
+#/*****************************/
+#/* Sourcing the file that sets the Search path and the libraries(target,link) */
+set sys_clk $clock_name
+clock
+set netlist_file [format "%s%s"  [format "%s%s"  $SYN_DIR $design_name] ".vg"]
+./ROB.vg
+set ddc_file [format "%s%s"  [format "%s%s"  $SYN_DIR $design_name] ".ddc"]
+./ROB.ddc
+set rep_file [format "%s%s"  [format "%s%s"  $SYN_DIR $design_name] ".rep"]
+./ROB.rep
+set dc_shell_status [ set chk_file [format "%s%s"  [format "%s%s"  $SYN_DIR $design_name] ".chk"] ]
+./ROB.chk
+#/* if we didnt find errors at this point, run */
+if {  $dc_shell_status != [list] } {
+   current_design $design_name
+  link
+  set_wire_load_model -name $WIRE_LOAD -lib $LOGICLIB $design_name
+  set_wire_load_mode top
+  set_fix_multiple_port_nets -outputs -buffer_constants
+  create_clock -period $CLK_PERIOD -name $sys_clk [find port $sys_clk]
+  set_clock_uncertainty $CLK_UNCERTAINTY $sys_clk
+  set_fix_hold $sys_clk
+  group_path -from [all_inputs] -name input_grp
+  group_path -to [all_outputs] -name output_grp
+  set_driving_cell  -lib_cell $DRIVING_CELL [all_inputs]
+  remove_driving_cell [find port $sys_clk]
+  set_fanout_load $AVG_FANOUT_LOAD [all_outputs]
+  set_load $AVG_LOAD [all_outputs]
+  set_input_delay $AVG_INPUT_DELAY -clock $sys_clk [all_inputs]
+  remove_input_delay -clock $sys_clk [find port $sys_clk]
+  set_output_delay $AVG_OUTPUT_DELAY -clock $sys_clk [all_outputs]
+  set_dont_touch $reset_name
+  set_resistance 0 $reset_name
+  set_drive 0 $reset_name
+  set_critical_range $CRIT_RANGE [current_design]
+  set_max_delay $CLK_PERIOD [all_outputs]
+  set MAX_FANOUT $MAX_FANOUT
+  set MAX_TRANSITION $MAX_TRANSITION
+  uniquify
+  ungroup -all -flatten
+  redirect $chk_file { check_design }
+  compile -map_effort medium
+  write -hier -format verilog -output $netlist_file $design_name
+  write -hier -format ddc -output $ddc_file $design_name
+  redirect $rep_file { report_design -nosplit }
+  redirect -append $rep_file { report_area }
+  redirect -append $rep_file { report_timing -max_paths 2 -input_pins -nets -transition_time -nosplit }
+  redirect -append $rep_file { report_constraint -max_delay -verbose -nosplit }
+  remove_design -all
+  read_file -format verilog $netlist_file
+  current_design $design_name
+  redirect -append $rep_file { report_reference -nosplit }
+  quit
+} else {
+   quit
+}
+Current design is 'ROB'.
+
+  Linking design 'ROB'
+  Using the following designs and libraries:
+  --------------------------------------------------------------------------
+  ROB                         /afs/umich.edu/user/b/r/brucewei/EECS470/Projects/Project4/group15w21/verilog/ROB.db
+  lec25dscc25_TT (library)    /afs/umich.edu/class/eecs470/lib/synopsys/lec25dscc25_TT.db
+
+Current design is 'ROB'.
+Warning: Design has no hierarchy.  No cells can be ungrouped. (UID-228)
+Information: Evaluating DesignWare library utilization. (UISN-27)
+
+============================================================================
+| DesignWare Building Block Library  |         Version         | Available |
+============================================================================
+| Basic DW Building Blocks           | O-2018.06-DWBB_201806.0 |     *     |
+| Licensed DW Building Blocks        |                         |           |
+============================================================================
+
+
+Information: There are 12 potential problems in your design. Please run 'check_design' for more information. (LINT-99)
+
+
+
+  Beginning Pass 1 Mapping
+  ------------------------
+  Processing 'ROB'
+
+  Updating timing information
+Information: Updating design information... (UID-85)
+
+  Beginning Implementation Selection
+  ----------------------------------
+  Processing 'ROB_DW01_add_0'
+  Processing 'ROB_DW01_add_1'
+  Processing 'ROB_DW01_inc_0'
+  Processing 'ROB_DW01_add_2'
+  Processing 'ROB_DW01_cmp6_0'
+  Processing 'ROB_DW01_add_3'
+  Processing 'ROB_DW01_inc_1'
+  Processing 'ROB_DW01_cmp6_1'
+  Processing 'ROB_DW01_add_4'
+  Processing 'ROB_DW01_cmp6_2'
+  Processing 'ROB_DW01_cmp6_3'
+  Processing 'ROB_DW01_cmp6_4'
+  Processing 'ROB_DW01_inc_2'
+  Processing 'ROB_DW01_add_5'
+  Processing 'ROB_DW01_add_6'
+  Processing 'ROB_DW01_cmp6_5'
+  Processing 'ROB_DW01_cmp6_6'
+  Processing 'ROB_DW01_add_7'
+  Processing 'ROB_DW01_inc_3'
+  Processing 'ROB_DW01_inc_4'
+  Processing 'ROB_DW01_add_8'
+  Processing 'ROB_DW01_dec_0'
+  Processing 'ROB_DW01_add_9'
+  Processing 'DW02_mult_A_width2_B_width1'
+
+  Beginning Mapping Optimizations  (Medium effort)
+  -------------------------------
+
+                                  TOTAL                                                  
+   ELAPSED            WORST NEG   SETUP    DESIGN                              MIN DELAY 
+    TIME      AREA      SLACK     COST    RULE COST         ENDPOINT             COST    
+  --------- --------- --------- --------- --------- ------------------------- -----------
+    0:00:31 1921706.8      3.68    5794.8    8055.5                                0.00  
+    0:00:31 1921706.8      3.68    5794.8    8055.5                                0.00  
+    0:00:32 2692471.7      3.22    5278.1    5462.6                                0.00  
+    0:00:38 2707129.0      0.00       0.0       2.8                                0.00  
+    0:00:38 2707129.0      0.00       0.0       2.8                                0.00  
+    0:00:38 2707129.0      0.00       0.0       2.8                                0.00  
+    0:00:38 2707129.0      0.00       0.0       2.8                                0.00  
+    0:00:39 2707129.0      0.00       0.0       2.8                                0.00  
+    0:00:45 1189660.5      0.04       9.8       0.7                                0.00  
+    0:00:47 1176314.8      0.00       0.0       0.3                                0.00  
+    0:00:48 1176099.1      0.00       0.0       0.3                                0.00  
+    0:00:49 1176099.1      0.00       0.0       0.3                                0.00  
+    0:00:49 1176099.1      0.00       0.0       0.3                                0.00  
+    0:00:49 1176099.1      0.00       0.0       0.3                                0.00  
+    0:00:49 1176099.1      0.00       0.0       0.3                                0.00  
+    0:00:49 1176132.3      0.00       0.0       0.1                                0.00  
+    0:00:49 1176182.1      0.00       0.0       0.0                                0.00  
+    0:00:49 1176182.1      0.00       0.0       0.0                                0.00  
+    0:00:49 1176182.1      0.00       0.0       0.0                                0.00  
+    0:00:49 1176182.1      0.00       0.0       0.0                                0.00  
+
+
+
+  Beginning Delay Optimization Phase
+  ----------------------------------
+
+                                  TOTAL                                                  
+   ELAPSED            WORST NEG   SETUP    DESIGN                              MIN DELAY 
+    TIME      AREA      SLACK     COST    RULE COST         ENDPOINT             COST    
+  --------- --------- --------- --------- --------- ------------------------- -----------
+    0:00:49 1176182.1      0.00       0.0       0.0                                0.00  
+    0:00:49 1176182.1      0.00       0.0       0.0                                0.00  
+    0:00:51 1175742.5      0.00       0.0       4.5                                0.00  
+
+
+  Beginning Design Rule Fixing  (max_transition)
+  ----------------------------
+
+                                  TOTAL                                                  
+   ELAPSED            WORST NEG   SETUP    DESIGN                              MIN DELAY 
+    TIME      AREA      SLACK     COST    RULE COST         ENDPOINT             COST    
+  --------- --------- --------- --------- --------- ------------------------- -----------
+    0:00:52 1175742.5      0.00       0.0       4.5                                0.00  
+    0:00:53 1176381.2      0.00       0.0       0.0                                0.00  
+
+
+  Beginning Critical Range Optimization
+  -------------------------------------
+
+                                  TOTAL                                                  
+   ELAPSED            WORST NEG   SETUP    DESIGN                              MIN DELAY 
+    TIME      AREA      SLACK     COST    RULE COST         ENDPOINT             COST    
+  --------- --------- --------- --------- --------- ------------------------- -----------
+    0:00:53 1176381.2      0.00       0.0       0.0                                0.00  
+
+
+  Beginning Area-Recovery Phase  (cleanup)
+  -----------------------------
+
+                                  TOTAL                                                  
+   ELAPSED            WORST NEG   SETUP    DESIGN                              MIN DELAY 
+    TIME      AREA      SLACK     COST    RULE COST         ENDPOINT             COST    
+  --------- --------- --------- --------- --------- ------------------------- -----------
+    0:00:53 1176381.2      0.00       0.0       0.0                                0.00  
+    0:00:53 1176381.2      0.00       0.0       0.0                                0.00  
+    0:00:54 1154716.2      0.22     156.3       0.0                                0.00  
+    0:00:56 1141544.7      0.00       0.0       0.0                                0.00  
+    0:00:58 1136169.9      0.00       0.0       0.0                                0.00  
+    0:00:59 1132396.0      0.00       0.0       0.0                                0.00  
+    0:01:00 1129277.3      0.00       0.0       0.0                                0.00  
+    0:01:00 1126291.3      0.00       0.0       0.0                                0.00  
+    0:01:01 1123968.8      0.00       0.0       0.0                                0.00  
+    0:01:02 1122467.6      0.00       0.0       0.0                                0.00  
+    0:01:02 1121273.2      0.00       0.0       0.0                                0.00  
+    0:01:02 1120078.8      0.00       0.0       0.0                                0.00  
+    0:01:03 1119481.6      0.00       0.0       0.0                                0.00  
+    0:01:03 1119348.9      0.00       0.0       0.0                                0.00  
+    0:01:03 1119216.1      0.00       0.0       0.0                                0.00  
+    0:01:03 1119116.6      0.00       0.0       0.0                                0.00  
+    0:01:03 1119017.1      0.00       0.0       0.0                                0.00  
+    0:01:03 1118909.3      0.00       0.0       0.0                                0.00  
+    0:01:03 1118909.3      0.00       0.0       0.0                                0.00  
+    0:01:04 1118909.3      0.00       0.0       0.0                                0.00  
+    0:01:04 1118699.2      0.00       0.0       0.0                                0.00  
+    0:01:04 1118699.2      0.00       0.0       0.0                                0.00  
+    0:01:04 1118699.2      0.00       0.0       0.0                                0.00  
+    0:01:04 1118699.2      0.00       0.0       0.0                                0.00  
+    0:01:04 1118699.2      0.00       0.0       0.0                                0.00  
+    0:01:04 1118699.2      0.00       0.0       0.0                                0.00  
+
+
+  Beginning Critical Range Optimization
+  -------------------------------------
+
+                                  TOTAL                                                  
+   ELAPSED            WORST NEG   SETUP    DESIGN                              MIN DELAY 
+    TIME      AREA      SLACK     COST    RULE COST         ENDPOINT             COST    
+  --------- --------- --------- --------- --------- ------------------------- -----------
+    0:01:04 1118699.2      0.00       0.0       0.0                                0.00  
+    0:01:04 1118699.2      0.00       0.0       0.0                                0.00  
+Loading db file '/afs/umich.edu/class/eecs470/lib/synopsys/lec25dscc25_TT.db'
+
+
+Note: Symbol # after min delay cost means estimated hold TNS across all active scenarios 
+
+
+  Optimization Complete
+  ---------------------
+Warning: Design 'ROB' contains 1 high-fanout nets. A fanout number of 1000 will be used for delay calculations involving these nets. (TIM-134)
+     Net 'clock': 1707 load(s), 1 driver(s)
+Writing verilog file '/afs/umich.edu/user/b/r/brucewei/EECS470/Projects/Project4/group15w21/synth/ROB.vg'.
+Warning: Verilog 'assign' or 'tran' statements are written out. (VO-4)
+Writing ddc file './ROB.ddc'.
+Removing design 'ROB'
+Removing library 'lec25dscc25_TT'
+Removing library 'gtech'
+Removing library 'standard.sldb'
+Loading db file '/afs/umich.edu/class/eecs470/lib/synopsys/lec25dscc25_TT.db'
+Loading db file '/usr/caen/synopsys-synth-2018.06/libraries/syn/gtech.db'
+Loading db file '/usr/caen/synopsys-synth-2018.06/libraries/syn/standard.sldb'
+  Loading link library 'lec25dscc25_TT'
+  Loading link library 'gtech'
+Loading verilog file '/afs/umich.edu/user/b/r/brucewei/EECS470/Projects/Project4/group15w21/synth/ROB.vg'
+Detecting input file type automatically (-rtl or -netlist).
+Running DC verilog reader
+Performing 'read' command.
+Compiling source file /afs/umich.edu/user/b/r/brucewei/EECS470/Projects/Project4/group15w21/synth/ROB.vg
+Reading with netlist reader (equivalent to -netlist option).
+Verilog netlist reader completed successfully.
+Current design is now '/afs/umich.edu/user/b/r/brucewei/EECS470/Projects/Project4/group15w21/synth/ROB.db:ROB'
+Loaded 1 design.
+Current design is 'ROB'.
+Current design is 'ROB'.
+
+Thank you...
+vcs -V -sverilog +vc -Mupdate -line -full64 +vcs+vcdpluson -debug_pp sys_defs.svh ISA.svh synth/ROB.vg testbench/rob_test.sv /afs/umich.edu/class/eecs470/lib/verilog/lec25dscc25.v +define+SYNTH_TEST +error+20 -o rob_syn_simv
+/usr/caen/vcs-2017.12-SP2-1/linux64/bin/vcs1 -Mcc=gcc -Mcplusplus=g++ -Masflags= -Mcfl= -pipe -fPIC -O -I/usr/caen/vcs-2017.12-SP2-1/include  -Mxcflags= -pipe -fPIC -I/usr/caen/vcs-2017.12-SP2-1/include -Mldflags= -rdynamic  -Mout=rob_syn_simv -Mamsrun="" -Mvcsaceobjs="" -Mobjects=" /usr/caen/vcs-2017.12-SP2-1/linux64/lib/libvirsim.so /usr/caen/vcs-2017.12-SP2-1/linux64/lib/liberrorinf.so /usr/caen/vcs-2017.12-SP2-1/linux64/lib/libsnpsmalloc.so /usr/caen/vcs-2017.12-SP2-1/linux64/lib/libvfs.so " -Mexternalobj= -Msaverestoreobj=/usr/caen/vcs-2017.12-SP2-1/linux64/lib/vcs_save_restore_new.o -Mcrt0= -Mcrtn="" -Mcsrc="" -Mupdate -Msyslibs=-ldl  -V +vc -line -full64 +vcs+vcdpluson -Xcbug=0x1 -Xpiyushb1=0x80 +define+SYNTH_TEST +error+20 -o rob_syn_simv -picarchive +vcsd +itf+/usr/caen/vcs-2017.12-SP2-1/linux64/lib/vcsdp.tab +cli+1 -debug=4 +memcbk -sverilog +vpi -gen_obj sys_defs.svh ISA.svh synth/ROB.vg testbench/rob_test.sv /afs/umich.edu/class/eecs470/lib/verilog/lec25dscc25.v  
+                         Chronologic VCS (TM)
+      Version N-2017.12-SP2-1_Full64 -- Sun Mar 28 00:15:18 2021
+               Copyright (c) 1991-2017 by Synopsys Inc.
+                         ALL RIGHTS RESERVED
+
+This program is proprietary and confidential information of Synopsys Inc.
+and may be used and disclosed only as authorized in a license agreement
+controlling such use and disclosure.
+
+Parsing design file 'sys_defs.svh'
+Parsing design file 'ISA.svh'
+Parsing design file 'synth/ROB.vg'
+Parsing design file 'testbench/rob_test.sv'
+Parsing design file '/afs/umich.edu/class/eecs470/lib/verilog/lec25dscc25.v'
+Top Level Modules:
+       testbench
+       and2s3
+       and3s2
+       and3s3
+       and4s2
+       aoai1112s1
+       aoai1112s2
+       aoai1112s3
+       aoi123s1
+       aoi123s2
+       aoi123s3
+       aoi13s1
+       aoi13s2
+       aoi13s3
+       aoi211s2
+       aoi211s3
+       aoi21s3
+       aoi221s2
+       aoi221s3
+       aoi2221s1
+       aoi2221s2
+       aoi2221s3
+       aoi222s2
+       aoi222s3
+       aoi22s3
+       aoi23s1
+       aoi23s2
+       aoi23s3
+       aoi33s1
+       aoi33s2
+       aoi33s3
+       aoi4111s1
+       aoi4111s2
+       aoi4111s3
+       aoi42s1
+       aoi42s2
+       aoi42s3
+       bshes1
+       bshes2
+       bshes3
+       bsles1
+       bsles2
+       bsles3
+       dchei24s1
+       dchei24s2
+       dchei24s3
+       dci24s1
+       dci24s2
+       dci24s3
+       dclei24s1
+       dclei24s2
+       dclei24s3
+       dffacs1
+       dffacs2
+       dffascs1
+       dffascs2
+       dffass1
+       dffass2
+       dffles1
+       dffles2
+       dffs1
+       dffscs1
+       dffscs2
+       dffss2
+       di2s1
+       di2s2
+       di2s3
+       di2s4
+       di2s5
+       di2s6
+       dsmxc31s1
+       dsmxc31s2
+       fadd1s3
+       hib1s1
+       hnb1s1
+       i1s2
+       i1s4
+       i1s5
+       i1s6
+       i1s7
+       ib1s2
+       ib1s3
+       ib1s4
+       lclks1
+       lclks2
+       lcs1
+       lcs2
+       lnnds1
+       lnnds2
+       lnors1
+       lnors2
+       lscs1
+       lscs2
+       lss1
+       lss2
+       mx21s1
+       mx21s2
+       mx21s3
+       mx41s1
+       mx41s2
+       mx41s3
+       mxi21s1
+       mxi21s2
+       mxi21s3
+       mxi41s1
+       mxi41s2
+       mxi41s3
+       nb1s1
+       nb1s4
+       nb1s5
+       nb1s6
+       nnd2s3
+       nnd3s3
+       nnd4s2
+       nnd4s3
+       nnd5s3
+       nnd6s3
+       nor2s2
+       nor2s3
+       nor3s1
+       nor3s2
+       nor3s3
+       nor4s1
+       nor4s2
+       nor4s3
+       nor5s1
+       nor5s2
+       nor5s3
+       nor6s1
+       nor6s2
+       nor6s3
+       npd1s1
+       npd1s2
+       npt1s1
+       npt1s2
+       npt1s3
+       npt1s4
+       npt1s5
+       npt1s6
+       oaaoi1123s1
+       oaaoi1123s2
+       oaaoi1123s3
+       oai1112s1
+       oai1112s3
+       oai211s1
+       oai211s3
+       oai21s3
+       oai221s1
+       oai221s2
+       oai221s3
+       oai2222s1
+       oai2222s2
+       oai2222s3
+       oai222s2
+       oai222s3
+       oai24s1
+       oai24s2
+       oai24s3
+       oai322s1
+       oai322s2
+       oai322s3
+       oai32s1
+       oai32s2
+       oai32s3
+       oai33s2
+       oai33s3
+       or2s2
+       or2s3
+       or3s1
+       or3s2
+       or3s3
+       or4s1
+       or4s2
+       or4s3
+       or5s1
+       or5s2
+       or5s3
+       ppt1s1
+       ppt1s2
+       ppt1s3
+       ppt1s4
+       ppt1s5
+       ppt1s6
+       ppu1s1
+       ppu1s2
+       rpc1s1
+       rpc1s2
+       sdffacs1
+       sdffacs2
+       sdffascs1
+       sdffascs2
+       sdffass1
+       sdffass2
+       sdffcs1
+       sdffcs2
+       sdffles1
+       sdffles2
+       sdffs1
+       sdffs2
+       sdffscs1
+       sdffscs2
+       sdffss1
+       sdffss2
+       sub1s1
+       sub1s2
+       sub1s3
+       tibh1s1
+       tibh1s2
+       tibh1s3
+       tibh1s4
+       tibh1s5
+       tibl1s1
+       tibl1s2
+       tibl1s3
+       tibl1s4
+       tibl1s5
+       tnbh1s1
+       tnbh1s2
+       tnbh1s3
+       tnbh1s4
+       tnbh1s5
+       tnbl1s1
+       xnr2s2
+       xnr2s3
+       xnr3s1
+       xnr3s2
+       xnr3s3
+       xor2s3
+       xor3s2
+       xor3s3
+       and4s3
+       aoai122s1
+       aoai122s3
+       clc2s1
+       clc2s2
+       clc2s3
+       di2s10
+       di2s11
+       di2s12
+       di2s7
+       di2s8
+       di2s9
+       faddpgs1
+       faddpgs2
+       faddpgs3
+       hadd1s3
+       i1s10
+       i1s11
+       i1s12
+       i1s8
+       i1s9
+       ib1s10
+       ib1s11
+       ib1s12
+       ib1s6
+       ib1s7
+       ib1s8
+       ib1s9
+       nb1s10
+       nb1s11
+       nb1s12
+       nb1s7
+       nb1s8
+       nb1s9
+       nnd7s3
+       nnd8s3
+       nor7s3
+       oai13s1
+       oai13s3
+       oai22s3
+       oai321s1
+       oai321s2
+       oai321s3
+       oai33s1
+       tibh1s6
+       tibl1s6
+       tnbh1s6
+       tnbl1s2
+       tnbl1s3
+       tnbl1s4
+       tnbl1s5
+       tnbl1s6
+TimeScale is 1 ns / 100 ps
+
+Warning-[TFIPC] Too few instance port connections
+synth/ROB.vg, 5303
+"dffs2 \rob_entries_reg[31][completed] ( .DIN (N22592),  .CLK (clock),  .Q (\rob_entries_display[31][completed] ));"
+  The above instance has fewer port connections than the module definition.
+  Please use '+lint=TFIPC-L' to print out detailed information of unconnected 
+  ports.
+
+
+Warning-[TFIPC] Too few instance port connections
+synth/ROB.vg, 5409
+"dffs2 \rob_entries_reg[23][completed] ( .DIN (N22168),  .CLK (clock),  .Q (\rob_entries_display[23][completed] ));"
+  The above instance has fewer port connections than the module definition.
+  Please use '+lint=TFIPC-L' to print out detailed information of unconnected 
+  ports.
+
+
+Warning-[TFIPC] Too few instance port connections
+synth/ROB.vg, 5515
+"dffs2 \rob_entries_reg[15][completed] ( .DIN (N21744),  .CLK (clock),  .Q (\rob_entries_display[15][completed] ));"
+  The above instance has fewer port connections than the module definition.
+  Please use '+lint=TFIPC-L' to print out detailed information of unconnected 
+  ports.
+
+
+Warning-[TFIPC] Too few instance port connections
+synth/ROB.vg, 5621
+"dffs2 \rob_entries_reg[7][completed] ( .DIN (N21320),  .CLK (clock),  .Q (\rob_entries_display[7][completed] ));"
+  The above instance has fewer port connections than the module definition.
+  Please use '+lint=TFIPC-L' to print out detailed information of unconnected 
+  ports.
+
+
+Warning-[TFIPC] Too few instance port connections
+synth/ROB.vg, 5727
+"dffs2 \rob_entries_reg[29][completed] ( .DIN (N22486),  .CLK (clock),  .Q (\rob_entries_display[29][completed] ));"
+  The above instance has fewer port connections than the module definition.
+  Please use '+lint=TFIPC-L' to print out detailed information of unconnected 
+  ports.
+
+
+Warning-[TFIPC] Too few instance port connections
+synth/ROB.vg, 5833
+"dffs2 \rob_entries_reg[21][completed] ( .DIN (N22062),  .CLK (clock),  .Q (\rob_entries_display[21][completed] ));"
+  The above instance has fewer port connections than the module definition.
+  Please use '+lint=TFIPC-L' to print out detailed information of unconnected 
+  ports.
+
+
+Warning-[TFIPC] Too few instance port connections
+synth/ROB.vg, 5939
+"dffs2 \rob_entries_reg[13][completed] ( .DIN (N21638),  .CLK (clock),  .Q (\rob_entries_display[13][completed] ));"
+  The above instance has fewer port connections than the module definition.
+  Please use '+lint=TFIPC-L' to print out detailed information of unconnected 
+  ports.
+
+
+Warning-[TFIPC] Too few instance port connections
+synth/ROB.vg, 6045
+"dffs2 \rob_entries_reg[5][completed] ( .DIN (N21214),  .CLK (clock),  .Q (\rob_entries_display[5][completed] ));"
+  The above instance has fewer port connections than the module definition.
+  Please use '+lint=TFIPC-L' to print out detailed information of unconnected 
+  ports.
+
+
+Warning-[TFIPC] Too few instance port connections
+synth/ROB.vg, 6151
+"dffs2 \rob_entries_reg[27][completed] ( .DIN (N22380),  .CLK (clock),  .Q (\rob_entries_display[27][completed] ));"
+  The above instance has fewer port connections than the module definition.
+  Please use '+lint=TFIPC-L' to print out detailed information of unconnected 
+  ports.
+
+
+Warning-[TFIPC] Too few instance port connections
+synth/ROB.vg, 6257
+"dffs2 \rob_entries_reg[19][completed] ( .DIN (N21956),  .CLK (clock),  .Q (\rob_entries_display[19][completed] ));"
+  The above instance has fewer port connections than the module definition.
+  Please use '+lint=TFIPC-L' to print out detailed information of unconnected 
+  ports.
+
+
+Warning-[TFIPC] Too few instance port connections
+synth/ROB.vg, 6363
+"dffs2 \rob_entries_reg[11][completed] ( .DIN (N21532),  .CLK (clock),  .Q (\rob_entries_display[11][completed] ));"
+  The above instance has fewer port connections than the module definition.
+  Please use '+lint=TFIPC-L' to print out detailed information of unconnected 
+  ports.
+
+
+Warning-[TFIPC] Too few instance port connections
+synth/ROB.vg, 6469
+"dffs2 \rob_entries_reg[3][completed] ( .DIN (N21108),  .CLK (clock),  .Q (\rob_entries_display[3][completed] ));"
+  The above instance has fewer port connections than the module definition.
+  Please use '+lint=TFIPC-L' to print out detailed information of unconnected 
+  ports.
+
+
+Warning-[TFIPC] Too few instance port connections
+synth/ROB.vg, 6575
+"dffs2 \rob_entries_reg[25][completed] ( .DIN (N22274),  .CLK (clock),  .Q (\rob_entries_display[25][completed] ));"
+  The above instance has fewer port connections than the module definition.
+  Please use '+lint=TFIPC-L' to print out detailed information of unconnected 
+  ports.
+
+
+Warning-[TFIPC] Too few instance port connections
+synth/ROB.vg, 6681
+"dffs2 \rob_entries_reg[17][completed] ( .DIN (N21850),  .CLK (clock),  .Q (\rob_entries_display[17][completed] ));"
+  The above instance has fewer port connections than the module definition.
+  Please use '+lint=TFIPC-L' to print out detailed information of unconnected 
+  ports.
+
+
+Warning-[TFIPC] Too few instance port connections
+synth/ROB.vg, 6787
+"dffs2 \rob_entries_reg[9][completed] ( .DIN (N21426),  .CLK (clock),  .Q (\rob_entries_display[9][completed] ));"
+  The above instance has fewer port connections than the module definition.
+  Please use '+lint=TFIPC-L' to print out detailed information of unconnected 
+  ports.
+
+
+Warning-[TFIPC] Too few instance port connections
+synth/ROB.vg, 6893
+"dffs2 \rob_entries_reg[1][completed] ( .DIN (N21002),  .CLK (clock),  .Q (\rob_entries_display[1][completed] ));"
+  The above instance has fewer port connections than the module definition.
+  Please use '+lint=TFIPC-L' to print out detailed information of unconnected 
+  ports.
+
+
+Warning-[TFIPC] Too few instance port connections
+synth/ROB.vg, 6999
+"dffs2 \rob_entries_reg[30][completed] ( .DIN (N22539),  .CLK (clock),  .Q (\rob_entries_display[30][completed] ));"
+  The above instance has fewer port connections than the module definition.
+  Please use '+lint=TFIPC-L' to print out detailed information of unconnected 
+  ports.
+
+
+Warning-[TFIPC] Too few instance port connections
+synth/ROB.vg, 7105
+"dffs2 \rob_entries_reg[22][completed] ( .DIN (N22115),  .CLK (clock),  .Q (\rob_entries_display[22][completed] ));"
+  The above instance has fewer port connections than the module definition.
+  Please use '+lint=TFIPC-L' to print out detailed information of unconnected 
+  ports.
+
+
+Warning-[TFIPC] Too few instance port connections
+synth/ROB.vg, 7211
+"dffs2 \rob_entries_reg[14][completed] ( .DIN (N21691),  .CLK (clock),  .Q (\rob_entries_display[14][completed] ));"
+  The above instance has fewer port connections than the module definition.
+  Please use '+lint=TFIPC-L' to print out detailed information of unconnected 
+  ports.
+
+
+Warning-[TFIPC] Too few instance port connections
+synth/ROB.vg, 7317
+"dffs2 \rob_entries_reg[6][completed] ( .DIN (N21267),  .CLK (clock),  .Q (\rob_entries_display[6][completed] ));"
+  The above instance has fewer port connections than the module definition.
+  Please use '+lint=TFIPC-L' to print out detailed information of unconnected 
+  ports.
+
+
+Warning-[TFIPC] Too few instance port connections
+synth/ROB.vg, 7423
+"dffs2 \rob_entries_reg[28][completed] ( .DIN (N22433),  .CLK (clock),  .Q (\rob_entries_display[28][completed] ));"
+  The above instance has fewer port connections than the module definition.
+  Please use '+lint=TFIPC-L' to print out detailed information of unconnected 
+  ports.
+
+
+Warning-[TFIPC] Too few instance port connections
+synth/ROB.vg, 7529
+"dffs2 \rob_entries_reg[20][completed] ( .DIN (N22009),  .CLK (clock),  .Q (\rob_entries_display[20][completed] ));"
+  The above instance has fewer port connections than the module definition.
+  Please use '+lint=TFIPC-L' to print out detailed information of unconnected 
+  ports.
+
+
+Warning-[TFIPC] Too few instance port connections
+synth/ROB.vg, 7635
+"dffs2 \rob_entries_reg[12][completed] ( .DIN (N21585),  .CLK (clock),  .Q (\rob_entries_display[12][completed] ));"
+  The above instance has fewer port connections than the module definition.
+  Please use '+lint=TFIPC-L' to print out detailed information of unconnected 
+  ports.
+
+
+Warning-[TFIPC] Too few instance port connections
+synth/ROB.vg, 7741
+"dffs2 \rob_entries_reg[4][completed] ( .DIN (N21161),  .CLK (clock),  .Q (\rob_entries_display[4][completed] ));"
+  The above instance has fewer port connections than the module definition.
+  Please use '+lint=TFIPC-L' to print out detailed information of unconnected 
+  ports.
+
+
+Warning-[TFIPC] Too few instance port connections
+synth/ROB.vg, 7847
+"dffs2 \rob_entries_reg[26][completed] ( .DIN (N22327),  .CLK (clock),  .Q (\rob_entries_display[26][completed] ));"
+  The above instance has fewer port connections than the module definition.
+  Please use '+lint=TFIPC-L' to print out detailed information of unconnected 
+  ports.
+
+
+Warning-[TFIPC] Too few instance port connections
+synth/ROB.vg, 7953
+"dffs2 \rob_entries_reg[18][completed] ( .DIN (N21903),  .CLK (clock),  .Q (\rob_entries_display[18][completed] ));"
+  The above instance has fewer port connections than the module definition.
+  Please use '+lint=TFIPC-L' to print out detailed information of unconnected 
+  ports.
+
+
+Warning-[TFIPC] Too few instance port connections
+synth/ROB.vg, 8059
+"dffs2 \rob_entries_reg[10][completed] ( .DIN (N21479),  .CLK (clock),  .Q (\rob_entries_display[10][completed] ));"
+  The above instance has fewer port connections than the module definition.
+  Please use '+lint=TFIPC-L' to print out detailed information of unconnected 
+  ports.
+
+
+Warning-[TFIPC] Too few instance port connections
+synth/ROB.vg, 8165
+"dffs2 \rob_entries_reg[2][completed] ( .DIN (N21055),  .CLK (clock),  .Q (\rob_entries_display[2][completed] ));"
+  The above instance has fewer port connections than the module definition.
+  Please use '+lint=TFIPC-L' to print out detailed information of unconnected 
+  ports.
+
+
+Warning-[TFIPC] Too few instance port connections
+synth/ROB.vg, 8271
+"dffs2 \rob_entries_reg[24][completed] ( .DIN (N22221),  .CLK (clock),  .Q (\rob_entries_display[24][completed] ));"
+  The above instance has fewer port connections than the module definition.
+  Please use '+lint=TFIPC-L' to print out detailed information of unconnected 
+  ports.
+
+
+Warning-[TFIPC] Too few instance port connections
+synth/ROB.vg, 8377
+"dffs2 \rob_entries_reg[16][completed] ( .DIN (N21797),  .CLK (clock),  .Q (\rob_entries_display[16][completed] ));"
+  The above instance has fewer port connections than the module definition.
+  Please use '+lint=TFIPC-L' to print out detailed information of unconnected 
+  ports.
+
+
+Warning-[TFIPC] Too few instance port connections
+synth/ROB.vg, 8483
+"dffs2 \rob_entries_reg[8][completed] ( .DIN (N21373),  .CLK (clock),  .Q (\rob_entries_display[8][completed] ));"
+  The above instance has fewer port connections than the module definition.
+  Please use '+lint=TFIPC-L' to print out detailed information of unconnected 
+  ports.
+
+
+Warning-[TFIPC] Too few instance port connections
+synth/ROB.vg, 8589
+"dffs2 \rob_entries_reg[0][completed] ( .DIN (N20949),  .CLK (clock),  .Q (\rob_entries_display[0][completed] ));"
+  The above instance has fewer port connections than the module definition.
+  Please use '+lint=TFIPC-L' to print out detailed information of unconnected 
+  ports.
+
+
+Warning-[TFIPC] Too few instance port connections
+synth/ROB.vg, 11364
+"dffss1 empty_reg( .DIN (n8644),  .SETB (n14072),  .CLK (clock),  .Q (empty));"
+  The above instance has fewer port connections than the module definition.
+  Please use '+lint=TFIPC-L' to print out detailed information of unconnected 
+  ports.
+
+
+Warning-[TFIPC] Too few instance port connections
+synth/ROB.vg, 11365
+"dffcs1 \tail_reg[1] ( .CLRB (n14676),  .DIN (n14072),  .CLK (clock),  .QN (n14352));"
+  The above instance has fewer port connections than the module definition.
+  Please use '+lint=TFIPC-L' to print out detailed information of unconnected 
+  ports.
+
+
+Warning-[TFIPC] Too few instance port connections
+synth/ROB.vg, 11369
+"dffcs1 \tail_reg[3] ( .CLRB (n14674),  .DIN (n14072),  .CLK (clock),  .QN (n8898));"
+  The above instance has fewer port connections than the module definition.
+  Please use '+lint=TFIPC-L' to print out detailed information of unconnected 
+  ports.
+
+
+Warning-[TFIPC] Too few instance port connections
+synth/ROB.vg, 11371
+"dffcs1 \tail_reg[2] ( .CLRB (n14675),  .DIN (n14072),  .CLK (clock),  .QN (n8897));"
+  The above instance has fewer port connections than the module definition.
+  Please use '+lint=TFIPC-L' to print out detailed information of unconnected 
+  ports.
+
+
+Warning-[TFIPC] Too few instance port connections
+synth/ROB.vg, 11373
+"dffcs1 \tail_reg[4] ( .CLRB (n14673),  .DIN (n14072),  .CLK (clock),  .QN (n8899));"
+  The above instance has fewer port connections than the module definition.
+  Please use '+lint=TFIPC-L' to print out detailed information of unconnected 
+  ports.
+
+
+Warning-[TFIPC] Too few instance port connections
+synth/ROB.vg, 11377
+"dffcs2 \head_reg[2] ( .CLRB (head_next[2]),  .DIN (n2504),  .CLK (clock),  .QN (n10326));"
+  The above instance has fewer port connections than the module definition.
+  Please use '+lint=TFIPC-L' to print out detailed information of unconnected 
+  ports.
+
+
+Warning-[TFIPC] Too few instance port connections
+synth/ROB.vg, 11381
+"dffcs2 \tail_reg[0] ( .CLRB (n14677),  .DIN (n14072),  .CLK (clock),  .QN (n14350));"
+  The above instance has fewer port connections than the module definition.
+  Please use '+lint=TFIPC-L' to print out detailed information of unconnected 
+  ports.
+
+Starting vcs inline pass...
+328 modules and 8 UDPs read.
+recompiling module testbench
+recompiling module and2s1
+recompiling module and2s2
+recompiling module and3s1
+recompiling module and4s1
+recompiling module aoi13s2
+recompiling module aoi211s1
+recompiling module aoi21s2
+recompiling module aoi221s1
+recompiling module aoi222s1
+recompiling module aoi22s1
+recompiling module aoi22s2
+recompiling module dffcs2
+recompiling module dffs2
+recompiling module dffscs1
+recompiling module dffscs2
+recompiling module hi1s1
+recompiling module i1s3
+recompiling module ib1s1
+recompiling module nb1s2
+recompiling module nnd2s1
+recompiling module nnd2s2
+recompiling module nnd2s3
+recompiling module nnd3s2
+recompiling module nor2s1
+recompiling module oai211s2
+recompiling module oai21s1
+recompiling module oai21s2
+recompiling module oai21s3
+recompiling module oai222s1
+recompiling module oai22s1
+recompiling module oai22s2
+recompiling module or2s1
+recompiling module xnr2s1
+recompiling module xor2s1
+recompiling module xor2s2
+recompiling module and4s3
+recompiling module aoai122s1
+recompiling module aoai122s2
+recompiling module hadd1s1
+recompiling module hadd1s2
+recompiling module oai13s2
+42 of 328 modules done
+	However, due to incremental compilation, only 42 modules need to be compiled. 
+  /usr/caen/vcs-2017.12-SP2-1/linux64/bin/vcselab -o rob_syn_simv -nobanner 
+make[1]: Entering directory `/afs/umich.edu/user/b/r/brucewei/EECS470/Projects/Project4/group15w21/csrc'
+make[1]: Leaving directory `/afs/umich.edu/user/b/r/brucewei/EECS470/Projects/Project4/group15w21/csrc'
+( cd csrc ; make -f Makefile SNPS_VCS_TMPDIR=/tmp/vcs_20210328041517_9031 product )
+make[1]: Entering directory `/afs/umich.edu/user/b/r/brucewei/EECS470/Projects/Project4/group15w21/csrc'
+rm -f _csrc*.so pre_vcsobj_*.so share_vcsobj_*.so
+if [ -x ../rob_syn_simv ]; then chmod -x ../rob_syn_simv; fi
+g++  -o ../rob_syn_simv    -Wl,-rpath-link=./ -Wl,-rpath='$ORIGIN'/rob_syn_simv.daidir/ -Wl,-rpath=./rob_syn_simv.daidir/ -Wl,-rpath='$ORIGIN'/rob_syn_simv.daidir//scsim.db.dir  -rdynamic  -Wl,-rpath=/usr/caen/vcs-2017.12-SP2-1/linux64/lib -L/usr/caen/vcs-2017.12-SP2-1/linux64/lib -lcmsg   objs/amcQw_d.o   _9516_archive_1.so _prev_archive_1.so objs/udps/guAtk.o objs/udps/hUcmi.o objs/udps/PjGxs.o objs/udps/F8ezs.o objs/udps/MzHq6.o objs/udps/aKVa7.o objs/udps/GLrQJ.o objs/udps/dKp3B.o  SIM_l.o       rmapats_mop.o rmapats.o rmar.o rmar_nd.o  rmar_llvm_0_1.o rmar_llvm_0_0.o          -lzerosoft_rt_stubs -lvirsim -lerrorinf -lsnpsmalloc -lvfs    -lvcsnew -lsimprofile -luclinative /usr/caen/vcs-2017.12-SP2-1/linux64/lib/vcs_tls.o   -Wl,-whole-archive -lvcsucli -Wl,-no-whole-archive          /usr/caen/vcs-2017.12-SP2-1/linux64/lib/vcs_save_restore_new.o -ldl  -lc -lm -lpthread -ldl 
+../rob_syn_simv up to date
+make[1]: Leaving directory `/afs/umich.edu/user/b/r/brucewei/EECS470/Projects/Project4/group15w21/csrc'
+CPU time: 4.770 seconds to compile + 1.652 seconds to elab + 1.070 seconds to link
+./rob_syn_simv | tee rob_syn_program.out
+Chronologic VCS simulator copyright 1991-2017
+Contains Synopsys proprietary information.
+Compiler version N-2017.12-SP2-1_Full64; Runtime version N-2017.12-SP2-1_Full64;  Mar 28 00:15 2021
+VCD+ Writer N-2017.12-SP2-1_Full64 Copyright (c) 1991-2017 by Synopsys Inc.
+####### Cycle          0 ##########
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+head: 0 tail: 0
+structual_stall:000
+=====   ROB_IN Packet   =====
+| WAY | valid |  Tnew | Told | arch_reg | completed | precise_state | target_pc |
+|  0  |     0 |    0  |    0 |      0   |     0     |       0       |      0    |
+|  1  |     0 |    0  |    0 |      0   |     0     |       0       |      0    |
+|  2  |     0 |    0  |    0 |      0   |     0     |       0       |      0    |
+=====   ROB_Complete Packet   =====
+| WAY | valid |  ROB_entry | precise_state | target_pc |
+|  0  |     0 |      0     |       0       |      0    |
+|  1  |     0 |      0     |       0       |      0    |
+|  2  |     0 |      0     |       0       |      0    |
+=====   ROB_Retire Packet   =====
+| WAY | valid |  Tnew | Told | arch_reg | completed | precise_state | target_pc |
+|  0  |     0 |    0  |    0 |      0   |     0     |       0       |    0      |
+|  1  |     0 |    0  |    0 |      0   |     0     |       0       |    0      |
+|  2  |     0 |    0  |    0 |      0   |     0     |       0       |    0      |
+####### Cycle          1 ##########
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+head: 0 tail: 0
+structual_stall:000
+=====   ROB_IN Packet   =====
+| WAY | valid |  Tnew | Told | arch_reg | completed | precise_state | target_pc |
+|  0  |     1 |   34  |    3 |      3   |     0     |       0       |      0    |
+|  1  |     1 |   33  |    2 |      2   |     0     |       0       |      0    |
+|  2  |     1 |   32  |    1 |      1   |     0     |       0       |      0    |
+=====   ROB_Complete Packet   =====
+| WAY | valid |  ROB_entry | precise_state | target_pc |
+|  0  |     0 |      0     |       0       |      0    |
+|  1  |     0 |      0     |       0       |      0    |
+|  2  |     0 |      0     |       0       |      0    |
+=====   ROB_Retire Packet   =====
+| WAY | valid |  Tnew | Told | arch_reg | completed | precise_state | target_pc |
+|  0  |     0 |    0  |    0 |      0   |     0     |       0       |    0      |
+|  1  |     0 |    0  |    0 |      0   |     0     |       0       |    0      |
+|  2  |     0 |    0  |    0 |      0   |     0     |       0       |    0      |
+####### Cycle          2 ##########
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 34  Told:  3  arch_reg:  3  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 33  Told:  2  arch_reg:  2  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 32  Told:  1  arch_reg:  1  completed: 0  precise_state: 0  target_pc:   0
+head: 0 tail: 2
+structual_stall:000
+=====   ROB_IN Packet   =====
+| WAY | valid |  Tnew | Told | arch_reg | completed | precise_state | target_pc |
+|  0  |     1 |   37  |    6 |      6   |     0     |       0       |      0    |
+|  1  |     1 |   36  |    5 |      5   |     0     |       0       |      0    |
+|  2  |     1 |   35  |    4 |      4   |     0     |       0       |      0    |
+=====   ROB_Complete Packet   =====
+| WAY | valid |  ROB_entry | precise_state | target_pc |
+|  0  |     0 |      0     |       0       |      0    |
+|  1  |     0 |      0     |       0       |      0    |
+|  2  |     0 |      0     |       0       |      0    |
+=====   ROB_Retire Packet   =====
+| WAY | valid |  Tnew | Told | arch_reg | completed | precise_state | target_pc |
+|  0  |     0 |    0  |    0 |      0   |     0     |       0       |    0      |
+|  1  |     0 |    0  |    0 |      0   |     0     |       0       |    0      |
+|  2  |     0 |    0  |    0 |      0   |     0     |       0       |    0      |
+####### Cycle          3 ##########
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 37  Told:  6  arch_reg:  6  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 36  Told:  5  arch_reg:  5  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 35  Told:  4  arch_reg:  4  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 34  Told:  3  arch_reg:  3  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 33  Told:  2  arch_reg:  2  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 32  Told:  1  arch_reg:  1  completed: 0  precise_state: 0  target_pc:   0
+head: 0 tail: 5
+structual_stall:000
+=====   ROB_IN Packet   =====
+| WAY | valid |  Tnew | Told | arch_reg | completed | precise_state | target_pc |
+|  0  |     1 |   40  |    9 |      9   |     0     |       0       |      0    |
+|  1  |     1 |   39  |    8 |      8   |     0     |       0       |      0    |
+|  2  |     1 |   38  |    7 |      7   |     0     |       0       |      0    |
+=====   ROB_Complete Packet   =====
+| WAY | valid |  ROB_entry | precise_state | target_pc |
+|  0  |     0 |      0     |       0       |      0    |
+|  1  |     0 |      0     |       0       |      0    |
+|  2  |     0 |      0     |       0       |      0    |
+=====   ROB_Retire Packet   =====
+| WAY | valid |  Tnew | Told | arch_reg | completed | precise_state | target_pc |
+|  0  |     0 |    0  |    0 |      0   |     0     |       0       |    0      |
+|  1  |     0 |    0  |    0 |      0   |     0     |       0       |    0      |
+|  2  |     0 |    0  |    0 |      0   |     0     |       0       |    0      |
+####### Cycle          4 ##########
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 40  Told:  9  arch_reg:  9  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 39  Told:  8  arch_reg:  8  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 38  Told:  7  arch_reg:  7  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 37  Told:  6  arch_reg:  6  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 36  Told:  5  arch_reg:  5  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 35  Told:  4  arch_reg:  4  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 34  Told:  3  arch_reg:  3  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 33  Told:  2  arch_reg:  2  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 32  Told:  1  arch_reg:  1  completed: 0  precise_state: 0  target_pc:   0
+head: 0 tail: 8
+structual_stall:000
+=====   ROB_IN Packet   =====
+| WAY | valid |  Tnew | Told | arch_reg | completed | precise_state | target_pc |
+|  0  |     1 |   43  |   12 |     12   |     0     |       0       |      0    |
+|  1  |     1 |   42  |   11 |     11   |     0     |       0       |      0    |
+|  2  |     1 |   41  |   10 |     10   |     0     |       0       |      0    |
+=====   ROB_Complete Packet   =====
+| WAY | valid |  ROB_entry | precise_state | target_pc |
+|  0  |     0 |      0     |       0       |      0    |
+|  1  |     0 |      0     |       0       |      0    |
+|  2  |     0 |      0     |       0       |      0    |
+=====   ROB_Retire Packet   =====
+| WAY | valid |  Tnew | Told | arch_reg | completed | precise_state | target_pc |
+|  0  |     0 |    0  |    0 |      0   |     0     |       0       |    0      |
+|  1  |     0 |    0  |    0 |      0   |     0     |       0       |    0      |
+|  2  |     0 |    0  |    0 |      0   |     0     |       0       |    0      |
+####### Cycle          5 ##########
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 43  Told: 12  arch_reg: 12  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 42  Told: 11  arch_reg: 11  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 41  Told: 10  arch_reg: 10  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 40  Told:  9  arch_reg:  9  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 39  Told:  8  arch_reg:  8  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 38  Told:  7  arch_reg:  7  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 37  Told:  6  arch_reg:  6  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 36  Told:  5  arch_reg:  5  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 35  Told:  4  arch_reg:  4  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 34  Told:  3  arch_reg:  3  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 33  Told:  2  arch_reg:  2  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 32  Told:  1  arch_reg:  1  completed: 0  precise_state: 0  target_pc:   0
+head: 0 tail:11
+structual_stall:000
+=====   ROB_IN Packet   =====
+| WAY | valid |  Tnew | Told | arch_reg | completed | precise_state | target_pc |
+|  0  |     1 |   46  |   15 |     15   |     0     |       0       |      0    |
+|  1  |     1 |   45  |   14 |     14   |     0     |       0       |      0    |
+|  2  |     1 |   44  |   13 |     13   |     0     |       0       |      0    |
+=====   ROB_Complete Packet   =====
+| WAY | valid |  ROB_entry | precise_state | target_pc |
+|  0  |     0 |      0     |       0       |      0    |
+|  1  |     0 |      0     |       0       |      0    |
+|  2  |     0 |      0     |       0       |      0    |
+=====   ROB_Retire Packet   =====
+| WAY | valid |  Tnew | Told | arch_reg | completed | precise_state | target_pc |
+|  0  |     0 |    0  |    0 |      0   |     0     |       0       |    0      |
+|  1  |     0 |    0  |    0 |      0   |     0     |       0       |    0      |
+|  2  |     0 |    0  |    0 |      0   |     0     |       0       |    0      |
+####### Cycle          6 ##########
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 46  Told: 15  arch_reg: 15  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 45  Told: 14  arch_reg: 14  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 44  Told: 13  arch_reg: 13  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 43  Told: 12  arch_reg: 12  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 42  Told: 11  arch_reg: 11  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 41  Told: 10  arch_reg: 10  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 40  Told:  9  arch_reg:  9  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 39  Told:  8  arch_reg:  8  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 38  Told:  7  arch_reg:  7  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 37  Told:  6  arch_reg:  6  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 36  Told:  5  arch_reg:  5  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 35  Told:  4  arch_reg:  4  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 34  Told:  3  arch_reg:  3  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 33  Told:  2  arch_reg:  2  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 32  Told:  1  arch_reg:  1  completed: 0  precise_state: 0  target_pc:   0
+head: 0 tail:14
+structual_stall:000
+=====   ROB_IN Packet   =====
+| WAY | valid |  Tnew | Told | arch_reg | completed | precise_state | target_pc |
+|  0  |     1 |   49  |   18 |     18   |     0     |       0       |      0    |
+|  1  |     1 |   48  |   17 |     17   |     0     |       0       |      0    |
+|  2  |     1 |   47  |   16 |     16   |     0     |       0       |      0    |
+=====   ROB_Complete Packet   =====
+| WAY | valid |  ROB_entry | precise_state | target_pc |
+|  0  |     0 |      0     |       0       |      0    |
+|  1  |     0 |      0     |       0       |      0    |
+|  2  |     0 |      0     |       0       |      0    |
+=====   ROB_Retire Packet   =====
+| WAY | valid |  Tnew | Told | arch_reg | completed | precise_state | target_pc |
+|  0  |     0 |    0  |    0 |      0   |     0     |       0       |    0      |
+|  1  |     0 |    0  |    0 |      0   |     0     |       0       |    0      |
+|  2  |     0 |    0  |    0 |      0   |     0     |       0       |    0      |
+####### Cycle          7 ##########
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 49  Told: 18  arch_reg: 18  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 48  Told: 17  arch_reg: 17  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 47  Told: 16  arch_reg: 16  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 46  Told: 15  arch_reg: 15  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 45  Told: 14  arch_reg: 14  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 44  Told: 13  arch_reg: 13  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 43  Told: 12  arch_reg: 12  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 42  Told: 11  arch_reg: 11  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 41  Told: 10  arch_reg: 10  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 40  Told:  9  arch_reg:  9  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 39  Told:  8  arch_reg:  8  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 38  Told:  7  arch_reg:  7  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 37  Told:  6  arch_reg:  6  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 36  Told:  5  arch_reg:  5  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 35  Told:  4  arch_reg:  4  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 34  Told:  3  arch_reg:  3  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 33  Told:  2  arch_reg:  2  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 32  Told:  1  arch_reg:  1  completed: 0  precise_state: 0  target_pc:   0
+head: 0 tail:17
+structual_stall:000
+=====   ROB_IN Packet   =====
+| WAY | valid |  Tnew | Told | arch_reg | completed | precise_state | target_pc |
+|  0  |     1 |   52  |   21 |     21   |     0     |       0       |      0    |
+|  1  |     1 |   51  |   20 |     20   |     0     |       0       |      0    |
+|  2  |     1 |   50  |   19 |     19   |     0     |       0       |      0    |
+=====   ROB_Complete Packet   =====
+| WAY | valid |  ROB_entry | precise_state | target_pc |
+|  0  |     0 |      0     |       0       |      0    |
+|  1  |     0 |      0     |       0       |      0    |
+|  2  |     0 |      0     |       0       |      0    |
+=====   ROB_Retire Packet   =====
+| WAY | valid |  Tnew | Told | arch_reg | completed | precise_state | target_pc |
+|  0  |     0 |    0  |    0 |      0   |     0     |       0       |    0      |
+|  1  |     0 |    0  |    0 |      0   |     0     |       0       |    0      |
+|  2  |     0 |    0  |    0 |      0   |     0     |       0       |    0      |
+####### Cycle          8 ##########
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 52  Told: 21  arch_reg: 21  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 51  Told: 20  arch_reg: 20  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 50  Told: 19  arch_reg: 19  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 49  Told: 18  arch_reg: 18  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 48  Told: 17  arch_reg: 17  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 47  Told: 16  arch_reg: 16  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 46  Told: 15  arch_reg: 15  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 45  Told: 14  arch_reg: 14  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 44  Told: 13  arch_reg: 13  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 43  Told: 12  arch_reg: 12  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 42  Told: 11  arch_reg: 11  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 41  Told: 10  arch_reg: 10  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 40  Told:  9  arch_reg:  9  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 39  Told:  8  arch_reg:  8  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 38  Told:  7  arch_reg:  7  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 37  Told:  6  arch_reg:  6  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 36  Told:  5  arch_reg:  5  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 35  Told:  4  arch_reg:  4  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 34  Told:  3  arch_reg:  3  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 33  Told:  2  arch_reg:  2  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 32  Told:  1  arch_reg:  1  completed: 0  precise_state: 0  target_pc:   0
+head: 0 tail:20
+structual_stall:000
+=====   ROB_IN Packet   =====
+| WAY | valid |  Tnew | Told | arch_reg | completed | precise_state | target_pc |
+|  0  |     1 |   55  |   24 |     24   |     0     |       0       |      0    |
+|  1  |     1 |   54  |   23 |     23   |     0     |       0       |      0    |
+|  2  |     1 |   53  |   22 |     22   |     0     |       0       |      0    |
+=====   ROB_Complete Packet   =====
+| WAY | valid |  ROB_entry | precise_state | target_pc |
+|  0  |     0 |      0     |       0       |      0    |
+|  1  |     0 |      0     |       0       |      0    |
+|  2  |     0 |      0     |       0       |      0    |
+=====   ROB_Retire Packet   =====
+| WAY | valid |  Tnew | Told | arch_reg | completed | precise_state | target_pc |
+|  0  |     0 |    0  |    0 |      0   |     0     |       0       |    0      |
+|  1  |     0 |    0  |    0 |      0   |     0     |       0       |    0      |
+|  2  |     0 |    0  |    0 |      0   |     0     |       0       |    0      |
+####### Cycle          9 ##########
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 55  Told: 24  arch_reg: 24  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 54  Told: 23  arch_reg: 23  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 53  Told: 22  arch_reg: 22  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 52  Told: 21  arch_reg: 21  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 51  Told: 20  arch_reg: 20  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 50  Told: 19  arch_reg: 19  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 49  Told: 18  arch_reg: 18  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 48  Told: 17  arch_reg: 17  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 47  Told: 16  arch_reg: 16  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 46  Told: 15  arch_reg: 15  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 45  Told: 14  arch_reg: 14  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 44  Told: 13  arch_reg: 13  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 43  Told: 12  arch_reg: 12  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 42  Told: 11  arch_reg: 11  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 41  Told: 10  arch_reg: 10  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 40  Told:  9  arch_reg:  9  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 39  Told:  8  arch_reg:  8  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 38  Told:  7  arch_reg:  7  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 37  Told:  6  arch_reg:  6  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 36  Told:  5  arch_reg:  5  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 35  Told:  4  arch_reg:  4  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 34  Told:  3  arch_reg:  3  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 33  Told:  2  arch_reg:  2  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 32  Told:  1  arch_reg:  1  completed: 0  precise_state: 0  target_pc:   0
+head: 0 tail:23
+structual_stall:000
+=====   ROB_IN Packet   =====
+| WAY | valid |  Tnew | Told | arch_reg | completed | precise_state | target_pc |
+|  0  |     1 |   58  |   27 |     27   |     0     |       0       |      0    |
+|  1  |     1 |   57  |   26 |     26   |     0     |       0       |      0    |
+|  2  |     1 |   56  |   25 |     25   |     0     |       0       |      0    |
+=====   ROB_Complete Packet   =====
+| WAY | valid |  ROB_entry | precise_state | target_pc |
+|  0  |     0 |      0     |       0       |      0    |
+|  1  |     0 |      0     |       0       |      0    |
+|  2  |     0 |      0     |       0       |      0    |
+=====   ROB_Retire Packet   =====
+| WAY | valid |  Tnew | Told | arch_reg | completed | precise_state | target_pc |
+|  0  |     0 |    0  |    0 |      0   |     0     |       0       |    0      |
+|  1  |     0 |    0  |    0 |      0   |     0     |       0       |    0      |
+|  2  |     0 |    0  |    0 |      0   |     0     |       0       |    0      |
+####### Cycle         10 ##########
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 58  Told: 27  arch_reg: 27  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 57  Told: 26  arch_reg: 26  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 56  Told: 25  arch_reg: 25  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 55  Told: 24  arch_reg: 24  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 54  Told: 23  arch_reg: 23  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 53  Told: 22  arch_reg: 22  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 52  Told: 21  arch_reg: 21  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 51  Told: 20  arch_reg: 20  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 50  Told: 19  arch_reg: 19  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 49  Told: 18  arch_reg: 18  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 48  Told: 17  arch_reg: 17  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 47  Told: 16  arch_reg: 16  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 46  Told: 15  arch_reg: 15  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 45  Told: 14  arch_reg: 14  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 44  Told: 13  arch_reg: 13  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 43  Told: 12  arch_reg: 12  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 42  Told: 11  arch_reg: 11  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 41  Told: 10  arch_reg: 10  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 40  Told:  9  arch_reg:  9  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 39  Told:  8  arch_reg:  8  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 38  Told:  7  arch_reg:  7  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 37  Told:  6  arch_reg:  6  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 36  Told:  5  arch_reg:  5  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 35  Told:  4  arch_reg:  4  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 34  Told:  3  arch_reg:  3  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 33  Told:  2  arch_reg:  2  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 32  Told:  1  arch_reg:  1  completed: 0  precise_state: 0  target_pc:   0
+head: 0 tail:26
+structual_stall:000
+=====   ROB_IN Packet   =====
+| WAY | valid |  Tnew | Told | arch_reg | completed | precise_state | target_pc |
+|  0  |     1 |   61  |   30 |     30   |     0     |       0       |      0    |
+|  1  |     1 |   60  |   29 |     29   |     0     |       0       |      0    |
+|  2  |     1 |   59  |   28 |     28   |     0     |       0       |      0    |
+=====   ROB_Complete Packet   =====
+| WAY | valid |  ROB_entry | precise_state | target_pc |
+|  0  |     0 |      0     |       0       |      0    |
+|  1  |     0 |      0     |       0       |      0    |
+|  2  |     0 |      0     |       0       |      0    |
+=====   ROB_Retire Packet   =====
+| WAY | valid |  Tnew | Told | arch_reg | completed | precise_state | target_pc |
+|  0  |     0 |    0  |    0 |      0   |     0     |       0       |    0      |
+|  1  |     0 |    0  |    0 |      0   |     0     |       0       |    0      |
+|  2  |     0 |    0  |    0 |      0   |     0     |       0       |    0      |
+####### Cycle         11 ##########
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 61  Told: 30  arch_reg: 30  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 60  Told: 29  arch_reg: 29  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 59  Told: 28  arch_reg: 28  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 58  Told: 27  arch_reg: 27  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 57  Told: 26  arch_reg: 26  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 56  Told: 25  arch_reg: 25  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 55  Told: 24  arch_reg: 24  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 54  Told: 23  arch_reg: 23  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 53  Told: 22  arch_reg: 22  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 52  Told: 21  arch_reg: 21  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 51  Told: 20  arch_reg: 20  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 50  Told: 19  arch_reg: 19  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 49  Told: 18  arch_reg: 18  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 48  Told: 17  arch_reg: 17  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 47  Told: 16  arch_reg: 16  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 46  Told: 15  arch_reg: 15  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 45  Told: 14  arch_reg: 14  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 44  Told: 13  arch_reg: 13  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 43  Told: 12  arch_reg: 12  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 42  Told: 11  arch_reg: 11  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 41  Told: 10  arch_reg: 10  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 40  Told:  9  arch_reg:  9  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 39  Told:  8  arch_reg:  8  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 38  Told:  7  arch_reg:  7  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 37  Told:  6  arch_reg:  6  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 36  Told:  5  arch_reg:  5  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 35  Told:  4  arch_reg:  4  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 34  Told:  3  arch_reg:  3  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 33  Told:  2  arch_reg:  2  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 32  Told:  1  arch_reg:  1  completed: 0  precise_state: 0  target_pc:   0
+head: 0 tail:29
+structual_stall:001
+=====   ROB_IN Packet   =====
+| WAY | valid |  Tnew | Told | arch_reg | completed | precise_state | target_pc |
+|  0  |     1 |    0  |   33 |      1   |     0     |       0       |      0    |
+|  1  |     1 |   63  |   32 |      0   |     0     |       0       |      0    |
+|  2  |     1 |   62  |   31 |     31   |     0     |       0       |      0    |
+=====   ROB_Complete Packet   =====
+| WAY | valid |  ROB_entry | precise_state | target_pc |
+|  0  |     0 |      0     |       0       |      0    |
+|  1  |     0 |      0     |       0       |      0    |
+|  2  |     0 |      0     |       0       |      0    |
+=====   ROB_Retire Packet   =====
+| WAY | valid |  Tnew | Told | arch_reg | completed | precise_state | target_pc |
+|  0  |     0 |    0  |    0 |      0   |     0     |       0       |    0      |
+|  1  |     0 |    0  |    0 |      0   |     0     |       0       |    0      |
+|  2  |     0 |    0  |    0 |      0   |     0     |       0       |    0      |
+####### Cycle         12 ##########
+valid: 1  Tnew: 63  Told: 32  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 62  Told: 31  arch_reg: 31  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 61  Told: 30  arch_reg: 30  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 60  Told: 29  arch_reg: 29  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 59  Told: 28  arch_reg: 28  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 58  Told: 27  arch_reg: 27  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 57  Told: 26  arch_reg: 26  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 56  Told: 25  arch_reg: 25  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 55  Told: 24  arch_reg: 24  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 54  Told: 23  arch_reg: 23  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 53  Told: 22  arch_reg: 22  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 52  Told: 21  arch_reg: 21  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 51  Told: 20  arch_reg: 20  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 50  Told: 19  arch_reg: 19  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 49  Told: 18  arch_reg: 18  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 48  Told: 17  arch_reg: 17  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 47  Told: 16  arch_reg: 16  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 46  Told: 15  arch_reg: 15  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 45  Told: 14  arch_reg: 14  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 44  Told: 13  arch_reg: 13  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 43  Told: 12  arch_reg: 12  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 42  Told: 11  arch_reg: 11  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 41  Told: 10  arch_reg: 10  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 40  Told:  9  arch_reg:  9  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 39  Told:  8  arch_reg:  8  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 38  Told:  7  arch_reg:  7  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 37  Told:  6  arch_reg:  6  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 36  Told:  5  arch_reg:  5  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 35  Told:  4  arch_reg:  4  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 34  Told:  3  arch_reg:  3  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 33  Told:  2  arch_reg:  2  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 32  Told:  1  arch_reg:  1  completed: 0  precise_state: 0  target_pc:   0
+head: 0 tail:31
+structual_stall:111
+=====   ROB_IN Packet   =====
+| WAY | valid |  Tnew | Told | arch_reg | completed | precise_state | target_pc |
+|  0  |     1 |    3  |   36 |      4   |     0     |       0       |      0    |
+|  1  |     1 |    2  |   35 |      3   |     0     |       0       |      0    |
+|  2  |     1 |    1  |   34 |      2   |     0     |       0       |      0    |
+=====   ROB_Complete Packet   =====
+| WAY | valid |  ROB_entry | precise_state | target_pc |
+|  0  |     0 |      0     |       0       |      0    |
+|  1  |     0 |      0     |       0       |      0    |
+|  2  |     0 |      0     |       0       |      0    |
+=====   ROB_Retire Packet   =====
+| WAY | valid |  Tnew | Told | arch_reg | completed | precise_state | target_pc |
+|  0  |     0 |    0  |    0 |      0   |     0     |       0       |    0      |
+|  1  |     0 |    0  |    0 |      0   |     0     |       0       |    0      |
+|  2  |     0 |    0  |    0 |      0   |     0     |       0       |    0      |
+####### Cycle         13 ##########
+valid: 1  Tnew: 63  Told: 32  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 62  Told: 31  arch_reg: 31  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 61  Told: 30  arch_reg: 30  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 60  Told: 29  arch_reg: 29  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 59  Told: 28  arch_reg: 28  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 58  Told: 27  arch_reg: 27  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 57  Told: 26  arch_reg: 26  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 56  Told: 25  arch_reg: 25  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 55  Told: 24  arch_reg: 24  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 54  Told: 23  arch_reg: 23  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 53  Told: 22  arch_reg: 22  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 52  Told: 21  arch_reg: 21  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 51  Told: 20  arch_reg: 20  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 50  Told: 19  arch_reg: 19  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 49  Told: 18  arch_reg: 18  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 48  Told: 17  arch_reg: 17  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 47  Told: 16  arch_reg: 16  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 46  Told: 15  arch_reg: 15  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 45  Told: 14  arch_reg: 14  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 44  Told: 13  arch_reg: 13  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 43  Told: 12  arch_reg: 12  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 42  Told: 11  arch_reg: 11  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 41  Told: 10  arch_reg: 10  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 40  Told:  9  arch_reg:  9  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 39  Told:  8  arch_reg:  8  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 38  Told:  7  arch_reg:  7  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 37  Told:  6  arch_reg:  6  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 36  Told:  5  arch_reg:  5  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 35  Told:  4  arch_reg:  4  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 34  Told:  3  arch_reg:  3  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 33  Told:  2  arch_reg:  2  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 32  Told:  1  arch_reg:  1  completed: 0  precise_state: 0  target_pc:   0
+head: 0 tail:31
+structual_stall:000
+=====   ROB_IN Packet   =====
+| WAY | valid |  Tnew | Told | arch_reg | completed | precise_state | target_pc |
+|  0  |     0 |   37  |    6 |      6   |     0     |       0       |      0    |
+|  1  |     0 |   36  |    5 |      5   |     0     |       0       |      0    |
+|  2  |     0 |   35  |    4 |      4   |     0     |       0       |      0    |
+=====   ROB_Complete Packet   =====
+| WAY | valid |  ROB_entry | precise_state | target_pc |
+|  0  |     1 |      2     |       0       |      0    |
+|  1  |     1 |      1     |       1       |     32    |
+|  2  |     1 |      0     |       0       |      0    |
+=====   ROB_Retire Packet   =====
+| WAY | valid |  Tnew | Told | arch_reg | completed | precise_state | target_pc |
+|  0  |     0 |    0  |    0 |      0   |     0     |       0       |    0      |
+|  1  |     0 |    0  |    0 |      0   |     0     |       0       |    0      |
+|  2  |     0 |    0  |    0 |      0   |     0     |       0       |    0      |
+####### Cycle         14 ##########
+valid: 1  Tnew: 63  Told: 32  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 62  Told: 31  arch_reg: 31  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 61  Told: 30  arch_reg: 30  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 60  Told: 29  arch_reg: 29  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 59  Told: 28  arch_reg: 28  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 58  Told: 27  arch_reg: 27  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 57  Told: 26  arch_reg: 26  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 56  Told: 25  arch_reg: 25  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 55  Told: 24  arch_reg: 24  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 54  Told: 23  arch_reg: 23  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 53  Told: 22  arch_reg: 22  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 52  Told: 21  arch_reg: 21  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 51  Told: 20  arch_reg: 20  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 50  Told: 19  arch_reg: 19  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 49  Told: 18  arch_reg: 18  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 48  Told: 17  arch_reg: 17  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 47  Told: 16  arch_reg: 16  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 46  Told: 15  arch_reg: 15  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 45  Told: 14  arch_reg: 14  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 44  Told: 13  arch_reg: 13  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 43  Told: 12  arch_reg: 12  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 42  Told: 11  arch_reg: 11  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 41  Told: 10  arch_reg: 10  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 40  Told:  9  arch_reg:  9  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 39  Told:  8  arch_reg:  8  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 38  Told:  7  arch_reg:  7  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 37  Told:  6  arch_reg:  6  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 36  Told:  5  arch_reg:  5  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 35  Told:  4  arch_reg:  4  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 34  Told:  3  arch_reg:  3  completed: 1  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 33  Told:  2  arch_reg:  2  completed: 1  precise_state: 1  target_pc:  32
+valid: 1  Tnew: 32  Told:  1  arch_reg:  1  completed: 1  precise_state: 0  target_pc:   0
+head: 0 tail:31
+structual_stall:000
+=====   ROB_IN Packet   =====
+| WAY | valid |  Tnew | Told | arch_reg | completed | precise_state | target_pc |
+|  0  |     0 |   37  |    6 |      6   |     0     |       0       |      0    |
+|  1  |     0 |   36  |    5 |      5   |     0     |       0       |      0    |
+|  2  |     0 |   35  |    4 |      4   |     0     |       0       |      0    |
+=====   ROB_Complete Packet   =====
+| WAY | valid |  ROB_entry | precise_state | target_pc |
+|  0  |     1 |      5     |       0       |      0    |
+|  1  |     1 |      4     |       1       |     32    |
+|  2  |     1 |      3     |       0       |      0    |
+=====   ROB_Retire Packet   =====
+| WAY | valid |  Tnew | Told | arch_reg | completed | precise_state | target_pc |
+|  0  |     1 |   34  |    3 |      3   |     1     |       0       |    0      |
+|  1  |     1 |   33  |    2 |      2   |     1     |       1       |   32      |
+|  2  |     1 |   32  |    1 |      1   |     1     |       0       |    0      |
+####### Cycle         15 ##########
+valid: 1  Tnew: 63  Told: 32  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 62  Told: 31  arch_reg: 31  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 61  Told: 30  arch_reg: 30  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 60  Told: 29  arch_reg: 29  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 59  Told: 28  arch_reg: 28  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 58  Told: 27  arch_reg: 27  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 57  Told: 26  arch_reg: 26  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 56  Told: 25  arch_reg: 25  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 55  Told: 24  arch_reg: 24  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 54  Told: 23  arch_reg: 23  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 53  Told: 22  arch_reg: 22  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 52  Told: 21  arch_reg: 21  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 51  Told: 20  arch_reg: 20  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 50  Told: 19  arch_reg: 19  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 49  Told: 18  arch_reg: 18  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 48  Told: 17  arch_reg: 17  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 47  Told: 16  arch_reg: 16  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 46  Told: 15  arch_reg: 15  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 45  Told: 14  arch_reg: 14  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 44  Told: 13  arch_reg: 13  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 43  Told: 12  arch_reg: 12  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 42  Told: 11  arch_reg: 11  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 41  Told: 10  arch_reg: 10  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 40  Told:  9  arch_reg:  9  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 39  Told:  8  arch_reg:  8  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 38  Told:  7  arch_reg:  7  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 37  Told:  6  arch_reg:  6  completed: 1  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 36  Told:  5  arch_reg:  5  completed: 1  precise_state: 1  target_pc:  32
+valid: 1  Tnew: 35  Told:  4  arch_reg:  4  completed: 1  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 34  Told:  3  arch_reg:  3  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 33  Told:  2  arch_reg:  2  completed: 0  precise_state: 1  target_pc:  32
+valid: 1  Tnew: 32  Told:  1  arch_reg:  1  completed: 0  precise_state: 0  target_pc:   0
+head: 3 tail:31
+structual_stall:000
+=====   ROB_IN Packet   =====
+| WAY | valid |  Tnew | Told | arch_reg | completed | precise_state | target_pc |
+|  0  |     0 |   37  |    6 |      6   |     0     |       0       |      0    |
+|  1  |     0 |   36  |    5 |      5   |     0     |       0       |      0    |
+|  2  |     0 |   35  |    4 |      4   |     0     |       0       |      0    |
+=====   ROB_Complete Packet   =====
+| WAY | valid |  ROB_entry | precise_state | target_pc |
+|  0  |     1 |      8     |       0       |      0    |
+|  1  |     1 |      7     |       1       |     32    |
+|  2  |     1 |      6     |       0       |      0    |
+=====   ROB_Retire Packet   =====
+| WAY | valid |  Tnew | Told | arch_reg | completed | precise_state | target_pc |
+|  0  |     1 |   37  |    6 |      6   |     1     |       0       |    0      |
+|  1  |     1 |   36  |    5 |      5   |     1     |       1       |   32      |
+|  2  |     1 |   35  |    4 |      4   |     1     |       0       |    0      |
+####### Cycle         16 ##########
+valid: 1  Tnew: 63  Told: 32  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 62  Told: 31  arch_reg: 31  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 61  Told: 30  arch_reg: 30  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 60  Told: 29  arch_reg: 29  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 59  Told: 28  arch_reg: 28  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 58  Told: 27  arch_reg: 27  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 57  Told: 26  arch_reg: 26  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 56  Told: 25  arch_reg: 25  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 55  Told: 24  arch_reg: 24  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 54  Told: 23  arch_reg: 23  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 53  Told: 22  arch_reg: 22  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 52  Told: 21  arch_reg: 21  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 51  Told: 20  arch_reg: 20  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 50  Told: 19  arch_reg: 19  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 49  Told: 18  arch_reg: 18  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 48  Told: 17  arch_reg: 17  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 47  Told: 16  arch_reg: 16  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 46  Told: 15  arch_reg: 15  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 45  Told: 14  arch_reg: 14  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 44  Told: 13  arch_reg: 13  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 43  Told: 12  arch_reg: 12  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 42  Told: 11  arch_reg: 11  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 41  Told: 10  arch_reg: 10  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 40  Told:  9  arch_reg:  9  completed: 1  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 39  Told:  8  arch_reg:  8  completed: 1  precise_state: 1  target_pc:  32
+valid: 1  Tnew: 38  Told:  7  arch_reg:  7  completed: 1  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 37  Told:  6  arch_reg:  6  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 36  Told:  5  arch_reg:  5  completed: 0  precise_state: 1  target_pc:  32
+valid: 1  Tnew: 35  Told:  4  arch_reg:  4  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 34  Told:  3  arch_reg:  3  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 33  Told:  2  arch_reg:  2  completed: 0  precise_state: 1  target_pc:  32
+valid: 1  Tnew: 32  Told:  1  arch_reg:  1  completed: 0  precise_state: 0  target_pc:   0
+head: 6 tail:31
+structual_stall:000
+=====   ROB_IN Packet   =====
+| WAY | valid |  Tnew | Told | arch_reg | completed | precise_state | target_pc |
+|  0  |     0 |   37  |    6 |      6   |     0     |       0       |      0    |
+|  1  |     0 |   36  |    5 |      5   |     0     |       0       |      0    |
+|  2  |     0 |   35  |    4 |      4   |     0     |       0       |      0    |
+=====   ROB_Complete Packet   =====
+| WAY | valid |  ROB_entry | precise_state | target_pc |
+|  0  |     1 |     11     |       0       |      0    |
+|  1  |     1 |     10     |       1       |     32    |
+|  2  |     1 |      9     |       0       |      0    |
+=====   ROB_Retire Packet   =====
+| WAY | valid |  Tnew | Told | arch_reg | completed | precise_state | target_pc |
+|  0  |     1 |   40  |    9 |      9   |     1     |       0       |    0      |
+|  1  |     1 |   39  |    8 |      8   |     1     |       1       |   32      |
+|  2  |     1 |   38  |    7 |      7   |     1     |       0       |    0      |
+####### Cycle         17 ##########
+valid: 1  Tnew: 63  Told: 32  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 62  Told: 31  arch_reg: 31  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 61  Told: 30  arch_reg: 30  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 60  Told: 29  arch_reg: 29  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 59  Told: 28  arch_reg: 28  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 58  Told: 27  arch_reg: 27  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 57  Told: 26  arch_reg: 26  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 56  Told: 25  arch_reg: 25  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 55  Told: 24  arch_reg: 24  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 54  Told: 23  arch_reg: 23  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 53  Told: 22  arch_reg: 22  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 52  Told: 21  arch_reg: 21  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 51  Told: 20  arch_reg: 20  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 50  Told: 19  arch_reg: 19  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 49  Told: 18  arch_reg: 18  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 48  Told: 17  arch_reg: 17  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 47  Told: 16  arch_reg: 16  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 46  Told: 15  arch_reg: 15  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 45  Told: 14  arch_reg: 14  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 44  Told: 13  arch_reg: 13  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 43  Told: 12  arch_reg: 12  completed: 1  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 42  Told: 11  arch_reg: 11  completed: 1  precise_state: 1  target_pc:  32
+valid: 1  Tnew: 41  Told: 10  arch_reg: 10  completed: 1  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 40  Told:  9  arch_reg:  9  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 39  Told:  8  arch_reg:  8  completed: 0  precise_state: 1  target_pc:  32
+valid: 1  Tnew: 38  Told:  7  arch_reg:  7  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 37  Told:  6  arch_reg:  6  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 36  Told:  5  arch_reg:  5  completed: 0  precise_state: 1  target_pc:  32
+valid: 1  Tnew: 35  Told:  4  arch_reg:  4  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 34  Told:  3  arch_reg:  3  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 33  Told:  2  arch_reg:  2  completed: 0  precise_state: 1  target_pc:  32
+valid: 1  Tnew: 32  Told:  1  arch_reg:  1  completed: 0  precise_state: 0  target_pc:   0
+head: 9 tail:31
+structual_stall:000
+=====   ROB_IN Packet   =====
+| WAY | valid |  Tnew | Told | arch_reg | completed | precise_state | target_pc |
+|  0  |     0 |   37  |    6 |      6   |     0     |       0       |      0    |
+|  1  |     0 |   36  |    5 |      5   |     0     |       0       |      0    |
+|  2  |     0 |   35  |    4 |      4   |     0     |       0       |      0    |
+=====   ROB_Complete Packet   =====
+| WAY | valid |  ROB_entry | precise_state | target_pc |
+|  0  |     1 |     14     |       0       |      0    |
+|  1  |     1 |     13     |       1       |     32    |
+|  2  |     1 |     12     |       0       |      0    |
+=====   ROB_Retire Packet   =====
+| WAY | valid |  Tnew | Told | arch_reg | completed | precise_state | target_pc |
+|  0  |     1 |   43  |   12 |     12   |     1     |       0       |    0      |
+|  1  |     1 |   42  |   11 |     11   |     1     |       1       |   32      |
+|  2  |     1 |   41  |   10 |     10   |     1     |       0       |    0      |
+####### Cycle         18 ##########
+valid: 1  Tnew: 63  Told: 32  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 62  Told: 31  arch_reg: 31  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 61  Told: 30  arch_reg: 30  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 60  Told: 29  arch_reg: 29  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 59  Told: 28  arch_reg: 28  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 58  Told: 27  arch_reg: 27  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 57  Told: 26  arch_reg: 26  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 56  Told: 25  arch_reg: 25  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 55  Told: 24  arch_reg: 24  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 54  Told: 23  arch_reg: 23  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 53  Told: 22  arch_reg: 22  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 52  Told: 21  arch_reg: 21  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 51  Told: 20  arch_reg: 20  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 50  Told: 19  arch_reg: 19  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 49  Told: 18  arch_reg: 18  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 48  Told: 17  arch_reg: 17  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 47  Told: 16  arch_reg: 16  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 46  Told: 15  arch_reg: 15  completed: 1  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 45  Told: 14  arch_reg: 14  completed: 1  precise_state: 1  target_pc:  32
+valid: 1  Tnew: 44  Told: 13  arch_reg: 13  completed: 1  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 43  Told: 12  arch_reg: 12  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 42  Told: 11  arch_reg: 11  completed: 0  precise_state: 1  target_pc:  32
+valid: 1  Tnew: 41  Told: 10  arch_reg: 10  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 40  Told:  9  arch_reg:  9  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 39  Told:  8  arch_reg:  8  completed: 0  precise_state: 1  target_pc:  32
+valid: 1  Tnew: 38  Told:  7  arch_reg:  7  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 37  Told:  6  arch_reg:  6  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 36  Told:  5  arch_reg:  5  completed: 0  precise_state: 1  target_pc:  32
+valid: 1  Tnew: 35  Told:  4  arch_reg:  4  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 34  Told:  3  arch_reg:  3  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 33  Told:  2  arch_reg:  2  completed: 0  precise_state: 1  target_pc:  32
+valid: 1  Tnew: 32  Told:  1  arch_reg:  1  completed: 0  precise_state: 0  target_pc:   0
+head:12 tail:31
+structual_stall:000
+=====   ROB_IN Packet   =====
+| WAY | valid |  Tnew | Told | arch_reg | completed | precise_state | target_pc |
+|  0  |     0 |   37  |    6 |      6   |     0     |       0       |      0    |
+|  1  |     0 |   36  |    5 |      5   |     0     |       0       |      0    |
+|  2  |     0 |   35  |    4 |      4   |     0     |       0       |      0    |
+=====   ROB_Complete Packet   =====
+| WAY | valid |  ROB_entry | precise_state | target_pc |
+|  0  |     1 |     17     |       0       |      0    |
+|  1  |     1 |     16     |       1       |     32    |
+|  2  |     1 |     15     |       0       |      0    |
+=====   ROB_Retire Packet   =====
+| WAY | valid |  Tnew | Told | arch_reg | completed | precise_state | target_pc |
+|  0  |     1 |   46  |   15 |     15   |     1     |       0       |    0      |
+|  1  |     1 |   45  |   14 |     14   |     1     |       1       |   32      |
+|  2  |     1 |   44  |   13 |     13   |     1     |       0       |    0      |
+####### Cycle         19 ##########
+valid: 1  Tnew: 63  Told: 32  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 62  Told: 31  arch_reg: 31  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 61  Told: 30  arch_reg: 30  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 60  Told: 29  arch_reg: 29  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 59  Told: 28  arch_reg: 28  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 58  Told: 27  arch_reg: 27  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 57  Told: 26  arch_reg: 26  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 56  Told: 25  arch_reg: 25  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 55  Told: 24  arch_reg: 24  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 54  Told: 23  arch_reg: 23  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 53  Told: 22  arch_reg: 22  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 52  Told: 21  arch_reg: 21  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 51  Told: 20  arch_reg: 20  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 50  Told: 19  arch_reg: 19  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 49  Told: 18  arch_reg: 18  completed: 1  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 48  Told: 17  arch_reg: 17  completed: 1  precise_state: 1  target_pc:  32
+valid: 1  Tnew: 47  Told: 16  arch_reg: 16  completed: 1  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 46  Told: 15  arch_reg: 15  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 45  Told: 14  arch_reg: 14  completed: 0  precise_state: 1  target_pc:  32
+valid: 1  Tnew: 44  Told: 13  arch_reg: 13  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 43  Told: 12  arch_reg: 12  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 42  Told: 11  arch_reg: 11  completed: 0  precise_state: 1  target_pc:  32
+valid: 1  Tnew: 41  Told: 10  arch_reg: 10  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 40  Told:  9  arch_reg:  9  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 39  Told:  8  arch_reg:  8  completed: 0  precise_state: 1  target_pc:  32
+valid: 1  Tnew: 38  Told:  7  arch_reg:  7  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 37  Told:  6  arch_reg:  6  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 36  Told:  5  arch_reg:  5  completed: 0  precise_state: 1  target_pc:  32
+valid: 1  Tnew: 35  Told:  4  arch_reg:  4  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 34  Told:  3  arch_reg:  3  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 33  Told:  2  arch_reg:  2  completed: 0  precise_state: 1  target_pc:  32
+valid: 1  Tnew: 32  Told:  1  arch_reg:  1  completed: 0  precise_state: 0  target_pc:   0
+head:15 tail:31
+structual_stall:000
+=====   ROB_IN Packet   =====
+| WAY | valid |  Tnew | Told | arch_reg | completed | precise_state | target_pc |
+|  0  |     0 |   37  |    6 |      6   |     0     |       0       |      0    |
+|  1  |     0 |   36  |    5 |      5   |     0     |       0       |      0    |
+|  2  |     0 |   35  |    4 |      4   |     0     |       0       |      0    |
+=====   ROB_Complete Packet   =====
+| WAY | valid |  ROB_entry | precise_state | target_pc |
+|  0  |     1 |     20     |       0       |      0    |
+|  1  |     1 |     19     |       1       |     32    |
+|  2  |     1 |     18     |       0       |      0    |
+=====   ROB_Retire Packet   =====
+| WAY | valid |  Tnew | Told | arch_reg | completed | precise_state | target_pc |
+|  0  |     1 |   49  |   18 |     18   |     1     |       0       |    0      |
+|  1  |     1 |   48  |   17 |     17   |     1     |       1       |   32      |
+|  2  |     1 |   47  |   16 |     16   |     1     |       0       |    0      |
+####### Cycle         20 ##########
+valid: 1  Tnew: 63  Told: 32  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 62  Told: 31  arch_reg: 31  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 61  Told: 30  arch_reg: 30  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 60  Told: 29  arch_reg: 29  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 59  Told: 28  arch_reg: 28  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 58  Told: 27  arch_reg: 27  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 57  Told: 26  arch_reg: 26  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 56  Told: 25  arch_reg: 25  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 55  Told: 24  arch_reg: 24  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 54  Told: 23  arch_reg: 23  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 53  Told: 22  arch_reg: 22  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 52  Told: 21  arch_reg: 21  completed: 1  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 51  Told: 20  arch_reg: 20  completed: 1  precise_state: 1  target_pc:  32
+valid: 1  Tnew: 50  Told: 19  arch_reg: 19  completed: 1  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 49  Told: 18  arch_reg: 18  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 48  Told: 17  arch_reg: 17  completed: 0  precise_state: 1  target_pc:  32
+valid: 1  Tnew: 47  Told: 16  arch_reg: 16  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 46  Told: 15  arch_reg: 15  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 45  Told: 14  arch_reg: 14  completed: 0  precise_state: 1  target_pc:  32
+valid: 1  Tnew: 44  Told: 13  arch_reg: 13  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 43  Told: 12  arch_reg: 12  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 42  Told: 11  arch_reg: 11  completed: 0  precise_state: 1  target_pc:  32
+valid: 1  Tnew: 41  Told: 10  arch_reg: 10  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 40  Told:  9  arch_reg:  9  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 39  Told:  8  arch_reg:  8  completed: 0  precise_state: 1  target_pc:  32
+valid: 1  Tnew: 38  Told:  7  arch_reg:  7  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 37  Told:  6  arch_reg:  6  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 36  Told:  5  arch_reg:  5  completed: 0  precise_state: 1  target_pc:  32
+valid: 1  Tnew: 35  Told:  4  arch_reg:  4  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 34  Told:  3  arch_reg:  3  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 33  Told:  2  arch_reg:  2  completed: 0  precise_state: 1  target_pc:  32
+valid: 1  Tnew: 32  Told:  1  arch_reg:  1  completed: 0  precise_state: 0  target_pc:   0
+head:18 tail:31
+structual_stall:000
+=====   ROB_IN Packet   =====
+| WAY | valid |  Tnew | Told | arch_reg | completed | precise_state | target_pc |
+|  0  |     0 |   37  |    6 |      6   |     0     |       0       |      0    |
+|  1  |     0 |   36  |    5 |      5   |     0     |       0       |      0    |
+|  2  |     0 |   35  |    4 |      4   |     0     |       0       |      0    |
+=====   ROB_Complete Packet   =====
+| WAY | valid |  ROB_entry | precise_state | target_pc |
+|  0  |     1 |     23     |       0       |      0    |
+|  1  |     1 |     22     |       1       |     32    |
+|  2  |     1 |     21     |       0       |      0    |
+=====   ROB_Retire Packet   =====
+| WAY | valid |  Tnew | Told | arch_reg | completed | precise_state | target_pc |
+|  0  |     1 |   52  |   21 |     21   |     1     |       0       |    0      |
+|  1  |     1 |   51  |   20 |     20   |     1     |       1       |   32      |
+|  2  |     1 |   50  |   19 |     19   |     1     |       0       |    0      |
+####### Cycle         21 ##########
+valid: 1  Tnew: 63  Told: 32  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 62  Told: 31  arch_reg: 31  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 61  Told: 30  arch_reg: 30  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 60  Told: 29  arch_reg: 29  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 59  Told: 28  arch_reg: 28  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 58  Told: 27  arch_reg: 27  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 57  Told: 26  arch_reg: 26  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 56  Told: 25  arch_reg: 25  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 55  Told: 24  arch_reg: 24  completed: 1  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 54  Told: 23  arch_reg: 23  completed: 1  precise_state: 1  target_pc:  32
+valid: 1  Tnew: 53  Told: 22  arch_reg: 22  completed: 1  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 52  Told: 21  arch_reg: 21  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 51  Told: 20  arch_reg: 20  completed: 0  precise_state: 1  target_pc:  32
+valid: 1  Tnew: 50  Told: 19  arch_reg: 19  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 49  Told: 18  arch_reg: 18  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 48  Told: 17  arch_reg: 17  completed: 0  precise_state: 1  target_pc:  32
+valid: 1  Tnew: 47  Told: 16  arch_reg: 16  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 46  Told: 15  arch_reg: 15  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 45  Told: 14  arch_reg: 14  completed: 0  precise_state: 1  target_pc:  32
+valid: 1  Tnew: 44  Told: 13  arch_reg: 13  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 43  Told: 12  arch_reg: 12  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 42  Told: 11  arch_reg: 11  completed: 0  precise_state: 1  target_pc:  32
+valid: 1  Tnew: 41  Told: 10  arch_reg: 10  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 40  Told:  9  arch_reg:  9  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 39  Told:  8  arch_reg:  8  completed: 0  precise_state: 1  target_pc:  32
+valid: 1  Tnew: 38  Told:  7  arch_reg:  7  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 37  Told:  6  arch_reg:  6  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 36  Told:  5  arch_reg:  5  completed: 0  precise_state: 1  target_pc:  32
+valid: 1  Tnew: 35  Told:  4  arch_reg:  4  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 34  Told:  3  arch_reg:  3  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 33  Told:  2  arch_reg:  2  completed: 0  precise_state: 1  target_pc:  32
+valid: 1  Tnew: 32  Told:  1  arch_reg:  1  completed: 0  precise_state: 0  target_pc:   0
+head:21 tail:31
+structual_stall:000
+=====   ROB_IN Packet   =====
+| WAY | valid |  Tnew | Told | arch_reg | completed | precise_state | target_pc |
+|  0  |     0 |   37  |    6 |      6   |     0     |       0       |      0    |
+|  1  |     0 |   36  |    5 |      5   |     0     |       0       |      0    |
+|  2  |     0 |   35  |    4 |      4   |     0     |       0       |      0    |
+=====   ROB_Complete Packet   =====
+| WAY | valid |  ROB_entry | precise_state | target_pc |
+|  0  |     1 |     26     |       0       |      0    |
+|  1  |     1 |     25     |       1       |     32    |
+|  2  |     1 |     24     |       0       |      0    |
+=====   ROB_Retire Packet   =====
+| WAY | valid |  Tnew | Told | arch_reg | completed | precise_state | target_pc |
+|  0  |     1 |   55  |   24 |     24   |     1     |       0       |    0      |
+|  1  |     1 |   54  |   23 |     23   |     1     |       1       |   32      |
+|  2  |     1 |   53  |   22 |     22   |     1     |       0       |    0      |
+####### Cycle         22 ##########
+valid: 1  Tnew: 63  Told: 32  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 62  Told: 31  arch_reg: 31  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 61  Told: 30  arch_reg: 30  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 60  Told: 29  arch_reg: 29  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 59  Told: 28  arch_reg: 28  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 58  Told: 27  arch_reg: 27  completed: 1  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 57  Told: 26  arch_reg: 26  completed: 1  precise_state: 1  target_pc:  32
+valid: 1  Tnew: 56  Told: 25  arch_reg: 25  completed: 1  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 55  Told: 24  arch_reg: 24  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 54  Told: 23  arch_reg: 23  completed: 0  precise_state: 1  target_pc:  32
+valid: 1  Tnew: 53  Told: 22  arch_reg: 22  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 52  Told: 21  arch_reg: 21  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 51  Told: 20  arch_reg: 20  completed: 0  precise_state: 1  target_pc:  32
+valid: 1  Tnew: 50  Told: 19  arch_reg: 19  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 49  Told: 18  arch_reg: 18  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 48  Told: 17  arch_reg: 17  completed: 0  precise_state: 1  target_pc:  32
+valid: 1  Tnew: 47  Told: 16  arch_reg: 16  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 46  Told: 15  arch_reg: 15  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 45  Told: 14  arch_reg: 14  completed: 0  precise_state: 1  target_pc:  32
+valid: 1  Tnew: 44  Told: 13  arch_reg: 13  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 43  Told: 12  arch_reg: 12  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 42  Told: 11  arch_reg: 11  completed: 0  precise_state: 1  target_pc:  32
+valid: 1  Tnew: 41  Told: 10  arch_reg: 10  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 40  Told:  9  arch_reg:  9  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 39  Told:  8  arch_reg:  8  completed: 0  precise_state: 1  target_pc:  32
+valid: 1  Tnew: 38  Told:  7  arch_reg:  7  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 37  Told:  6  arch_reg:  6  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 36  Told:  5  arch_reg:  5  completed: 0  precise_state: 1  target_pc:  32
+valid: 1  Tnew: 35  Told:  4  arch_reg:  4  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 34  Told:  3  arch_reg:  3  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 33  Told:  2  arch_reg:  2  completed: 0  precise_state: 1  target_pc:  32
+valid: 1  Tnew: 32  Told:  1  arch_reg:  1  completed: 0  precise_state: 0  target_pc:   0
+head:24 tail:31
+structual_stall:000
+=====   ROB_IN Packet   =====
+| WAY | valid |  Tnew | Told | arch_reg | completed | precise_state | target_pc |
+|  0  |     0 |   37  |    6 |      6   |     0     |       0       |      0    |
+|  1  |     0 |   36  |    5 |      5   |     0     |       0       |      0    |
+|  2  |     0 |   35  |    4 |      4   |     0     |       0       |      0    |
+=====   ROB_Complete Packet   =====
+| WAY | valid |  ROB_entry | precise_state | target_pc |
+|  0  |     1 |     29     |       0       |      0    |
+|  1  |     1 |     28     |       1       |     32    |
+|  2  |     1 |     27     |       0       |      0    |
+=====   ROB_Retire Packet   =====
+| WAY | valid |  Tnew | Told | arch_reg | completed | precise_state | target_pc |
+|  0  |     1 |   58  |   27 |     27   |     1     |       0       |    0      |
+|  1  |     1 |   57  |   26 |     26   |     1     |       1       |   32      |
+|  2  |     1 |   56  |   25 |     25   |     1     |       0       |    0      |
+####### Cycle         23 ##########
+valid: 1  Tnew: 63  Told: 32  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 62  Told: 31  arch_reg: 31  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 61  Told: 30  arch_reg: 30  completed: 1  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 60  Told: 29  arch_reg: 29  completed: 1  precise_state: 1  target_pc:  32
+valid: 1  Tnew: 59  Told: 28  arch_reg: 28  completed: 1  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 58  Told: 27  arch_reg: 27  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 57  Told: 26  arch_reg: 26  completed: 0  precise_state: 1  target_pc:  32
+valid: 1  Tnew: 56  Told: 25  arch_reg: 25  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 55  Told: 24  arch_reg: 24  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 54  Told: 23  arch_reg: 23  completed: 0  precise_state: 1  target_pc:  32
+valid: 1  Tnew: 53  Told: 22  arch_reg: 22  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 52  Told: 21  arch_reg: 21  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 51  Told: 20  arch_reg: 20  completed: 0  precise_state: 1  target_pc:  32
+valid: 1  Tnew: 50  Told: 19  arch_reg: 19  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 49  Told: 18  arch_reg: 18  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 48  Told: 17  arch_reg: 17  completed: 0  precise_state: 1  target_pc:  32
+valid: 1  Tnew: 47  Told: 16  arch_reg: 16  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 46  Told: 15  arch_reg: 15  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 45  Told: 14  arch_reg: 14  completed: 0  precise_state: 1  target_pc:  32
+valid: 1  Tnew: 44  Told: 13  arch_reg: 13  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 43  Told: 12  arch_reg: 12  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 42  Told: 11  arch_reg: 11  completed: 0  precise_state: 1  target_pc:  32
+valid: 1  Tnew: 41  Told: 10  arch_reg: 10  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 40  Told:  9  arch_reg:  9  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 39  Told:  8  arch_reg:  8  completed: 0  precise_state: 1  target_pc:  32
+valid: 1  Tnew: 38  Told:  7  arch_reg:  7  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 37  Told:  6  arch_reg:  6  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 36  Told:  5  arch_reg:  5  completed: 0  precise_state: 1  target_pc:  32
+valid: 1  Tnew: 35  Told:  4  arch_reg:  4  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 34  Told:  3  arch_reg:  3  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 33  Told:  2  arch_reg:  2  completed: 0  precise_state: 1  target_pc:  32
+valid: 1  Tnew: 32  Told:  1  arch_reg:  1  completed: 0  precise_state: 0  target_pc:   0
+head:27 tail:31
+structual_stall:000
+=====   ROB_IN Packet   =====
+| WAY | valid |  Tnew | Told | arch_reg | completed | precise_state | target_pc |
+|  0  |     0 |   37  |    6 |      6   |     0     |       0       |      0    |
+|  1  |     0 |   36  |    5 |      5   |     0     |       0       |      0    |
+|  2  |     0 |   35  |    4 |      4   |     0     |       0       |      0    |
+=====   ROB_Complete Packet   =====
+| WAY | valid |  ROB_entry | precise_state | target_pc |
+|  0  |     0 |     29     |       0       |      0    |
+|  1  |     1 |     31     |       1       |     32    |
+|  2  |     1 |     30     |       0       |      0    |
+=====   ROB_Retire Packet   =====
+| WAY | valid |  Tnew | Told | arch_reg | completed | precise_state | target_pc |
+|  0  |     1 |   61  |   30 |     30   |     1     |       0       |    0      |
+|  1  |     1 |   60  |   29 |     29   |     1     |       1       |   32      |
+|  2  |     1 |   59  |   28 |     28   |     1     |       0       |    0      |
+####### Cycle         24 ##########
+valid: 1  Tnew: 63  Told: 32  arch_reg:  0  completed: 1  precise_state: 1  target_pc:  32
+valid: 1  Tnew: 62  Told: 31  arch_reg: 31  completed: 1  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 61  Told: 30  arch_reg: 30  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 60  Told: 29  arch_reg: 29  completed: 0  precise_state: 1  target_pc:  32
+valid: 1  Tnew: 59  Told: 28  arch_reg: 28  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 58  Told: 27  arch_reg: 27  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 57  Told: 26  arch_reg: 26  completed: 0  precise_state: 1  target_pc:  32
+valid: 1  Tnew: 56  Told: 25  arch_reg: 25  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 55  Told: 24  arch_reg: 24  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 54  Told: 23  arch_reg: 23  completed: 0  precise_state: 1  target_pc:  32
+valid: 1  Tnew: 53  Told: 22  arch_reg: 22  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 52  Told: 21  arch_reg: 21  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 51  Told: 20  arch_reg: 20  completed: 0  precise_state: 1  target_pc:  32
+valid: 1  Tnew: 50  Told: 19  arch_reg: 19  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 49  Told: 18  arch_reg: 18  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 48  Told: 17  arch_reg: 17  completed: 0  precise_state: 1  target_pc:  32
+valid: 1  Tnew: 47  Told: 16  arch_reg: 16  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 46  Told: 15  arch_reg: 15  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 45  Told: 14  arch_reg: 14  completed: 0  precise_state: 1  target_pc:  32
+valid: 1  Tnew: 44  Told: 13  arch_reg: 13  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 43  Told: 12  arch_reg: 12  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 42  Told: 11  arch_reg: 11  completed: 0  precise_state: 1  target_pc:  32
+valid: 1  Tnew: 41  Told: 10  arch_reg: 10  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 40  Told:  9  arch_reg:  9  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 39  Told:  8  arch_reg:  8  completed: 0  precise_state: 1  target_pc:  32
+valid: 1  Tnew: 38  Told:  7  arch_reg:  7  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 37  Told:  6  arch_reg:  6  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 36  Told:  5  arch_reg:  5  completed: 0  precise_state: 1  target_pc:  32
+valid: 1  Tnew: 35  Told:  4  arch_reg:  4  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 34  Told:  3  arch_reg:  3  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 33  Told:  2  arch_reg:  2  completed: 0  precise_state: 1  target_pc:  32
+valid: 1  Tnew: 32  Told:  1  arch_reg:  1  completed: 0  precise_state: 0  target_pc:   0
+head:30 tail:31
+structual_stall:000
+=====   ROB_IN Packet   =====
+| WAY | valid |  Tnew | Told | arch_reg | completed | precise_state | target_pc |
+|  0  |     0 |   37  |    6 |      6   |     0     |       0       |      0    |
+|  1  |     0 |   36  |    5 |      5   |     0     |       0       |      0    |
+|  2  |     0 |   35  |    4 |      4   |     0     |       0       |      0    |
+=====   ROB_Complete Packet   =====
+| WAY | valid |  ROB_entry | precise_state | target_pc |
+|  0  |     0 |     29     |       0       |      0    |
+|  1  |     0 |     31     |       1       |     32    |
+|  2  |     0 |     30     |       0       |      0    |
+=====   ROB_Retire Packet   =====
+| WAY | valid |  Tnew | Told | arch_reg | completed | precise_state | target_pc |
+|  0  |     0 |    0  |    0 |      0   |     0     |       0       |    0      |
+|  1  |     1 |   63  |   32 |      0   |     1     |       1       |   32      |
+|  2  |     1 |   62  |   31 |     31   |     1     |       0       |    0      |
+####### Cycle         25 ##########
+valid: 1  Tnew: 63  Told: 32  arch_reg:  0  completed: 0  precise_state: 1  target_pc:  32
+valid: 1  Tnew: 62  Told: 31  arch_reg: 31  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 61  Told: 30  arch_reg: 30  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 60  Told: 29  arch_reg: 29  completed: 0  precise_state: 1  target_pc:  32
+valid: 1  Tnew: 59  Told: 28  arch_reg: 28  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 58  Told: 27  arch_reg: 27  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 57  Told: 26  arch_reg: 26  completed: 0  precise_state: 1  target_pc:  32
+valid: 1  Tnew: 56  Told: 25  arch_reg: 25  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 55  Told: 24  arch_reg: 24  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 54  Told: 23  arch_reg: 23  completed: 0  precise_state: 1  target_pc:  32
+valid: 1  Tnew: 53  Told: 22  arch_reg: 22  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 52  Told: 21  arch_reg: 21  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 51  Told: 20  arch_reg: 20  completed: 0  precise_state: 1  target_pc:  32
+valid: 1  Tnew: 50  Told: 19  arch_reg: 19  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 49  Told: 18  arch_reg: 18  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 48  Told: 17  arch_reg: 17  completed: 0  precise_state: 1  target_pc:  32
+valid: 1  Tnew: 47  Told: 16  arch_reg: 16  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 46  Told: 15  arch_reg: 15  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 45  Told: 14  arch_reg: 14  completed: 0  precise_state: 1  target_pc:  32
+valid: 1  Tnew: 44  Told: 13  arch_reg: 13  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 43  Told: 12  arch_reg: 12  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 42  Told: 11  arch_reg: 11  completed: 0  precise_state: 1  target_pc:  32
+valid: 1  Tnew: 41  Told: 10  arch_reg: 10  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 40  Told:  9  arch_reg:  9  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 39  Told:  8  arch_reg:  8  completed: 0  precise_state: 1  target_pc:  32
+valid: 1  Tnew: 38  Told:  7  arch_reg:  7  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 37  Told:  6  arch_reg:  6  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 36  Told:  5  arch_reg:  5  completed: 0  precise_state: 1  target_pc:  32
+valid: 1  Tnew: 35  Told:  4  arch_reg:  4  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 34  Told:  3  arch_reg:  3  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 33  Told:  2  arch_reg:  2  completed: 0  precise_state: 1  target_pc:  32
+valid: 1  Tnew: 32  Told:  1  arch_reg:  1  completed: 0  precise_state: 0  target_pc:   0
+head:31 tail:31
+structual_stall:000
+=====   ROB_IN Packet   =====
+| WAY | valid |  Tnew | Told | arch_reg | completed | precise_state | target_pc |
+|  0  |     1 |   34  |    3 |      3   |     0     |       0       |      0    |
+|  1  |     1 |   33  |    2 |      2   |     0     |       0       |      0    |
+|  2  |     1 |   32  |    1 |      1   |     0     |       0       |      0    |
+=====   ROB_Complete Packet   =====
+| WAY | valid |  ROB_entry | precise_state | target_pc |
+|  0  |     0 |     29     |       0       |      0    |
+|  1  |     0 |     31     |       1       |     32    |
+|  2  |     0 |     30     |       0       |      0    |
+=====   ROB_Retire Packet   =====
+| WAY | valid |  Tnew | Told | arch_reg | completed | precise_state | target_pc |
+|  0  |     0 |    0  |    0 |      0   |     0     |       0       |    0      |
+|  1  |     0 |    0  |    0 |      0   |     0     |       0       |    0      |
+|  2  |     0 |    0  |    0 |      0   |     0     |       0       |    0      |
+####### Cycle         26 ##########
+valid: 1  Tnew: 32  Told:  1  arch_reg:  1  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 62  Told: 31  arch_reg: 31  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 61  Told: 30  arch_reg: 30  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 60  Told: 29  arch_reg: 29  completed: 0  precise_state: 1  target_pc:  32
+valid: 1  Tnew: 59  Told: 28  arch_reg: 28  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 58  Told: 27  arch_reg: 27  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 57  Told: 26  arch_reg: 26  completed: 0  precise_state: 1  target_pc:  32
+valid: 1  Tnew: 56  Told: 25  arch_reg: 25  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 55  Told: 24  arch_reg: 24  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 54  Told: 23  arch_reg: 23  completed: 0  precise_state: 1  target_pc:  32
+valid: 1  Tnew: 53  Told: 22  arch_reg: 22  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 52  Told: 21  arch_reg: 21  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 51  Told: 20  arch_reg: 20  completed: 0  precise_state: 1  target_pc:  32
+valid: 1  Tnew: 50  Told: 19  arch_reg: 19  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 49  Told: 18  arch_reg: 18  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 48  Told: 17  arch_reg: 17  completed: 0  precise_state: 1  target_pc:  32
+valid: 1  Tnew: 47  Told: 16  arch_reg: 16  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 46  Told: 15  arch_reg: 15  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 45  Told: 14  arch_reg: 14  completed: 0  precise_state: 1  target_pc:  32
+valid: 1  Tnew: 44  Told: 13  arch_reg: 13  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 43  Told: 12  arch_reg: 12  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 42  Told: 11  arch_reg: 11  completed: 0  precise_state: 1  target_pc:  32
+valid: 1  Tnew: 41  Told: 10  arch_reg: 10  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 40  Told:  9  arch_reg:  9  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 39  Told:  8  arch_reg:  8  completed: 0  precise_state: 1  target_pc:  32
+valid: 1  Tnew: 38  Told:  7  arch_reg:  7  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 37  Told:  6  arch_reg:  6  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 36  Told:  5  arch_reg:  5  completed: 0  precise_state: 1  target_pc:  32
+valid: 1  Tnew: 35  Told:  4  arch_reg:  4  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 34  Told:  3  arch_reg:  3  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 34  Told:  3  arch_reg:  3  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 33  Told:  2  arch_reg:  2  completed: 0  precise_state: 0  target_pc:   0
+head:31 tail: 1
+structual_stall:000
+=====   ROB_IN Packet   =====
+| WAY | valid |  Tnew | Told | arch_reg | completed | precise_state | target_pc |
+|  0  |     1 |   34  |    3 |      3   |     0     |       0       |      0    |
+|  1  |     1 |   33  |    2 |      2   |     0     |       0       |      0    |
+|  2  |     1 |   32  |    1 |      1   |     0     |       0       |      0    |
+=====   ROB_Complete Packet   =====
+| WAY | valid |  ROB_entry | precise_state | target_pc |
+|  0  |     0 |     29     |       0       |      0    |
+|  1  |     0 |     31     |       1       |     32    |
+|  2  |     0 |     30     |       0       |      0    |
+=====   ROB_Retire Packet   =====
+| WAY | valid |  Tnew | Told | arch_reg | completed | precise_state | target_pc |
+|  0  |     0 |    0  |    0 |      0   |     0     |       0       |    0      |
+|  1  |     0 |    0  |    0 |      0   |     0     |       0       |    0      |
+|  2  |     0 |    0  |    0 |      0   |     0     |       0       |    0      |
+####### Cycle         27 ##########
+valid: 1  Tnew: 32  Told:  1  arch_reg:  1  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 62  Told: 31  arch_reg: 31  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 61  Told: 30  arch_reg: 30  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 60  Told: 29  arch_reg: 29  completed: 0  precise_state: 1  target_pc:  32
+valid: 1  Tnew: 59  Told: 28  arch_reg: 28  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 58  Told: 27  arch_reg: 27  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 57  Told: 26  arch_reg: 26  completed: 0  precise_state: 1  target_pc:  32
+valid: 1  Tnew: 56  Told: 25  arch_reg: 25  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 55  Told: 24  arch_reg: 24  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 54  Told: 23  arch_reg: 23  completed: 0  precise_state: 1  target_pc:  32
+valid: 1  Tnew: 53  Told: 22  arch_reg: 22  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 52  Told: 21  arch_reg: 21  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 51  Told: 20  arch_reg: 20  completed: 0  precise_state: 1  target_pc:  32
+valid: 1  Tnew: 50  Told: 19  arch_reg: 19  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 49  Told: 18  arch_reg: 18  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 48  Told: 17  arch_reg: 17  completed: 0  precise_state: 1  target_pc:  32
+valid: 1  Tnew: 47  Told: 16  arch_reg: 16  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 46  Told: 15  arch_reg: 15  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 45  Told: 14  arch_reg: 14  completed: 0  precise_state: 1  target_pc:  32
+valid: 1  Tnew: 44  Told: 13  arch_reg: 13  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 43  Told: 12  arch_reg: 12  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 42  Told: 11  arch_reg: 11  completed: 0  precise_state: 1  target_pc:  32
+valid: 1  Tnew: 41  Told: 10  arch_reg: 10  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 40  Told:  9  arch_reg:  9  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 39  Told:  8  arch_reg:  8  completed: 0  precise_state: 1  target_pc:  32
+valid: 1  Tnew: 38  Told:  7  arch_reg:  7  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 37  Told:  6  arch_reg:  6  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 34  Told:  3  arch_reg:  3  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 33  Told:  2  arch_reg:  2  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 32  Told:  1  arch_reg:  1  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 34  Told:  3  arch_reg:  3  completed: 0  precise_state: 0  target_pc:   0
+valid: 1  Tnew: 33  Told:  2  arch_reg:  2  completed: 0  precise_state: 0  target_pc:   0
+head:31 tail: 4
+structual_stall:000
+=====   ROB_IN Packet   =====
+| WAY | valid |  Tnew | Told | arch_reg | completed | precise_state | target_pc |
+|  0  |     1 |   34  |    3 |      3   |     0     |       0       |      0    |
+|  1  |     1 |   33  |    2 |      2   |     0     |       0       |      0    |
+|  2  |     1 |   32  |    1 |      1   |     0     |       0       |      0    |
+=====   ROB_Complete Packet   =====
+| WAY | valid |  ROB_entry | precise_state | target_pc |
+|  0  |     0 |     29     |       0       |      0    |
+|  1  |     0 |     31     |       1       |     32    |
+|  2  |     0 |     30     |       0       |      0    |
+=====   ROB_Retire Packet   =====
+| WAY | valid |  Tnew | Told | arch_reg | completed | precise_state | target_pc |
+|  0  |     0 |    0  |    0 |      0   |     0     |       0       |    0      |
+|  1  |     0 |    0  |    0 |      0   |     0     |       0       |    0      |
+|  2  |     0 |    0  |    0 |      0   |     0     |       0       |    0      |
+####### Cycle         28 ##########
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+valid: 0  Tnew:  0  Told:  0  arch_reg:  0  completed: 0  precise_state: 0  target_pc:   0
+head: 0 tail: 0
+structual_stall:000
+=====   ROB_IN Packet   =====
+| WAY | valid |  Tnew | Told | arch_reg | completed | precise_state | target_pc |
+|  0  |     1 |   34  |    3 |      3   |     0     |       0       |      0    |
+|  1  |     1 |   33  |    2 |      2   |     0     |       0       |      0    |
+|  2  |     1 |   32  |    1 |      1   |     0     |       0       |      0    |
+=====   ROB_Complete Packet   =====
+| WAY | valid |  ROB_entry | precise_state | target_pc |
+|  0  |     0 |     29     |       0       |      0    |
+|  1  |     0 |     31     |       1       |     32    |
+|  2  |     0 |     30     |       0       |      0    |
+=====   ROB_Retire Packet   =====
+| WAY | valid |  Tnew | Told | arch_reg | completed | precise_state | target_pc |
+|  0  |     0 |    0  |    0 |      0   |     0     |       0       |    0      |
+|  1  |     0 |    0  |    0 |      0   |     0     |       0       |    0      |
+|  2  |     0 |    0  |    0 |      0   |     0     |       0       |    0      |
+$finish called from file "testbench/rob_test.sv", line 256.
+$finish at simulation time                 2900
+           V C S   S i m u l a t i o n   R e p o r t 
+Time: 290000 ps
+CPU Time:      0.980 seconds;       Data structure size:   4.2Mb
+Sun Mar 28 00:15:35 2021

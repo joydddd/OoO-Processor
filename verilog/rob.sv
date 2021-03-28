@@ -18,7 +18,7 @@ module ROB(
 	input [2:0][`XLEN-1:0] target_pc,
 	input BPRecoverEN,
 	output logic [2:0][`ROB-1:0] dispatch_index,
-	output ROB_ENTRY_PACKET [2:0]  retire_entry,  // which ENTRY to be retired
+	output ROB_ENTRY_PACKET[2:0]  retire_entry,  // which ENTRY to be retired
 
 	output logic [2:0] struct_stall
 	`ifdef TEST_MODE
@@ -30,8 +30,9 @@ module ROB(
 
 ROB_ENTRY_PACKET [`ROBW-1:0] rob_entries;
 ROB_ENTRY_PACKET [`ROBW-1:0] rob_entries_next;
-ROB_STATE [`ROBW-1:0] rob_states;
-ROB_STATE [`ROBW-1:0] rob_states_next;
+logic empty;
+logic empty_temp;
+logic empty_next;
 
 logic [`ROB-1:0] head;
 logic [`ROB-1:0] head_incre1;
@@ -45,10 +46,7 @@ logic [`ROB-1:0] input_start;
 logic [`ROB-1:0] input_start_incre1;
 logic [`ROB-1:0] input_start_incre2;
 logic [`ROB-1:0] input_start_incre3;
-logic [`ROB-1:0] input_end;
-logic [`ROB-1:0] input_diff;
-logic [`ROB-1:0] output_end;
-logic [`ROB-1:0] output_diff;
+logic [2:0] input_num;
 logic [`ROB-1:0] head_next;
 logic [`ROB-1:0] tail_next;
 logic [2:0] head_incre;
@@ -69,8 +67,6 @@ assign tail_incre3 = tail + 3;
 assign input_start_incre1 = input_start + 1;
 assign input_start_incre2 = input_start + 2;
 assign input_start_incre3 = input_start + 3;
-assign input_diff = input_end - input_start;
-assign output_diff = output_end - head;
 assign tail_incre = (rob_in[0].valid & rob_in[1].valid & rob_in[2].valid) ? 3 :
 					(rob_in[1].valid & rob_in[2].valid) ? 2 :
 					(rob_in[2].valid) ? 1 : 0;
@@ -78,61 +74,50 @@ assign tail_incre = (rob_in[0].valid & rob_in[1].valid & rob_in[2].valid) ? 3 :
 
 always_comb begin
 	head_incre = 0;
-	if(rob_states[head] == COMPLETE || rob_entries[head].completed) begin
+	empty_temp = empty;
+	if(rob_entries[head].completed) begin
 		head_incre = 1;
-		if(rob_states[head_incre1] == COMPLETE || rob_entries[head_incre1].completed) begin
+		if(rob_entries[head_incre1].completed) begin
 			head_incre = 2;
-			if(rob_states[head_incre2] == COMPLETE || rob_entries[head_incre2].completed) begin
+			if(rob_entries[head_incre2].completed) begin
 				head_incre = 3;			
 			end
 		end
 	end
 	priority case (head_incre)
 		3: begin
-			if (head_incre1 == tail) begin
-				head_next = head + 1;
-				output_end = tail + 1;
-			end
-			else if (head_incre2 == tail) begin
+			if (head_incre2 == tail) begin
 				head_next = head + 2;
-				output_end = tail + 1;
-			end
-			else if (head_incre3 == tail) begin
-				head_next = head + 3;
-				output_end = tail + 1;
+				empty_temp = 1;
 			end
 			else begin
 				head_next = head + head_incre;
-				output_end = head_next;
+				empty_temp = 0;
 			end
-			end
+		end
 		2: begin
 			if (head_incre1 == tail) begin
 				head_next = head + 1;
-				output_end = tail + 1;
-			end
-			else if (head_incre2 == tail) begin
-				head_next = head + 2;
-				output_end = tail + 1;
+				empty_temp = 1;
 			end
 			else begin
 				head_next = head + head_incre;
-				output_end = head_next;
+				empty_temp = 0;
 			end
 		end
 		1: begin
-			if (head_incre1 == tail) begin
-				head_next = head + 1;
-				output_end = tail + 1;
+			if (head == tail) begin
+				head_next = head;
+				empty_temp = 1;
 			end
 			else begin
 				head_next = head + head_incre;
-				output_end = head_next;
+				empty_temp = 0;
 			end
 		end
 		default begin
-			head_next = head + head_incre;
-			output_end = head_next;
+			head_next = head;
+			empty_temp = empty;
 		end
 	endcase
 end
@@ -142,17 +127,14 @@ always_comb begin
 	tail_next = tail + tail_incre;
 	input_start = tail + 1;
 	struct_stall = 3'b000;
-	if (tail == head_next) begin
-		if (rob_states[tail] == EMPTY || output_end == tail + 1 ) begin
-			input_start = tail;
-			tail_next = (tail_incre > 0) ? tail + tail_incre - 1 : tail;
-			input_end = (tail_incre > 0) ? tail + tail_incre : tail;
-		end
-		else begin
-			input_start = tail + 1;
-			tail_next =  tail + tail_incre;
-			input_end = tail_next + 1;
-		end
+	empty_next = 0;
+	if (tail == head_next && empty_temp) begin
+		input_start = tail;
+		tail_next = (tail_incre > 0) ? tail + tail_incre - 1 : tail;
+		input_num = (tail_incre == 3) ? 3'b111 :
+					(tail_incre == 2) ? 3'b110 :
+					(tail_incre == 1) ? 3'b100 : 3'b000;
+		empty_next = (tail_incre > 0) ? 0 : 1;
 	end
 	else begin
 		priority case (tail_incre)
@@ -160,120 +142,115 @@ always_comb begin
 				if (tail_incre1 == head_next) begin
 					tail_next = tail;
 					struct_stall = 3'b111;
+					input_num = 3'b000;
 				end
 				else if (tail_incre2 == head_next) begin
 					tail_next = tail + 1;
 					struct_stall = 3'b011;
+					input_num = 3'b100;
 				end
 				else if (tail_incre3 == head_next) begin
 					tail_next = tail + 2;
 					struct_stall = 3'b001;
+					input_num = 3'b110;
 				end
 				else begin
 					tail_next = tail + 3;
 					struct_stall = 3'b000;
+					input_num = 3'b111;
 				end
 			end
 			2: begin
 				if (tail_incre1 == head_next) begin
 					tail_next = tail;
 					struct_stall = 3'b110;
+					input_num = 3'b000;
 				end
 				else if (tail_incre2 == head_next) begin
 					tail_next = tail + 1;
 					struct_stall = 3'b100;
+					input_num = 3'b100;
 				end
 				else begin
 					tail_next = tail + 2;
 					struct_stall = 3'b000;
+					input_num = 3'b110;
 				end
 			end
 			1: begin
 				if (tail_incre1 == head_next) begin
 					tail_next = tail;
 					struct_stall = 3'b100;
+					input_num = 3'b000;
 				end
 				else begin
 					tail_next = tail + 1;
 					struct_stall = 3'b000;
+					input_num = 3'b100;
 				end
 			end
 			default begin
 				struct_stall = 3'b000;
+				input_num = 3'b000;
 				tail_next = tail;
 			end
 		endcase
-		input_end = tail_next + 1;
 	end
 end
 
 /* update ROB */
 always_comb begin
-	rob_states_next = rob_states;
 	rob_entries_next = rob_entries;
 	retire_entry = 0;
 	dispatch_index = 0;
-	priority case (output_diff)
+	priority case (head_incre)
 		3: begin
 			retire_entry[2] = rob_entries[head];
 			retire_entry[1] = rob_entries[head_incre1];
 			retire_entry[0] = rob_entries[head_incre2];
-			rob_states_next[head] = EMPTY;
 			rob_entries_next[head].completed = 0;
-			rob_states_next[head_incre1] = EMPTY;
 			rob_entries_next[head_incre1].completed = 0;
-			rob_states_next[head_incre2] = EMPTY;
 			rob_entries_next[head_incre2].completed = 0;		
 		end
 		2: begin
 			retire_entry[2] = rob_entries[head];
 			retire_entry[1] = rob_entries[head_incre1];
-			rob_states_next[head] = EMPTY;
 			rob_entries_next[head].completed = 0;
-			rob_states_next[head_incre1] = EMPTY;
 			rob_entries_next[head_incre1].completed = 0;
 		end
 		1: begin
 			retire_entry[2] = rob_entries[head];
-			rob_states_next[head] = EMPTY;
 			rob_entries_next[head].completed = 0;
 		end
-		0: begin
-			
+		default: begin
+			retire_entry = 0;
 		end
 	endcase
-	priority case (input_diff)
-		3: begin
+	priority case (input_num)
+		3'b111: begin
 			rob_entries_next[input_start] = rob_in[2];
-			rob_states_next[input_start] = INUSED;
 			dispatch_index[2] = input_start;
 			rob_entries_next[input_start_incre1] = rob_in[1];
-			rob_states_next[input_start_incre1] = INUSED;
 			dispatch_index[1] = input_start_incre1;	
 			rob_entries_next[input_start_incre2] = rob_in[0];
-			rob_states_next[input_start_incre2] = INUSED;	
 			dispatch_index[0] = input_start_incre2;	
 		end
-		2: begin
+		3'b110: begin
 			rob_entries_next[input_start] = rob_in[2];
-			rob_states_next[input_start] = INUSED;
 			dispatch_index[2] = input_start;
-			rob_entries_next[input_start_incre1] = rob_in[1];
-			rob_states_next[input_start_incre1] = INUSED;	
+			rob_entries_next[input_start_incre1] = rob_in[1];	
 			dispatch_index[1] = input_start_incre1;	
 		end
-		1: begin
+		3'b100: begin
 			rob_entries_next[input_start] = rob_in[2];
-			rob_states_next[input_start] = INUSED;
 			dispatch_index[2] = input_start;	
 		end
-		0: begin
-			
+		default: begin
+			dispatch_index = 0;
 		end
 	endcase
 	for (int i = 0; i < 3; i++) begin
 		if (complete_valid[i]) begin
-			rob_states_next[complete_entry[i]] = COMPLETE;
 			rob_entries_next[complete_entry[i]].completed = 1;
 			rob_entries_next[complete_entry[i]].precise_state_need = (precise_state_valid[i]) ? 1 : 0;
 			rob_entries_next[complete_entry[i]].target_pc = (precise_state_valid[i]) ? target_pc[i] : 0;
@@ -285,14 +262,14 @@ always_ff @(posedge clock) begin
     if (reset | BPRecoverEN) begin
 		head <= `SD 0;
 		tail <= `SD 0;
-		rob_states <= `SD 0;
+		empty <= `SD 1;
         rob_entries <= `SD 0; 
 	end	 
     else begin 
         rob_entries <= `SD rob_entries_next;
 		head <= `SD head_next;
 		tail <= `SD tail_next;
-		rob_states <= `SD rob_states_next;
+		empty <= `SD empty_next;
 	end
 end
 

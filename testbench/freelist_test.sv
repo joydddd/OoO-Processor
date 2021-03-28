@@ -22,11 +22,12 @@ module testbench;
     logic       [31:0][`PR-1:0]      array;
 	logic       [4:0]               head;
 	logic       [4:0]               tail;
-
+    logic       [4:0]               fl_distance;
+    logic                           empty_display;
     logic [31:0] cycle_count;
 
 
-    Freelist tbp(.clock(clock), .reset(reset), .DispatchEN(DispatchEN), .RewindEN(RewindEN), .RetireEN(RetireEN), .RetireReg(RetireReg), .BPRecoverEN(BPRecoverEN), .BPRecoverHead(BPRecoverHead),.FreeReg(FreeReg), .Head(Head), .FreeRegValid(FreeRegValid), .array_display(array), .head_display(head), .tail_display(tail));
+    Freelist tbp(.clock(clock), .reset(reset), .DispatchEN(DispatchEN), .RetireEN(RetireEN), .RetireReg(RetireReg), .BPRecoverEN(BPRecoverEN), .BPRecoverHead(BPRecoverHead),.FreeReg(FreeReg), .Head(Head), .FreeRegValid(FreeRegValid), .fl_distance(fl_distance),.array_display(array), .head_display(head), .tail_display(tail), .empty_display(empty_display));
 
     always begin
 		#(`VERILOG_CLOCK_PERIOD/2.0);

@@ -74,7 +74,7 @@ ROBSYNFILES = synth/ROB.vg
 FREELISTSYNFILES = synth/Freelist.vg
 
 ROBTESTBENCH = testbench/rob_test.sv
-ROBFILES = verilog/rob.sv verilog/complete_stage.sv verilog/ps.sv verilog/re_stage.sv verilog/freelist.sv
+ROBFILES = verilog/rob.sv
 
 FREELISTTESTBENCH = testbench/freelist_test.sv
 FREELISTFILES = verilog/freelist.sv
