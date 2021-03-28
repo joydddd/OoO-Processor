@@ -23,10 +23,11 @@ set mt_module [getenv MAP_TABLE_NAME]
 set is_fifo_module [getenv IS_FIFO_NAME]
 set freelist_module [getenv FREELIST_NAME]
 set rob_module [getenv ROB_NAME]
+set pr_module [getenv PR_NAME]
 
 
-read_file -f ddc [list ${rs_module}.ddc ${is_fifo_module}.ddc ${mt_module}.ddc ]
-set_dont_touch [list ${rs_module} ${is_fifo_module} ${mt_module}]
+read_file -f ddc [list ${rs_module}.ddc ${is_fifo_module}.ddc ${mt_module}.ddc ${pr_module}.dcc]
+set_dont_touch [list ${rs_module} ${is_fifo_module} ${mt_module} ${pr_module}]
 
 
 set headers [getenv HEADERS]

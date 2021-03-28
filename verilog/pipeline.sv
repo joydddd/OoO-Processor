@@ -82,6 +82,9 @@ module pipeline(
     , output [4:0]                      fl_head_display
     , output [4:0]                      fl_tail_display
     , output                            fl_empty_display
+
+    // PR
+    , output logic [2**`PR-1:0][`XLEN-1:0] pr_display
 `endif
 
 `ifdef DIS_DEBUG
@@ -260,7 +263,7 @@ assign maptable_reg1_ready = maptable_reg1_ready_debug;
 assign maptable_reg2_ready = maptable_reg2_ready_debug;
 assign fu_ready = fu_ready_debug;
 */
-//assign rob_stall = rob_stall_debug;     // TODO: comment this line when ROB is added
+//assign rob_stall = rob_stall_debug;  
 //assign cdb_t = cdb_t_debug;
 `endif
 
@@ -443,6 +446,28 @@ issue_stage issue_0(
 
 //////////////////////////////////////////////////
 //                                              //
+//                Physical Reg                  //
+//                                              //
+//////////////////////////////////////////////////
+
+physical_regfile pr_0(
+    // Inputs
+    .rda_idx (is_pr1_idx),
+    .rdb_idx (is_pr2_idx),
+    .wr_data (wb_value),
+    .wr_idx (cdb_t),
+    .clock (clock),
+    .reset (reset),
+    // Output
+    .rda_out(pr1_read),
+    .rdb_out(pr2_read)
+`ifdef TEST_MODE
+    .pr_reg_display(pr_display)
+`endif
+)
+
+//////////////////////////////////////////////////
+//                                              //
 //                IS-FU-Register                //
 //                                              //
 //////////////////////////////////////////////////
@@ -531,23 +556,6 @@ complete_stage cs(
     .target_pc(target_pc)                       // -> ROB.target_pc
 );
 
-/*
-//////////////////////////////////////////////////
-//                                              //
-//                C-RE-Register (No-need)       //
-//                                              //
-//////////////////////////////////////////////////
-
-// TODO: Not sure about this part - hc
-always_ff @(posedge clock) begin
-    if (reset) begin
-        retire_entry <= `SD 0;
-    end
-    else begin
-        retire_entry <= `SD rob_retire_entry;
-    end
-end
-*/
 //////////////////////////////////////////////////
 //                                              //
 //                 Retire Stage                 //

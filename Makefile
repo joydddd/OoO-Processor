@@ -84,6 +84,9 @@ ROBFILES = verilog/rob.sv
 FREELISTTESTBENCH = testbench/freelist_test.sv
 FREELISTFILES = verilog/freelist.sv
 
+PRFILES = verilog/physical_regfile.sv
+PRSYNFILES = synth/physical_regfile.vg
+
 # fetch stage
 FSTESTBENCH = testbench/fetch_test.sv
 FSFILES = verilog/pipeline_fetch.sv verilog/fetch_stage.sv cache/icache.sv cache/cachemem.sv
@@ -118,6 +121,7 @@ export FSFILES
 export REFILES
 export PLFILES
 export ARCHMTFILES
+export PRFILES
 
 
 export CACHE_NAME = cache
@@ -127,6 +131,7 @@ export MAP_TABLE_NAME = map_table
 export IS_FIFO_NAME = fu_FIFO_3
 export FREELIST_NAME = Freelist
 export ROB_NAME = ROB
+export PR_NAME = physical_regfile
 
 export RSFILES
 export ROBFILES
@@ -191,6 +196,9 @@ freelist: freelist_simv
 	./freelist_simv | tee freelist_sim_program.out
 freelist_simv: $(HEADERS) $(FREELISTFILES) $(FREELISTTESTBENCH)
 	$(VCS) $^ -o freelist_simv
+
+pr_simv: $(HEADERS) $(PRFILES)
+	$(VCS) $^ -o pr_simv
 
 # retire_stage:
 ret: ret_simv
@@ -257,6 +265,9 @@ $(FREELISTSYNFILES): $(FREELISTFILES) $(SYNTH_DIR)/freelist.tcl
 $(ISFIFOSYN): $(ISFIFOFILE) $(SYNTH_DIR)/is_fifo.tcl
 	cd $(SYNTH_DIR) && dc_shell-t -f ./is_fifo.tcl | tee is_fifo_synth.out
 
+$(PRSYNFILES): $(PRFILES) $(SYNTH_DIR)/pr.tcl
+	cd $(SYNTH_DIR) && dc_shell-t -f ./pr.tcl | tee pr_synth.out
+
 rs_syn:	rs_syn_simv 
 	./rs_syn_simv | tee rs_syn_program.out
 
@@ -310,7 +321,7 @@ ret_syn_simv: $(HEADERS) $(RESYNFILES) $(RETESTBENCH)
 	$(VCS) $^ $(LIB) +define+SYNTH_TEST +error+20 -o dis_syn_simv 
 
 
-$(PLSYNFILES):	$(PLFILES) $(RSSYNFILES) $(MTSYNFILES) $(ARCHMTSYNFILES) $(ISFIFOSYN) $(FREELISTSYNFILES) $(ROBSYNFILES) $(SYNTH_DIR)/pl.tcl 
+$(PLSYNFILES):	$(PLFILES) $(RSSYNFILES) $(MTSYNFILES) $(ARCHMTSYNFILES) $(ISFIFOSYN) $(FREELISTSYNFILES) $(ROBSYNFILES) $(PRSYNFILES) $(SYNTH_DIR)/pl.tcl 
 	cd $(SYNTH_DIR) && dc_shell-t -f ./pl.tcl | tee pl_synth.out
 
 pl_syn: pl_syn_simv
