@@ -555,6 +555,8 @@ ROB rob_0(
 //////////////////////////////////////////////////
 
 complete_stage cs(
+    .clock(clock),
+    .reset(reset),
     .fu_finish(fu_finish),                      // <- fu.fu_finish
     .fu_c_in(fu_c_in),                          // <- fu.fu_c_in
     .fu_c_stall(complete_stall),                // -> fu.complete_stall
