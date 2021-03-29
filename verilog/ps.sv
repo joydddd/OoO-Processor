@@ -89,7 +89,7 @@ module pc_sel2(
     output logic [`XLEN-1:0] pc_up
 );
     logic [1:0] pri;
-    wire larger;
+    wire smaller;
     assign req_up = req[1] || req[0];
     assign gnt = en? pri:2'b0;
     assign smaller = (pc[1] < pc[0]);

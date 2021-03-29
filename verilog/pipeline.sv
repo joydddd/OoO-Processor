@@ -485,7 +485,7 @@ fu_alu fu_alu_1(
 	.clock(clock),                          // system clock
 	.reset(reset),                          // system reset
     .complete_stall(complete_stall[ALU_1]),    // <- complete.fu_c_stall
-	.fu_packet_in(is_fu_packet[ALU_1]),        // <- issue.issue_2_fu
+	.fu_packet_in(fu_packet_in[ALU_1]),        // <- issue.issue_2_fu
     .fu_ready(fu_ready.alu_1),                // -> issue.fu_ready
     .want_to_complete(fu_finish.alu_1),// -> complete.fu_finish
 	.fu_packet_out(fu_c_in[ALU_1])         // -> complete.fu_c_in
@@ -495,7 +495,7 @@ fu_alu fu_alu_2(
 	.clock(clock),                          // system clock
 	.reset(reset),                          // system reset
     .complete_stall(complete_stall[ALU_2]),    // <- complete.fu_c_stall
-	.fu_packet_in(is_fu_packet[ALU_2]),        // <- issue.issue_2_fu
+	.fu_packet_in(fu_packet_in[ALU_2]),        // <- issue.issue_2_fu
     .fu_ready(fu_ready.alu_2),                // -> issue.fu_ready
     .want_to_complete(fu_finish.alu_2),// -> complete.fu_finish
 	.fu_packet_out(fu_c_in[ALU_2])         // -> complete.fu_c_in
@@ -505,7 +505,7 @@ fu_alu fu_alu_3(
 	.clock(clock),                          // system clock
 	.reset(reset),                          // system reset
     .complete_stall(complete_stall[ALU_3]),    // <- complete.fu_c_stall
-	.fu_packet_in(is_fu_packet[ALU_3]),        // <- issue.issue_2_fu
+	.fu_packet_in(fu_packet_in[ALU_3]),        // <- issue.issue_2_fu
     .fu_ready(fu_ready.alu_3),                // -> issue.fu_ready
     .want_to_complete(fu_finish.alu_3),// -> complete.fu_finish
 	.fu_packet_out(fu_c_in[ALU_3])         // -> complete.fu_c_in
@@ -517,6 +517,12 @@ assign fu_finish.mult_1 = 0;
 assign fu_finish.mult_2 = 0;
 assign fu_finish.loadstore_1 = 0;
 assign fu_finish.loadstore_2 = 0;
+
+assign fu_ready.branch = 0;
+assign fu_ready.mult_1 = 0;
+assign fu_ready.mult_2 = 0;
+assign fu_ready.loadstore_1 = 0;
+assign fu_ready.loadstore_2 = 0;
 
 assign fu_c_in[BRANCH:LS_1] = 0;
 
@@ -598,7 +604,7 @@ retire_stage retire_0(
 Freelist fl_0(
     .clock(clock), 
     .reset(reset), 
-    .DispatchEN(dis_new_pr_en),                    // <- TODO: ???
+    .DispatchEN(dis_new_pr_en),                    //
     .RetireEN(RetireEN),                        // <- retire.RetireEN
     .RetireReg(RetireReg),                      // <- retire.RetireReg
     .BPRecoverEN(BPRecoverEN),                  // <- retire.BPRecoverEN
