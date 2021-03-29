@@ -34,7 +34,6 @@ module brcond(// Inputs
 	input [`XLEN-1:0] rs1,    // Value to check against condition
 	input [`XLEN-1:0] rs2,
 	input BR_SELECT br,  // Specifies which condition to check
-
 	output logic cond    // 0/1 condition result (False/True)
 );
 
@@ -58,21 +57,29 @@ endmodule // brcond
 
 
 module branch_stage(
-	input clock,               // system clock
-	input reset,               // system reset
-	input FU_STATE_PACKET complete_stall,			// complete stage structural hazard
-	input ISSUE_FU_PACKET fu_packet_in,
-	output FU_STATE_PACKET fu_ready,				// TODO: combine complete_stall and the FU currently running, forward to issue stage
-	output FU_STATE_PACKET want_to_complete,		// TODO: deal with this value when we have more FUs
-	output FU_COMPLETE_PACKET fu_packet_out
+	input				  	clock,
+	input 			      	reset,
+	input logic 		  	complete_stall,			// complete stage structural hazard
+	input ISSUE_FU_PACKET 	fu_packet_in,
+	output 				  	fu_ready,				// TODO: combine complete_stall and the FU currently running, forward to issue stage
+	output logic	 	 	want_to_complete_branch,		// TODO: deal with this value when we have more FUs
+	output FU_COMPLETE_PACKET fu_packet_out_reg
 );
+
+	FU_COMPLETE_PACKET fu_packet_out;
 
     // TODO: fu_ready and want_to_complete
 	// Pass-throughs
+	logic fu_complete;    //There is a inst just finished in this cycle
+
+	assign fu_complete = fu_packet_in.valid;  //Latency just 1
 	assign fu_packet_out.dest_pr = fu_packet_in.dest_pr;
 	assign fu_packet_out.rob_entry = fu_packet_in.rob_entry;
 	assign fu_packet_out.halt = fu_packet_in.halt;
 	assign fu_packet_out.valid = fu_packet_in.valid;
+	assign want_to_complete_branch = fu_complete;
+	assign fu_ready = ~(complete_stall);
+
 	logic [`XLEN-1:0] opa_mux_out, opb_mux_out;
 	logic brcond_result;
 	
@@ -97,7 +104,7 @@ module branch_stage(
 		// value on the output of the mux you have an invalid opb_select
 		opb_mux_out = `XLEN'hfacefeed;
 		case (fu_packet_in.opb_select)
-			OPB_IS_RS2:   opb_mux_out[ = fu_packet_in.r2_value;
+			OPB_IS_RS2:   opb_mux_out = fu_packet_in.r2_value;
 			OPB_IS_I_IMM: opb_mux_out = `RV32_signext_Iimm(fu_packet_in.inst);
 			OPB_IS_B_IMM: opb_mux_out = `RV32_signext_Bimm(fu_packet_in.inst);
 			OPB_IS_J_IMM: opb_mux_out = `RV32_signext_Jimm(fu_packet_in.inst);
@@ -110,22 +117,32 @@ module branch_stage(
 	brcond brcond (// Inputs
 		.rs1(fu_packet_in.r1_value), 
 		.rs2(fu_packet_in.r2_value),
-		.func(fu_packet_in.op_sel.br), // inst bits to determine check
+		.br(fu_packet_in.op_sel.br), // inst bits to determine check
 
 		// Output
 		.cond(brcond_result)
 	);
 
-
-    assign fu_packet_out.precise_state_need = brcond_result;  //TODO: If not "assume all not taken", modify this
-    assign fu_packet_out.target_pc = brcond_result ? (opa_mux_out + opb_mux_out) : 0;
-
-    always_comb begin
+ 	always_comb begin
+    	fu_packet_out.if_take_branch = brcond_result;  //TODO: If not "assume all not taken", modify this
+		
+    	fu_packet_out.target_pc = brcond_result ? (opa_mux_out + opb_mux_out) : 0;
         fu_packet_out.dest_value = 0;
         if (fu_packet_in.op_sel.br==UNCOND) begin
             fu_packet_out.dest_value = fu_packet_in.NPC;
         end
     end
 
+	always_ff @(posedge clock) begin
+		if (reset) begin
+			fu_packet_out_reg <= `SD 0;
+		end
+		else if (complete_stall) begin
+			fu_packet_out_reg <= `SD fu_packet_out_reg;
+		end
+		else begin
+			fu_packet_out_reg <= `SD fu_packet_out;
+		end
+	end
 endmodule 
 `endif 

@@ -13,7 +13,7 @@
 #
 #
 
-SOURCE = test_progs/addonly.s
+SOURCE = test_progs/branch.s
 
 CRT = crt.s
 LINKERS = linker.lds
@@ -101,7 +101,9 @@ REFILES = verilog/re_stage.sv
 RETESTBENCH = testbench/retire_test.sv
 RESYNFILES = synth/retire_stage.vg
 
-
+BRANCHFILES = verilog/branch_fu.sv
+BRANCHTESTBENCH = testbench/branchfu_test.sv
+RESYNFILES = synth/branch_stage.vg
 # SIMULATION CONFIG
 
 HEADERS     = $(wildcard *.svh)
@@ -129,6 +131,7 @@ export ARCHMTFILES
 export PRFILES
 # FUs
 export ALUFILES
+export BRANCHFILES
 
 
 export CACHE_NAME = cache
@@ -170,7 +173,7 @@ all:    simv
 # pipeline(currently no fetch)
 pipeline: pl_simv
 	./pl_simv | tee pl_sim_program.out
-pl_simv: $(HEADERS) $(PLFILES) $(PLTESTBENCH)
+pl_simv: $(HEADERS) $(PLFILES) $(RSFILES) $(DFILES) $(MTFILES) $(FREELISTFILES) $(BRANCHFILES) $(ROBFILES) $(REFILES) $(PRFILES) $(ISFIFOFILE) $(PLTESTBENCH)
 	$(VCS) $^ -o pl_simv
 
 # RS
@@ -215,6 +218,12 @@ ret: ret_simv
 	./ret_simv | tee ret_sim_program.out
 ret_simv: $(HEADERS) $(REFILES) $(RETESTBENCH)
 	$(VCS) $^ -o ret_simv
+
+# branch_fu:
+branch: branch_simv
+	./branch_simv | tee branch_sim_program.out
+branch_simv: $(HEADERS) $(BRANCHFILES) $(BRANCHTESTBENCH)
+	$(VCS) $^ -o branch_simv
 
 sim:	simv
 	./simv | tee sim_program.out
@@ -334,6 +343,11 @@ ret_syn: ret_syn_simv
 ret_syn_simv: $(HEADERS) $(RESYNFILES) $(RETESTBENCH) 
 	$(VCS) $^ $(LIB) +define+SYNTH_TEST +error+20 -o dis_syn_simv 
 
+$(RESYNFILES):	$(BRANCHFILES) $(SYNTH_DIR)/branch.tcl
+	cd $(SYNTH_DIR) && dc_shell-t -f ./branch.tcl | tee branch_synth.out
+
+branch_syn: $(RESYNFILES)
+ 
 
 $(PLSYNFILES):	$(PLFILES) $(RSSYNFILES) $(MTSYNFILES) $(ARCHMTSYNFILES) $(ISFIFOSYN) $(FREELISTSYNFILES) $(ROBSYNFILES) $(PRSYNFILES) $(ALUSYNFILES) $(SYNTH_DIR)/pl.tcl 
 	cd $(SYNTH_DIR) && dc_shell-t -f ./pl.tcl | tee pl_synth.out
