@@ -2,6 +2,8 @@
 `ifndef __FETCH_TEST_SV__
 `define __FETCH_TEST_SV__
 
+`define CACHE_MODE
+
 module testbench();
 
     logic               clock;
@@ -30,6 +32,21 @@ module testbench();
         .fetch_packet_out(if_packet_out)        // show the outputs of fetch stage
     );
 
+    mem memory(
+        .clk(clock),                            // Memory clock
+        .proc2mem_addr(proc2Imem_addr),         // address for current command
+        //support for memory model with byte level addressing
+        .proc2mem_data(64'b0),                  // write data, no need for this test
+    `ifndef CACHE_MODE  
+        .proc2mem_size(DOUBLE),                 //BYTE, HALF, WORD or DOUBLE, no need for this test
+    `endif
+        .proc2mem_command(proc2Imem_command),   // `BUS_NONE `BUS_LOAD or `BUS_STORE
+        
+        .mem2proc_response(Imem2proc_response), // 0 = can't accept, other=tag of transaction
+        .mem2proc_data(Imem2proc_data),         // data resulting from a load
+        .mem2proc_tag(Imem2proc_tag)            // 0 = no value, other=tag of transaction
+    );
+
     task show_out();
         begin
             $display("==================================================");
@@ -53,64 +70,22 @@ module testbench();
 		clock=0;
         reset=1'b1;
         target_pc=0;
-        Imem2proc_response = 0;
-        Imem2proc_data = 0;
-        Imem2proc_tag = 0;
-        
+        @(negedge clock)
+        $readmemh("program.mem", memory.unified_memory);
+
 		@(negedge clock);
 		@(negedge clock);
         reset=0;
-        Imem2proc_response = 3'd1;
         #2
         show_out();
 		
-		@(negedge clock);
-        Imem2proc_response = 0;
-        #2
-        show_out();
+        for (int i = 0; i < 28; i++) begin
+            @(negedge clock);
+            #2
+            show_out();
+        end
 
-        @(negedge clock);
-        Imem2proc_data = 64'h12345678abcdef01;
-        Imem2proc_tag = 3'd1;
-        #2
         show_out();
-
-        @(negedge clock);
-        Imem2proc_tag = 0;
-        Imem2proc_response = 2;
-        #2
-        show_out();
-        
-        @(negedge clock);
-        Imem2proc_response = 0;
-        #2
-        show_out();
-        @(negedge clock);
-        #2
-        show_out();
-        
-        @(negedge clock);
-        #2
-        show_out();
-        @(negedge clock);
-        Imem2proc_data = 64'h12345678abcdef01;
-        Imem2proc_tag = 3'd2;
-        #2
-        show_out();
-        @(negedge clock);
-        #2
-        show_out();
-        /*
-        @(negedge clock);
-        #2
-        show_out();
-        @(negedge clock);
-        #2
-        show_out();
-        @(negedge clock);
-        #2
-        show_out();
-        */
         $display("@@@Finished\n");
 		$finish;
 	end

@@ -5,8 +5,8 @@ module fetch_stage (
     input                       reset,
     input   [2:0][31:0]         cache_data,         // <- icache.Icache_data_out
     input   [2:0]               cache_valid,        // <- Icache_valid_out
-    input                       take_branch,        // taken-branch signal
-	input   [`XLEN-1:0]         target_pc,          // target pc: use if take_branch is TRUE
+    input                       take_branch,        // <- retire.BPRecoverEN
+	input   [`XLEN-1:0]         target_pc,          // <- retire.fetch_pc
 
     output  logic [1:0]         shift,              // -> icache.shift
     output  [2:0][`XLEN-1:0]    proc2Icache_addr,   // -> icache.proc2Icache_addr
