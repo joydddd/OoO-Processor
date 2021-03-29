@@ -38,8 +38,8 @@ end
 // Read 
 always_comb begin
     for(int i=0; i<3; i++) begin
-        rda_out[i] = pr_next[rda_idx[i]];
-        rdb_out[i] = pr_next[rdb_idx[i]];
+        rda_out[i] = pr_reg[rda_idx[i]];
+        rdb_out[i] = pr_reg[rdb_idx[i]];
     end
 end
 

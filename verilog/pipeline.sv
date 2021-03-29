@@ -172,8 +172,8 @@ logic [2:0][`PR-1:0]    is_pr1_idx, is_pr2_idx; // access pr
 /* physical register */
 logic [2:0][`XLEN-1:0]  pr1_read, pr2_read;
 // TODO: plug in pr
-assign pr1_read = 0;
-assign pr2_read = 0;
+// assign pr1_read = 0;
+// assign pr2_read = 0;
 
 
 /* Reorder Buffer */
@@ -193,13 +193,11 @@ logic       [`ROB-1:0]          tail;
 FU_STATE_PACKET                     fu_ready;
 ISSUE_FU_PACKET     [2**`FU-1:0]    fu_packet_in;
 FU_STATE_PACKET                     complete_stall;
-FU_COMPLETE_PACKET  [2:0]           fu_c_packet;
-FU_STATE_PACKET                     fu_finish_packet;
 
 
 /* Complete Stage */
 CDB_T_PACKET                    cdb_t;
-FU_COMPLETE_PACKET [2:0]        fu_c_in;
+FU_COMPLETE_PACKET [2**`FU-1:0]    fu_c_in;
 FU_STATE_PACKET                 fu_finish;
 logic       [2:0][`XLEN-1:0]    wb_value;
 logic       [2:0]               precise_state_valid;
@@ -483,15 +481,44 @@ end
 //               (Functional Units)             //
 //////////////////////////////////////////////////
 
-alu_stage alus(
-	.clock(clock),                      // system clock
-	.reset(reset),                      // system reset
-    .complete_stall(complete_stall),    // <- complete.fu_c_stall
-	.fu_packet_in(is_fu_packet[2:0]),        // <- issue.issue_2_fu
-    .fu_ready(fu_ready),                // -> issue.fu_ready
-    .want_to_complete(fu_finish_packet),// -> complete.fu_finish
-	.fu_packet_out(fu_c_packet)         // -> complete.fu_c_in
+fu_alu fu_alu_1(
+	.clock(clock),                          // system clock
+	.reset(reset),                          // system reset
+    .complete_stall(complete_stall[ALU_1]),    // <- complete.fu_c_stall
+	.fu_packet_in(is_fu_packet[ALU_1]),        // <- issue.issue_2_fu
+    .fu_ready(fu_ready.alu_1),                // -> issue.fu_ready
+    .want_to_complete(fu_finish.alu_1),// -> complete.fu_finish
+	.fu_packet_out(fu_c_in[ALU_1])         // -> complete.fu_c_in
 );
+
+fu_alu fu_alu_2(
+	.clock(clock),                          // system clock
+	.reset(reset),                          // system reset
+    .complete_stall(complete_stall[ALU_2]),    // <- complete.fu_c_stall
+	.fu_packet_in(is_fu_packet[ALU_2]),        // <- issue.issue_2_fu
+    .fu_ready(fu_ready.alu_2),                // -> issue.fu_ready
+    .want_to_complete(fu_finish.alu_2),// -> complete.fu_finish
+	.fu_packet_out(fu_c_in[ALU_2])         // -> complete.fu_c_in
+);
+
+fu_alu fu_alu_3(
+	.clock(clock),                          // system clock
+	.reset(reset),                          // system reset
+    .complete_stall(complete_stall[ALU_3]),    // <- complete.fu_c_stall
+	.fu_packet_in(is_fu_packet[ALU_3]),        // <- issue.issue_2_fu
+    .fu_ready(fu_ready.alu_3),                // -> issue.fu_ready
+    .want_to_complete(fu_finish.alu_3),// -> complete.fu_finish
+	.fu_packet_out(fu_c_in[ALU_3])         // -> complete.fu_c_in
+);
+
+// TODO add more fus
+assign fu_finish.branch = 0;
+assign fu_finish.mult_1 = 0;
+assign fu_finish.mult_2 = 0;
+assign fu_finish.loadstore_1 = 0;
+assign fu_finish.loadstore_2 = 0;
+
+assign fu_c_in[BRANCH:LS_1] = 0;
 
 //////////////////////////////////////////////////
 //                                              //
@@ -520,23 +547,6 @@ ROB rob_0(
     , .rob_entries_debug(rob_debug)             // <- debug input
     `endif
 );
-
-//////////////////////////////////////////////////
-//                                              //
-//                FU-C-Register                 //
-//                                              //
-//////////////////////////////////////////////////
-
-always_ff @(posedge clock) begin
-    if (reset) begin
-        fu_finish <= `SD 0;
-        fu_c_in   <= `SD 0;
-    end
-    else begin
-        fu_finish <= `SD fu_finish_packet;
-        fu_c_in   <= `SD fu_c_packet;
-    end
-end
 
 //////////////////////////////////////////////////
 //                                              //
@@ -591,9 +601,9 @@ Freelist fl_0(
     .RetireReg(RetireReg),                      // <- retire.RetireReg
     .BPRecoverEN(BPRecoverEN),                  // <- retire.BPRecoverEN
     .BPRecoverHead(BPRecoverHead),              // <- retire.BPRecoverHead
-    .FreeReg(free_pr),                          // -> dispatch.free_pr_in  TODO: has bugs
+    .FreeReg(free_pr),                          // -> dispatch.free_pr_in 
     .Head(FreelistHead),                        // -> retire.FreelistHead
-    .FreeRegValid(free_pr_valid),               // -> dispatch.free_reg_valid  TODO:has bugs
+    .FreeRegValid(free_pr_valid),               // -> dispatch.free_reg_valid 
     .fl_distance(fl_distance)                   // -> retire.fl_distance
     `ifdef TEST_MODE
     , .array_display(fl_array_display)          // -> display

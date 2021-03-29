@@ -316,11 +316,7 @@ typedef enum logic[`OP-1:0] {
 	ALU_XOR,
 	ALU_SLL,
 	ALU_SRL,
-	ALU_SRA,
-	ALU_MUL,  
-	ALU_MULH,   
-	ALU_MULHSU, 
-	ALU_MULHU  
+	ALU_SRA
 } ALU_SELECT;
 typedef enum logic[`OP-1:0]{
 	MULT,
@@ -350,7 +346,7 @@ typedef union packed{
 	MULT_SELECT mult;
 	LS_SELECT ls;
 	BR_SELECT br;
-} OP_SELECT;
+}OP_SELECT;
 
 typedef enum logic[1:0]{
 		EMPTY = 0,

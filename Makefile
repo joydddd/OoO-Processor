@@ -48,7 +48,7 @@ LIB = /afs/umich.edu/class/eecs470/lib/verilog/lec25dscc25.v
 
 # Pipeline without fetch
 PLTESTBENCH = testbench/pipeline_test.sv testbench/mt-fl_sim.cpp testbench/pipe_print.c 
-PLFILES = verilog/alu_stage.sv verilog/dispatch.sv verilog/issue.sv verilog/pipeline.sv verilog/complete_stage.sv verilog/re_stage.sv verilog/ps.sv
+PLFILES = verilog/dispatch.sv verilog/issue.sv verilog/pipeline.sv verilog/complete_stage.sv verilog/re_stage.sv verilog/ps.sv
 PLSYNFILES = synth/pipeline.vg
 
 # Reservation Station
@@ -73,7 +73,7 @@ DSYNFILES = synth/pipeline.vg
 
 #issue_fifo
 ISFIFOFILE = verilog/issue_fifo.sv
-ISFIFOSYN = syn/fu_FIFO_3.vg
+ISFIFOSYN = synth/fu_FIFO_3.vg
 
 ROBSYNFILES = synth/ROB.vg
 FREELISTSYNFILES = synth/Freelist.vg
@@ -86,6 +86,11 @@ FREELISTFILES = verilog/freelist.sv
 
 PRFILES = verilog/physical_regfile.sv
 PRSYNFILES = synth/physical_regfile.vg
+
+# functional units
+ALUFILES = verilog/fu_alu.sv
+ALUSYNFILES = synth/fu_alu.vg
+
 
 # fetch stage
 FSTESTBENCH = testbench/fetch_test.sv
@@ -122,16 +127,21 @@ export REFILES
 export PLFILES
 export ARCHMTFILES
 export PRFILES
+# FUs
+export ALUFILES
 
 
 export CACHE_NAME = cache
 export PIPELINE_NAME = pipeline
 export RS_NAME = RS
 export MAP_TABLE_NAME = map_table
+export ARCH_MT_NAME = arch_maptable
 export IS_FIFO_NAME = fu_FIFO_3
 export FREELIST_NAME = Freelist
 export ROB_NAME = ROB
 export PR_NAME = physical_regfile
+# FUs
+export ALU_NAME = fu_alu
 
 export RSFILES
 export ROBFILES
@@ -267,6 +277,10 @@ $(ISFIFOSYN): $(ISFIFOFILE) $(SYNTH_DIR)/is_fifo.tcl
 
 $(PRSYNFILES): $(PRFILES) $(SYNTH_DIR)/pr.tcl
 	cd $(SYNTH_DIR) && dc_shell-t -f ./pr.tcl | tee pr_synth.out
+
+# FUs
+$(ALUSYNFILES): $(ALUFILES) $(SYNTH_DIR)/fu_alu.tcl
+	cd $(SYNTH_DIR) && dc_shell-t -f ./fu_alu.tcl | tee alu_synth.out
 
 rs_syn:	rs_syn_simv 
 	./rs_syn_simv | tee rs_syn_program.out
