@@ -57,12 +57,12 @@ endmodule // brcond
 
 
 module branch_stage(
-	input				  clock,
-	input 			      reset,
-	input FU_STATE_PACKET complete_stall,			// complete stage structural hazard
-	input ISSUE_FU_PACKET fu_packet_in,
-	output 				  fu_ready,				// TODO: combine complete_stall and the FU currently running, forward to issue stage
-	output logic want_to_complete_branch,		// TODO: deal with this value when we have more FUs
+	input				  	clock,
+	input 			      	reset,
+	input logic 		  	complete_stall,			// complete stage structural hazard
+	input ISSUE_FU_PACKET 	fu_packet_in,
+	output 				  	fu_ready,				// TODO: combine complete_stall and the FU currently running, forward to issue stage
+	output logic	 	 	want_to_complete_branch,		// TODO: deal with this value when we have more FUs
 	output FU_COMPLETE_PACKET fu_packet_out_reg
 );
 
@@ -133,15 +133,16 @@ module branch_stage(
         end
     end
 
-
-	/* write result to finish reg */
-	always_ff @(posedge clock)	begin
-	    if (reset) 
-	        fu_packet_out_reg <= `SD 0;
-	    else if (complete_stall)
-	        fu_packet_out_reg <= `SD fu_packet_out;
-	    else fu_packet_out_reg <= `SD fu_packet_out;
+	always_ff @(posedge clock) begin
+		if (reset) begin
+			fu_packet_out_reg <= `SD 0;
+		end
+		else if (complete_stall) begin
+			fu_packet_out_reg <= `SD fu_packet_out_reg;
+		end
+		else begin
+			fu_packet_out_reg <= `SD fu_packet_out;
+		end
 	end
-
 endmodule 
 `endif 

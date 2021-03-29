@@ -12,7 +12,7 @@ module testbench;
     logic clock, reset;
     logic [31:0] cycle_count;
 
-    FU_STATE_PACKET complete_stall;
+    logic complete_stall;
     ISSUE_FU_PACKET fu_packet_store;
     logic fu_ready;
     logic want_to_complete;
@@ -21,6 +21,8 @@ module testbench;
 
 
     branch_stage tmp(
+        .clock(clock),
+        .reset(reset),
         .complete_stall(complete_stall),			// complete stage structural hazard
         .fu_packet_in(fu_packet_store),
         .fu_ready(fu_ready),			
@@ -37,7 +39,7 @@ module testbench;
     task show_branch_fu;
         begin
             $display("Fu_ready: %b", fu_ready);
-            $display("want_to_complete: %b", want_to_complete.branch);
+            $display("want_to_complete: %b", want_to_complete);
             $display("| if_take_branch | valid |  halt | target_pc | dest_pr | dest_value | rob_entry |");
             $display("|      %1d         |   %b   |   %2d  |    %d     |    %2d   |     %2d     |     %d    |",
                     fu_packet_out.if_take_branch, fu_packet_out.valid, fu_packet_out.halt, fu_packet_out.target_pc, fu_packet_out.dest_pr, fu_packet_out.dest_value, fu_packet_out.rob_entry);
@@ -79,8 +81,11 @@ module testbench;
         @(negedge clock)
         show_branch_fu;
 
+        @(negedge clock)
+        show_branch_fu;
+
         @(posedge clock)
-        complete_stall.branch = 1;
+        complete_stall= 1;
 
         @(negedge clock)
         show_branch_fu;
