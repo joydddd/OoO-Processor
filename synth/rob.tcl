@@ -25,7 +25,7 @@ read_file -f sverilog [list ${headers} ${sources}]
 set design_name ROB
 set clock_name clock
 set reset_name reset
-set CLK_PERIOD 9
+set CLK_PERIOD 6
 
 
 #/***********************************************************/

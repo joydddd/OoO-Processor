@@ -4,7 +4,7 @@ Information: Updating design information... (UID-85)
 Report : design
 Design : map_table
 Version: O-2018.06
-Date   : Sun Mar 28 10:15:55 2021
+Date   : Mon Mar 29 07:21:48 2021
 ****************************************
 
 Design allows ideal nets on clock nets.
@@ -86,7 +86,7 @@ Design Parameters:
 Report : area
 Design : map_table
 Version: O-2018.06
-Date   : Sun Mar 28 10:15:55 2021
+Date   : Mon Mar 29 07:21:48 2021
 ****************************************
 
 Library(s) Used:
@@ -102,14 +102,14 @@ Number of macros/black boxes:               0
 Number of buf/inv:                        457
 Number of references:                      26
 
-Combinational area:             213743.170746
-Buf/Inv area:                    15518.822762
+Combinational area:             213734.876347
+Buf/Inv area:                    15510.528362
 Noncombinational area:           35831.871094
 Macro/Black Box area:                0.000000
-Net Interconnect area:            2571.579419
+Net Interconnect area:            2571.481140
 
-Total cell area:                249575.041840
-Total area:                     252146.621258
+Total cell area:                249566.747440
+Total area:                     252138.228580
 1
  
 ****************************************
@@ -122,7 +122,7 @@ Report : timing
         -transition_time
 Design : map_table
 Version: O-2018.06
-Date   : Sun Mar 28 10:15:55 2021
+Date   : Mon Mar 29 07:21:48 2021
 ****************************************
 
  * Some/all delay information is back-annotated.
@@ -167,17 +167,17 @@ Wire Load Model Mode: top
   ready_array_reg[1]/DIN (dffs2)           0.79      0.01       1.65 r
   data arrival time                                             1.65
 
-  clock clock (rise edge)                            8.50       8.50
-  clock network delay (ideal)                        0.00       8.50
-  clock uncertainty                                 -0.10       8.40
-  ready_array_reg[1]/CLK (dffs2)                     0.00       8.40 r
-  library setup time                                -0.16       8.24
-  data required time                                            8.24
+  clock clock (rise edge)                            5.00       5.00
+  clock network delay (ideal)                        0.00       5.00
+  clock uncertainty                                 -0.10       4.90
+  ready_array_reg[1]/CLK (dffs2)                     0.00       4.90 r
+  library setup time                                -0.16       4.74
+  data required time                                            4.74
   ---------------------------------------------------------------------
-  data required time                                            8.24
+  data required time                                            4.74
   data arrival time                                            -1.65
   ---------------------------------------------------------------------
-  slack (MET)                                                   6.59
+  slack (MET)                                                   3.09
 
 
   Startpoint: map_array_reg[3][0]
@@ -217,17 +217,17 @@ Wire Load Model Mode: top
   ready_array_reg[3]/DIN (dffs2)           0.79      0.01       1.65 r
   data arrival time                                             1.65
 
-  clock clock (rise edge)                            8.50       8.50
-  clock network delay (ideal)                        0.00       8.50
-  clock uncertainty                                 -0.10       8.40
-  ready_array_reg[3]/CLK (dffs2)                     0.00       8.40 r
-  library setup time                                -0.16       8.24
-  data required time                                            8.24
+  clock clock (rise edge)                            5.00       5.00
+  clock network delay (ideal)                        0.00       5.00
+  clock uncertainty                                 -0.10       4.90
+  ready_array_reg[3]/CLK (dffs2)                     0.00       4.90 r
+  library setup time                                -0.16       4.74
+  data required time                                            4.74
   ---------------------------------------------------------------------
-  data required time                                            8.24
+  data required time                                            4.74
   data arrival time                                            -1.65
   ---------------------------------------------------------------------
-  slack (MET)                                                   6.59
+  slack (MET)                                                   3.09
 
 
   Startpoint: maptable_new_ar[1][0]
@@ -284,17 +284,17 @@ Wire Load Model Mode: top
   map_array_reg[8][2]/DIN (dffs1)          0.55      0.01       3.13 f
   data arrival time                                             3.13
 
-  clock clock (rise edge)                            8.50       8.50
-  clock network delay (ideal)                        0.00       8.50
-  clock uncertainty                                 -0.10       8.40
-  map_array_reg[8][2]/CLK (dffs1)                    0.00       8.40 r
-  library setup time                                -0.19       8.21
-  data required time                                            8.21
+  clock clock (rise edge)                            5.00       5.00
+  clock network delay (ideal)                        0.00       5.00
+  clock uncertainty                                 -0.10       4.90
+  map_array_reg[8][2]/CLK (dffs1)                    0.00       4.90 r
+  library setup time                                -0.19       4.71
+  data required time                                            4.71
   ---------------------------------------------------------------------
-  data required time                                            8.21
+  data required time                                            4.71
   data arrival time                                            -3.13
   ---------------------------------------------------------------------
-  slack (MET)                                                   5.07
+  slack (MET)                                                   1.57
 
 
   Startpoint: maptable_new_ar[1][0]
@@ -351,17 +351,17 @@ Wire Load Model Mode: top
   map_array_reg[8][1]/DIN (dffs1)          0.55      0.01       3.13 f
   data arrival time                                             3.13
 
-  clock clock (rise edge)                            8.50       8.50
-  clock network delay (ideal)                        0.00       8.50
-  clock uncertainty                                 -0.10       8.40
-  map_array_reg[8][1]/CLK (dffs1)                    0.00       8.40 r
-  library setup time                                -0.19       8.21
-  data required time                                            8.21
+  clock clock (rise edge)                            5.00       5.00
+  clock network delay (ideal)                        0.00       5.00
+  clock uncertainty                                 -0.10       4.90
+  map_array_reg[8][1]/CLK (dffs1)                    0.00       4.90 r
+  library setup time                                -0.19       4.71
+  data required time                                            4.71
   ---------------------------------------------------------------------
-  data required time                                            8.21
+  data required time                                            4.71
   data arrival time                                            -3.13
   ---------------------------------------------------------------------
-  slack (MET)                                                   5.07
+  slack (MET)                                                   1.57
 
 
   Startpoint: map_array_reg[1][0]
@@ -399,15 +399,15 @@ Wire Load Model Mode: top
   Told_out[2][0] (out)                     0.91      0.02       1.74 r
   data arrival time                                             1.74
 
-  max_delay                                          8.50       8.50
-  clock uncertainty                                 -0.10       8.40
-  output external delay                             -0.10       8.30
-  data required time                                            8.30
+  max_delay                                          5.00       5.00
+  clock uncertainty                                 -0.10       4.90
+  output external delay                             -0.10       4.80
+  data required time                                            4.80
   ---------------------------------------------------------------------
-  data required time                                            8.30
+  data required time                                            4.80
   data arrival time                                            -1.74
   ---------------------------------------------------------------------
-  slack (MET)                                                   6.56
+  slack (MET)                                                   3.06
 
 
   Startpoint: map_array_reg[1][0]
@@ -445,15 +445,15 @@ Wire Load Model Mode: top
   Told_out[1][0] (out)                     0.91      0.02       1.74 r
   data arrival time                                             1.74
 
-  max_delay                                          8.50       8.50
-  clock uncertainty                                 -0.10       8.40
-  output external delay                             -0.10       8.30
-  data required time                                            8.30
+  max_delay                                          5.00       5.00
+  clock uncertainty                                 -0.10       4.90
+  output external delay                             -0.10       4.80
+  data required time                                            4.80
   ---------------------------------------------------------------------
-  data required time                                            8.30
+  data required time                                            4.80
   data arrival time                                            -1.74
   ---------------------------------------------------------------------
-  slack (MET)                                                   6.56
+  slack (MET)                                                   3.06
 
 
 1
@@ -464,7 +464,7 @@ Report : constraint
         -max_delay
 Design : map_table
 Version: O-2018.06
-Date   : Sun Mar 28 10:15:55 2021
+Date   : Mon Mar 29 07:21:48 2021
 ****************************************
 
 
@@ -494,17 +494,17 @@ Date   : Sun Mar 28 10:15:55 2021
   ready_array_reg[1]/DIN (dffs2)           0.01       1.65 r
   data arrival time                                   1.65
 
-  clock clock (rise edge)                  8.50       8.50
-  clock network delay (ideal)              0.00       8.50
-  clock uncertainty                       -0.10       8.40
-  ready_array_reg[1]/CLK (dffs2)           0.00       8.40 r
-  library setup time                      -0.16       8.24
-  data required time                                  8.24
+  clock clock (rise edge)                  5.00       5.00
+  clock network delay (ideal)              0.00       5.00
+  clock uncertainty                       -0.10       4.90
+  ready_array_reg[1]/CLK (dffs2)           0.00       4.90 r
+  library setup time                      -0.16       4.74
+  data required time                                  4.74
   -----------------------------------------------------------
-  data required time                                  8.24
+  data required time                                  4.74
   data arrival time                                  -1.65
   -----------------------------------------------------------
-  slack (MET)                                         6.59
+  slack (MET)                                         3.09
 
 
   Startpoint: maptable_new_ar[1][0]
@@ -538,17 +538,17 @@ Date   : Sun Mar 28 10:15:55 2021
   map_array_reg[8][2]/DIN (dffs1)          0.01       3.13 f
   data arrival time                                   3.13
 
-  clock clock (rise edge)                  8.50       8.50
-  clock network delay (ideal)              0.00       8.50
-  clock uncertainty                       -0.10       8.40
-  map_array_reg[8][2]/CLK (dffs1)          0.00       8.40 r
-  library setup time                      -0.19       8.21
-  data required time                                  8.21
+  clock clock (rise edge)                  5.00       5.00
+  clock network delay (ideal)              0.00       5.00
+  clock uncertainty                       -0.10       4.90
+  map_array_reg[8][2]/CLK (dffs1)          0.00       4.90 r
+  library setup time                      -0.19       4.71
+  data required time                                  4.71
   -----------------------------------------------------------
-  data required time                                  8.21
+  data required time                                  4.71
   data arrival time                                  -3.13
   -----------------------------------------------------------
-  slack (MET)                                         5.07
+  slack (MET)                                         1.57
 
 
   Startpoint: map_array_reg[1][0]
@@ -575,15 +575,15 @@ Date   : Sun Mar 28 10:15:55 2021
   Told_out[1][0] (out)                     0.02       1.74 r
   data arrival time                                   1.74
 
-  max_delay                                8.50       8.50
-  clock uncertainty                       -0.10       8.40
-  output external delay                   -0.10       8.30
-  data required time                                  8.30
+  max_delay                                5.00       5.00
+  clock uncertainty                       -0.10       4.90
+  output external delay                   -0.10       4.80
+  data required time                                  4.80
   -----------------------------------------------------------
-  data required time                                  8.30
+  data required time                                  4.80
   data arrival time                                  -1.74
   -----------------------------------------------------------
-  slack (MET)                                         6.56
+  slack (MET)                                         3.06
 
 
 1
@@ -593,7 +593,7 @@ Information: Updating graph... (UID-83)
 Report : reference
 Design : map_table
 Version: O-2018.06
-Date   : Sun Mar 28 10:15:56 2021
+Date   : Mon Mar 29 07:21:48 2021
 ****************************************
 
 Attributes:
@@ -618,8 +618,8 @@ aoi222s1           lec25dscc25_TT    82.944000      80  6635.520020
 dffs1              lec25dscc25_TT   157.593994     192 30258.046875 n
 dffs2              lec25dscc25_TT   174.182007      32  5573.824219 n
 hi1s1              lec25dscc25_TT    33.177601     111  3682.713696
-i1s3               lec25dscc25_TT    41.472000      43  1783.296005
-ib1s1              lec25dscc25_TT    33.177601     303 10052.813061
+i1s3               lec25dscc25_TT    41.472000      42  1741.824005
+ib1s1              lec25dscc25_TT    33.177601     304 10085.990662
 nnd2s1             lec25dscc25_TT    41.472000     277 11487.744034
 nnd2s2             lec25dscc25_TT    41.472000      13   539.136002
 nnd3s1             lec25dscc25_TT    49.766399      94  4678.041542
@@ -636,5 +636,5 @@ or5s1              lec25dscc25_TT    91.238403       1    91.238403
 xnr2s1             lec25dscc25_TT    82.944000     104  8626.176025
 xor2s1             lec25dscc25_TT    82.944000     472 39149.568115
 -----------------------------------------------------------------------------
-Total 26 references                                 249575.041840
+Total 26 references                                 249566.747440
 1

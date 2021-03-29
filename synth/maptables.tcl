@@ -25,7 +25,7 @@ read_file -f sverilog [list ${headers} ${sources}]
 set design_name map_table
 set clock_name clock
 set reset_name reset
-set CLK_PERIOD 8.5
+set CLK_PERIOD 5
 
 
 #/***********************************************************/
