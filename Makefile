@@ -103,7 +103,7 @@ RESYNFILES = synth/retire_stage.vg
 
 BRANCHFILES = verilog/branch_fu.sv
 BRANCHTESTBENCH = testbench/branchfu_test.sv
-RESYNFILES = synth/branch_stage.vg
+BRANCHSYNFILES = synth/branch_stage.vg
 # SIMULATION CONFIG
 
 HEADERS     = $(wildcard *.svh)
@@ -145,6 +145,7 @@ export ROB_NAME = ROB
 export PR_NAME = physical_regfile
 # FUs
 export ALU_NAME = fu_alu
+export BRANCH_NAME = branch_stage
 
 export RSFILES
 export ROBFILES
@@ -343,13 +344,13 @@ ret_syn: ret_syn_simv
 ret_syn_simv: $(HEADERS) $(RESYNFILES) $(RETESTBENCH) 
 	$(VCS) $^ $(LIB) +define+SYNTH_TEST +error+20 -o dis_syn_simv 
 
-$(RESYNFILES):	$(BRANCHFILES) $(SYNTH_DIR)/branch.tcl
+$(BRANCHSYNFILES):	$(BRANCHFILES) $(SYNTH_DIR)/branch.tcl
 	cd $(SYNTH_DIR) && dc_shell-t -f ./branch.tcl | tee branch_synth.out
 
-branch_syn: $(RESYNFILES)
+branch_syn: $(BRANCHSYNFILES)
  
 
-$(PLSYNFILES):	$(PLFILES) $(RSSYNFILES) $(MTSYNFILES) $(ARCHMTSYNFILES) $(ISFIFOSYN) $(FREELISTSYNFILES) $(ROBSYNFILES) $(PRSYNFILES) $(ALUSYNFILES) $(SYNTH_DIR)/pl.tcl 
+$(PLSYNFILES):	$(PLFILES) $(RSSYNFILES) $(MTSYNFILES) $(ARCHMTSYNFILES) $(ISFIFOSYN) $(FREELISTSYNFILES) $(ROBSYNFILES) $(PRSYNFILES) $(ALUSYNFILES) $(BRANCHSYNFILES) $(SYNTH_DIR)/pl.tcl 
 	cd $(SYNTH_DIR) && dc_shell-t -f ./pl.tcl | tee pl_synth.out
 
 pl_syn: pl_syn_simv

@@ -524,11 +524,11 @@ assign fu_ready.loadstore_2 = 0;
 
 assign fu_c_in[MULT_2:LS_1] = 0;
 
-branch_fu branc(
+branch_stage branc(
     .clock(clock),
     .reset(reset),
     .complete_stall(complete_stall.branch),
-    .fu_packet_in(fu_packed_in[BRANCH]),
+    .fu_packet_in(fu_packet_in[BRANCH]),
     .fu_ready(fu_ready.branch),
     .want_to_complete_branch(fu_finish.branch),
     .fu_packet_out_reg(fu_c_in[BRANCH])
