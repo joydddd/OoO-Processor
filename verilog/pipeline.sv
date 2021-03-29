@@ -193,13 +193,13 @@ logic       [`ROB-1:0]          tail;
 FU_STATE_PACKET                     fu_ready;
 ISSUE_FU_PACKET     [2**`FU-1:0]    fu_packet_in;
 FU_STATE_PACKET                     complete_stall;
-FU_COMPLETE_PACKET  [2:0]           fu_c_packet;
+FU_COMPLETE_PACKET  [7:0]           fu_c_packet;
 FU_STATE_PACKET                     fu_finish_packet;
 
 
 /* Complete Stage */
 CDB_T_PACKET                    cdb_t;
-FU_COMPLETE_PACKET [2:0]        fu_c_in;
+FU_COMPLETE_PACKET [7:0]        fu_c_in;
 FU_STATE_PACKET                 fu_finish;
 logic       [2:0][`XLEN-1:0]    wb_value;
 logic       [2:0]               precise_state_valid;
@@ -482,6 +482,8 @@ end
 //                 EXECUTE-Stage                //
 //               (Functional Units)             //
 //////////////////////////////////////////////////
+logic fu_ready_br;
+logic want_to_complete_branch;
 
 alu_stage alus(
 	.clock(clock),                      // system clock
@@ -492,6 +494,18 @@ alu_stage alus(
     .want_to_complete(fu_finish_packet),// -> complete.fu_finish
 	.fu_packet_out(fu_c_packet)         // -> complete.fu_c_in
 );
+
+branch_fu branc(
+    .complete_stall(complete_stall),
+    .fu_packet_in(fu_packet_in),
+    .fu_ready(fu_ready_br),
+    .want_to_complete_branch(want_to_complete_branch),
+    .fu_packet_out(fu_c_packet[7])
+);
+
+assign fu_ready.branch = fu_ready_br;
+assign fu_ready.branch = want_to_complete_branch;
+
 
 //////////////////////////////////////////////////
 //                                              //
