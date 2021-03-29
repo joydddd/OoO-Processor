@@ -497,14 +497,14 @@ alu_stage alus(
 
 branch_fu branc(
     .complete_stall(complete_stall),
-    .fu_packet_in(fu_packet_in),
+    .fu_packet_in(is_fu_packet[7]),
     .fu_ready(fu_ready_br),
     .want_to_complete_branch(want_to_complete_branch),
     .fu_packet_out(fu_c_packet[7])
 );
 
 assign fu_ready.branch = fu_ready_br;
-assign fu_ready.branch = want_to_complete_branch;
+assign want_to_complete.branch = want_to_complete_branch;
 
 
 //////////////////////////////////////////////////

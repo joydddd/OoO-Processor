@@ -66,12 +66,15 @@ module branch_stage(
 
     // TODO: fu_ready and want_to_complete
 	// Pass-throughs
-	
+	logic fu_complete;    //There is a inst just finished in this cycle
+
+	assign fu_complete = fu_packet_in.valid;  //Latency just 1
 	assign fu_packet_out.dest_pr = fu_packet_in.dest_pr;
 	assign fu_packet_out.rob_entry = fu_packet_in.rob_entry;
 	assign fu_packet_out.halt = fu_packet_in.halt;
 	assign fu_packet_out.valid = fu_packet_in.valid;
-	assign want_to_complete_branch = fu_ready & ~complete_stall.branch;
+	assign want_to_complete_branch = fu_complete;
+	assign fu_ready = ~(fu_complete & complete_stall);
 
 	logic [`XLEN-1:0] opa_mux_out, opb_mux_out;
 	logic brcond_result;
@@ -125,6 +128,6 @@ module branch_stage(
             fu_packet_out.dest_value = fu_packet_in.NPC;
         end
     end
-	assign fu_ready = 1;
+
 endmodule 
 `endif 
