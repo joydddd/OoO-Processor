@@ -163,7 +163,7 @@ all:    simv
 # pipeline(currently no fetch)
 pipeline: pl_simv
 	./pl_simv | tee pl_sim_program.out
-pl_simv: $(HEADERS) $(PLFILES) $(PLTESTBENCH)
+pl_simv: $(HEADERS) $(PLFILES) $(RSFILES) $(DFILES) $(MTFILES) $(FREELISTFILES) $(BRANCHFILES) $(ROBFILES) $(REFILES) $(PRFILES) $(ISFIFOFILE) $(PLTESTBENCH)
 	$(VCS) $^ -o pl_simv
 
 # RS

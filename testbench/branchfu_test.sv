@@ -15,7 +15,7 @@ module testbench;
     FU_STATE_PACKET complete_stall;
     ISSUE_FU_PACKET fu_packet_store;
     logic fu_ready;
-    FU_STATE_PACKET want_to_complete;
+    logic want_to_complete;
     FU_COMPLETE_PACKET fu_packet_out;
 
 
@@ -24,7 +24,7 @@ module testbench;
         .complete_stall(complete_stall),			// complete stage structural hazard
         .fu_packet_in(fu_packet_store),
         .fu_ready(fu_ready),			
-        .want_to_complete(want_to_complete),		// TODO: deal with this value when we have more FUs
+        .want_to_complete_branch(want_to_complete),		// TODO: deal with this value when we have more FUs
         .fu_packet_out(fu_packet_out)
     );
 
