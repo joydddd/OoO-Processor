@@ -59,7 +59,7 @@ endmodule // brcond
 module branch_stage(
 	input				  	clock,
 	input 			      	reset,
-	input logic 		  	complete_stall,			// complete stage structural hazard
+	input  		  			complete_stall,			// complete stage structural hazard
 	input ISSUE_FU_PACKET 	fu_packet_in,
 	output 				  	fu_ready,				// TODO: combine complete_stall and the FU currently running, forward to issue stage
 	output logic	 	 	want_to_complete_branch,		// TODO: deal with this value when we have more FUs
