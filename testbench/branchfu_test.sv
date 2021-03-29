@@ -25,7 +25,7 @@ module testbench;
         .fu_packet_in(fu_packet_store),
         .fu_ready(fu_ready),			
         .want_to_complete_branch(want_to_complete),		// TODO: deal with this value when we have more FUs
-        .fu_packet_out(fu_packet_out)
+        .fu_packet_out_reg(fu_packet_out)
     );
 
     always begin
