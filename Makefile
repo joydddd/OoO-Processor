@@ -13,7 +13,7 @@
 #
 #
 
-SOURCE = test_progs/branch.s
+SOURCE = test_progs/mult_no_lsq.s
 
 CRT = crt.s
 LINKERS = linker.lds
@@ -47,8 +47,8 @@ VCS = vcs -V -sverilog +vc -Mupdate -line -full64 +vcs+vcdpluson -debug_pp
 LIB = /afs/umich.edu/class/eecs470/lib/verilog/lec25dscc25.v
 
 # Pipeline without fetch
-PLTESTBENCH = testbench/pipeline_test.sv testbench/mt-fl_sim.cpp testbench/pipe_print.c 
-PLFILES = verilog/dispatch.sv verilog/issue.sv verilog/pipeline.sv verilog/complete_stage.sv verilog/re_stage.sv verilog/ps.sv
+PLTESTBENCH = testbench/pipeline_test.sv testbench/mt-fl_sim.cpp testbench/pipe_print.c testbench/mem.sv
+PLFILES = verilog/dispatch.sv verilog/issue.sv verilog/pipeline.sv verilog/complete_stage.sv verilog/re_stage.sv verilog/ps.sv verilog/fetch_stage.sv cache/cachemem.sv cache/icache.sv
 PLSYNFILES = synth/pipeline.vg
 
 # Reservation Station

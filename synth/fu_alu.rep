@@ -4,7 +4,7 @@ Information: Updating design information... (UID-85)
 Report : design
 Design : fu_alu
 Version: O-2018.06
-Date   : Mon Mar 29 07:49:56 2021
+Date   : Tue Mar 30 02:07:55 2021
 ****************************************
 
 Design allows ideal nets on clock nets.
@@ -86,7 +86,7 @@ Design Parameters:
 Report : area
 Design : fu_alu
 Version: O-2018.06
-Date   : Mon Mar 29 07:49:56 2021
+Date   : Tue Mar 30 02:07:55 2021
 ****************************************
 
 Library(s) Used:
@@ -122,7 +122,7 @@ Report : timing
         -transition_time
 Design : fu_alu
 Version: O-2018.06
-Date   : Mon Mar 29 07:49:56 2021
+Date   : Tue Mar 30 02:07:55 2021
 ****************************************
 
  * Some/all delay information is back-annotated.
@@ -521,7 +521,7 @@ Report : constraint
         -max_delay
 Design : fu_alu
 Version: O-2018.06
-Date   : Mon Mar 29 07:49:56 2021
+Date   : Tue Mar 30 02:07:55 2021
 ****************************************
 
 
@@ -658,7 +658,7 @@ Information: Updating graph... (UID-83)
 Report : reference
 Design : fu_alu
 Version: O-2018.06
-Date   : Mon Mar 29 07:49:57 2021
+Date   : Tue Mar 30 02:07:56 2021
 ****************************************
 
 Attributes:

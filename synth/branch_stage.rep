@@ -4,7 +4,7 @@ Information: Updating design information... (UID-85)
 Report : design
 Design : branch_stage
 Version: O-2018.06
-Date   : Mon Mar 29 13:10:31 2021
+Date   : Tue Mar 30 02:08:07 2021
 ****************************************
 
 Design allows ideal nets on clock nets.
@@ -86,7 +86,7 @@ Design Parameters:
 Report : area
 Design : branch_stage
 Version: O-2018.06
-Date   : Mon Mar 29 13:10:31 2021
+Date   : Tue Mar 30 02:08:07 2021
 ****************************************
 
 Library(s) Used:
@@ -122,7 +122,7 @@ Report : timing
         -transition_time
 Design : branch_stage
 Version: O-2018.06
-Date   : Mon Mar 29 13:10:31 2021
+Date   : Tue Mar 30 02:08:07 2021
 ****************************************
 
  * Some/all delay information is back-annotated.
@@ -514,7 +514,7 @@ Report : constraint
         -max_delay
 Design : branch_stage
 Version: O-2018.06
-Date   : Mon Mar 29 13:10:31 2021
+Date   : Tue Mar 30 02:08:07 2021
 ****************************************
 
 
@@ -650,7 +650,7 @@ Information: Updating graph... (UID-83)
 Report : reference
 Design : branch_stage
 Version: O-2018.06
-Date   : Mon Mar 29 13:10:32 2021
+Date   : Tue Mar 30 02:08:07 2021
 ****************************************
 
 Attributes:

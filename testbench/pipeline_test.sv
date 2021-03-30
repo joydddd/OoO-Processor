@@ -65,7 +65,7 @@ ISSUE_FU_PACKET [`IS_FIFO_DEPTH-1:0] ls_fifo_display;
 ISSUE_FU_PACKET [2**`FU-1:0] fu_in_display;
 FU_STATE_PACKET            fu_ready_display;
 FU_STATE_PACKET            fu_finish_display;
-FU_COMPLETE_PACKET [2:0]   fu_packet_out_display;
+FU_COMPLETE_PACKET [2**`FU-1:0]   fu_packet_out_display;
 
 // Complete
 CDB_T_PACKET               cdb_t_display;
@@ -177,8 +177,8 @@ pipeline tbd(
     , .if_d_packet_debug(if_d_packet_debug)
     , .dis_new_pr_en_out(dis_new_pr_en_out)
     /* free list simulation */
-    , .free_pr_valid_debug(free_pr_valid_debug)
-    , .free_pr_debug(free_pr_debug)
+    // , .free_pr_valid_debug(free_pr_valid_debug)
+    // , .free_pr_debug(free_pr_debug)
     /* maptable simulation */
     /*
     , .maptable_lookup_reg1_ar_out(maptable_lookup_reg1_ar_out)
@@ -192,9 +192,9 @@ pipeline tbd(
     , .maptable_reg2_ready_debug(maptable_reg2_ready_debug)
     */
 
-    , .rob_stall_debug(rob_stall_debug)
-    , .fu_ready_debug(fu_ready_debug)
-    , .cdb_t_debug(cdb_t_debug)
+    // , .rob_stall_debug(rob_stall_debug)
+    // , .fu_ready_debug(fu_ready_debug)
+    // , .cdb_t_debug(cdb_t_debug)
 `endif
 );
 
@@ -322,10 +322,10 @@ endtask; // show_rs_table
 
 
 task show_fu_stat;
-    $display("fu ready: %8b", fu_ready_debug);
+    $display("fu ready: %8b", fu_ready_display);
     $display("fu finish: %8b", fu_finish_display);
     $display("| valid | halt | take_branch | target_pc | dest_pr | dest_value | rob_entry |");
-    for(int i = 2; i >=0; i--) begin
+    for(int i=0; i<2**`FU; i++) begin
         $display("| %1d | %1d | %1d | %4h | %2d | %d | %2d |", 
                 fu_packet_out_display[i].valid, fu_packet_out_display[i].halt, fu_packet_out_display[i].if_take_branch,
                 fu_packet_out_display[i].target_pc, fu_packet_out_display[i].dest_pr, fu_packet_out_display[i].dest_value,
@@ -395,69 +395,40 @@ endtask
 ///////////////         SET      
 /////////////////////////////////////////////////////////
 
-task set_if_d_packet;
-    input int i;
-    input INST inst;
-    input [`XLEN-1:0] pc;
-    if_d_packet_debug[i].inst = inst;
-    if_d_packet_debug[i].PC = pc;
-    if_d_packet_debug[i].NPC = pc+4;
-    if_d_packet_debug[i].valid = 1;
-endtask
+// task set_if_d_packet;
+//     input int i;
+//     input INST inst;
+//     input [`XLEN-1:0] pc;
+//     if_d_packet_debug[i].inst = inst;
+//     if_d_packet_debug[i].PC = pc;
+//     if_d_packet_debug[i].NPC = pc+4;
+//     if_d_packet_debug[i].valid = 1;
+// endtask
 
 task set_if_d_packet_invalid;
     input int i;
     if_d_packet_debug[i].valid = 0;
 endtask
 
-int PC; 
+// int PC; 
 initial begin
     $dumpvars;
     clock = 1'b0;
     reset = 1'b1;
-    rob_stall_debug = 3'b000;
-    fu_ready_debug = 8'b00011111;
-    cdb_t_debug = {`RS'b0, `RS'b0, `RS'b0};
-    PC = 0;
+    // rob_stall_debug = 3'b000;
+    // fu_ready_debug = 8'b00011111;
+    // cdb_t_debug = {`RS'b0, `RS'b0, `RS'b0};
+    // PC = 0;
     @(posedge clock)
     $readmemh("program.mem", memory.unified_memory);
     @(posedge clock)
     #2 reset = 1'b0;
     
-    @(negedge clock)
-    set_if_d_packet(2, 32'h03f301b3, PC);
-    set_if_d_packet(1, 32'h00312023, PC+4);
-    set_if_d_packet(0, 32'h00012203, PC+8);
-    `SD PC = PC + 12;
 
-    @(negedge clock)
-    set_if_d_packet(2, 32'h10412023, PC);
-    set_if_d_packet(1, 32'h00810113, PC+4);
-    set_if_d_packet(0, 32'h00130313, PC+8);
-    `SD PC = PC + 12;
-
-    @(negedge clock)
-    set_if_d_packet(2, 32'h01032293, PC);
-    set_if_d_packet(1, 32'h00000013, PC+4);
-    set_if_d_packet(0, 32'h00000513, PC+8);
-    `SD PC = PC + 12;
-
-    @(negedge clock)
-    set_if_d_packet(2, 32'h000035b7, PC);
-    set_if_d_packet(1, 32'h01a58593, PC+4);
-    set_if_d_packet(0, 32'h15600613, PC+8);
-    `SD PC = PC + 12;
-
+    for (int i = 0; i < 250; i++) begin
+    @(negedge clock);
+    end
     
-
-    @(negedge clock)
-    set_if_d_packet_invalid(2);
-    set_if_d_packet_invalid(1);
-    set_if_d_packet_invalid(0);
-    @(negedge clock)
-    @(negedge clock)
-    @(negedge clock)
-    @(negedge clock)
     #2;
     $display("@@@Pass: test finished");
     $finish;

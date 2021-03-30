@@ -18,13 +18,13 @@
 
 module pipeline(
 	input         clock,                    // System clock
-	input         reset                     // System reset
+	input         reset,                    // System reset
 	input [3:0]   mem2proc_response,        // Tag from memory about current request
 	input [63:0]  mem2proc_data,            // Data coming back from memory
 	input [3:0]   mem2proc_tag,              // Tag from memory about current reply
 	
 	output logic [1:0]  proc2mem_command,    // command sent to memory
-	output logic [`XLEN-1:0] proc2mem_addr,      // Address sent to memory
+	output logic [`XLEN-1:0] proc2mem_addr      // Address sent to memory
 	// output logic [63:0] proc2mem_data,      // Data sent to memory
 	// output MEM_SIZE proc2mem_size,          // data size sent to memory
 
@@ -66,7 +66,7 @@ module pipeline(
     , output ISSUE_FU_PACKET [2**`FU-1:0] fu_in_display
     , output FU_STATE_PACKET            fu_ready_display
     , output FU_STATE_PACKET            fu_finish_display
-    , output FU_COMPLETE_PACKET         fu_packet_out_display
+    , output FU_COMPLETE_PACKET [2**`FU-1:0]         fu_packet_out_display
     
     // Complete
     , output CDB_T_PACKET               cdb_t_display
@@ -88,11 +88,11 @@ module pipeline(
 `endif
 
 `ifdef DIS_DEBUG
-    , input IF_ID_PACKET [2:0]          if_d_packet_debug
+    , output IF_ID_PACKET [2:0]          if_d_packet_debug
     , output logic [2:0]                dis_new_pr_en_out
     /* free list simulation */
-    , input [2:0]                       free_pr_valid_debug
-    , input [2:0][`PR-1:0]              free_pr_debug
+    // , input [2:0]                       free_pr_valid_debug
+    // , input [2:0][`PR-1:0]              free_pr_debug
 
     /* maptable simulation */
     /*
@@ -107,9 +107,9 @@ module pipeline(
     , input [2:0]                       maptable_reg2_ready_debug
     */
 
-    , input [2:0]                       rob_stall_debug
-    , input FU_STATE_PACKET             fu_ready_debug
-    , input CDB_T_PACKET                cdb_t_debug
+    // , input [2:0]                       rob_stall_debug
+    // , input FU_STATE_PACKET             fu_ready_debug
+    // , input CDB_T_PACKET                cdb_t_debug
 `endif
     
 );
@@ -256,7 +256,7 @@ assign wb_value_display = wb_value;
 `endif
 
 `ifdef DIS_DEBUG
-//assign if_d_packet = if_d_packet_debug; 
+assign if_d_packet_debug = if_d_packet; 
 assign dis_new_pr_en_out = dis_new_pr_en;
 /* free list simulation */
 // assign free_pr_valid = free_pr_valid_debug;

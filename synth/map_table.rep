@@ -4,7 +4,7 @@ Information: Updating design information... (UID-85)
 Report : design
 Design : map_table
 Version: O-2018.06
-Date   : Mon Mar 29 07:21:48 2021
+Date   : Tue Mar 30 01:59:09 2021
 ****************************************
 
 Design allows ideal nets on clock nets.
@@ -86,7 +86,7 @@ Design Parameters:
 Report : area
 Design : map_table
 Version: O-2018.06
-Date   : Mon Mar 29 07:21:48 2021
+Date   : Tue Mar 30 01:59:09 2021
 ****************************************
 
 Library(s) Used:
@@ -122,7 +122,7 @@ Report : timing
         -transition_time
 Design : map_table
 Version: O-2018.06
-Date   : Mon Mar 29 07:21:48 2021
+Date   : Tue Mar 30 01:59:09 2021
 ****************************************
 
  * Some/all delay information is back-annotated.
@@ -464,7 +464,7 @@ Report : constraint
         -max_delay
 Design : map_table
 Version: O-2018.06
-Date   : Mon Mar 29 07:21:48 2021
+Date   : Tue Mar 30 01:59:09 2021
 ****************************************
 
 
@@ -593,7 +593,7 @@ Information: Updating graph... (UID-83)
 Report : reference
 Design : map_table
 Version: O-2018.06
-Date   : Mon Mar 29 07:21:48 2021
+Date   : Tue Mar 30 01:59:10 2021
 ****************************************
 
 Attributes:
