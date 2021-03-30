@@ -70,6 +70,7 @@ module pipeline(
     
     // Complete
     , output CDB_T_PACKET               cdb_t_display
+    , output FU_COMPLETE_PACKET [2:0]   complete_pckt_in_display
     , output [2:0][`XLEN-1:0]           wb_value_display
 
     // ROB
@@ -654,6 +655,9 @@ complete_stage cs(
     .complete_entry(complete_entry),            // -> ROB.complete_entry
     .precise_state_valid(precise_state_valid),  // -> ROB.precise_state_valid
     .target_pc(target_pc)                       // -> ROB.target_pc
+    `ifdef TEST_MODE
+    , .complete_pckt_in_display(complete_pckt_in_display)
+    `endif
 );
 
 //////////////////////////////////////////////////

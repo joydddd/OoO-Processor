@@ -437,7 +437,7 @@ typedef struct packed{
 typedef struct packed{
 	logic if_take_branch;
 	logic valid;
-	logic halt; // TODO: pass through halt
+	logic halt; 
 	logic [`XLEN-1:0] target_pc;
 	logic [`PR-1:0] dest_pr;
 	logic [`XLEN-1:0] dest_value;

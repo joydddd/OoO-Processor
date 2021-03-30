@@ -1,3 +1,4 @@
+`define TEST_MODE
 `timescale 1ns/100ps
 
 // complete_stage is a combinational module
@@ -23,6 +24,9 @@ module complete_stage(
 	output  logic [2:0][`ROB-1:0]             complete_entry,
     output  logic [2:0]                       precise_state_valid,
 	output  logic [2:0][`XLEN-1:0]            target_pc
+    `ifdef TEST_MODE
+    , output FU_COMPLETE_PACKET [2:0]   complete_pckt_in_display
+    `endif
 );
 
     wire [7:0]      sel_1, sel_2, sel_3;

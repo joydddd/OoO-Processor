@@ -69,6 +69,7 @@ FU_COMPLETE_PACKET [2**`FU-1:0]   fu_packet_out_display;
 
 // Complete
 CDB_T_PACKET               cdb_t_display;
+FU_COMPLETE_PACKET [2:0]    complete_pckt_in_display;
 
 //ROB
 	ROB_ENTRY_PACKET [`ROBW-1:0]    rob_entries_display;
@@ -162,6 +163,7 @@ pipeline tbd(
     // Complete
     , .cdb_t_display(cdb_t_display)
     , .wb_value_display(wb_value_display)
+    , .complete_pckt_in_display(complete_pckt_in_display)
     // ROB
     , .rob_entries_display(rob_entries_display)
     , .head_display(head_display)
@@ -268,14 +270,16 @@ always @(negedge clock) begin
         $display();
         print_pipeline;
         // print_is_fifo;
-        // print_alu;
+        print_alu;
         // show_fu_stat;
-        // show_cdb;
+        show_cdb;
+        show_complete;
         // show_rs_in;
         // show_rs_table;
         // show_rs_out;
         // show_rob_table;
         // show_rob_in;
+
     end
 end
 
@@ -324,13 +328,25 @@ endtask; // show_rs_table
 task show_fu_stat;
     $display("fu ready: %8b", fu_ready_display);
     $display("fu finish: %8b", fu_finish_display);
-    // $display("| valid | halt | take_branch | target_pc | dest_pr | dest_value | rob_entry |");
+    $display("| valid | halt | take_branch | target_pc | dest_pr | dest_value | rob_entry |");
     // for(int i=0; i<2**`FU; i++) begin
     //     $display("| %1d | %1d | %1d | %4h | %2d | %d | %2d |", 
     //             fu_packet_out_display[i].valid, fu_packet_out_display[i].halt, fu_packet_out_display[i].if_take_branch,
     //             fu_packet_out_display[i].target_pc, fu_packet_out_display[i].dest_pr, fu_packet_out_display[i].dest_value,
     //             fu_packet_out_display[i].rob_entry);
     // end
+endtask; 
+
+task show_complete;
+    $display("fu ready: %8b", fu_ready_display);
+    $display("======== Completing =============");
+    $display("| valid | halt | take_branch | target_pc | dest_pr | dest_value | rob_entry |");
+    for(int i=0; i<3; i++) begin
+        $display("| %1d | %1d | %1d | %4h | %2d | %d | %2d |", 
+                complete_pckt_in_display[i].valid, complete_pckt_in_display[i].halt, complete_pckt_in_display[i].if_take_branch,
+                complete_pckt_in_display[i].target_pc, complete_pckt_in_display[i].dest_pr, complete_pckt_in_display[i].dest_value,
+                complete_pckt_in_display[i].rob_entry);
+    end
 endtask; 
 
 task show_cdb;
