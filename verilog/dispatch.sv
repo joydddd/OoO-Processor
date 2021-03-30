@@ -54,8 +54,8 @@ module decoder(
 		if(valid_inst_in) begin
 			casez (inst) 
 				`RV32_LUI: begin
-					fu_sel = LS_1;
-					op_sel.ls = LUPP;
+					fu_sel = ALU_1;
+					op_sel.alu = ALU_ADD;
 					dest_reg = inst.r.rd;
 					opa_select = OPA_IS_ZERO;
 					opb_select = OPB_IS_U_IMM;

@@ -267,15 +267,15 @@ always @(negedge clock) begin
         $display("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
         $display();
         print_pipeline;
-        print_is_fifo;
-        print_alu;
-        show_fu_stat;
-        show_cdb;
+        // print_is_fifo;
+        // print_alu;
+        // show_fu_stat;
+        // show_cdb;
         // show_rs_in;
-        show_rs_table;
-        show_rs_out;
-        show_rob_table;
-        show_rob_in;
+        // show_rs_table;
+        // show_rs_out;
+        // show_rob_table;
+        // show_rob_in;
     end
 end
 
@@ -324,13 +324,13 @@ endtask; // show_rs_table
 task show_fu_stat;
     $display("fu ready: %8b", fu_ready_display);
     $display("fu finish: %8b", fu_finish_display);
-    $display("| valid | halt | take_branch | target_pc | dest_pr | dest_value | rob_entry |");
-    for(int i=0; i<2**`FU; i++) begin
-        $display("| %1d | %1d | %1d | %4h | %2d | %d | %2d |", 
-                fu_packet_out_display[i].valid, fu_packet_out_display[i].halt, fu_packet_out_display[i].if_take_branch,
-                fu_packet_out_display[i].target_pc, fu_packet_out_display[i].dest_pr, fu_packet_out_display[i].dest_value,
-                fu_packet_out_display[i].rob_entry);
-    end
+    // $display("| valid | halt | take_branch | target_pc | dest_pr | dest_value | rob_entry |");
+    // for(int i=0; i<2**`FU; i++) begin
+    //     $display("| %1d | %1d | %1d | %4h | %2d | %d | %2d |", 
+    //             fu_packet_out_display[i].valid, fu_packet_out_display[i].halt, fu_packet_out_display[i].if_take_branch,
+    //             fu_packet_out_display[i].target_pc, fu_packet_out_display[i].dest_pr, fu_packet_out_display[i].dest_value,
+    //             fu_packet_out_display[i].rob_entry);
+    // end
 endtask; 
 
 task show_cdb;

@@ -174,7 +174,7 @@ all:    simv
 # pipeline(currently no fetch)
 pipeline: pl_simv
 	./pl_simv | tee pl_sim_program.out
-pl_simv: $(HEADERS) $(PLFILES) $(RSFILES) $(DFILES) $(MTFILES) $(FREELISTFILES) $(BRANCHFILES) $(ROBFILES) $(REFILES) $(PRFILES) $(ISFIFOFILE) $(PLTESTBENCH)
+pl_simv: $(HEADERS) $(PLFILES) $(RSFILES) $(MTFILES) $(ISFIFOFILE) $(FREELISTFILES) $(ROBFILES) $(PRFILES) $(ALUFILES) $(BRANCHFILES) $(PLTESTBENCH)
 	$(VCS) $^ -o pl_simv
 
 # RS
@@ -383,7 +383,7 @@ clean:
 	rm -rf dve* inter.vpd DVEfiles
 	rm -rf syn_simv syn_simv.daidir syn_program.out
 	rm -rf synsimv synsimv.daidir csrc vcdplus.vpd vcs.key synprog.out pipeline.out writeback.out vc_hdrs.h
-	rm -f *.elf *.dump *.mem debug_bin
+	rm -f *.elf *.dump *.mem debug_bin *.out
 
 nuke:	clean
 	rm -rf synth/*.vg synth/*.rep synth/*.ddc synth/*.chk synth/*.log synth/*.syn
