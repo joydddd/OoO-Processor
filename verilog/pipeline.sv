@@ -19,12 +19,12 @@
 module pipeline(
 	input         clock,                    // System clock
 	input         reset                     // System reset
-	// input [3:0]   mem2proc_response,        // Tag from memory about current request
-	// input [63:0]  mem2proc_data,            // Data coming back from memory
-	// input [3:0]   mem2proc_tag,              // Tag from memory about current reply
+	input [3:0]   mem2proc_response,        // Tag from memory about current request
+	input [63:0]  mem2proc_data,            // Data coming back from memory
+	input [3:0]   mem2proc_tag,              // Tag from memory about current reply
 	
-	// output logic [1:0]  proc2mem_command,    // command sent to memory
-	// output logic [`XLEN-1:0] proc2mem_addr,      // Address sent to memory
+	output logic [1:0]  proc2mem_command,    // command sent to memory
+	output logic [`XLEN-1:0] proc2mem_addr,      // Address sent to memory
 	// output logic [63:0] proc2mem_data,      // Data sent to memory
 	// output MEM_SIZE proc2mem_size,          // data size sent to memory
 
@@ -114,7 +114,20 @@ module pipeline(
     
 );
 /* Fetch Stage */
-IF_ID_PACKET [2:0]      if_d_packet;
+IF_ID_PACKET [2:0]           if_d_packet;
+logic    [2:0][31:0]         cache_data;
+logic    [2:0]               cache_valid;
+
+logic    [1:0]               fetch_shift;
+logic    [2:0][`XLEN-1:0]    proc2Icache_addr;
+
+logic    [2:0][63:0]         cachemem_data;
+logic    [2:0]               cachemem_valid;
+logic    [2:0][4:0]          current_index;
+logic    [2:0][7:0]          current_tag;
+logic    [4:0]               wr_index;
+logic    [7:0]               wr_tag;
+logic                        data_write_enable;
 
 /* Dispatch Stage */
 // Inputs
@@ -243,7 +256,7 @@ assign wb_value_display = wb_value;
 `endif
 
 `ifdef DIS_DEBUG
-assign if_d_packet = if_d_packet_debug; 
+//assign if_d_packet = if_d_packet_debug; 
 assign dis_new_pr_en_out = dis_new_pr_en;
 /* free list simulation */
 // assign free_pr_valid = free_pr_valid_debug;
@@ -264,6 +277,64 @@ assign fu_ready = fu_ready_debug;
 //assign rob_stall = rob_stall_debug;  
 //assign cdb_t = cdb_t_debug;
 `endif
+
+//////////////////////////////////////////////////
+//                                              //
+//                  Fetch Stage                 //
+//                                              //
+//////////////////////////////////////////////////
+
+cache ic_mem(
+    .clock(clock),
+    .reset(reset),
+    .wr1_en(data_write_enable),     // <- icache.data_write_enable
+    .wr1_idx(wr_index),             // <- icache.wr_index
+    .rd1_idx(current_index),        // <- icache.current_index
+    .wr1_tag(wr_tag),               // <- icache.wr_tag
+    .rd1_tag(current_tag),          // <- icache.current_tag
+    .wr1_data(mem2proc_data),       // <- mem.mem2proc_data
+
+    .rd1_data(cachemem_data),       // -> icache.cachemem_data
+    .rd1_valid(cachemem_valid)      // -> icache.mcachemem_valid
+);
+
+icache ic(
+    .clock(clock),
+    .reset(reset),
+    .Imem2proc_response(mem2proc_response), // <- mem.mem2proc_response
+    .Imem2proc_data(mem2proc_data),         // <- mem.mem2proc_data
+    .Imem2proc_tag(mem2proc_tag),           // <- mem2proc_tag
+
+    .shift(fetch_shift),                    // <- fetch.shift
+    .proc2Icache_addr(proc2Icache_addr),    // <- fetch.proc2Icache_addr
+    .cachemem_data(cachemem_data),          // <- cache.rd1_data
+    .cachemem_valid(cachemem_valid),        // <- cache.rd1_valid
+
+    .proc2Imem_command(proc2mem_command),   // -> mem.proc2mem_command
+    .proc2Imem_addr(proc2mem_addr),         // -> mem.proc2mem_addr
+
+    .Icache_data_out(cache_data),           // -> fetch.cache_data
+    .Icache_valid_out(cache_valid),         // -> fetch.cache_valid
+
+    .current_index(current_index),          // -> cache.rd1_idx
+    .current_tag(current_tag),              // -> cache.rd1_tag
+    .wr_index(wr_index),                    // -> cache.wr_idx
+    .wr_tag(wr_tag),                        // -> cache.wr_tag
+    .data_write_enable(data_write_enable)   // -> cache.wr1_en
+);
+
+fetch_stage fetch(
+    .clock(clock), 
+    .reset(reset), 
+    .cache_data(cache_data),                // <- icache.Icache_data_out
+    .cache_valid(cache_valid),              // <- icache.Icache_valid_out
+    .take_branch(BPRecoverEN),              // <- retire.BPRecoverEN
+    .target_pc(fetch_pc),                   // <- retire.target_pc
+    
+    .shift(fetch_shift),                    // -> icache.shift
+    .proc2Icache_addr(proc2Icache_addr),    // -> icache.proc2Icache_addr
+    .if_packet_out(if_d_packet)             // -> dispatch
+);
 
 //////////////////////////////////////////////////
 //                                              //
@@ -595,7 +666,7 @@ retire_stage retire_0(
     .rob_head_entry(rob_retire_entry),          // <- ROB.retire_entry
     .fl_distance(fl_distance),                  // <- Freelist.fl_distance
     .BPRecoverEN(BPRecoverEN),                  // -> ROB.BPRecoverEN, Freelist.BPRecoverEN, fetch.take_branch
-    .target_pc(fetch_pc),                       // -> TODO: fetch.target_pc
+    .target_pc(fetch_pc),                       // -> fetch.target_pc
     .archi_maptable(archi_maptable_out),        // <- arch map.archi_maptable
     .map_ar_pr(map_ar_pr),                      // -> arch map.Tnew_in
     .map_ar(map_ar),                            // -> arch map.Retire_AR

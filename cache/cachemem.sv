@@ -4,19 +4,19 @@
 
 module cache(
         input clock, reset, wr1_en,             // <- icache.data_write_enable
-        input  [1:0] wr1_idx,                   // <- icache.wr_index
-        input  [2:0][1:0] rd1_idx,              // <- icache.current_index
-        input  [10:0] wr1_tag,                  // <- icache.wr_tag
-        input  [2:0][10:0] rd1_tag,             // <- icache.current_tag
+        input  [4:0] wr1_idx,                   // <- icache.wr_index
+        input  [2:0][4:0] rd1_idx,              // <- icache.current_index
+        input  [7:0] wr1_tag,                   // <- icache.wr_tag
+        input  [2:0][7:0] rd1_tag,              // <- icache.current_tag
         input  [63:0] wr1_data,                 // <- mem.mem2proc_data
 
         output [2:0][63:0] rd1_data,            // -> icache.cachemem_data
         output [2:0] rd1_valid                  // -> icache.cachemem_valid
 );
 
-  logic [3:0] [63:0] data;
-  logic [3:0] [10:0] tags; 
-  logic [3:0]        valids;
+  logic [31:0] [63:0] data;
+  logic [31:0] [7:0]  tags;
+  logic [31:0]        valids;
 
   assign rd1_data[2] = data[rd1_idx[2]];
   assign rd1_data[1] = data[rd1_idx[1]];
@@ -27,7 +27,7 @@ module cache(
 
   always_ff @(posedge clock) begin
     if(reset)
-      valids <= `SD 4'b0;
+      valids <= `SD 32'b0;
     else if(wr1_en) 
       valids[wr1_idx] <= `SD 1;
   end

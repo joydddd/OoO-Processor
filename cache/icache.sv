@@ -17,10 +17,10 @@ module icache(
     output logic  [2:0][31:0] Icache_data_out,  // -> fetch_stage.cache_data
     output logic  [2:0]Icache_valid_out,        // -> fetch_stage.cache_valid
 
-    output logic  [2:0][1:0] current_index,     // -> cache.rd1_idx
-    output logic  [2:0][10:0] current_tag,      // -> cache.rd1_tag
-    output logic  [1:0] wr_index,               // -> cache.wr1_idx
-    output logic  [10:0] wr_tag,                // -> cache.wr1_tag
+    output logic  [2:0][4:0] current_index,     // -> cache.rd1_idx
+    output logic  [2:0][7:0] current_tag,       // -> cache.rd1_tag
+    output logic  [4:0] wr_index,               // -> cache.wr1_idx
+    output logic  [7:0] wr_tag,                 // -> cache.wr1_tag
     output logic  data_write_enable             // -> cache.wr1_en
   
 );
@@ -31,8 +31,8 @@ module icache(
 
   logic [3:0] sync_Imem2proc_response;
 
-  logic [1:0]   wr_index_next;
-  logic [10:0]  wr_tag_next;
+  logic [4:0]   wr_index_next;
+  logic [7:0]   wr_tag_next;
 
   logic [`XLEN-1:0] last_proc2Imem_addr;
 
@@ -64,8 +64,9 @@ module icache(
 
   wire update_mem_tag = changed_addr || unanswered_miss || data_write_enable;
 
-  assign proc2Imem_command = unanswered_miss ? BUS_LOAD :
-                                               BUS_NONE;
+  wire require_load = ~reset & unanswered_miss;
+
+  assign proc2Imem_command = require_load ? BUS_LOAD : BUS_NONE;
 
   always_comb begin
     if (!cachemem_valid[2]) begin

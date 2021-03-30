@@ -4,6 +4,7 @@
 
 `define TEST_MODE 
 `define DIS_DEBUG
+`define CACHE_MODE
 
 /* import freelist simulator */
 import "DPI-C" function void fl_init();
@@ -101,9 +102,38 @@ FU_STATE_PACKET             fu_ready_debug;
 CDB_T_PACKET                cdb_t_debug;
 `endif
 
+logic  [3:0]        Imem2proc_response;
+logic [63:0]        Imem2proc_data;
+logic  [3:0]        Imem2proc_tag;
+logic [`XLEN-1:0]   proc2Imem_addr;
+logic [1:0]         proc2Imem_command;
+
+mem memory(
+    .clk(clock),                            // Memory clock
+    .proc2mem_addr(proc2Imem_addr),         // <- pipeline.proc2mem_addr
+    //support for memory model with byte level addressing
+    // TODO: change when we have store and load
+    .proc2mem_data(64'b0),                  // write data, no need for this test 
+`ifndef CACHE_MODE  
+    .proc2mem_size(DOUBLE),                 //BYTE, HALF, WORD or DOUBLE, no need for this test
+`endif
+    // TODO: when we have store and load FU, this signal connection needs to be modified
+    .proc2mem_command(proc2Imem_command),   // `BUS_NONE `BUS_LOAD or `BUS_STORE
+    
+    .mem2proc_response(Imem2proc_response), // 0 = can't accept, other=tag of transaction
+    .mem2proc_data(Imem2proc_data),         // data resulting from a load
+    .mem2proc_tag(Imem2proc_tag)            // 0 = no value, other=tag of transaction
+);
+
 pipeline tbd(
     .clock(clock),
-    .reset(reset)
+    .reset(reset),
+    .mem2proc_response(Imem2proc_response),    // <- mem.mem2proc_response
+	.mem2proc_data(Imem2proc_data),            // <- mem.mem2proc_data
+	.mem2proc_tag(Imem2proc_tag),              // <- mem.mem2proc_tag
+	
+	.proc2mem_command(proc2Imem_command),      // -> mem.proc2Imem_command
+	.proc2mem_addr(proc2Imem_addr)             // -> mem.proc2Imem_addr
 `ifdef TEST_MODE
     // ID
     , .dis_in_display(dis_in_display)
@@ -389,6 +419,8 @@ initial begin
     fu_ready_debug = 8'b00011111;
     cdb_t_debug = {`RS'b0, `RS'b0, `RS'b0};
     PC = 0;
+    @(posedge clock)
+    $readmemh("program.mem", memory.unified_memory);
     @(posedge clock)
     #2 reset = 1'b0;
     
