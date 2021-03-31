@@ -191,9 +191,9 @@ initial begin
     set_cdb_packet(33,34,0);
 
     @(posedge clock)
-    set_mpt_in(2,5,60,15,16);
-    set_mpt_in(1,9,59,17,0);
-    set_mpt_in(0,10,58,0,0);
+    set_mpt_in(2,11,40,35,16);
+    set_mpt_in(1,11,41,17,0);
+    set_mpt_in(0,11,42,0,0);
     set_cdb_packet(35,63,0);
 
 
