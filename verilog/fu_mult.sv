@@ -105,6 +105,7 @@ logic [2*`XLEN-1:0] product;
 logic [`XLEN-1:0] result;
 FU_COMPLETE_PACKET result_pckt;
 logic [`MUL_STAGE:0] dones;
+ISSUE_FU_PACKET fu_in_reg;
 
 logic result_in_reg;
 logic result_in_reg_next;
@@ -144,18 +145,24 @@ mult #(.XLEN(`XLEN), .NUM_STAGE(`MUL_STAGE)) mult_0 (
 );
 
 always_comb begin
-    if (fu_packet_in.op_sel.mult == MULT) result = product[`XLEN-1:0];
+    if (fu_in_reg.op_sel.mult == MULT) result = product[`XLEN-1:0];
     else result = product[`XLEN*2-1:`XLEN];
+end
+
+always_comb begin
+    if (reset) fu_in_reg <= `SD 0;
+    else if (fu_packet_in.valid) fu_in_reg <= `SD fu_packet_in;
+    else fu_in_reg <= `SD fu_in_reg;
 end
 
 // build output package
 always_comb begin
     result_pckt = 0;
-    result_pckt.halt = fu_packet_in.halt;
+    result_pckt.halt = fu_in_reg.halt;
     result_pckt.valid = dones[`MUL_STAGE];
-    result_pckt.dest_pr = fu_packet_in.dest_pr;
+    result_pckt.dest_pr = fu_in_reg.dest_pr;
     result_pckt.dest_value = result;
-    result_pckt.rob_entry = fu_packet_in.rob_entry;
+    result_pckt.rob_entry = fu_in_reg.rob_entry;
 end
 
 // ctrl signals

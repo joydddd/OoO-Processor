@@ -76,7 +76,7 @@ module testbench;
         fu_packet_store.opb_select = OPB_IS_B_IMM;
         fu_packet_store.inst = `XLEN'h00028463;
         fu_packet_store.halt = 0;
-        fu_packet_store.rob_entry = 0;
+        fu_packet_store.rob_entry = 6;
         fu_packet_store.dest_pr = 32;
         fu_packet_store.r1_value = 32'h00001f1e;
         fu_packet_store.r2_value = 32'hffffffff;
@@ -84,6 +84,7 @@ module testbench;
         $display("Expected product: %h", product[31:0]);
         @(posedge clock)
         fu_packet_store.valid = 0;
+        fu_packet_store = 0;
         @(posedge clock)
         @(posedge clock)
         @(posedge clock)
