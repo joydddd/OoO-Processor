@@ -98,7 +98,6 @@ module fu_mult(
     output logic                want_to_complete,
     output FU_COMPLETE_PACKET   fu_packet_out
 );
-
 logic start;
 logic [1:0] sign;
 logic [`XLEN-1:0] rs1, rs2;

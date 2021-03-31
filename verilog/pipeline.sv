@@ -72,6 +72,7 @@ module pipeline(
     , output CDB_T_PACKET               cdb_t_display
     , output FU_COMPLETE_PACKET [2:0]   complete_pckt_in_display
     , output [2:0][`XLEN-1:0]           wb_value_display
+    , output [2**`FU-1:0]               complete_stall_display
 
     // ROB
     , output ROB_ENTRY_PACKET [`ROBW-1:0]   rob_entries_display
@@ -253,6 +254,7 @@ assign fu_packet_out_display = fu_c_in;
 // Complete
 assign cdb_t_display = cdb_t;
 assign wb_value_display = wb_value;
+assign complete_stall_display = complete_stall;
 
 `endif
 
@@ -588,7 +590,7 @@ fu_mult fu_mult_1(
     .reset(reset),
     .complete_stall(complete_stall.mult_1),
     .fu_packet_in(fu_packet_in[MULT_1]),
-    .fu_packet_out(fu_ready.mult_1),
+    .fu_ready(fu_ready.mult_1),
     .want_to_complete(fu_finish.mult_1),
     .fu_packet_out(fu_c_in[MULT_1])
 );
@@ -598,7 +600,7 @@ fu_mult fu_mult_2(
     .reset(reset),
     .complete_stall(complete_stall.mult_2),
     .fu_packet_in(fu_packet_in[MULT_2]),
-    .fu_packet_out(fu_ready.mult_2),
+    .fu_ready(fu_ready.mult_2),
     .want_to_complete(fu_finish.mult_2),
     .fu_packet_out(fu_c_in[MULT_2])
 );

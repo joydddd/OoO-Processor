@@ -70,6 +70,7 @@ FU_COMPLETE_PACKET [2**`FU-1:0]   fu_packet_out_display;
 // Complete
 CDB_T_PACKET               cdb_t_display;
 FU_COMPLETE_PACKET [2:0]    complete_pckt_in_display;
+logic [2**`FU-1:0]          complete_stall_display;
 
 //ROB
 	ROB_ENTRY_PACKET [`ROBW-1:0]    rob_entries_display;
@@ -164,6 +165,7 @@ pipeline tbd(
     , .cdb_t_display(cdb_t_display)
     , .wb_value_display(wb_value_display)
     , .complete_pckt_in_display(complete_pckt_in_display)
+    , .complete_stall_display(complete_stall_display)
     // ROB
     , .rob_entries_display(rob_entries_display)
     , .head_display(head_display)
@@ -339,6 +341,7 @@ endtask;
 
 task show_complete;
     $display("fu ready: %8b", fu_ready_display);
+    $display("complete stall: %8b", complete_stall_display);
     $display("======== Completing =============");
     $display("| valid | halt | take_branch | target_pc | dest_pr | dest_value | rob_entry |");
     for(int i=0; i<3; i++) begin
