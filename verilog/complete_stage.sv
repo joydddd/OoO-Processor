@@ -29,8 +29,35 @@ module complete_stage(
     `endif
 );
 
+    `ifdef TEST_MODE
+    assign complete_pckt_in_display[2].if_take_branch = precise_state_valid[2];
+    assign complete_pckt_in_display[2].valid = complete_valid[2];
+    assign complete_pckt_in_display[2].halt = finish_valid[2] ? fu_c_in[finish[2]].halt : 0;
+    assign complete_pckt_in_display[2].target_pc = target_pc[2];
+    assign complete_pckt_in_display[2].dest_pr = cdb_t.t2;
+    assign complete_pckt_in_display[2].dest_value = wb_value[2];
+    assign complete_pckt_in_display[2].rob_entry = complete_entry[2];
+    
+    assign complete_pckt_in_display[1].if_take_branch = precise_state_valid[1];
+    assign complete_pckt_in_display[1].valid = complete_valid[1];
+    assign complete_pckt_in_display[1].halt = finish_valid[1] ? fu_c_in[finish[1]].halt : 0;
+    assign complete_pckt_in_display[1].target_pc = target_pc[1];
+    assign complete_pckt_in_display[1].dest_pr = cdb_t.t1;
+    assign complete_pckt_in_display[1].dest_value = wb_value[1];
+    assign complete_pckt_in_display[1].rob_entry = complete_entry[1];
+    
+    assign complete_pckt_in_display[0].if_take_branch = precise_state_valid[0];
+    assign complete_pckt_in_display[0].valid = complete_valid[0];
+    assign complete_pckt_in_display[0].halt = finish_valid[0] ? fu_c_in[finish[0]].halt : 0;
+    assign complete_pckt_in_display[0].target_pc = target_pc[0];
+    assign complete_pckt_in_display[0].dest_pr = cdb_t.t0;
+    assign complete_pckt_in_display[0].dest_value = wb_value[0];
+    assign complete_pckt_in_display[0].rob_entry = complete_entry[0];
+    `endif
+
     wire [7:0]      sel_1, sel_2, sel_3;
     wire [7:0]      fu_finish_12, fu_finish_23;
+    wire [2:0]      finish_valid;
 
     logic [2:0][`FU:0]      finish_next;
     logic [2:0][`FU:0]      finish;
@@ -43,20 +70,24 @@ module complete_stage(
     assign fu_finish_23 = fu_finish_12 & ~sel_2;
     assign fu_c_stall   = fu_finish_23 & ~sel_3;
 
-    assign cdb_t.t0 = fu_c_in[0].dest_pr;
-    assign cdb_t.t1 = fu_c_in[1].dest_pr;
-    assign cdb_t.t2 = fu_c_in[2].dest_pr;
-    
-    assign wb_value[0] = fu_c_in[0].dest_value;
-    assign wb_value[1] = fu_c_in[1].dest_value;
-    assign wb_value[2] = fu_c_in[2].dest_value;
+    assign finish_valid[2] = finish[2] < 4'd8;
+    assign finish_valid[1] = finish[1] < 4'd8;
+    assign finish_valid[0] = finish[0] < 4'd8;
+ 
+    assign cdb_t.t2 = finish_valid[2] ? fu_c_in[finish[2]].dest_pr : 0;
+    assign cdb_t.t1 = finish_valid[1] ? fu_c_in[finish[1]].dest_pr : 0;
+    assign cdb_t.t0 = finish_valid[0] ? fu_c_in[finish[0]].dest_pr : 0;
+
+    assign wb_value[2] = finish_valid[2] ? fu_c_in[finish[2]].dest_value : 0;
+    assign wb_value[1] = finish_valid[1] ? fu_c_in[finish[1]].dest_value : 0;
+    assign wb_value[0] = finish_valid[0] ? fu_c_in[finish[0]].dest_value : 0;
 
     always_comb begin
         complete_valid[2] = 0;
         complete_entry[2] = 0;
         precise_state_valid[2] = 0;
         target_pc[2] = 0;
-        if (finish[2] < 4'd8) begin
+        if (finish_valid[2]) begin
             complete_valid[2] = 1'b1;
             complete_entry[2] = fu_c_in[finish[2]].rob_entry;
             if (fu_c_in[finish[2]].if_take_branch) begin
@@ -69,7 +100,7 @@ module complete_stage(
         complete_entry[1] = 0;
         precise_state_valid[1] = 0;
         target_pc[1] = 0;
-        if (finish[1] < 4'd8) begin
+        if (finish_valid[1]) begin
             complete_valid[1] = 1'b1;
             complete_entry[1] = fu_c_in[finish[1]].rob_entry;
             if (fu_c_in[finish[1]].if_take_branch) begin
@@ -82,7 +113,7 @@ module complete_stage(
         complete_entry[0] = 0;
         precise_state_valid[0] = 0;
         target_pc[0] = 0;
-        if (finish[0] < 4'd8) begin
+        if (finish_valid[0]) begin
             complete_valid[0] = 1'b1;
             complete_entry[0] = fu_c_in[finish[0]].rob_entry;
             if (fu_c_in[finish[0]].if_take_branch) begin
