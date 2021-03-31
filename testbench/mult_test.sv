@@ -69,7 +69,7 @@ module testbench;
 
         @(posedge clock)
         fu_packet_store.valid = 1;
-        fu_packet_store.op_sel.mult = MUL;
+        fu_packet_store.op_sel.mult = MULT;
         fu_packet_store.NPC = 4;
         fu_packet_store.PC = 0;
         fu_packet_store.opa_select = OPA_IS_PC;
