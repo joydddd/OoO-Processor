@@ -29,6 +29,17 @@ module complete_stage(
     `endif
 );
 
+    wire [7:0]      sel_1, sel_2, sel_3;
+    wire [7:0]      fu_finish_12, fu_finish_23;
+    wire [2:0]      finish_valid;
+
+    logic [2:0][`FU:0]      finish_next;
+    logic [2:0][`FU:0]      finish;
+
+    ps8 sel_1st(fu_finish   , 1'b1, sel_1, req1_waste);
+    ps8 sel_2nd(fu_finish_12, 1'b1, sel_2, req2_waste);
+    ps8 sel_3rd(fu_finish_23, 1'b1, sel_3, req3_waste);
+
     `ifdef TEST_MODE
     assign complete_pckt_in_display[2].if_take_branch = precise_state_valid[2];
     assign complete_pckt_in_display[2].valid = complete_valid[2];
@@ -54,17 +65,6 @@ module complete_stage(
     assign complete_pckt_in_display[0].dest_value = wb_value[0];
     assign complete_pckt_in_display[0].rob_entry = complete_entry[0];
     `endif
-
-    wire [7:0]      sel_1, sel_2, sel_3;
-    wire [7:0]      fu_finish_12, fu_finish_23;
-    wire [2:0]      finish_valid;
-
-    logic [2:0][`FU:0]      finish_next;
-    logic [2:0][`FU:0]      finish;
-
-    ps8 sel_1st(fu_finish   , 1'b1, sel_1, req1_waste);
-    ps8 sel_2nd(fu_finish_12, 1'b1, sel_2, req2_waste);
-    ps8 sel_3rd(fu_finish_23, 1'b1, sel_3, req3_waste);
 
     assign fu_finish_12 = fu_finish    & ~sel_1;
     assign fu_finish_23 = fu_finish_12 & ~sel_2;
