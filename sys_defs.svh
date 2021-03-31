@@ -289,6 +289,7 @@ typedef struct packed {
 `define RS 4// 16 RS
 `define RSW 16 // = 2**`RS, change ps width in RS as well!! 
 `define OP 4
+`define MUL_STAGE 4
 
 `define IS_FIFO_DEPTH 32
 

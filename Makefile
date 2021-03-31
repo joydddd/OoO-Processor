@@ -91,6 +91,10 @@ PRSYNFILES = synth/physical_regfile.vg
 ALUFILES = verilog/fu_alu.sv
 ALUSYNFILES = synth/fu_alu.vg
 
+MULTFILES = verilog/fu_mult.sv
+MULTSYNFILES = synth/fu_mult.vg
+MULTTESTBENCH = testbench/mult_test.sv
+
 
 # fetch stage
 FSTESTBENCH = testbench/fetch_test.sv
@@ -131,6 +135,7 @@ export ARCHMTFILES
 export PRFILES
 # FUs
 export ALUFILES
+export MULTFILES
 export BRANCHFILES
 
 
@@ -145,6 +150,7 @@ export ROB_NAME = ROB
 export PR_NAME = physical_regfile
 # FUs
 export ALU_NAME = fu_alu
+export MULT_NAME = fu_mult
 export BRANCH_NAME = branch_stage
 
 export RSFILES
@@ -174,7 +180,7 @@ all:    simv
 # pipeline(currently no fetch)
 pipeline: pl_simv
 	./pl_simv | tee pl_sim_program.out
-pl_simv: $(HEADERS) $(PLFILES) $(RSFILES) $(MTFILES) $(ISFIFOFILE) $(FREELISTFILES) $(ROBFILES) $(PRFILES) $(ALUFILES) $(BRANCHFILES) $(PLTESTBENCH)
+pl_simv: $(HEADERS) $(PLFILES) $(RSFILES) $(MTFILES) $(ISFIFOFILE) $(FREELISTFILES) $(ROBFILES) $(PRFILES) $(ALUFILES) $(BRANCHFILES) $(MULTFILES) $(PLTESTBENCH)
 	$(VCS) $^ -o pl_simv
 
 # RS
@@ -225,6 +231,12 @@ branch: branch_simv
 	./branch_simv | tee branch_sim_program.out
 branch_simv: $(HEADERS) $(BRANCHFILES) $(BRANCHTESTBENCH)
 	$(VCS) $^ -o branch_simv
+
+# multiply fu
+mult: mult_simv
+	./mult_simv | tee mult_sim_program.out
+mult_simv: $(HEADERS) $(MULTFILES) $(MULTTESTBENCH)
+	$(VCS) $^ -o mult_simv
 
 sim:	simv
 	./simv | tee sim_program.out
@@ -291,6 +303,8 @@ $(PRSYNFILES): $(PRFILES) $(SYNTH_DIR)/pr.tcl
 # FUs
 $(ALUSYNFILES): $(ALUFILES) $(SYNTH_DIR)/fu_alu.tcl
 	cd $(SYNTH_DIR) && dc_shell-t -f ./fu_alu.tcl | tee alu_synth.out
+$(MULTSYNFILES): $(MULTFILES) $(SYNTH_DIR)/mult.tcl
+	cd $(SYNTH_DIR) && dc_shell-t -f ./mult.tcl | tee mult_synth.out
 
 rs_syn:	rs_syn_simv 
 	./rs_syn_simv | tee rs_syn_program.out
@@ -348,9 +362,14 @@ $(BRANCHSYNFILES):	$(BRANCHFILES) $(SYNTH_DIR)/branch.tcl
 	cd $(SYNTH_DIR) && dc_shell-t -f ./branch.tcl | tee branch_synth.out
 
 branch_syn: $(BRANCHSYNFILES)
+
+mult_syn: mult_syn_simv
+	./mult_syn_simv | tee mult_syn_program.out
+mult_syn_simv: $(HEADERS) $(MULTSYNFILES) $(MULTTESTBENCH)
+	$(VCS) $^ $(LIB) +define+SYNTH_TEST +error+20 -o mult_syn_simv
  
 
-$(PLSYNFILES):	$(PLFILES) $(RSSYNFILES) $(MTSYNFILES) $(ARCHMTSYNFILES) $(ISFIFOSYN) $(FREELISTSYNFILES) $(ROBSYNFILES) $(PRSYNFILES) $(ALUSYNFILES) $(BRANCHSYNFILES) $(SYNTH_DIR)/pl.tcl 
+$(PLSYNFILES):	$(PLFILES) $(RSSYNFILES) $(MTSYNFILES) $(ARCHMTSYNFILES) $(ISFIFOSYN) $(FREELISTSYNFILES) $(ROBSYNFILES) $(PRSYNFILES) $(ALUSYNFILES) $(BRANCHSYNFILES) $(MULTSYNFILES) $(SYNTH_DIR)/pl.tcl 
 	cd $(SYNTH_DIR) && dc_shell-t -f ./pl.tcl | tee pl_synth.out
 
 pl_syn: pl_syn_simv

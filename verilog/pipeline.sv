@@ -583,18 +583,35 @@ fu_alu fu_alu_3(
 	.fu_packet_out(fu_c_in[ALU_3])         // -> complete.fu_c_in
 );
 
+fu_mult fu_mult_1(
+    .clock(clock),
+    .reset(reset),
+    .complete_stall(complete_stall.mult_1),
+    .fu_packet_in(fu_packet_in[MULT_1]),
+    .fu_packet_out(fu_ready.mult_1),
+    .want_to_complete(fu_finish.mult_1),
+    .fu_packet_out(fu_c_in[MULT_1])
+);
+
+fu_mult fu_mult_2(
+    .clock(clock),
+    .reset(reset),
+    .complete_stall(complete_stall.mult_2),
+    .fu_packet_in(fu_packet_in[MULT_2]),
+    .fu_packet_out(fu_ready.mult_2),
+    .want_to_complete(fu_finish.mult_2),
+    .fu_packet_out(fu_c_in[MULT_2])
+);
+
 // TODO add more fus
-assign fu_finish.mult_1 = 0;
-assign fu_finish.mult_2 = 0;
 assign fu_finish.loadstore_1 = 0;
 assign fu_finish.loadstore_2 = 0;
 
-assign fu_ready.mult_1 = 0;
-assign fu_ready.mult_2 = 0;
+
 assign fu_ready.loadstore_1 = 0;
 assign fu_ready.loadstore_2 = 0;
 
-assign fu_c_in[MULT_2:LS_1] = 0;
+assign fu_c_in[LS_2:LS_1] = 0;
 
 branch_stage branc(
     .clock(clock),
