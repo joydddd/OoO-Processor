@@ -23,7 +23,6 @@ import "DPI-C" function void mt_map(int ar, int pr);
 /* import print pipeline */
 import "DPI-C" function void print_header(string str);
 import "DPI-C" function void print_num(int num);
-import "DPI-C" function void print_cycles();
 import "DPI-C" function void print_stage(string div, int inst, int npc, int valid_inst);
 
 /* import print rs */ 
@@ -51,6 +50,7 @@ logic [2:0]                rs_stall_display;
 // Maptable
 logic [31:0][`PR-1:0] map_array_display;
 logic [31:0] ready_array_display;
+logic [31:0][`PR-1:0] archi_map_display;
 
 // IS
 RS_S_PACKET [2:0]          is_in_display;
@@ -76,6 +76,13 @@ logic [2**`FU-1:0]          complete_stall_display;
 	ROB_ENTRY_PACKET [`ROBW-1:0]    rob_entries_display;
     logic       [`ROB-1:0]          head_display;
     logic       [`ROB-1:0]          tail_display;
+
+// PR
+    logic [2**`PR-1:0][`XLEN-1:0] pr_display;
+
+// Archi Map Table
+    logic [2:0][`PR-1:0]       map_ar_pr;
+    logic [2:0][4:0]           map_ar;
 
 `endif
 
@@ -149,6 +156,7 @@ pipeline tbd(
     // Maptable
     , .map_array_disp(map_array_display)
     , .ready_array_disp(ready_array_display)
+    , .archi_map_display(archi_map_display)
     // IS
     , .is_in_display(is_in_display)
     , .fu_fifo_stall_display(fu_fifo_stall_display)
@@ -175,6 +183,11 @@ pipeline tbd(
     , .fl_head_display(fl_head_display)
     , .fl_tail_display(fl_tail_display)
     , .fl_empty_display(fl_empty_display)
+    // PR
+    , .pr_display(pr_display)
+    // Archi Map Table
+    , .map_ar_pr_disp(map_ar_pr)
+    , .map_ar_disp(map_ar)
 `endif // TEST_MODE
 
 `ifdef DIS_DEBUG
@@ -212,23 +225,28 @@ end
 /////////////       SIMULATORS
 ///////////////////////////////////////////////////////////
 
-/* free list simulator */
+int cycle_count; 
 always @(posedge clock) begin
-    if (reset) begin
-        fl_init();
-    end else begin
-        fl_pop(dis_new_pr_en_out);
-    end
+    cycle_count++;
 end
-always @(dis_new_pr_en_out, clock) begin
-    `SD;
-    if (!reset) begin
-        free_pr_valid_debug = fl_new_pr_valid();
-        free_pr_debug[2] = fl_new_pr2(dis_new_pr_en_out);
-        free_pr_debug[1] = fl_new_pr1(dis_new_pr_en_out);
-        free_pr_debug[0] = fl_new_pr0(dis_new_pr_en_out);
-    end
-end
+
+// /* free list simulator */
+// always @(posedge clock) begin
+//     if (reset) begin
+//         fl_init();
+//     end else begin
+//         fl_pop(dis_new_pr_en_out);
+//     end
+// end
+// always @(dis_new_pr_en_out, clock) begin
+//     `SD;
+//     if (!reset) begin
+//         free_pr_valid_debug = fl_new_pr_valid();
+//         free_pr_debug[2] = fl_new_pr2(dis_new_pr_en_out);
+//         free_pr_debug[1] = fl_new_pr1(dis_new_pr_en_out);
+//         free_pr_debug[0] = fl_new_pr0(dis_new_pr_en_out);
+//     end
+// end
 
 /* map table simulator */
 /*
@@ -267,21 +285,21 @@ end
 always @(negedge clock) begin
     if (!reset)  begin
         #1;
-        $display();
-        $display("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-        $display();
-        print_pipeline;
+        print_retire_wb();
+        // $display();
+        // $display("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+        // $display();
+        // print_pipeline;
         // print_is_fifo;
-        print_alu;
+        // print_alu;
         // show_fu_stat;
-        show_cdb;
-        show_complete;
+        // show_cdb;
+        // show_complete;
         // show_rs_in;
         // show_rs_table;
         // show_rs_out;
         // show_rob_table;
         // show_rob_in;
-
     end
 end
 
@@ -372,7 +390,7 @@ endtask; // show_rs_table
 
 
 task print_pipeline;
-    print_cycles();
+    $display(" ============ Cycle 5%d ==============", cycle_count);
     print_header("\n |     IF      |     DIS     |     IS      |\n");
     for(int i=2; i>=0; i--) begin
         print_num(i);
@@ -390,6 +408,25 @@ task print_pipeline;
     end
 endtask
 
+task print_final;
+    $display("+++++++++++++++++++++ Result ++++++++++++++++++++++");
+    $display("Arch Map Table");
+    $display("|  AR  |  PR  |");
+    for(int i=0; i<32; i++)begin
+        $display("|  %2d  |  %2d  |", i, archi_map_display[i]);
+    end
+    $display("Physical Register");
+    $display("|  PR  |  value  |");
+    for(int i=0; i<64; i++)begin
+        $display("|  %2d  |  %10d  |", i, pr_display[i]);
+    end
+endtask
+
+task print_retire_wb;
+    for(int i=2; i>=0; i--) begin
+        if (map_ar[i] != 0) $display("Cycle: %d: wb r%d = %d", cycle_count, map_ar[i], $signed(pr_display[map_ar_pr[i]]));
+    end
+endtask
 task print_is_fifo;
     $display("IS FIFO stall: %4b", fu_fifo_stall_display);
     print_header("\n|     ALU     |     LS      |    MULT     |   BRANCH    |\n");
@@ -434,6 +471,7 @@ initial begin
     $dumpvars;
     clock = 1'b0;
     reset = 1'b1;
+    cycle_count = 0;
     // rob_stall_debug = 3'b000;
     // fu_ready_debug = 8'b00011111;
     // cdb_t_debug = {`RS'b0, `RS'b0, `RS'b0};
@@ -444,11 +482,12 @@ initial begin
     #2 reset = 1'b0;
     
 
-    for (int i = 0; i < 250; i++) begin
+    for (int i = 0; i < 800; i++) begin
     @(negedge clock);
     end
     
     #2;
+    print_final;
     $display("@@@Pass: test finished");
     $finish;
 end

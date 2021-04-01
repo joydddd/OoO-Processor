@@ -61,6 +61,7 @@ module pipeline(
     // Maptable
     , output logic [31:0][`PR-1:0] map_array_disp
     , output logic [31:0] ready_array_disp
+    , output logic [31:0][`PR-1:0] archi_map_display
 
     // FU
     , output ISSUE_FU_PACKET [2**`FU-1:0] fu_in_display
@@ -87,6 +88,10 @@ module pipeline(
 
     // PR
     , output logic [2**`PR-1:0][`XLEN-1:0] pr_display
+
+    // Archi Map Table
+    , output logic [2:0][`PR-1:0]       map_ar_pr_disp
+    , output logic [2:0][4:0]           map_ar_disp
 `endif
 
 `ifdef DIS_DEBUG
@@ -251,10 +256,17 @@ assign fu_ready_display = fu_ready;
 assign fu_finish_display = fu_finish;
 assign fu_packet_out_display = fu_c_in;
 
+// Maptable
+assign archi_map_display = archi_maptable_out;
+
 // Complete
 assign cdb_t_display = cdb_t;
 assign wb_value_display = wb_value;
 assign complete_stall_display = complete_stall;
+
+// Archi Map Table
+assign map_ar_pr_disp = map_ar_pr;
+assign map_ar_disp = map_ar;
 
 `endif
 

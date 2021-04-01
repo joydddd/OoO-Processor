@@ -22,11 +22,6 @@ void print_header(char* str) {
 
 void print_num(int num) { printf( "%d", num); }
 
-void print_cycles() {
-    /* we'll enforce the printing of a header */
-    if (ppfile != NULL) printf( "=========== Cycle %5d =========:", cycle_count++);
-}
-
 void print_stage(char* div, int inst, int npc, int valid_inst) {
     int opcode, funct3, funct7, funct12;
     char* str;
