@@ -97,7 +97,7 @@ module decoder(
 					dest_reg = inst.r.rd;
 					reg1 = inst.r.rs1;
 					reg2 = inst.r.rs2;
-					opa_select  = OPA_IS_NPC;
+					opa_select  = OPA_IS_PC;
 					opb_select  = OPB_IS_B_IMM;
 				end
 				`RV32_BLT: begin

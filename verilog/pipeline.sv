@@ -268,6 +268,9 @@ assign complete_stall_display = complete_stall;
 assign map_ar_pr_disp = map_ar_pr;
 assign map_ar_disp = map_ar;
 
+// Retire stage
+
+
 `endif
 
 `ifdef DIS_DEBUG

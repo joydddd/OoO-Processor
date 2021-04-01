@@ -298,7 +298,7 @@ always @(negedge clock) begin
         // show_rs_in;
         // show_rs_table;
         // show_rs_out;
-        // show_rob_table;
+        show_rob_table();
         // show_rob_in;
     end
 end
