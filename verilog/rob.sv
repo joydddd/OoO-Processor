@@ -52,7 +52,7 @@ logic [`ROB-1:0] tail_next;
 logic [2:0] head_incre;
 logic [2:0]  tail_incre;
 logic [`ROB-1:0] head_tail_diff;
-logic [`ROB-1:0] space_left;
+logic [`ROB:0] space_left;
 
 `ifdef TEST_MODE
     assign rob_entries_display = rob_entries;
@@ -73,7 +73,7 @@ assign tail_incre = (rob_in[0].valid & rob_in[1].valid & rob_in[2].valid) ? 3 :
 					(rob_in[1].valid & rob_in[2].valid) ? 2 :
 					(rob_in[2].valid) ? 1 : 0;
 assign head_tail_diff = tail - head;
-assign space_left = 31 - head_tail_diff + head_incre;
+assign space_left = (empty) ? 32 : 31 - head_tail_diff + head_incre;
 assign struct_stall = 	(space_left == 0) ? 3'b111 :
 						(space_left == 1) ? 3'b011 :
 						(space_left == 2) ? 3'b001 : 3'b000;
@@ -251,7 +251,8 @@ always_comb begin
 			rob_entries_next[complete_entry[i]].precise_state_need = (precise_state_valid[i]) ? 1 : 0;
 			rob_entries_next[complete_entry[i]].target_pc = (precise_state_valid[i]) ? target_pc[i] : 0;
 		end
-	end	
+	end
+	//$display("%d %d %d %d******%d",head, tail, head_tail_diff, head_incre, space_left);	
 end
 
 always_ff @(posedge clock) begin

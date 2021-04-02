@@ -289,17 +289,17 @@ always @(negedge clock) begin
         // $display();
         // $display("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
         // $display();
-        // print_pipeline;
+        //  print_pipeline;
         // print_is_fifo;
         // print_alu;
         // show_fu_stat;
         // show_cdb;
-        // show_complete;
+        //  show_complete;
         // show_rs_in;
         // show_rs_table;
         // show_rs_out;
-        show_rob_table();
-        // show_rob_in;
+        // show_rob_table();
+        //  show_rob_in;
     end
 end
 
@@ -482,7 +482,7 @@ initial begin
     #2 reset = 1'b0;
     
 
-    for (int i = 0; i < 800; i++) begin
+    for (int i = 0; i < 1000; i++) begin
     @(negedge clock);
     end
     

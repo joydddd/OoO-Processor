@@ -85,7 +85,7 @@ module decoder(
 				`RV32_BEQ: begin
 					op_sel.br = BEQ;
 					fu_sel = BRANCH;
-					dest_reg = inst.r.rd;
+					//dest_reg = inst.r.rd;
 					reg1 = inst.r.rs1;
 					reg2 = inst.r.rs2;
 					opa_select  = OPA_IS_PC;
@@ -94,7 +94,7 @@ module decoder(
 				`RV32_BNE: begin
 					op_sel.br = BNE;
 					fu_sel = BRANCH;
-					dest_reg = inst.r.rd;
+					//dest_reg = inst.r.rd;
 					reg1 = inst.r.rs1;
 					reg2 = inst.r.rs2;
 					opa_select  = OPA_IS_PC;
@@ -103,7 +103,7 @@ module decoder(
 				`RV32_BLT: begin
 					op_sel.br = BLT;
 					fu_sel = BRANCH;
-					dest_reg = inst.r.rd;
+					//dest_reg = inst.r.rd;
 					reg1 = inst.r.rs1;
 					reg2 = inst.r.rs2;
 					opa_select  = OPA_IS_PC;
@@ -112,7 +112,7 @@ module decoder(
 				`RV32_BGE: begin
 					op_sel.br = BGE;
 					fu_sel = BRANCH;
-					dest_reg = inst.r.rd;
+					//dest_reg = inst.r.rd;
 					reg1 = inst.r.rs1;
 					reg2 = inst.r.rs2;
 					opa_select  = OPA_IS_PC;
@@ -121,7 +121,7 @@ module decoder(
 				`RV32_BLTU: begin
 					op_sel.br = BLTU;
 					fu_sel = BRANCH;
-					dest_reg = inst.r.rd;
+					//dest_reg = inst.r.rd;
 					reg1 = inst.r.rs1;
 					reg2 = inst.r.rs2;
 					opa_select  = OPA_IS_PC;
@@ -130,7 +130,7 @@ module decoder(
 				`RV32_BGEU: begin
 					op_sel.br = BGEU;
 					fu_sel = BRANCH;
-					dest_reg = inst.r.rd;
+					//dest_reg = inst.r.rd;
 					reg1 = inst.r.rs1;
 					reg2 = inst.r.rs2;
 					opa_select  = OPA_IS_PC;
