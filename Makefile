@@ -108,6 +108,10 @@ RESYNFILES = synth/retire_stage.vg
 BRANCHFILES = verilog/branch_fu.sv
 BRANCHTESTBENCH = testbench/branchfu_test.sv
 BRANCHSYNFILES = synth/branch_stage.vg
+
+# Load Store Queue
+SQFILES = verilog/lsque.sv
+SQTESTBENCH = testbench/SQ_test.sv
 # SIMULATION CONFIG
 
 HEADERS     = $(wildcard *.svh)
@@ -237,6 +241,13 @@ mult: mult_simv
 	./mult_simv | tee mult_sim_program.out
 mult_simv: $(HEADERS) $(MULTFILES) $(MULTTESTBENCH)
 	$(VCS) $^ -o mult_simv
+
+# sq
+sq: sq_simv
+	./sq_simv | tee sq_sim_program.out
+sq_simv: $(HEADERS) $(SQFILES) $(SQTESTBENCH)
+	$(VCS) $^ -o sq_simv
+
 
 sim:	simv
 	./simv | tee sim_program.out

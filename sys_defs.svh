@@ -292,6 +292,7 @@ typedef struct packed {
 `define MUL_STAGE 4
 
 `define IS_FIFO_DEPTH 32
+`define LSQ   3 // 8 entries for LSQ
 
 //FU: 3 * Int ALU(+,-,bitwise), 2* load/store, 2* int multi, 1* branch
 
@@ -335,12 +336,17 @@ typedef enum logic [`OP-1:0]{
 	BGE,
 	BLTU,
 	BGEU
-}BR_SELECT;
+} BR_SELECT;
 typedef enum logic[`OP-1:0]{
-	LUPP, // used for LUI instruction
-	LOAD,
-	STORE
-}LS_SELECT;
+	SB, 
+	SH,
+    SW,
+    LB,
+    LH,
+    LW,
+    LBU,
+    LHU
+} LS_SELECT;
 
 typedef union packed{
 	ALU_SELECT alu;
@@ -353,7 +359,7 @@ typedef enum logic[1:0]{
 		EMPTY = 0,
 		INUSED = 1,
 		COMPLETE = 2
-} ROB_STATE;
+}ROB_STATE;
 
 typedef struct packed{
 	logic branch;
@@ -364,7 +370,7 @@ typedef struct packed{
 	logic alu_3;
 	logic alu_2;
 	logic alu_1; 
-} FU_STATE_PACKET;
+}FU_STATE_PACKET;
 
 /*	
 	logic alu_1; 
@@ -452,15 +458,35 @@ typedef struct packed{
  }CDB_T_PACKET;
 
  typedef struct packed {
-	logic 			valid;
+	logic 			    valid;
 	logic [`PR-1:0] 	Tnew;
 	logic [`PR-1:0] 	Told;
 	logic 				halt;
 	logic [4:0] 		arch_reg;
-	logic 			precise_state_need;
+	logic 			    precise_state_need;
 	logic [`XLEN-1:0]	target_pc;
-	logic 			completed;
+	logic 			    completed;
 } ROB_ENTRY_PACKET;
 
+
+typedef struct packed {
+    logic                   ready;
+    logic [3:0]             usebytes;
+    logic [`XLEN-1:0]       addr; // must be aligned with words
+    logic [`XLEN-1:0]       data;
+} SQ_ENTRY_PACKET;
+
+// typedef struct packet{
+//     logic [3:0]             usebytes;
+//     logic [`XLEN-1:0]       addr; // must be aligned with words
+//     logic [`XLEn-1:0]       data;
+// } CACHE_IN_PACKET;
+
+// typedef struct packet{
+//     logic [3:0]             validbtyes;
+//     logic                   addr_ready;
+//     logic [`XLEN-1:0]       addr; // must be aligned with words
+//     logic [`XLEn-1:0]       data;
+// } LQ_ENTRY_PACKET;
 
 `endif // __SYS_DEFS_VH__
