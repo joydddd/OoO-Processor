@@ -65,7 +65,7 @@ module fu_alu(
 	// STORE ins
 	output 						if_store,
 	output SQ_ENTRY_PACKET		store_pckt,
-	output [`LSQ-1:0]			sq_idx,
+	output [`LSQ-1:0]			sq_idx
 );
 
 logic [`XLEN-1:0] opa_mux_out, opb_mux_out;
@@ -74,7 +74,7 @@ ALU_SELECT alu_sel;
 
 assign if_store = fu_packet_in.op_sel.alu >= SB;
 assign alu_sel = if_store ? ALU_ADD:fu_packet_in.op_sel.alu;
-assign sq_idx = sq_tail;
+assign sq_idx = fu_packet_in.sq_tail;
 
 ///
 //// Pass through
@@ -127,19 +127,48 @@ alu alu_0(
 );
 assign result.dest_value = alu_result;
 
+
+logic [`XLEN-1:0] store_val;
+assign store_val = fu_packet_in.r2_value; 
 always_comb begin
-	store_pckt.
+	store_pckt.addr = {alu_result[`XLEN-1:2], 2'b00};
 	store_pckt.ready = 1;
 	store_pckt.data = 0; // dummy value
 	store_pckt.usebytes = 0; // dummy value
 	case(fu_packet_in.op_sel.alu)
-	SB: begin
-		case(alu_result[1:0])
-
+	SB: case(alu_result[1:0])
+		2'b00: begin
+			store_pckt.usebytes = 4'b0001;
+			store_pckt.data[7:0] = store_val[7:0];
+		end
+		2'b01: begin
+			store_pckt.usebytes = 4'b0010;
+			store_pckt.data[15:8] = store_val[15:8];
+		end
+		2'b10: begin
+			store_pckt.usebytes = 4'b0100;
+			store_pckt.data[23:16] = store_val[23:16];
+		end
+		2'b11: begin
+			store_pckt.usebytes = 4'b1000;
+			store_pckt.data[31:24] = store_val[31:24];
+		end
 		endcase
+	SH: case(alu_result[1:0])
+		2'b00: begin
+			store_pckt.usebytes = 4'b0011;
+			store_pckt.data[15:0] = store_val[15:0];
+		end
+		2'b10: begin
+			store_pckt.usebytes = 4'b1100;
+			store_pckt.data[31:16] = store_val[15:0];
+		end
+		endcase
+	SW: begin
+		store_pckt.usebytes = 4'b1111;
+		store_pckt.data = store_val;
 	end
 	endcase
-	
 end
 
 

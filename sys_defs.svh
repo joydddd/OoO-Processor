@@ -318,7 +318,10 @@ typedef enum logic[`OP-1:0] {
 	ALU_XOR,
 	ALU_SLL,
 	ALU_SRL,
-	ALU_SRA
+	ALU_SRA,
+	SB, 
+	SH,
+    SW
 } ALU_SELECT;
 typedef enum logic[`OP-1:0]{
 	MULT,
@@ -338,9 +341,6 @@ typedef enum logic [`OP-1:0]{
 	BGEU
 } BR_SELECT;
 typedef enum logic[`OP-1:0]{
-	SB, 
-	SH,
-    SW,
     LB,
     LH,
     LW,
@@ -402,7 +402,7 @@ typedef struct packed {
     INST          		inst;
     logic               halt;          // is this a halt?
 	logic [`ROB-1:0] 	rob_entry;
-
+	
     logic [`PR-1:0]     dest_pr;
     logic [`PR-1:0]     reg1_pr;
     logic               reg1_ready;
@@ -436,6 +436,7 @@ typedef struct packed{
 	INST          		inst;
 	logic 				halt;
 	logic [`ROB-1:0] 	rob_entry;
+	logic [`LSQ-1:0]	sq_tail; // TODO: Add passthrough 
 	logic [`PR-1:0] 	dest_pr;
 	logic [`XLEN-1:0]	r1_value;
 	logic [`XLEN-1:0] 	r2_value;
@@ -475,6 +476,18 @@ typedef struct packed {
     logic [`XLEN-1:0]       addr; // must be aligned with words
     logic [`XLEN-1:0]       data;
 } SQ_ENTRY_PACKET;
+
+typedef struct packed {
+	logic					stall;
+	logic [3:0]				usebytes;
+	logic [`XLEN-1:0]		data;
+} SQ_LOAD_PACKET;
+
+typedef struct packed {
+	logic [`LSQ-1:0]		tail_pos; // the tail position when load is dispatched
+	logic [`XLEN-1:0]		addr; // must align with word! 
+	logic [3:0]				usebytes;
+} LOAD_SQ_PACKET;
 
 // typedef struct packet{
 //     logic [3:0]             usebytes;

@@ -23,7 +23,8 @@ module SQ(
     
     // retire
     input [2:0]                     retire,
-    output SQ_ENTRY_PACKET [2:0]    cache_wb  
+    output SQ_ENTRY_PACKET [2:0]    cache_wb
+    
     `ifdef TEST_MODE
     , output SQ_ENTRY_PACKET [0:2**`LSQ-1]  sq_display
     , output logic [`LSQ-1:0]               head_dis, tail_dis

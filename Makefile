@@ -110,8 +110,11 @@ BRANCHTESTBENCH = testbench/branchfu_test.sv
 BRANCHSYNFILES = synth/branch_stage.vg
 
 # Load Store Queue
-SQFILES = verilog/lsque.sv
+SQFILES = verilog/lsque.sv verilog/ps.sv
 SQTESTBENCH = testbench/SQ_test.sv
+
+LSFILES = $(SQFILES) verilog/fu_alu.sv verilog/fu_store.sv
+LSTESTBENCH = testbench/ls_test.sv
 # SIMULATION CONFIG
 
 HEADERS     = $(wildcard *.svh)
@@ -247,6 +250,12 @@ sq: sq_simv
 	./sq_simv | tee sq_sim_program.out
 sq_simv: $(HEADERS) $(SQFILES) $(SQTESTBENCH)
 	$(VCS) $^ -o sq_simv
+
+#ls
+ls: ls_simv
+	./ls_simv | tee sq_sim_program.out
+ls_simv: $(HEADERS) $(LSFILES) $(LSTESTBENCH)
+	$(VCS) $^ -o ls_simv
 
 
 sim:	simv
