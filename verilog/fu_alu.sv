@@ -60,14 +60,21 @@ module fu_alu(
 	input ISSUE_FU_PACKET       fu_packet_in,
 	output logic                fu_ready,				
 	output logic                want_to_complete,
-	output FU_COMPLETE_PACKET   fu_packet_out
+	output FU_COMPLETE_PACKET   fu_packet_out,
+	
+	// STORE ins
+	output 						if_store,
+	output SQ_ENTRY_PACKET		store_pckt,
+	output [`LSQ-1:0]			sq_idx,
 );
 
 logic [`XLEN-1:0] opa_mux_out, opb_mux_out;
 FU_COMPLETE_PACKET result;
 ALU_SELECT alu_sel;
 
-assign alu_sel = fu_packet_in.op_sel.alu;
+assign if_store = fu_packet_in.op_sel.alu >= SB;
+assign alu_sel = if_store ? ALU_ADD:fu_packet_in.op_sel.alu;
+assign sq_idx = sq_tail;
 
 ///
 //// Pass through
@@ -111,13 +118,29 @@ always_comb begin
     endcase 
 end
 
+logic [`XLEN-1:0] alu_result;
 alu alu_0(
     .opa(opa_mux_out),
     .opb(opb_mux_out),
     .func(alu_sel),
-    .result(result.dest_value)
+    .result(alu_result)
 );
+assign result.dest_value = alu_result;
 
+always_comb begin
+	store_pckt.
+	store_pckt.ready = 1;
+	store_pckt.data = 0; // dummy value
+	store_pckt.usebytes = 0; // dummy value
+	case(fu_packet_in.op_sel.alu)
+	SB: begin
+		case(alu_result[1:0])
+
+		endcase
+	end
+	endcase
+	
+end
 
 
 assign want_to_complete = fu_packet_in.valid;

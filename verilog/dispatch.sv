@@ -145,9 +145,25 @@ module decoder(
 					opa_select = OPA_IS_RS1;
 					opb_select = OPB_IS_I_IMM;
 				end
-				`RV32_SB, `RV32_SH, `RV32_SW: begin
-					fu_sel = LS_1;
-					op_sel.ls = STORE;
+				`RV32_SB begin
+					fu_sel = ALU_1;
+					op_sel.ls = SB;
+					reg1 = inst.r.rs1;
+					reg2 = inst.r.rs2;
+					opa_select = OPA_IS_RS1;
+					opb_select = OPB_IS_S_IMM;
+				end 
+				`RV32_SH begin
+					fu_sel = ALU_1;
+					op_sel.ls = SH;
+					reg1 = inst.r.rs1;
+					reg2 = inst.r.rs2;
+					opa_select = OPA_IS_RS1;
+					opb_select = OPB_IS_S_IMM;
+				end
+				`RV32_SW: begin
+					fu_sel = ALU_1;
+					op_sel.ls = SW;
 					reg1 = inst.r.rs1;
 					reg2 = inst.r.rs2;
 					opa_select = OPA_IS_RS1;
