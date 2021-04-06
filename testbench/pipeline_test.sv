@@ -289,7 +289,7 @@ always @(negedge clock) begin
         // $display();
         // $display("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
         // $display();
-        //  print_pipeline;
+        print_pipeline;
         // print_is_fifo;
         // print_alu;
         // show_fu_stat;
@@ -390,7 +390,7 @@ endtask; // show_rs_table
 
 
 task print_pipeline;
-    $display(" ============ Cycle 5%d ==============", cycle_count);
+    $display(" ============ Cycle %d ==============", cycle_count);
     print_header("\n |     IF      |     DIS     |     IS      |\n");
     for(int i=2; i>=0; i--) begin
         print_num(i);
@@ -405,6 +405,12 @@ task print_pipeline;
         /* IS */
         print_stage("|", is_in_display[i].inst, is_in_display[i].PC, is_in_display[i].valid);
         print_header("|\n");
+    end
+    for(int i=2; i>=0; i--) begin
+        `ifdef DIS_DEBUG
+        /* IF debug */
+        $display("%h", if_d_packet_debug[i].inst);
+        `endif
     end
 endtask
 
@@ -482,7 +488,7 @@ initial begin
     #2 reset = 1'b0;
     
 
-    for (int i = 0; i < 1000; i++) begin
+    for (int i = 0; i < 200; i++) begin
     @(negedge clock);
     end
     

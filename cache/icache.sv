@@ -2,6 +2,7 @@
 module icache(
     input   clock,
     input   reset,
+    input   take_branch,
     input   [3:0] Imem2proc_response,           // <- mem.mem2proc_response
     input  [63:0] Imem2proc_data,               // <- mem.mem2proc_data
     input   [3:0] Imem2proc_tag,                // <- mem.mem2proc_tag
@@ -31,16 +32,28 @@ module icache(
 
   logic [3:0] sync_Imem2proc_response;
 
-  logic [4:0]   wr_index_next;
-  logic [7:0]   wr_tag_next;
+  logic [4:0]   fetch_index;
+  logic [4:0]   fetch_index_next;
+  logic [7:0]   fetch_tag;
+  logic [7:0]   fetch_tag_next;
 
-  logic [`XLEN-1:0] last_proc2Imem_addr;
+  logic [`XLEN-1:0] fetch_addr;
+  logic [`XLEN-1:0] last_fetch_addr;
+
+  // prefetch
+  logic               give_way;
+  logic [1:0]         prefetch_command;
+  logic [`XLEN-1:0]   prefetch_addr;
+  logic [4:0]         prefetch_index;
+  logic [7:0]         prefetch_tag;
+  logic               prefetch_wr_enable;
+  logic               already_fetched;
 
   assign {current_tag[2], current_index[2]} = proc2Icache_addr[2][`XLEN-1:3];
   assign {current_tag[1], current_index[1]} = proc2Icache_addr[1][`XLEN-1:3];
   assign {current_tag[0], current_index[0]} = proc2Icache_addr[0][`XLEN-1:3];
 
-  wire changed_addr = (current_index[2] != wr_index) || (current_tag[2] != wr_tag); // still needed for "update_mem_tag"
+  wire changed_addr = (current_index[2] != fetch_index) || (current_tag[2] != fetch_tag); // still needed for "update_mem_tag"
   wire cache_miss = ~cachemem_valid[2] | ~cachemem_valid[1] | ~cachemem_valid[0];
 
   //wire send_request = miss_outstanding && !changed_addr;
@@ -53,64 +66,114 @@ module icache(
   assign Icache_valid_out[1] = cachemem_valid[1];
   assign Icache_valid_out[0] = cachemem_valid[0];
 
-  assign data_write_enable =  (current_mem_tag == Imem2proc_tag) &&
-                              (current_mem_tag != 0);
+  assign fetch_wr_enable =  (current_mem_tag == Imem2proc_tag) &&
+                            (current_mem_tag != 0);
 
-  wire new_read = proc2Imem_addr != last_proc2Imem_addr;
+  wire new_read = fetch_addr != last_fetch_addr;
 
   wire unanswered_miss = changed_addr ? cache_miss :
                          new_read     ? cache_miss :
                          miss_outstanding && (sync_Imem2proc_response == 0);
 
-  wire update_mem_tag = changed_addr || unanswered_miss || data_write_enable;
+  wire update_mem_tag = changed_addr || unanswered_miss || fetch_wr_enable;
 
-  wire require_load = ~reset & unanswered_miss;
+  wire want_to_fetch = ~reset & unanswered_miss;
 
-  assign proc2Imem_command = require_load ? BUS_LOAD : BUS_NONE;
+  wire require_load = want_to_fetch & ~already_fetched;
+
+  wire prefetch_require = !require_load && prefetch_command == BUS_LOAD;
+
+  assign proc2Imem_command = reset            ? BUS_NONE :
+                             require_load     ? BUS_LOAD : 
+                             prefetch_require ? BUS_LOAD : 
+                             BUS_NONE;
+
+  assign give_way = require_load;
+
+  assign proc2Imem_addr = require_load     ? fetch_addr :
+                          prefetch_require ? prefetch_addr :
+                          0;
+
+  assign data_write_enable = fetch_wr_enable | prefetch_wr_enable;
+
+  assign wr_index = fetch_wr_enable    ? fetch_index :
+                    prefetch_wr_enable ? prefetch_index : 0;
+
+  assign wr_tag = fetch_wr_enable    ? fetch_tag :
+                  prefetch_wr_enable ? prefetch_tag : 0;
+
+  prefetch pf (
+    .clock(clock),
+    .reset(reset),
+    .Imem2pref_response(Imem2proc_response),    // <- (inside icache).Imem2proc_response
+    .Imem2pref_tag(Imem2proc_tag),              // <- (inside icache).Imem2proc_tag
+
+    .give_way(give_way),                        // <- (inside icache).give_way
+    .branch(take_branch),                       // <- (inside icache).take_branch
+    .proc2Icache_addr(proc2Icache_addr),        // <- (inside icache).proc2Icache_addr
+    .cachemem_valid(cachemem_valid),            // <- (inside icache).cachemem_valid
+
+    .want_to_fetch(want_to_fetch),              // <- (inside icache).want_to_fetch
+
+    .already_fetched(already_fetched),          // -> (inside icache).already_fetched
+
+    .prefetch_command(prefetch_command),        // -> (inside icache).prefetch_command
+    .prefetch_addr(prefetch_addr),              // -> (inside icache).prefetch_addr
+    .prefetch_index(prefetch_index),            // -> (inside icache).prefetch_index
+    .prefetch_tag(prefetch_tag),                // -> (inside icache).prefetch_tag
+    .prefetch_wr_enable(prefetch_wr_enable)     // -> (inside icache).prefetch_wr_enable
+
+    `ifdef TEST_MODE
+    , .pref_count_display(pref_count_display)
+    , .mem_tag_display(mem_tag_display)
+    , .store_prefetch_index_display(store_prefetch_index_display)
+    , .store_prefetch_tag_display(store_prefetch_tag_display)
+    `endif
+  );
 
   always_comb begin
     if (!cachemem_valid[2]) begin
-      proc2Imem_addr = {proc2Icache_addr[2][`XLEN-1:3],3'b0};
+      fetch_addr = {proc2Icache_addr[2][`XLEN-1:3],3'b0};
     end
     else if (!cachemem_valid[1]) begin
-      proc2Imem_addr = {proc2Icache_addr[1][`XLEN-1:3],3'b0};
+      fetch_addr = {proc2Icache_addr[1][`XLEN-1:3],3'b0};
     end
     else if (!cachemem_valid[0]) begin
-      proc2Imem_addr = {proc2Icache_addr[0][`XLEN-1:3],3'b0};
+      fetch_addr = {proc2Icache_addr[0][`XLEN-1:3],3'b0};
     end
     else begin
-      proc2Imem_addr = {proc2Icache_addr[2][`XLEN-1:3],3'b0};
+      fetch_addr = {proc2Icache_addr[2][`XLEN-1:3],3'b0};
     end
 
     if (shift == 2'd2) begin
-      wr_index_next = current_index[0];
-      wr_tag_next   = current_tag[0];
+      fetch_index_next = current_index[0];
+      fetch_tag_next   = current_tag[0];
     end
     else if (shift == 2'd1) begin
-      wr_index_next = current_index[1];
-      wr_tag_next   = current_tag[1];
+      fetch_index_next = current_index[1];
+      fetch_tag_next   = current_tag[1];
     end
     else begin
-      wr_index_next = current_index[2];
-      wr_tag_next   = current_tag[2];
+      fetch_index_next = current_index[2];
+      fetch_tag_next   = current_tag[2];
     end
   end
 
   // synopsys sync_set_reset "reset"
   always_ff @(posedge clock) begin
     if(reset) begin
-      wr_index       <= `SD -1;   // These are -1 to get ball rolling when
-      wr_tag         <= `SD -1;   // reset goes low because addr "changes"
+      fetch_index       <= `SD -1;   // These are -1 to get ball rolling when
+      fetch_tag         <= `SD -1;   // reset goes low because addr "changes"
       current_mem_tag  <= `SD 0;              
       miss_outstanding <= `SD 0;
       sync_Imem2proc_response <= `SD 0;
-      last_proc2Imem_addr <= `SD 0;
+      last_fetch_addr <= `SD 0;
     end else begin
-      wr_index       <= `SD wr_index_next;
-      wr_tag         <= `SD wr_tag_next;
+      fetch_index       <= `SD fetch_index_next;
+      fetch_tag         <= `SD fetch_tag_next;
       miss_outstanding <= `SD unanswered_miss;
       sync_Imem2proc_response <= `SD Imem2proc_response;
-      last_proc2Imem_addr <= `SD proc2Imem_addr;
+      last_fetch_addr <= `SD fetch_addr;
       if(update_mem_tag)
         current_mem_tag <= `SD Imem2proc_response;
     end

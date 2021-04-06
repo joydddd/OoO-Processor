@@ -38,7 +38,6 @@ module pipeline(
 `ifdef TEST_MODE
     // IF to Dispatch 
     
-    
     // ID 
     , output IF_ID_PACKET [2:0]         dis_in_display
     , output ROB_ENTRY_PACKET [2:0]     dis_rob_packet_display
@@ -319,6 +318,7 @@ cache ic_mem(
 icache ic(
     .clock(clock),
     .reset(reset),
+    .take_branch(BPRecoverEN),
     .Imem2proc_response(mem2proc_response), // <- mem.mem2proc_response
     .Imem2proc_data(mem2proc_data),         // <- mem.mem2proc_data
     .Imem2proc_tag(mem2proc_tag),           // <- mem2proc_tag
@@ -348,6 +348,7 @@ fetch_stage fetch(
     .cache_valid(cache_valid),              // <- icache.Icache_valid_out
     .take_branch(BPRecoverEN),              // <- retire.BPRecoverEN
     .target_pc(fetch_pc),                   // <- retire.target_pc
+    .dis_stall(dis_stall),                  // <- dispatch.stall
     
     .shift(fetch_shift),                    // -> icache.shift
     .proc2Icache_addr(proc2Icache_addr),    // -> icache.proc2Icache_addr

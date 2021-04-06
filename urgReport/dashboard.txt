@@ -1,0 +1,29 @@
+Dashboard
+
+Date: Fri Mar 12 19:51:51 2021
+
+User: kouchin
+
+Version: N-2017.12-SP2-1
+Command line: urg -dir rs_simv.vdb -format text 
+
+Number of tests: 1
+
+-------------------------------------------------------------------------------
+Total Coverage Summary 
+SCORE  LINE   TOGGLE 
+ 69.80  93.57  46.03 
+
+
+-------------------------------------------------------------------------------
+Hierarchical coverage data for top-level instances 
+SCORE  LINE   TOGGLE NAME      
+ 30.00  60.00   0.00 ps8       
+ 70.65  94.96  46.34 testbench 
+
+
+-------------------------------------------------------------------------------
+Total Module Definition Coverage Summary 
+SCORE  LINE   TOGGLE 
+ 72.43  99.20  45.66 
+
