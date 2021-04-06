@@ -136,16 +136,47 @@ module decoder(
 					opa_select  = OPA_IS_PC;
 					opb_select  = OPB_IS_B_IMM;
 				end
-				`RV32_LB, `RV32_LH, `RV32_LW,
-				`RV32_LBU, `RV32_LHU: begin
+				`RV32_LB: begin
 					fu_sel = LS_1;
-					op_sel.ls = LOAD;
+					op_sel.ls = LB;
+					dest_reg = inst.r.rd;
+					reg1 = inst.r.rs1;
+					opa_select = OPA_IS_RS1;
+					opb_select = OPB_IS_I_IMM;
+				end 
+				`RV32_LH: begin
+					fu_sel = LS_1;
+					op_sel.ls = LH;
+					dest_reg = inst.r.rd;
+					reg1 = inst.r.rs1;
+					opa_select = OPA_IS_RS1;
+					opb_select = OPB_IS_I_IMM;
+				end 
+				`RV32_LW: begin
+					fu_sel = LS_1;
+					op_sel.ls = LW;
 					dest_reg = inst.r.rd;
 					reg1 = inst.r.rs1;
 					opa_select = OPA_IS_RS1;
 					opb_select = OPB_IS_I_IMM;
 				end
-				`RV32_SB begin
+				`RV32_LBU: begin
+					fu_sel = LS_1;
+					op_sel.ls = LBU;
+					dest_reg = inst.r.rd;
+					reg1 = inst.r.rs1;
+					opa_select = OPA_IS_RS1;
+					opb_select = OPB_IS_I_IMM;
+				end
+				`RV32_LHU: begin
+					fu_sel = LS_1;
+					op_sel.ls = LHU;
+					dest_reg = inst.r.rd;
+					reg1 = inst.r.rs1;
+					opa_select = OPA_IS_RS1;
+					opb_select = OPB_IS_I_IMM;
+				end
+				`RV32_SB: begin
 					fu_sel = ALU_1;
 					op_sel.ls = SB;
 					reg1 = inst.r.rs1;
@@ -153,7 +184,7 @@ module decoder(
 					opa_select = OPA_IS_RS1;
 					opb_select = OPB_IS_S_IMM;
 				end 
-				`RV32_SH begin
+				`RV32_SH: begin
 					fu_sel = ALU_1;
 					op_sel.ls = SH;
 					reg1 = inst.r.rs1;
@@ -396,6 +427,11 @@ module dispatch_stage (
 	input [2:0] 				free_reg_valid, // Free_List::FreeRegValid
 	input [2:0][`PR-1:0] 		free_pr_in, //  Free_List::FreeReg
 
+	/* allocate new SQ */
+	input [2:0]					sq_stall,
+	output[2:0]					sq_alloc, //--> SQ::dispatch
+	input [2:0][`LSQ-1:0]		sq_tail_pos, // <-- SQ::tail_pos
+
 	/* update map table */
 	output logic [2:0][`PR-1:0]	maptable_new_pr,
 	output logic [2:0][4:0]		maptable_ar,
@@ -415,7 +451,7 @@ IF_ID_PACKET [2:0] dis_packet;
 logic [2:0] valid_og;
 logic [2:0] valid_one_to_two;
 logic [2:0] valid_two_to_three;
-assign d_stall = rs_stall | rob_stall | ~free_reg_valid; 
+assign d_stall = rs_stall | rob_stall | ~free_reg_valid | sq_stall; 
 
 
 always_comb begin
@@ -495,6 +531,14 @@ end
 assign reg1_ar = reg1_arch;
 assign reg2_ar = reg2_arch;
 
+/* allocate SQ */
+always_comb begin
+	sq_alloc = 0;
+	for(int i=0; i<3; i++) begin
+		if (fu_sel == LS_1) sq_alloc[i] = 1;
+	end
+end
+
 /* allocate rob */
 always_comb begin
 	for(int i=0; i<3; i++) begin
@@ -522,6 +566,7 @@ always_comb begin
 		rs_in[i].inst = dis_packet[i].inst;
 		rs_in[i].halt = halt;
 		rs_in[i].rob_entry = rob_index[i];
+		rs_in[i].sq_tail = sq_tail_pos[i];
 		rs_in[i].dest_pr = dest_pr[i];
 		rs_in[i].reg1_pr = reg1_pr[i];
 		rs_in[i].reg1_ready = reg1_ready[i];

@@ -113,7 +113,7 @@ BRANCHSYNFILES = synth/branch_stage.vg
 SQFILES = verilog/lsque.sv verilog/ps.sv
 SQTESTBENCH = testbench/SQ_test.sv
 
-LSFILES = $(SQFILES) verilog/fu_alu.sv verilog/fu_store.sv
+LSFILES = $(SQFILES) verilog/fu_alu.sv verilog/fu_load.sv
 LSTESTBENCH = testbench/ls_test.sv
 # SIMULATION CONFIG
 

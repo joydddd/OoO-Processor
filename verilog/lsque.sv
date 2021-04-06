@@ -7,7 +7,6 @@ module SQ(
     input                       reset,
     // dispatch
     output logic [2:0]          stall,
-    input [2:0]                 dispatch_req, // without any stall considered
     input [2:0]                 dispatch, // with stall considered
     output logic [2:0][`LSQ-1:0] tail_pos, 
     // the newly allocated entry idx or the tail position if no allocation
@@ -24,7 +23,7 @@ module SQ(
     // retire
     input [2:0]                     retire,
     output SQ_ENTRY_PACKET [2:0]    cache_wb
-    
+
     `ifdef TEST_MODE
     , output SQ_ENTRY_PACKET [0:2**`LSQ-1]  sq_display
     , output logic [`LSQ-1:0]               head_dis, tail_dis
@@ -72,21 +71,10 @@ end
 logic [`LSQ:0] num_empty_entries;
 assign num_empty_entries = 2**`LSQ - filled_num + num_retire;
 always_comb begin
-    stall = 0;
-    case(dispatch_req)
-    3'b001: if (num_empty_entries < 2) stall = 3'b001;
-    3'b010: if (num_empty_entries < 2) stall = 3'b011;
-    3'b011: if (num_empty_entries < 2) stall = 3'b011;
-            else if (num_empty_entries < 3) stall = 3'b001;
-    3'b100: if (num_empty_entries < 2) stall = 3'b111;
-    3'b101: if (num_empty_entries < 2) stall = 3'b111;
-            else if (num_empty_entries < 3) stall = 3'b001;
-    3'b110: if(num_empty_entries < 2) stall = 3'b111;
-            else if (num_empty_entries < 3) stall = 3'b011;
-    3'b111: if (num_empty_entries < 2) stall = 3'b111;
-            else if (num_empty_entries < 3) stall = 3'b011;
-            else if (num_empty_entries < 4) stall = 3'b001;
-    endcase
+    if (num_empty_entries < 2) stall = 3'b111;
+    else if (num_empty_entries < 3) stall = 3'b011;
+    else if (num_empty_entries < 4) stall = 3'b001;
+    else stall = 3'b000;
 end
 
 // set dispatch index
