@@ -43,6 +43,7 @@ always_comb begin
         issue[i].inst = rs_out[i].inst;
         issue[i].halt = rs_out[i].halt;
         issue[i].rob_entry = rs_out[i].rob_entry;
+        issue[i].sq_tail = rs_out[i].sq_tail;
         issue[i].dest_pr = rs_out[i].dest_pr;
         issue[i].r1_value = read_rda[i];
         issue[i].r2_value = read_rdb[i];

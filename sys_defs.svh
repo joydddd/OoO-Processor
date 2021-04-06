@@ -402,7 +402,7 @@ typedef struct packed {
     INST          		inst;
     logic               halt;          // is this a halt?
 	logic [`ROB-1:0] 	rob_entry;
-	logic [`LSQ-1:0]	sq_tail; // TODO: add rs passthrough
+	logic [`LSQ-1:0]	sq_tail; 
     logic [`PR-1:0]     dest_pr;
     logic [`PR-1:0]     reg1_pr;
     logic               reg1_ready;
@@ -421,7 +421,7 @@ typedef struct packed {
     INST          		inst;
     logic               halt;          // is this a halt?
 	logic [`ROB-1:0] 	rob_entry;
-	logic [`LSQ-1:0]	sq_tail; // TODO: add rs passthrough
+	logic [`LSQ-1:0]	sq_tail;
     logic [`PR-1:0]     dest_pr;
     logic [`PR-1:0]     reg1_pr;
     logic [`PR-1:0]     reg2_pr;
@@ -437,7 +437,7 @@ typedef struct packed{
 	INST          		inst;
 	logic 				halt;
 	logic [`ROB-1:0] 	rob_entry;
-	logic [`LSQ-1:0]	sq_tail; // TODO: Add issue passthrough 
+	logic [`LSQ-1:0]	sq_tail; 
 	logic [`PR-1:0] 	dest_pr;
 	logic [`XLEN-1:0]	r1_value;
 	logic [`XLEN-1:0] 	r2_value;
