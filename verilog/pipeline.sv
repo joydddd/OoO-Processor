@@ -68,6 +68,14 @@ module pipeline(
     , output FU_STATE_PACKET            fu_ready_display
     , output FU_STATE_PACKET            fu_finish_display
     , output FU_COMPLETE_PACKET [2**`FU-1:0]         fu_packet_out_display
+
+    // SQ
+    , output SQ_ENTRY_PACKET [0:2**`LSQ-1]  sq_display
+    , output logic [`LSQ-1:0]               head_dis
+    , output logic [`LSQ-1:0]               tail_dis
+    , output logic [`LSQ:0]                 filled_num_dis
+    , output SQ_ENTRY_PACKET [2**`LSQ-1:0]  older_stores
+    , output logic [2**`LSQ-1:0]            older_stores_valid
     
     // Complete
     , output CDB_T_PACKET               cdb_t_display
@@ -149,6 +157,10 @@ logic [2:0][`PR-1:0]	maptable_allocate_pr;
 logic [2:0][4:0]		maptable_allocate_ar;
 logic [2:0][4:0]		maptable_lookup_reg1_ar;
 logic [2:0][4:0]		maptable_lookup_reg2_ar;
+// go to SQ
+logic [2:0]				sq_stall;
+logic [2:0]				sq_alloc;
+logic [2:0][`LSQ-1:0]	sq_tail_pos;
 
 /* Reservation Station */
 logic                   rs_reset;
@@ -214,6 +226,13 @@ FU_STATE_PACKET                     fu_ready;
 ISSUE_FU_PACKET     [2**`FU-1:0]    fu_packet_in;
 FU_STATE_PACKET                     complete_stall;
 
+/* sq */
+logic [2:0]                 exe_valid;
+SQ_ENTRY_PACKET [2:0]       exe_store;
+logic [2:0][`LSQ-1:0]       exe_idx;
+LOAD_SQ_PACKET [1:0]        load_lookup;
+SQ_LOAD_PACKET [1:0]        load_forward;
+SQ_ENTRY_PACKET [2:0]       cache_wb;
 
 /* Complete Stage */
 CDB_T_PACKET                    cdb_t;
@@ -414,6 +433,10 @@ dispatch_stage dipatch_0(
     // allocate new PR 
     .free_reg_valid(free_pr_valid),
     .free_pr_in(free_pr),
+    /* allocate new SQ */
+	.sq_stall(sq_stall),
+	.sq_alloc(sq_alloc), //--> SQ::dispatch
+	.sq_tail_pos(sq_tail_pos), // <-- SQ::tail_pos
     .maptable_new_pr(maptable_allocate_pr),
     .maptable_ar(maptable_allocate_ar),
     .maptable_old_pr(maptable_old_pr),
@@ -577,7 +600,12 @@ fu_alu fu_alu_1(
 	.fu_packet_in(fu_packet_in[ALU_1]),        // <- issue.issue_2_fu
     .fu_ready(fu_ready.alu_1),                // -> issue.fu_ready
     .want_to_complete(fu_finish.alu_1),// -> complete.fu_finish
-	.fu_packet_out(fu_c_in[ALU_1])         // -> complete.fu_c_in
+	.fu_packet_out(fu_c_in[ALU_1]),         // -> complete.fu_c_in
+
+    // STORE
+    .if_store(exe_valid[0]),
+    .store_pckt(exe_store[0]),
+    .sq_idx(exe_idx[0])
 );
 
 fu_alu fu_alu_2(
@@ -587,7 +615,12 @@ fu_alu fu_alu_2(
 	.fu_packet_in(fu_packet_in[ALU_2]),        // <- issue.issue_2_fu
     .fu_ready(fu_ready.alu_2),                // -> issue.fu_ready
     .want_to_complete(fu_finish.alu_2),// -> complete.fu_finish
-	.fu_packet_out(fu_c_in[ALU_2])         // -> complete.fu_c_in
+	.fu_packet_out(fu_c_in[ALU_2]),         // -> complete.fu_c_in
+
+    // STORE
+    .if_store(exe_valid[1]),
+    .store_pckt(exe_store[1]),
+    .sq_idx(exe_idx[1])
 );
 
 fu_alu fu_alu_3(
@@ -597,7 +630,12 @@ fu_alu fu_alu_3(
 	.fu_packet_in(fu_packet_in[ALU_3]),        // <- issue.issue_2_fu
     .fu_ready(fu_ready.alu_3),                // -> issue.fu_ready
     .want_to_complete(fu_finish.alu_3),// -> complete.fu_finish
-	.fu_packet_out(fu_c_in[ALU_3])         // -> complete.fu_c_in
+	.fu_packet_out(fu_c_in[ALU_3]),         // -> complete.fu_c_in
+
+    // STORE
+    .if_store(exe_valid[2]),
+    .store_pckt(exe_store[2]),
+    .sq_idx(exe_idx[2])
 );
 
 fu_mult fu_mult_1(
@@ -620,15 +658,33 @@ fu_mult fu_mult_2(
     .fu_packet_out(fu_c_in[MULT_2])
 );
 
+fu_load LD_0(
+    .clock(clock),
+    .reset(reset),
+    .complete_stall(complete_stall.loadstore_1),
+    .fu_packet_in(fu_packet_in[LS_1]),
+
+    // output
+    .fu_ready(fu_ready.loadstore_1),
+    .want_to_complete(fu_finish.loadstore_1),
+    .fu_packet_out(fu_c_in[LS_1]),
+
+    // SQ
+    .sq_lookup(load_lookup[0]),    // -> SQ.load_lookup
+    .sq_result(load_forward[0])    // <- SQ.load_forward
+
+    // Cache
+);
+
 // TODO add more fus
-assign fu_finish.loadstore_1 = 0;
-assign fu_finish.loadstore_2 = 0;
+//assign fu_finish.loadstore_1 = 0;
+//assign fu_finish.loadstore_2 = 0;
 
 
-assign fu_ready.loadstore_1 = 0;
-assign fu_ready.loadstore_2 = 0;
+//assign fu_ready.loadstore_1 = 0;
+//assign fu_ready.loadstore_2 = 0;
 
-assign fu_c_in[LS_2:LS_1] = 0;
+//assign fu_c_in[LS_2:LS_1] = 0;
 
 branch_stage branc(
     .clock(clock),
@@ -640,8 +696,32 @@ branch_stage branc(
     .fu_packet_out_reg(fu_c_in[BRANCH])
 );
 
+// TODO
+logic [2:0] retire;
+assign retire = 3'b111;
 
-
+SQ tdb(
+    .clock(clock),
+    .reset(reset),
+    .stall(sq_stall),             // -> dispatch.
+    .dispatch(sq_alloc),          // <- dispatch.sq_alloc
+    .tail_pos(sq_tail_pos),       // -> dispatch.sq_tail_pos
+    .exe_valid(exe_valid),        // <- alu.exe_valid
+    .exe_store(exe_store),        // <- alu.exe_store
+    .exe_idx(exe_idx),            // <- alu.exe_idx
+    .load_lookup(load_lookup),    // <- load.load_lookup
+    .load_forward(load_forward),  // -> load.load_forward
+    .retire(retire),              // <- retire.TODO
+    .cache_wb(cache_wb)           // -> TODO: dcache, currently dangling
+    `ifdef TEST_MODE
+    , .sq_display(sq_display)
+    , .head_dis(head_dis)
+    , .tail_dis(tail_dis)
+    , .filled_num_dis(filled_num_dis)
+    , .older_stores_display(older_stores)
+    , .older_stores_valid_display(older_stores_valid)
+    `endif
+);
 
 //////////////////////////////////////////////////
 //                                              //

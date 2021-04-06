@@ -88,6 +88,9 @@ PRFILES = verilog/physical_regfile.sv
 PRSYNFILES = synth/physical_regfile.vg
 
 # functional units
+LOADFILES = verilog/fu_load.sv
+# TODO: synfile missed
+
 ALUFILES = verilog/fu_alu.sv
 ALUSYNFILES = synth/fu_alu.vg
 
@@ -187,7 +190,7 @@ all:    simv
 # pipeline(currently no fetch)
 pipeline: pl_simv
 	./pl_simv | tee pl_sim_program.out
-pl_simv: $(HEADERS) $(PLFILES) $(RSFILES) $(MTFILES) $(ISFIFOFILE) $(FREELISTFILES) $(ROBFILES) $(PRFILES) $(ALUFILES) $(BRANCHFILES) $(MULTFILES) $(PLTESTBENCH)
+pl_simv: $(HEADERS) $(PLFILES) $(RSFILES) $(MTFILES) $(ISFIFOFILE) $(FREELISTFILES) $(ROBFILES) $(PRFILES) $(ALUFILES) $(LSFILES) $(BRANCHFILES) $(MULTFILES) $(PLTESTBENCH)
 	$(VCS) $^ -o pl_simv
 
 # RS

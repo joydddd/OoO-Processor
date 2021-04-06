@@ -38,16 +38,16 @@ logic [2**`LSQ-1:0]            older_stores_valid;
 SQ tdb(
     .clock(clock),
     .reset(reset),
-    .stall(stall),
-    .dispatch(dispatch),
-    .tail_pos(tail_pos),
-    .exe_valid(exe_valid),
-    .exe_store(exe_store),
-    .exe_idx(exe_idx),
-    .load_lookup(load_lookup),
-    .load_forward(load_forward),
-    .retire(retire),
-    .cache_wb(cache_wb),
+    .stall(stall),                                  // -> TODO
+    .dispatch(dispatch),                            // <- dispatch.TODO
+    .tail_pos(tail_pos),                            // -> TODO
+    .exe_valid(exe_valid),                          // <- alu.exe_valid
+    .exe_store(exe_store),                          // <- alu.exe_store
+    .exe_idx(exe_idx),                              // <- alu.exe_idx
+    .load_lookup(load_lookup),                      // <- load.load_lookup
+    .load_forward(load_forward),                    // -> load.load_forward
+    .retire(retire),                                // <- retire.TODO
+    .cache_wb(cache_wb),                            // -> TODO
     .sq_display(sq_display),
     .head_dis(head_dis),
     .tail_dis(tail_dis),

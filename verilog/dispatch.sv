@@ -178,7 +178,7 @@ module decoder(
 				end
 				`RV32_SB: begin
 					fu_sel = ALU_1;
-					op_sel.ls = SB;
+					op_sel.alu = SB;
 					reg1 = inst.r.rs1;
 					reg2 = inst.r.rs2;
 					opa_select = OPA_IS_RS1;
@@ -186,7 +186,7 @@ module decoder(
 				end 
 				`RV32_SH: begin
 					fu_sel = ALU_1;
-					op_sel.ls = SH;
+					op_sel.alu = SH;
 					reg1 = inst.r.rs1;
 					reg2 = inst.r.rs2;
 					opa_select = OPA_IS_RS1;
@@ -194,7 +194,7 @@ module decoder(
 				end
 				`RV32_SW: begin
 					fu_sel = ALU_1;
-					op_sel.ls = SW;
+					op_sel.alu = SW;
 					reg1 = inst.r.rs1;
 					reg2 = inst.r.rs2;
 					opa_select = OPA_IS_RS1;
@@ -429,7 +429,7 @@ module dispatch_stage (
 
 	/* allocate new SQ */
 	input [2:0]					sq_stall,
-	output[2:0]					sq_alloc, //--> SQ::dispatch
+	output logic [2:0]			sq_alloc, //--> SQ::dispatch
 	input [2:0][`LSQ-1:0]		sq_tail_pos, // <-- SQ::tail_pos
 
 	/* update map table */

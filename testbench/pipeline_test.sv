@@ -67,6 +67,14 @@ FU_STATE_PACKET            fu_ready_display;
 FU_STATE_PACKET            fu_finish_display;
 FU_COMPLETE_PACKET [2**`FU-1:0]   fu_packet_out_display;
 
+// SQ
+SQ_ENTRY_PACKET [0:2**`LSQ-1]  sq_display;
+logic [`LSQ-1:0]               head_dis;
+logic [`LSQ-1:0]               tail_dis;
+logic [`LSQ:0]                 filled_num_dis;
+SQ_ENTRY_PACKET [2**`LSQ-1:0]  older_stores;
+logic [2**`LSQ-1:0]            older_stores_valid;
+
 // Complete
 CDB_T_PACKET               cdb_t_display;
 FU_COMPLETE_PACKET [2:0]    complete_pckt_in_display;
@@ -169,6 +177,13 @@ pipeline tbd(
     , .fu_ready_display(fu_ready_display)
     , .fu_finish_display(fu_finish_display)
     , .fu_packet_out_display(fu_packet_out_display)
+    // SQ
+    , .sq_display(sq_display)
+    , .head_dis(head_dis)
+    , .tail_dis(tail_dis)
+    , .filled_num_dis(filled_num_dis)
+    , .older_stores(older_stores)
+    , .older_stores_valid(older_stores_valid)
     // Complete
     , .cdb_t_display(cdb_t_display)
     , .wb_value_display(wb_value_display)
