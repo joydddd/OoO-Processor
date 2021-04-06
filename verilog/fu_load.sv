@@ -3,7 +3,7 @@
 
 `timescale 1ns/100ps
 
-typedef struct packet{
+typedef struct packed {
     FU_COMPLETE_PACKET  result; // valid bit here
     logic [`XLEN-1:0]   addr;
     logic [`LSQ-1:0]    tail_pos;
@@ -13,10 +13,10 @@ typedef struct packet{
 } LOAD_STAGE_REG;
 
 typedef enum logic [1:0] {
-    WAITING_INPUT = 0;
-    WAITING_SQ;
-    WAITING_CACHE;
-    WAITING_OUTPUT;
+    WAITING_INPUT = 0,
+    WAITING_SQ,
+    WAITING_CACHE,
+    WAITING_OUTPUT
 } LOAD_STAGE_STATUS;
 
 module fu_load(
@@ -43,7 +43,10 @@ LOAD_STAGE_REG ins_reg; // the register that holds the instruction while executi
 
 
 // WAITING INPUT 
-logic [`XLEN-1:0] new_addr = fu_packet_in.r1_value + `RV32_signext_Iimm(fu_packet_in.inst);
+logic [`XLEN-1:0] new_addr;
+
+assign new_addr = fu_packet_in.r1_value + `RV32_signext_Iimm(fu_packet_in.inst);
+
 
 // build result packet passthrough
 FU_COMPLETE_PACKET new_result_pckt;
@@ -59,13 +62,13 @@ logic [3:0] new_usebytes;
 always_comb begin
     new_usebytes = 0; // dummy value
     case(fu_packet_in.op_sel.ls)
-    LB, LBU: case(addr[1:0])
+    LB, LBU: case(new_addr[1:0])
         2'b00: new_usebytes = 4'b0001;
         2'b01: new_usebytes = 4'b0010;
         2'b10: new_usebytes = 4'b0100;
         2'b11: new_usebytes = 4'b1000;
         endcase
-    LH, LHU: case (addr[1:0])
+    LH, LHU: case (new_addr[1:0])
         2'b00: new_usebytes = 4'b0011;
         2'b10: new_usebytes = 4'b1100;
     endcase
@@ -122,11 +125,11 @@ always_comb begin
     LH: case(ins_reg.addr[1:0])
         2'b00: begin
             wb_data[15:0] = ins_reg.aligned_data[15:0];
-            wb_data[31:16] = {16{ins_reg.alinged_data[15]}};
+            wb_data[31:16] = {16{ins_reg.aligned_data[15]}};
         end
         2'b10: begin
             wb_data[15:0] = ins_reg.aligned_data[31:16];
-            wb_data[31:16] = {16{ins_reg.alinged_data[31]}};
+            wb_data[31:16] = {16{ins_reg.aligned_data[31]}};
         end
         endcase
     LW: wb_data = ins_reg.aligned_data;
@@ -137,8 +140,8 @@ always_comb begin
         2'b11: wb_data[7:0] = ins_reg.aligned_data[31:24];
         endcase
     LHU: case(ins_reg.addr[1:0])
-        2'b00: wb_data[15:0] = ins_reg.alinged_data[15:0];
-        2'b10: wb_data[31:16] = ins_reg.alinged_data[31:16];
+        2'b00: wb_data[15:0] = ins_reg.aligned_data[15:0];
+        2'b10: wb_data[31:16] = ins_reg.aligned_data[31:16];
         endcase
     endcase
 end
@@ -158,14 +161,14 @@ always_ff @(posedge clock) begin
             status <= `SD fu_packet_in.valid ? WAITING_SQ : WAITING_INPUT;
             ins_reg.result <= `SD new_result_pckt;
             ins_reg.addr <= `SD new_addr;
-            ins_reg.tail_pos <= `SD fu_packet_in.tail_pos;
+            ins_reg.tail_pos <= `SD fu_packet_in.sq_tail;
             ins_reg.load_sel <= `SD fu_packet_in.op_sel.ls;
             ins_reg.usebytes <= `SD new_usebytes;
             ins_reg.forward_bytes <= `SD 0;
             ins_reg.aligned_data <= `SD 0;
         end
         WAITING_SQ: begin
-            status <= `SD   sq_result.stall ? WAITING_SQ 
+            status <= `SD   sq_result.stall ? WAITING_SQ :
                             sq_forward ? WAITING_OUTPUT
                             : WAITING_CACHE;
             ins_reg.result <= `SD ins_reg.result;

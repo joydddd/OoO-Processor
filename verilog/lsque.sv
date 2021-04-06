@@ -204,7 +204,7 @@ logic [3:0][2**`LSQ-1:0] byte_forward_sel;
 always_comb begin
     byte_forward_valid = 0;
     for(int i=0; i<2**`LSQ; i++) begin
-        if (older_stores_valid[i] & older_stores[i].addr == load_lookup[0].addr) begin
+        if (older_stores_valid[i] && older_stores[i].addr == load_lookup[0].addr) begin
             byte_forward_valid[0][i] = older_stores[i].usebytes[0];
             byte_forward_valid[1][i] = older_stores[i].usebytes[1];
             byte_forward_valid[2][i] = older_stores[i].usebytes[2];

@@ -72,7 +72,7 @@ logic [`XLEN-1:0] opa_mux_out, opb_mux_out;
 FU_COMPLETE_PACKET result;
 ALU_SELECT alu_sel;
 
-assign if_store = fu_packet_in.op_sel.alu >= SB;
+assign if_store = fu_packet_in.valid && fu_packet_in.op_sel.alu >= SB;
 assign alu_sel = if_store ? ALU_ADD:fu_packet_in.op_sel.alu;
 assign sq_idx = fu_packet_in.sq_tail;
 
