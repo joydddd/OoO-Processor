@@ -341,10 +341,11 @@ always @(negedge clock) begin
         // $display();
         // $display("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
         // $display();
-        //  print_pipeline;
+         print_pipeline;
         // print_is_fifo;
-        // print_alu;
+        print_alu;
         // show_fu_stat;
+        show_sq;
         // show_cdb;
         //  show_complete;
         // show_rs_in;
@@ -408,6 +409,14 @@ task show_fu_stat;
     //             fu_packet_out_display[i].rob_entry);
     // end
 endtask; 
+
+task show_sq;
+    $display("HEAD: %d, Tail: %d, Filled num: %d", head_dis, tail_dis, filled_num_dis);
+    $display(" |ready|   addr   |usebytes|   data   |");
+    for(int i=0; i<2**`LSQ; i++) begin
+        $display("%1d|  %d  | %8h |  %4b  | %8h |", i, sq_display[i].ready, sq_display[i].addr, sq_display[i].usebytes, sq_display[i].data);
+    end
+endtask
 
 task show_complete;
     $display("fu ready: %8b", fu_ready_display);

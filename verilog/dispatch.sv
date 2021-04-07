@@ -535,7 +535,7 @@ assign reg2_ar = reg2_arch;
 always_comb begin
 	sq_alloc = 0;
 	for(int i=0; i<3; i++) begin
-		if (fu_sel == LS_1) sq_alloc[i] = 1;
+		if (fu_sel[i] == LS_1 & dis_packet[i].valid) sq_alloc[i] = 1;
 	end
 end
 

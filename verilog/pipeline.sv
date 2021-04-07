@@ -708,9 +708,8 @@ branch_stage branc(
     .fu_packet_out_reg(fu_c_in[BRANCH])
 );
 
-// TODO
-logic [2:0] retire;
-assign retire = 3'b111;
+logic [2:0] retire_store;
+assign retire_store = 3'b111; // TODO: connect this signal to retire stage
 
 SQ SQ_0(
     .clock(clock),
@@ -723,7 +722,7 @@ SQ SQ_0(
     .exe_idx(exe_idx),            // <- alu.exe_idx
     .load_lookup(load_lookup),    // <- load.load_lookup
     .load_forward(load_forward),  // -> load.load_forward
-    .retire(retire),              // <- retire.TODO
+    .retire(retire_store),              // <- retire. TODO
     .cache_wb(cache_wb)           // -> TODO: dcache, currently dangling
     `ifdef TEST_MODE
     , .sq_display(sq_display)
