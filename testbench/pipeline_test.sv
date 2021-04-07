@@ -5,6 +5,7 @@
 `define TEST_MODE 
 `define DIS_DEBUG
 `define CACHE_MODE
+`define CACHE_SIM // TODO: comment this line to use real cache instead of simulation
 
 /* import freelist simulator */
 import "DPI-C" function void fl_init();
@@ -28,6 +29,11 @@ import "DPI-C" function void print_stage(string div, int inst, int npc, int vali
 /* import print rs */ 
 import "DPI-C" function void print_select(int index,  int valid, int inst,  int npc, int fu_select, int op_select);
 
+/* import simulate cache & memory */
+import "DPI-C" function void mem_init();
+import "DPI-C" function void mem_write(int addr, int data, int byte3, byte2, byte1, byte0);
+import "DPI-C" function int mem_read(int addr);
+import "DPI-C" function void mem_print();
 
 module testbench;
 logic clock, reset;
@@ -118,6 +124,11 @@ logic [2:0]                 rob_stall_debug;
 FU_STATE_PACKET             fu_ready_debug;
 CDB_T_PACKET                cdb_t_debug;
 `endif
+
+
+SQ_ENTRY_PACKET [2:0]          cache_wb_sim;
+logic [1:0][`XLEN-1:0]         cache_read_addr_sim;
+logic [1:0][`XLEN-1:0]         cache_read_data_sim;
 
 logic  [3:0]        Imem2proc_response;
 logic [63:0]        Imem2proc_data;
@@ -228,6 +239,11 @@ pipeline tbd(
     // , .fu_ready_debug(fu_ready_debug)
     // , .cdb_t_debug(cdb_t_debug)
 `endif
+`ifdef CACHE_SIM
+    , .cache_wb_sim(cache_wb_sim)
+    , .cache_read_addr_sim(cache_read_addr_sim)
+    , .cache_read_data_sim(cache_read_data_sim)
+`endif
 );
 
 /* clock */
@@ -245,6 +261,27 @@ always @(posedge clock) begin
     cycle_count++;
 end
 
+`ifdef CACHE_SIM
+always @(posedge clock) begin
+    if (reset) begin
+        mem_init();
+    end
+end
+
+always @(posedge clock) begin
+    if (!reset) begin
+        mem_write(cache_wb_sim[0].addr, cache_wb_sim[0].data, cache_wb_sim[0].usebytes[3], cache_wb_sim[0].usebytes[2], cache_wb_sim[0].usebytes[1], cache_wb_sim[0].usebytes[0]);
+        mem_write(cache_wb_sim[1].addr, cache_wb_sim[1].data, cache_wb_sim[1].usebytes[3], cache_wb_sim[1].usebytes[2], cache_wb_sim[1].usebytes[1], cache_wb_sim[1].usebytes[0]);
+        mem_write(cache_wb_sim[2].addr, cache_wb_sim[2].data, cache_wb_sim[2].usebytes[3], cache_wb_sim[2].usebytes[2], cache_wb_sim[2].usebytes[1], cache_wb_sim[2].usebytes[0]);
+    end
+end
+
+always @(cache_read_addr_sim) begin
+    cache_read_data_sim[0] = mem_read(cache_read_addr_sim[0]);
+    cache_read_data_sim[1] = mem_read(cache_read_addr_sim[1]);
+end
+
+`endif
 // /* free list simulator */
 // always @(posedge clock) begin
 //     if (reset) begin

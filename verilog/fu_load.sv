@@ -30,9 +30,12 @@ module fu_load(
 
     // SQ
     output LOAD_SQ_PACKET       sq_lookup,
-    input SQ_LOAD_PACKET        sq_result
+    input SQ_LOAD_PACKET        sq_result,
 
     // Cache
+    output logic [`XLEN-1:0]    addr,
+    input [`XLEN-1:0]           cache_data_in
+    // TODO add more when we have cache
 );
 
 LOAD_STAGE_STATUS status;
@@ -85,10 +88,11 @@ assign sq_forward_bytes = ins_reg.usebytes & sq_result.usebytes;
 assign sq_forward = (sq_forward_bytes == ins_reg.usebytes);
 
 // WARITING CACHE
-// TODO: look up cache word using ins_reg.addr (unaligned, ignore last two digits to align), write to cache_data; 
+assign addr = {ins_reg.addr[`XLEN-1:2], 2'b0};
 logic waiting_for_cache;
 logic [`XLEN-1:0] cache_data, data_after_cache;
-assign waiting_for_cache = 0; // TODO: change when we have cache
+assign waiting_for_cache = 0; // TODO: change this when we have cache
+assign cache_data = cache_data_in;
 always_comb begin
     data_after_cache = cache_data;
     if (ins_reg.forward_bytes[3]) data_after_cache[31:24] = ins_reg.aligned_data[31:24];

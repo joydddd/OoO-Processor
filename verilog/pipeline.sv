@@ -13,6 +13,7 @@
 
 `define TEST_MODE
 `define DIS_DEBUG
+`define CACHE_SIM // TODO: comment this line when we have Dcache
 
 `timescale 1ns/100ps
 
@@ -126,6 +127,12 @@ module pipeline(
     // , input FU_STATE_PACKET             fu_ready_debug
     // , input CDB_T_PACKET                cdb_t_debug
 `endif
+
+`ifdef CACHE_SIM
+    , output SQ_ENTRY_PACKET [2:0]          cache_wb_sim
+    , output logic [1:0][`XLEN-1:0]         cache_read_addr_sim
+    , input [1:0][`XLEN-1:0]                cache_read_data_sim
+`endif
     
 );
 /* Fetch Stage */
@@ -203,9 +210,6 @@ logic [2:0][`PR-1:0]    is_pr1_idx, is_pr2_idx; // access pr
 
 /* physical register */
 logic [2:0][`XLEN-1:0]  pr1_read, pr2_read;
-// TODO: plug in pr
-// assign pr1_read = 0;
-// assign pr2_read = 0;
 
 
 /* Reorder Buffer */
@@ -233,6 +237,10 @@ logic [2:0][`LSQ-1:0]       exe_idx;
 LOAD_SQ_PACKET [1:0]        load_lookup;
 SQ_LOAD_PACKET [1:0]        load_forward;
 SQ_ENTRY_PACKET [2:0]       cache_wb;
+
+/* cache */
+logic [1:0][`XLEN-1:0]      cache_read_addr;
+logic [1:0][`XLEN-1:0]      cache_read_data;
 
 /* Complete Stage */
 CDB_T_PACKET                    cdb_t;
@@ -313,6 +321,11 @@ assign fu_ready = fu_ready_debug;
 */
 //assign rob_stall = rob_stall_debug;  
 //assign cdb_t = cdb_t_debug;
+`endif
+`ifdef CACHE_SIM
+    assign cache_wb_sim = cache_wb;
+    assign cache_read_addr_sim = cache_read_addr;
+    assign cache_read_data = cache_read_data_sim;
 `endif
 
 //////////////////////////////////////////////////
@@ -671,20 +684,19 @@ fu_load LD_0(
 
     // SQ
     .sq_lookup(load_lookup[0]),    // -> SQ.load_lookup
-    .sq_result(load_forward[0])    // <- SQ.load_forward
+    .sq_result(load_forward[0]),   // <- SQ.load_forward
 
     // Cache
+    .addr(cache_read_addr[0]),      // TODO: -> dcache 
+    .cache_data_in(cache_read_data[0]) // TODO: <- dcache 
 );
 
 // TODO add more fus
-//assign fu_finish.loadstore_1 = 0;
-//assign fu_finish.loadstore_2 = 0;
+assign fu_finish.loadstore_2 = 0;
 
+assign fu_ready.loadstore_2 = 0;
 
-//assign fu_ready.loadstore_1 = 0;
-//assign fu_ready.loadstore_2 = 0;
-
-//assign fu_c_in[LS_2:LS_1] = 0;
+assign fu_c_in[LS_2] = 0;
 
 branch_stage branc(
     .clock(clock),
@@ -700,7 +712,7 @@ branch_stage branc(
 logic [2:0] retire;
 assign retire = 3'b111;
 
-SQ tdb(
+SQ SQ_0(
     .clock(clock),
     .reset(reset),
     .stall(sq_stall),             // -> dispatch.
