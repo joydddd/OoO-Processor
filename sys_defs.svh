@@ -466,6 +466,7 @@ typedef struct packed{
 	logic 				halt;
 	logic [4:0] 		arch_reg;
 	logic 			    precise_state_need;
+	logic 				is_store; // TODO: pass this down to retire
 	logic [`XLEN-1:0]	target_pc;
 	logic 			    completed;
 } ROB_ENTRY_PACKET;

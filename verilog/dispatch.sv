@@ -549,6 +549,7 @@ always_comb begin
 		rob_in[i].arch_reg = dest_arch[i];
 		rob_in[i].completed = 0;
 		rob_in[i].precise_state_need = 0;
+		rob_in[i].is_store = sq_alloc[i];
 		rob_in[i].target_pc = 0;
 	end
 end
