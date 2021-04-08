@@ -493,14 +493,15 @@ typedef struct packed {
 // typedef struct packet{
 //     logic [3:0]             usebytes;
 //     logic [`XLEN-1:0]       addr; // must be aligned with words
-//     logic [`XLEn-1:0]       data;
+//     logic [`XLEN-1:0]       data;
 // } CACHE_IN_PACKET;
 
 // typedef struct packet{
 //     logic [3:0]             validbtyes;
 //     logic                   addr_ready;
+//	   logic [3:0]			   tag;
 //     logic [`XLEN-1:0]       addr; // must be aligned with words
-//     logic [`XLEn-1:0]       data;
+//     logic [`XLEN-1:0]       data;
 // } LQ_ENTRY_PACKET;
 
 `endif // __SYS_DEFS_VH__
