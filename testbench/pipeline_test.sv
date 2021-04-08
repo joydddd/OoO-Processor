@@ -5,6 +5,7 @@
 `define TEST_MODE 
 `define DIS_DEBUG
 `define CACHE_MODE
+`define CACHE_SIM // TODO: comment this line to use real cache instead of simulation
 
 /* import freelist simulator */
 import "DPI-C" function void fl_init();
@@ -28,6 +29,11 @@ import "DPI-C" function void print_stage(string div, int inst, int npc, int vali
 /* import print rs */ 
 import "DPI-C" function void print_select(int index,  int valid, int inst,  int npc, int fu_select, int op_select);
 
+/* import simulate cache & memory */
+import "DPI-C" function void mem_init();
+import "DPI-C" function void mem_write(int addr, int data, int byte3, byte2, byte1, byte0);
+import "DPI-C" function int mem_read(int addr);
+import "DPI-C" function void mem_print();
 
 module testbench;
 logic clock, reset;
@@ -66,6 +72,15 @@ ISSUE_FU_PACKET [2**`FU-1:0] fu_in_display;
 FU_STATE_PACKET            fu_ready_display;
 FU_STATE_PACKET            fu_finish_display;
 FU_COMPLETE_PACKET [2**`FU-1:0]   fu_packet_out_display;
+
+// SQ
+SQ_ENTRY_PACKET [0:2**`LSQ-1]  sq_display;
+logic [`LSQ-1:0]               head_dis;
+logic [`LSQ-1:0]               tail_dis;
+logic [`LSQ:0]                 filled_num_dis;
+SQ_ENTRY_PACKET [2**`LSQ-1:0]  older_stores;
+logic [2**`LSQ-1:0]            older_stores_valid;
+LOAD_SQ_PACKET [1:0]           load_sq_pckt_display;
 
 // Complete
 CDB_T_PACKET               cdb_t_display;
@@ -110,6 +125,12 @@ logic [2:0]                 rob_stall_debug;
 FU_STATE_PACKET             fu_ready_debug;
 CDB_T_PACKET                cdb_t_debug;
 `endif
+
+
+SQ_ENTRY_PACKET [2:0]          cache_wb_sim;
+logic [1:0][`XLEN-1:0]         cache_read_addr_sim;
+logic [1:0][`XLEN-1:0]         cache_read_data_sim;
+logic [1:0]                    cache_read_start_sim;
 
 logic  [3:0]        Imem2proc_response;
 logic [63:0]        Imem2proc_data;
@@ -169,6 +190,14 @@ pipeline tbd(
     , .fu_ready_display(fu_ready_display)
     , .fu_finish_display(fu_finish_display)
     , .fu_packet_out_display(fu_packet_out_display)
+    // SQ
+    , .sq_display(sq_display)
+    , .head_dis(head_dis)
+    , .tail_dis(tail_dis)
+    , .filled_num_dis(filled_num_dis)
+    , .older_stores(older_stores)
+    , .older_stores_valid(older_stores_valid)
+    , .load_sq_pckt_display(load_sq_pckt_display)
     // Complete
     , .cdb_t_display(cdb_t_display)
     , .wb_value_display(wb_value_display)
@@ -213,6 +242,12 @@ pipeline tbd(
     // , .fu_ready_debug(fu_ready_debug)
     // , .cdb_t_debug(cdb_t_debug)
 `endif
+`ifdef CACHE_SIM
+    , .cache_wb_sim(cache_wb_sim)
+    , .cache_read_addr_sim(cache_read_addr_sim)
+    , .cache_read_data_sim(cache_read_data_sim)
+    , .cache_read_start_sim(cache_read_start_sim)
+`endif
 );
 
 /* clock */
@@ -230,6 +265,27 @@ always @(posedge clock) begin
     cycle_count++;
 end
 
+`ifdef CACHE_SIM
+always @(posedge clock) begin
+    if (reset) begin
+        mem_init();
+    end
+end
+
+always @(posedge clock) begin
+    if (!reset) begin
+        mem_write(cache_wb_sim[0].addr, cache_wb_sim[0].data, cache_wb_sim[0].usebytes[3], cache_wb_sim[0].usebytes[2], cache_wb_sim[0].usebytes[1], cache_wb_sim[0].usebytes[0]);
+        mem_write(cache_wb_sim[1].addr, cache_wb_sim[1].data, cache_wb_sim[1].usebytes[3], cache_wb_sim[1].usebytes[2], cache_wb_sim[1].usebytes[1], cache_wb_sim[1].usebytes[0]);
+        mem_write(cache_wb_sim[2].addr, cache_wb_sim[2].data, cache_wb_sim[2].usebytes[3], cache_wb_sim[2].usebytes[2], cache_wb_sim[2].usebytes[1], cache_wb_sim[2].usebytes[0]);
+    end
+end
+
+always @(cache_read_addr_sim, cache_read_start_sim) begin
+    if (cache_read_start_sim[0]) cache_read_data_sim[0] = mem_read(cache_read_addr_sim[0]);
+    if (cache_read_start_sim[1]) cache_read_data_sim[1] = mem_read(cache_read_addr_sim[1]);
+end
+
+`endif
 // /* free list simulator */
 // always @(posedge clock) begin
 //     if (reset) begin
@@ -293,6 +349,8 @@ always @(negedge clock) begin
         // print_is_fifo;
         // print_alu;
         // show_fu_stat;
+        // if (cycle_count >= 85 && cycle_count <= 95) show_sq;
+        // if (cycle_count >= 85 && cycle_count <= 95) show_sq_age;
         // show_cdb;
         //  show_complete;
         // show_rs_in;
@@ -357,6 +415,23 @@ task show_fu_stat;
     // end
 endtask; 
 
+task show_sq;
+    $display("HEAD: %d, Tail: %d, Filled num: %d", head_dis, tail_dis, filled_num_dis);
+    $display(" |ready|   addr   |usebytes|   data   |");
+    for(int i=0; i<2**`LSQ; i++) begin
+        $display("%1d|  %d  | %8h |  %4b  | %8h |", i, sq_display[i].ready, sq_display[i].addr, sq_display[i].usebytes, sq_display[i].data);
+    end
+endtask
+
+task show_sq_age;
+    $display("##### older stores, tail_pos at %d", load_sq_pckt_display[0].tail_pos);
+    $display(" |valid|ready|   addr   |usebytes|   data   |");
+    for(int i=0; i<2**`LSQ; i++) begin
+        $display("%1d|  %d  |  %d  | %8h |  %4b  | %8h |", i, older_stores_valid[i], older_stores[i].ready, older_stores[i].addr, older_stores[i].usebytes, older_stores[i].data);
+    end
+endtask
+
+
 task show_complete;
     $display("fu ready: %8b", fu_ready_display);
     $display("complete stall: %8b", complete_stall_display);
@@ -383,7 +458,7 @@ endtask
 
 task show_rob_table;
     for(int i=2**`ROB-1; i>=0; i--) begin  
-        $display("valid: %d  Tnew: %d  Told: %d  arch_reg: %d  completed: %b  precise_state: %b  target_pc: %3d", rob_entries_display[i].valid, rob_entries_display[i].Tnew, rob_entries_display[i].Told, rob_entries_display[i].arch_reg, rob_entries_display[i].completed, rob_entries_display[i].precise_state_need, rob_entries_display[i].target_pc);
+        $display("valid: %d  Tnew: %d  Told: %d  arch_reg: %d  completed: %b  precise_state: %b  target_pc: %3d is_store: %b", rob_entries_display[i].valid, rob_entries_display[i].Tnew, rob_entries_display[i].Told, rob_entries_display[i].arch_reg, rob_entries_display[i].completed, rob_entries_display[i].precise_state_need, rob_entries_display[i].target_pc, rob_entries_display[i].is_store);
     end
     $display("head:%d tail:%d", head_display, tail_display);
 endtask; // show_rs_table
@@ -420,6 +495,9 @@ task print_final;
     for(int i=0; i<64; i++)begin
         $display("|  %2d  |  %10d  |", i, pr_display[i]);
     end
+    `ifdef CACHE_SIM
+    mem_print();
+    `endif
 endtask
 
 task print_retire_wb;

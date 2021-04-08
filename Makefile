@@ -13,7 +13,7 @@
 #
 #
 
-SOURCE = test_progs/mult_no_lsq.s
+SOURCE := test_progs/rv32_copy.s
 
 CRT = crt.s
 LINKERS = linker.lds
@@ -47,7 +47,7 @@ VCS = vcs -V -sverilog +vc -Mupdate -line -full64 +vcs+vcdpluson -debug_pp
 LIB = /afs/umich.edu/class/eecs470/lib/verilog/lec25dscc25.v
 
 # Pipeline without fetch
-PLTESTBENCH = testbench/pipeline_test.sv testbench/mt-fl_sim.cpp testbench/pipe_print.c testbench/mem.sv
+PLTESTBENCH = testbench/pipeline_test.sv testbench/mt-fl_sim.cpp testbench/pipe_print.c testbench/mem.sv testbench/cache_simv.cpp
 PLFILES = verilog/dispatch.sv verilog/issue.sv verilog/pipeline.sv verilog/complete_stage.sv verilog/re_stage.sv verilog/ps.sv verilog/fetch_stage.sv cache/cachemem.sv cache/icache.sv
 PLSYNFILES = synth/pipeline.vg
 
@@ -88,6 +88,9 @@ PRFILES = verilog/physical_regfile.sv
 PRSYNFILES = synth/physical_regfile.vg
 
 # functional units
+LOADFILES = verilog/fu_load.sv
+# TODO: synfile missed
+
 ALUFILES = verilog/fu_alu.sv
 ALUSYNFILES = synth/fu_alu.vg
 
@@ -110,8 +113,11 @@ BRANCHTESTBENCH = testbench/branchfu_test.sv
 BRANCHSYNFILES = synth/branch_stage.vg
 
 # Load Store Queue
-SQFILES = verilog/lsque.sv
+SQFILES = verilog/lsque.sv verilog/ps.sv
 SQTESTBENCH = testbench/SQ_test.sv
+
+LSFILES = $(SQFILES) verilog/fu_alu.sv verilog/fu_load.sv
+LSTESTBENCH = testbench/ls_test.sv
 # SIMULATION CONFIG
 
 HEADERS     = $(wildcard *.svh)
@@ -184,7 +190,7 @@ all:    simv
 # pipeline(currently no fetch)
 pipeline: pl_simv
 	./pl_simv | tee pl_sim_program.out
-pl_simv: $(HEADERS) $(PLFILES) $(RSFILES) $(MTFILES) $(ISFIFOFILE) $(FREELISTFILES) $(ROBFILES) $(PRFILES) $(ALUFILES) $(BRANCHFILES) $(MULTFILES) $(PLTESTBENCH)
+pl_simv: $(HEADERS) $(PLFILES) $(RSFILES) $(MTFILES) $(ISFIFOFILE) $(FREELISTFILES) $(ROBFILES) $(PRFILES) $(ALUFILES) $(LSFILES) $(BRANCHFILES) $(MULTFILES) $(PLTESTBENCH)
 	$(VCS) $^ -o pl_simv
 
 # RS
@@ -247,6 +253,12 @@ sq: sq_simv
 	./sq_simv | tee sq_sim_program.out
 sq_simv: $(HEADERS) $(SQFILES) $(SQTESTBENCH)
 	$(VCS) $^ -o sq_simv
+
+#ls
+ls: ls_simv
+	./ls_simv | tee sq_sim_program.out
+ls_simv: $(HEADERS) $(LSFILES) $(LSTESTBENCH)
+	$(VCS) $^ -o ls_simv
 
 
 sim:	simv

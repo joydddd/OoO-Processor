@@ -170,6 +170,7 @@ always_comb begin
         issue_insts[i].inst = issue_pckts[i].inst;
         issue_insts[i].halt = issue_pckts[i].halt;
         issue_insts[i].rob_entry = issue_pckts[i].rob_entry;
+        issue_insts[i].sq_tail = issue_pckts[i].sq_tail;
         issue_insts[i].dest_pr = issue_pckts[i].dest_pr;
         issue_insts[i].reg1_pr = issue_pckts[i].reg1_pr;
         issue_insts[i].reg2_pr = issue_pckts[i].reg2_pr;
