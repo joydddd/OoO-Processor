@@ -94,6 +94,9 @@ LOADFILES = verilog/fu_load.sv
 ALUFILES = verilog/fu_alu.sv
 ALUSYNFILES = synth/fu_alu.vg
 
+LOADFILES = verilog/fu_load.sv
+LOADSYNFILES = synth/fu_load.vg
+
 MULTFILES = verilog/fu_mult.sv
 MULTSYNFILES = synth/fu_mult.vg
 MULTTESTBENCH = testbench/mult_test.sv
@@ -115,6 +118,7 @@ BRANCHSYNFILES = synth/branch_stage.vg
 # Load Store Queue
 SQFILES = verilog/lsque.sv verilog/ps.sv
 SQTESTBENCH = testbench/SQ_test.sv
+SQSYNFILES = synth/SQ.vg
 
 LSFILES = $(SQFILES) verilog/fu_alu.sv verilog/fu_load.sv
 LSTESTBENCH = testbench/ls_test.sv
@@ -146,7 +150,9 @@ export PRFILES
 # FUs
 export ALUFILES
 export MULTFILES
+export LOADFILES
 export BRANCHFILES
+export SQFILES
 
 
 export CACHE_NAME = cache
@@ -161,7 +167,9 @@ export PR_NAME = physical_regfile
 # FUs
 export ALU_NAME = fu_alu
 export MULT_NAME = fu_mult
+export LOAD_NAME = fu_load
 export BRANCH_NAME = branch_stage
+export SQ_NAME = SQ
 
 export RSFILES
 export ROBFILES
@@ -329,6 +337,12 @@ $(ALUSYNFILES): $(ALUFILES) $(SYNTH_DIR)/fu_alu.tcl
 $(MULTSYNFILES): $(MULTFILES) $(SYNTH_DIR)/mult.tcl
 	cd $(SYNTH_DIR) && dc_shell-t -f ./mult.tcl | tee mult_synth.out
 
+$(LOADSYNFILES): $(LOADFILES) $(SYNTH_DIR)/fu_load.tcl
+	cd $(SYNTH_DIR) && dc_shell-t -f ./fu_load.tcl | tee load_synth.out
+
+$(SQSYNFILES): $(SQFILES) $(SYNTH_DIR)/SQ.tcl
+	cd $(SYNTH_DIR) && dc_shell-t -f ./SQ.tcl | tee SQ_synth.out
+
 rs_syn:	rs_syn_simv 
 	./rs_syn_simv | tee rs_syn_program.out
 
@@ -359,6 +373,13 @@ freelist_syn:	freelist_syn_simv
 
 freelist_syn_simv:	$(HEADERS) $(FREELISTSYNFILES) $(FREELISTTESTBENCH)
 	$(VCS) $^ $(LIB) +define+SYNTH_TEST +error+20 -o freelist_syn_simv   
+
+sq_syn: sq_syn_simv
+	./sq_syn_simv | tee sq_syn_program.out
+
+sq_syn_simv: $(HEADERS) $(SQSYNFILES) $(SQTESTBENCH)
+	$(VCS) $^ $(LIB) +define+SYNTH_TEST +error+20 -o sq_syn_simv
+
 
 # dispatch pipeline test
 # $(DSYNFILES):	$(RSSYNFILES) $(MTSYNFILES) $(ISFIFOSYN) $(FREELISTSYNFILES) $(ROBSYNFILES) $(DFILES) $(SYNTH_DIR)/dis.tcl  
@@ -392,7 +413,7 @@ mult_syn_simv: $(HEADERS) $(MULTSYNFILES) $(MULTTESTBENCH)
 	$(VCS) $^ $(LIB) +define+SYNTH_TEST +error+20 -o mult_syn_simv
  
 
-$(PLSYNFILES):	$(PLFILES) $(RSSYNFILES) $(MTSYNFILES) $(ARCHMTSYNFILES) $(ISFIFOSYN) $(FREELISTSYNFILES) $(ROBSYNFILES) $(PRSYNFILES) $(ALUSYNFILES) $(BRANCHSYNFILES) $(MULTSYNFILES) $(SYNTH_DIR)/pl.tcl 
+$(PLSYNFILES):	$(PLFILES) $(RSSYNFILES) $(MTSYNFILES) $(ARCHMTSYNFILES) $(ISFIFOSYN) $(FREELISTSYNFILES) $(ROBSYNFILES) $(PRSYNFILES) $(ALUSYNFILES) $(BRANCHSYNFILES) $(MULTSYNFILES) $(SQSYNFILES) $(LOADSYNFILES) $(SYNTH_DIR)/pl.tcl 
 	cd $(SYNTH_DIR) && dc_shell-t -f ./pl.tcl | tee pl_synth.out
 
 pl_syn: pl_syn_simv

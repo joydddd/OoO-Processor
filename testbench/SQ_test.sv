@@ -33,7 +33,6 @@ SQ tdb(
     .clock(clock),
     .reset(reset),
     .stall(stall),
-    .dispatch_req(dispatch_req),
     .dispatch(dispatch),
     .tail_pos(tail_pos),
     .exe_valid(exe_valid),

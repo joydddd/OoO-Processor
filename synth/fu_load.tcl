@@ -18,31 +18,15 @@ suppress_message {"VER-130"}
 #/***********************************************************/
 lappend search_path ../
 
-set rs_module [getenv RS_NAME]
-set mt_module [getenv MAP_TABLE_NAME]
-set arch_mt_module [getenv ARCH_MT_NAME]
-set is_fifo_module [getenv IS_FIFO_NAME]
-set freelist_module [getenv FREELIST_NAME]
-set rob_module [getenv ROB_NAME]
-set pr_module [getenv PR_NAME]
-set alu_module [getenv ALU_NAME]
-set branch_module [getenv BRANCH_NAME]
-set mult_module [getenv MULT_NAME]
-set sq_module [getenv SQ_NAME]
-
-
-read_file -f ddc [list ${rs_module}.ddc ${mt_module}.ddc ${arch_mt_module}.ddc ${is_fifo_module}.ddc ${freelist_module}.ddc ${rob_module}.ddc ${pr_module}.ddc ${alu_module}.ddc ${branch_module}.ddc ${mult_module}.ddc ${sq_module}.ddc]
-set_dont_touch [list ${rs_module} ${mt_module} ${arch_mt_module} ${is_fifo_module} ${freelist_module} ${rob_module} ${pr_module} ${alu_module} ${branch_module} ${mult_module}${sq_module}]
-
-
 set headers [getenv HEADERS]
-set sources [getenv PLFILES]
+set sources [getenv LOADFILES]
+set load_module [getenv LOAD_NAME]
 
 read_file -f sverilog [list ${headers} ${sources}]
-set design_name pipeline
+set design_name ${load_module}
 set clock_name clock
 set reset_name reset
-set CLK_PERIOD 10
+set CLK_PERIOD 5
 
 
 #/***********************************************************/
@@ -60,7 +44,7 @@ set auto_wire_load_selection "false"
 set compile_seqmap_synchronous_extraction "true"
 
 # uncomment this and change number appropriately if on multi-core machine
-set_host_options -max_cores 6
+#set_host_options -max_cores 2
 
 #/***********************************************************/
 #/*  Clk Periods/uncertainty/transition                     */
