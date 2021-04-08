@@ -1,0 +1,375 @@
+Design Hierarchy
+
+
+----------------
+SCORE  LINE   TOGGLE     
+ 30.00  60.00   0.00 ps8 
+  
+  ----------------
+  SCORE  LINE   TOGGLE     
+   30.00  60.00   0.00 psl 
+    
+    ----------------
+    SCORE  LINE   TOGGLE       
+     20.00  40.00   0.00 p2top 
+     35.00  70.00   0.00 psl   
+     35.00  70.00   0.00 psr   
+  
+  ----------------
+  SCORE  LINE   TOGGLE     
+   30.00  60.00   0.00 psr 
+    
+    ----------------
+    SCORE  LINE   TOGGLE       
+     20.00  40.00   0.00 p2top 
+     35.00  70.00   0.00 psl   
+     35.00  70.00   0.00 psr   
+  
+  ----------------
+  SCORE  LINE   TOGGLE       
+   30.00  60.00   0.00 pstop 
+
+----------------
+SCORE  LINE   TOGGLE           
+ 70.65  94.96  46.34 testbench 
+  
+  ----------------
+  SCORE  LINE   TOGGLE     
+   69.29  92.23  46.35 tbp 
+    
+    ----------------
+    SCORE  LINE   TOGGLE             
+     67.42  89.73  45.11 issue_first 
+      
+      ----------------
+      SCORE  LINE   TOGGLE              
+       69.00  88.15  49.86 sel_small_pc 
+        
+        ----------------
+        SCORE  LINE   TOGGLE      
+         65.61  85.19  46.04 sel0 
+          
+          ----------------
+          SCORE  LINE   TOGGLE        
+           55.16  77.78  32.55 sell   
+           56.58  77.78  35.38 selr   
+           91.51 100.00  83.02 seltop 
+        
+        ----------------
+        SCORE  LINE   TOGGLE      
+         61.42  77.78  45.05 sel1 
+          
+          ----------------
+          SCORE  LINE   TOGGLE        
+           56.81  77.78  35.85 sell   
+           43.34  55.56  31.13 selr   
+           90.09 100.00  80.19 seltop 
+        
+        ----------------
+        SCORE  LINE   TOGGLE      
+         71.21  92.59  49.82 sel2 
+          
+          ----------------
+          SCORE  LINE   TOGGLE        
+           68.87 100.00  37.74 sell   
+           57.52  77.78  37.26 selr   
+           93.87 100.00  87.74 seltop 
+        
+        ----------------
+        SCORE  LINE   TOGGLE      
+         67.64  85.19  50.09 sel3 
+          
+          ----------------
+          SCORE  LINE   TOGGLE        
+           58.70  77.78  39.62 sell   
+           57.05  77.78  36.32 selr   
+           93.87 100.00  87.74 seltop 
+        
+        ----------------
+        SCORE  LINE   TOGGLE        
+         93.26 100.00  86.51 seltop 
+          
+          ----------------
+          SCORE  LINE   TOGGLE        
+           93.87 100.00  87.74 sell   
+           92.45 100.00  84.91 selr   
+           93.40 100.00  86.79 seltop 
+    
+    ----------------
+    SCORE  LINE   TOGGLE              
+     68.11  91.35  44.87 issue_second 
+      
+      ----------------
+      SCORE  LINE   TOGGLE              
+       68.66  88.15  49.17 sel_small_pc 
+        
+        ----------------
+        SCORE  LINE   TOGGLE      
+         65.52  85.19  45.86 sel0 
+          
+          ----------------
+          SCORE  LINE   TOGGLE        
+           56.58  77.78  35.38 sell   
+           54.69  77.78  31.60 selr   
+           91.51 100.00  83.02 seltop 
+        
+        ----------------
+        SCORE  LINE   TOGGLE      
+         65.30  85.19  45.41 sel1 
+          
+          ----------------
+          SCORE  LINE   TOGGLE        
+           57.29  77.78  36.79 sell   
+           54.45  77.78  31.13 selr   
+           90.09 100.00  80.19 seltop 
+        
+        ----------------
+        SCORE  LINE   TOGGLE      
+         71.12  92.59  49.64 sel2 
+          
+          ----------------
+          SCORE  LINE   TOGGLE        
+           68.87 100.00  37.74 sell   
+           57.52  77.78  37.26 selr   
+           93.40 100.00  86.79 seltop 
+        
+        ----------------
+        SCORE  LINE   TOGGLE      
+         61.96  77.78  46.13 sel3 
+          
+          ----------------
+          SCORE  LINE   TOGGLE        
+           55.87  77.78  33.96 sell   
+           55.16  77.78  32.55 selr   
+           80.87  77.78  83.96 seltop 
+        
+        ----------------
+        SCORE  LINE   TOGGLE        
+         93.26 100.00  86.51 seltop 
+          
+          ----------------
+          SCORE  LINE   TOGGLE        
+           93.87 100.00  87.74 sell   
+           92.45 100.00  84.91 selr   
+           93.40 100.00  86.79 seltop 
+    
+    ----------------
+    SCORE  LINE   TOGGLE             
+     65.40  89.19  41.62 issue_third 
+      
+      ----------------
+      SCORE  LINE   TOGGLE              
+       66.09  86.67  45.51 sel_small_pc 
+        
+        ----------------
+        SCORE  LINE   TOGGLE      
+         64.36  85.19  43.53 sel0 
+          
+          ----------------
+          SCORE  LINE   TOGGLE        
+           54.69  77.78  31.60 sell   
+           53.75  77.78  29.72 selr   
+           90.57 100.00  81.13 seltop 
+        
+        ----------------
+        SCORE  LINE   TOGGLE      
+         62.41  77.78  47.03 sel1 
+          
+          ----------------
+          SCORE  LINE   TOGGLE        
+           56.81  77.78  35.85 sell   
+           55.40  77.78  33.02 selr   
+           81.34  77.78  84.91 seltop 
+        
+        ----------------
+        SCORE  LINE   TOGGLE      
+         70.13  92.59  47.66 sel2 
+          
+          ----------------
+          SCORE  LINE   TOGGLE        
+           68.87 100.00  37.74 sell   
+           55.63  77.78  33.49 selr   
+           91.98 100.00  83.96 seltop 
+        
+        ----------------
+        SCORE  LINE   TOGGLE      
+         53.05  77.78  28.33 sel3 
+          
+          ----------------
+          SCORE  LINE   TOGGLE        
+           55.87  77.78  33.96 sell   
+           40.07  77.78   2.36 selr   
+           65.30  77.78  52.83 seltop 
+        
+        ----------------
+        SCORE  LINE   TOGGLE        
+         92.90 100.00  85.79 seltop 
+          
+          ----------------
+          SCORE  LINE   TOGGLE        
+           91.98 100.00  83.96 sell   
+           93.40 100.00  86.79 selr   
+           93.40 100.00  86.79 seltop 
+    
+    ----------------
+    SCORE  LINE   TOGGLE         
+     90.76  99.33  82.18 sel_av0 
+      
+      ----------------
+      SCORE  LINE   TOGGLE      
+       96.88 100.00  93.75 ps_0 
+        
+        ----------------
+        SCORE  LINE   TOGGLE       
+        100.00 100.00 100.00 p2top 
+        100.00 100.00 100.00 psl   
+         91.67 100.00  83.33 psr   
+      
+      ----------------
+      SCORE  LINE   TOGGLE      
+       93.75 100.00  87.50 ps_1 
+        
+        ----------------
+        SCORE  LINE   TOGGLE       
+        100.00 100.00 100.00 p2top 
+         91.67 100.00  83.33 psl   
+         91.67 100.00  83.33 psr   
+      
+      ----------------
+      SCORE  LINE   TOGGLE      
+       96.88 100.00  93.75 ps_2 
+        
+        ----------------
+        SCORE  LINE   TOGGLE       
+        100.00 100.00 100.00 p2top 
+         91.67 100.00  83.33 psl   
+        100.00 100.00 100.00 psr   
+      
+      ----------------
+      SCORE  LINE   TOGGLE      
+       75.00 100.00  50.00 ps_3 
+        
+        ----------------
+        SCORE  LINE   TOGGLE       
+         83.33 100.00  66.67 p2top 
+         50.00 100.00   0.00 psl   
+         91.67 100.00  83.33 psr   
+      
+      ----------------
+      SCORE  LINE   TOGGLE       
+       95.21  96.67  93.75 pstop 
+        
+        ----------------
+        SCORE  LINE   TOGGLE       
+         86.67  90.00  83.33 p2top 
+        100.00 100.00 100.00 psl   
+        100.00 100.00 100.00 psr   
+    
+    ----------------
+    SCORE  LINE   TOGGLE         
+     93.39  98.67  88.12 sel_av1 
+      
+      ----------------
+      SCORE  LINE   TOGGLE      
+       95.21  96.67  93.75 ps_0 
+        
+        ----------------
+        SCORE  LINE   TOGGLE       
+        100.00 100.00 100.00 p2top 
+        100.00 100.00 100.00 psl   
+         86.67  90.00  83.33 psr   
+      
+      ----------------
+      SCORE  LINE   TOGGLE      
+       96.88 100.00  93.75 ps_1 
+        
+        ----------------
+        SCORE  LINE   TOGGLE       
+        100.00 100.00 100.00 p2top 
+         91.67 100.00  83.33 psl   
+        100.00 100.00 100.00 psr   
+      
+      ----------------
+      SCORE  LINE   TOGGLE      
+       96.88 100.00  93.75 ps_2 
+        
+        ----------------
+        SCORE  LINE   TOGGLE       
+        100.00 100.00 100.00 p2top 
+        100.00 100.00 100.00 psl   
+         91.67 100.00  83.33 psr   
+      
+      ----------------
+      SCORE  LINE   TOGGLE      
+       90.62 100.00  81.25 ps_3 
+        
+        ----------------
+        SCORE  LINE   TOGGLE       
+        100.00 100.00 100.00 p2top 
+         83.33 100.00  66.67 psl   
+         91.67 100.00  83.33 psr   
+      
+      ----------------
+      SCORE  LINE   TOGGLE       
+       91.30  96.67  85.94 pstop 
+        
+        ----------------
+        SCORE  LINE   TOGGLE       
+         78.33  90.00  66.67 p2top 
+        100.00 100.00 100.00 psl   
+         95.83 100.00  91.67 psr   
+    
+    ----------------
+    SCORE  LINE   TOGGLE         
+     81.94  84.67  79.21 sel_av2 
+      
+      ----------------
+      SCORE  LINE   TOGGLE      
+       67.60  63.33  71.88 ps_0 
+        
+        ----------------
+        SCORE  LINE   TOGGLE       
+         76.67  70.00  83.33 p2top 
+         76.67  70.00  83.33 psl   
+         50.00  50.00  50.00 psr   
+      
+      ----------------
+      SCORE  LINE   TOGGLE      
+       74.27  76.67  71.88 ps_1 
+        
+        ----------------
+        SCORE  LINE   TOGGLE       
+         86.67  90.00  83.33 p2top 
+         50.00  50.00  50.00 psl   
+         86.67  90.00  83.33 psr   
+      
+      ----------------
+      SCORE  LINE   TOGGLE      
+       90.42  93.33  87.50 ps_2 
+        
+        ----------------
+        SCORE  LINE   TOGGLE       
+        100.00 100.00 100.00 p2top 
+         86.67  90.00  83.33 psl   
+         86.67  90.00  83.33 psr   
+      
+      ----------------
+      SCORE  LINE   TOGGLE      
+       92.08  96.67  87.50 ps_3 
+        
+        ----------------
+        SCORE  LINE   TOGGLE       
+        100.00 100.00 100.00 p2top 
+         91.67 100.00  83.33 psl   
+         86.67  90.00  83.33 psr   
+      
+      ----------------
+      SCORE  LINE   TOGGLE       
+       89.64  93.33  85.94 pstop 
+        
+        ----------------
+        SCORE  LINE   TOGGLE       
+         78.33  90.00  66.67 p2top 
+        100.00 100.00 100.00 psl   
+         90.83  90.00  91.67 psr   
+

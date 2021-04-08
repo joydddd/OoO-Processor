@@ -131,7 +131,7 @@ module arch_maptable(
 
     always_comb begin : Update_logic
         archi_maptable_next = archi_maptable;
-        for (int i = 0; i < 3 ; i++) begin
+        for (int i = 2; i >= 0; i--) begin
             if (Retire_EN[i]==1'b1) begin
                 archi_maptable_next[Retire_AR[i]] = Tnew_in[i];
             end

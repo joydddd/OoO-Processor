@@ -7,6 +7,7 @@ module fetch_stage (
     input   [2:0]               cache_valid,        // <- Icache_valid_out
     input                       take_branch,        // taken-branch signal
 	input   [`XLEN-1:0]         target_pc,          // target pc: use if take_branch is TRUE
+    input   [2:0]               dis_stall,
 
     output  logic [1:0]         shift,              // -> icache.shift
     output  [2:0][`XLEN-1:0]    proc2Icache_addr,   // -> icache.proc2Icache_addr
@@ -23,16 +24,22 @@ module fetch_stage (
     //  4. PC_reg[0], if no branch and the current PC_reg[0] is not in the cache
     //  5. PC_reg[0] + 4 = PC_reg[2] + 12, if no branch and all three PCs are in the cache
 	assign next_PC[2] = take_branch     ? target_pc :     // if take_branch, go to the target PC
+                        dis_stall[2]    ? PC_reg[2] :
                         ~cache_valid[2] ? PC_reg[2] :     // if the first inst isn't ready, wait until finish reading from memory
+                        dis_stall[1]    ? PC_reg[1] :
                         ~cache_valid[1] ? PC_reg[1] :     // same for the second inst
+                        dis_stall[0]    ? PC_reg[0] :                     
                         ~cache_valid[0] ? PC_reg[0] :     // and the third inst
                         PC_reg[0] + 4;
     assign next_PC[1] = next_PC[2] + 4;
     assign next_PC[0] = next_PC[1] + 4;
 
     assign shift = take_branch     ? 2'd0 :
+                    dis_stall[2]    ? 2'd0 :
                     ~cache_valid[2] ? 2'd0 :
+                    dis_stall[1]    ? 2'd1 :
                     ~cache_valid[1] ? 2'd1 :
+                    dis_stall[0]    ? 2'd2 :
                     ~cache_valid[0] ? 2'd2 :
                     2'd0;
 

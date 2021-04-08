@@ -39,7 +39,6 @@ module pipeline(
 `ifdef TEST_MODE
     // IF to Dispatch 
     
-    
     // ID 
     , output IF_ID_PACKET [2:0]         dis_in_display
     , output ROB_ENTRY_PACKET [2:0]     dis_rob_packet_display
@@ -89,6 +88,7 @@ module pipeline(
     , output ROB_ENTRY_PACKET [`ROBW-1:0]   rob_entries_display
 	, output [`ROB-1:0]                     head_display
 	, output [`ROB-1:0]                     tail_display
+    , output [2:0]                          rob_stall_display
 
     // Freelist
     , output [31:0][`PR-1:0]            fl_array_display
@@ -301,6 +301,9 @@ assign complete_stall_display = complete_stall;
 assign map_ar_pr_disp = map_ar_pr;
 assign map_ar_disp = map_ar;
 
+// ROB
+assign rob_stall_display = rob_stall;
+
 // Retire stage
 
 `endif
@@ -357,6 +360,7 @@ cache ic_mem(
 icache ic(
     .clock(clock),
     .reset(reset),
+    .take_branch(BPRecoverEN),
     .Imem2proc_response(mem2proc_response), // <- mem.mem2proc_response
     .Imem2proc_data(mem2proc_data),         // <- mem.mem2proc_data
     .Imem2proc_tag(mem2proc_tag),           // <- mem2proc_tag
@@ -386,6 +390,7 @@ fetch_stage fetch(
     .cache_valid(cache_valid),              // <- icache.Icache_valid_out
     .take_branch(BPRecoverEN),              // <- retire.BPRecoverEN
     .target_pc(fetch_pc),                   // <- retire.target_pc
+    .dis_stall(dis_stall),                  // <- dispatch.stall
     
     .shift(fetch_shift),                    // -> icache.shift
     .proc2Icache_addr(proc2Icache_addr),    // -> icache.proc2Icache_addr
@@ -402,12 +407,35 @@ always_comb begin
     priority case(dis_stall)
         3'b000: dis_packet_in_next = if_d_packet;
         3'b001: begin
-            dis_packet_in_next[2] = dis_packet_in[0];
-            dis_packet_in_next[1:0] = if_d_packet[2:1];
+            if (dis_packet_in[0].valid) begin
+                dis_packet_in_next[2] = dis_packet_in[0];
+                dis_packet_in_next[1:0] = if_d_packet[2:1];
+            end
+            else begin
+                dis_packet_in_next[2:1] = if_d_packet[2:1];
+                dis_packet_in_next[0] = dis_packet_in[0];
+            end
         end
         3'b011: begin
-            dis_packet_in_next[2:1] = dis_packet_in[1:0];
-            dis_packet_in_next[0] = if_d_packet[2];
+            if (dis_packet_in[1].valid & dis_packet_in[0].valid) begin
+                dis_packet_in_next[2:1] = dis_packet_in[1:0];
+                dis_packet_in_next[0] = if_d_packet[2];
+            end
+            else if (~dis_packet_in[1].valid & dis_packet_in[0].valid) begin
+                dis_packet_in_next[2] = dis_packet_in[0];
+                dis_packet_in_next[1] = if_d_packet[2];
+                dis_packet_in_next[0] = dis_packet_in[1];
+            end
+            else if (dis_packet_in[1].valid & ~dis_packet_in[0].valid) begin
+                dis_packet_in_next[2] = dis_packet_in[1];
+                dis_packet_in_next[1] = if_d_packet[2];
+                dis_packet_in_next[0] = dis_packet_in[0];
+            end
+            else begin
+                dis_packet_in_next[2] = if_d_packet[2];
+                dis_packet_in_next[1] = dis_packet_in[1];
+                dis_packet_in_next[0] = dis_packet_in[0];
+            end
         end
         3'b111: begin
             dis_packet_in_next = dis_packet_in;
@@ -417,7 +445,7 @@ end
 
 
 always_ff @(posedge clock) begin
-    if(reset) begin
+    if(reset | BPRecoverEN) begin
         for(int i=0; i<3; i++) begin
             dis_packet_in[i].valid <= `SD 0;
             dis_packet_in[i].inst <= `SD `NOP;
@@ -514,13 +542,12 @@ arch_maptable arch_maptable_0(
 //             Reservation Station              //
 //                                              //
 //////////////////////////////////////////////////
-assign rs_reset = reset | BPRecoverEN;
 
 
 RS RS_0(
     // Inputs
     .clock(clock),
-    .reset(reset),
+    .reset(reset | BPRecoverEN),
     .rs_in(dis_rs_packet),
     .cdb_t(cdb_t),
     .fu_fifo_stall(fu_fifo_stall),
@@ -555,7 +582,7 @@ end
 issue_stage issue_0(
     // Input
     .clock(clock),
-    .reset(reset),
+    .reset(reset | BPRecoverEN),
     .rs_out(is_packet_in),
     .read_rda(pr1_read),
     .read_rdb(pr2_read),
@@ -614,7 +641,7 @@ end
 
 fu_alu fu_alu_1(
 	.clock(clock),                          // system clock
-	.reset(reset),                          // system reset
+	.reset(reset | BPRecoverEN),                          // system reset
     .complete_stall(complete_stall[ALU_1]),    // <- complete.fu_c_stall
 	.fu_packet_in(fu_packet_in[ALU_1]),        // <- issue.issue_2_fu
     .fu_ready(fu_ready.alu_1),                // -> issue.fu_ready
@@ -629,7 +656,7 @@ fu_alu fu_alu_1(
 
 fu_alu fu_alu_2(
 	.clock(clock),                          // system clock
-	.reset(reset),                          // system reset
+	.reset(reset | BPRecoverEN),                          // system reset
     .complete_stall(complete_stall[ALU_2]),    // <- complete.fu_c_stall
 	.fu_packet_in(fu_packet_in[ALU_2]),        // <- issue.issue_2_fu
     .fu_ready(fu_ready.alu_2),                // -> issue.fu_ready
@@ -644,7 +671,7 @@ fu_alu fu_alu_2(
 
 fu_alu fu_alu_3(
 	.clock(clock),                          // system clock
-	.reset(reset),                          // system reset
+	.reset(reset | BPRecoverEN),                          // system reset
     .complete_stall(complete_stall[ALU_3]),    // <- complete.fu_c_stall
 	.fu_packet_in(fu_packet_in[ALU_3]),        // <- issue.issue_2_fu
     .fu_ready(fu_ready.alu_3),                // -> issue.fu_ready
@@ -659,7 +686,7 @@ fu_alu fu_alu_3(
 
 fu_mult fu_mult_1(
     .clock(clock),
-    .reset(reset),
+    .reset(reset | BPRecoverEN),
     .complete_stall(complete_stall.mult_1),
     .fu_packet_in(fu_packet_in[MULT_1]),
     .fu_ready(fu_ready.mult_1),
@@ -669,7 +696,7 @@ fu_mult fu_mult_1(
 
 fu_mult fu_mult_2(
     .clock(clock),
-    .reset(reset),
+    .reset(reset | BPRecoverEN),
     .complete_stall(complete_stall.mult_2),
     .fu_packet_in(fu_packet_in[MULT_2]),
     .fu_ready(fu_ready.mult_2),
@@ -707,7 +734,7 @@ assign fu_c_in[LS_2] = 0;
 
 branch_stage branc(
     .clock(clock),
-    .reset(reset),
+    .reset(reset | BPRecoverEN),
     .complete_stall(complete_stall.branch),
     .fu_packet_in(fu_packet_in[BRANCH]),
     .fu_ready(fu_ready.branch),

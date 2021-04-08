@@ -91,6 +91,7 @@ logic [2**`FU-1:0]          complete_stall_display;
 	ROB_ENTRY_PACKET [`ROBW-1:0]    rob_entries_display;
     logic       [`ROB-1:0]          head_display;
     logic       [`ROB-1:0]          tail_display;
+    logic       [2:0]               rob_stall_display;
 
 // PR
     logic [2**`PR-1:0][`XLEN-1:0] pr_display;
@@ -98,6 +99,11 @@ logic [2**`FU-1:0]          complete_stall_display;
 // Archi Map Table
     logic [2:0][`PR-1:0]       map_ar_pr;
     logic [2:0][4:0]           map_ar;
+
+    logic [31:0][`PR-1:0]            fl_array_display;
+    logic [4:0]                      fl_head_display;
+    logic [4:0]                      fl_tail_display;
+    logic                            fl_empty_display;
 
 `endif
 
@@ -207,6 +213,7 @@ pipeline tbd(
     , .rob_entries_display(rob_entries_display)
     , .head_display(head_display)
     , .tail_display(tail_display)
+    , .rob_stall_display(rob_stall_display)
     // Freelist
     , .fl_array_display(fl_array_display)
     , .fl_head_display(fl_head_display)
@@ -345,19 +352,23 @@ always @(negedge clock) begin
         // $display();
         // $display("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
         // $display();
-        //  print_pipeline;
         // print_is_fifo;
         // print_alu;
         // show_fu_stat;
         // if (cycle_count >= 85 && cycle_count <= 95) show_sq;
         // if (cycle_count >= 85 && cycle_count <= 95) show_sq_age;
         // show_cdb;
-        //  show_complete;
         // show_rs_in;
+        // print_pipeline;
+        // print_alu;
+        // show_fu_stat;
+        // show_complete;
         // show_rs_table;
+        // show_rob_table;
+        // show_rob_in;
         // show_rs_out;
-        // show_rob_table();
-        //  show_rob_in;
+        // show_freelist_table;
+        // show_mpt_entry;
     end
 end
 
@@ -461,11 +472,12 @@ task show_rob_table;
         $display("valid: %d  Tnew: %d  Told: %d  arch_reg: %d  completed: %b  precise_state: %b  target_pc: %3d is_store: %b", rob_entries_display[i].valid, rob_entries_display[i].Tnew, rob_entries_display[i].Told, rob_entries_display[i].arch_reg, rob_entries_display[i].completed, rob_entries_display[i].precise_state_need, rob_entries_display[i].target_pc, rob_entries_display[i].is_store);
     end
     $display("head:%d tail:%d", head_display, tail_display);
+    $display("structual_stall:%b", rob_stall_display);
 endtask; // show_rs_table
 
 
 task print_pipeline;
-    $display(" ============ Cycle 5%d ==============", cycle_count);
+    $display(" ============ Cycle %d ==============", cycle_count);
     print_header("\n |     IF      |     DIS     |     IS      |\n");
     for(int i=2; i>=0; i--) begin
         print_num(i);
@@ -480,6 +492,12 @@ task print_pipeline;
         /* IS */
         print_stage("|", is_in_display[i].inst, is_in_display[i].PC, is_in_display[i].valid);
         print_header("|\n");
+    end
+    for(int i=2; i>=0; i--) begin
+        `ifdef DIS_DEBUG
+        /* IF debug */
+        $display("%h", if_d_packet_debug[i].inst);
+        `endif
     end
 endtask
 
@@ -525,6 +543,24 @@ task print_alu;
     $display();
 endtask
 
+task show_freelist_table;
+    for(int i=31; i>=0; i--) begin  // For RS entry, it allocates from 15-0
+        $display("Index: %d        PR: %5d", i, fl_array_display[i]);
+    end
+    $display("head:%d tail:%d empty:%d", fl_head_display, fl_tail_display, fl_empty_display);
+endtask; // show_rs_table
+
+task show_mpt_entry;
+    begin
+        $display("=====   Maptable Entry   =====");
+        $display("| AR |   PR   | ready |");
+        for (int i = 0; i < 32; i++) begin
+            $display("| %2d |   %d   |   %b  |", i, archi_map_display[i], ready_array_display[i]);
+        end
+        $display(" ");
+    end
+endtask
+
 //////////////////////////////////////////////////////////
 ///////////////         SET      
 /////////////////////////////////////////////////////////
@@ -560,7 +596,7 @@ initial begin
     #2 reset = 1'b0;
     
 
-    for (int i = 0; i < 1000; i++) begin
+    for (int i = 0; i < 750; i++) begin
     @(negedge clock);
     end
     

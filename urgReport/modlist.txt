@@ -1,0 +1,22 @@
+Design Module List
+
+Total Module Definition Coverage Summary 
+SCORE  LINE   TOGGLE 
+ 72.43  99.20  45.66 
+
+
+Total modules in report: 11
+-------------------------------------------------------------------------------
+SCORE  LINE   TOGGLE NAME                                                      
+  0.00   0.00 --     \$unit::sys_defs.svh::testbench/rs_test.sv...@1570685757  
+  0.00 --       0.00 ps8                                                       
+ 28.99 --      28.99 pc_sel16                                                  
+ 62.37 100.00  24.73 Issue_Select                                              
+ 71.91  99.38  44.44 testbench                                                 
+ 87.58 100.00  75.17 RS                                                        
+ 88.03 --      88.03 pc_sel4                                                   
+ 93.87 100.00  87.74 pc_sel2                                                   
+ 97.62 --      97.62 ps16                                                      
+100.00 100.00 100.00 ps2                                                       
+100.00 --     100.00 ps4                                                       
+
