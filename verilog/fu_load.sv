@@ -4,9 +4,9 @@
 `timescale 1ns/100ps
 
 typedef struct packed {
+    logic [`LSQ-1:0]    tail_pos;
     FU_COMPLETE_PACKET  result; // valid bit here
     logic [`XLEN-1:0]   addr;
-    logic [`LSQ-1:0]    tail_pos;
     LS_SELECT           load_sel;
     logic [3:0]		    usebytes, forward_bytes;
     logic [`XLEN-1:0]   aligned_data;
@@ -34,6 +34,7 @@ module fu_load(
 
     // Cache
     output logic [`XLEN-1:0]    addr,
+    output logic                cache_read_EN,
     input [`XLEN-1:0]           cache_data_in
     // TODO add more when we have cache
 );
@@ -46,8 +47,8 @@ LOAD_STAGE_REG ins_reg; // the register that holds the instruction while executi
 
 
 // WAITING INPUT 
+assign fu_ready = ~fu_packet_in.valid && (status == WAITING_INPUT);
 logic [`XLEN-1:0] new_addr;
-
 assign new_addr = fu_packet_in.r1_value + `RV32_signext_Iimm(fu_packet_in.inst);
 
 
@@ -99,6 +100,12 @@ always_comb begin
     if (ins_reg.forward_bytes[2]) data_after_cache[23:16] = ins_reg.aligned_data[23:16];
     if (ins_reg.forward_bytes[1]) data_after_cache[15:8] = ins_reg.aligned_data[15:8];
     if (ins_reg.forward_bytes[0]) data_after_cache[7:0] = ins_reg.aligned_data[7:0];
+end
+
+always_ff @(posedge clock) begin
+    if (reset) cache_read_EN <= `SD 0;
+    else if (status == WAITING_SQ && ~sq_result.stall && ~sq_forward) cache_read_EN <= `SD 1;
+    else cache_read_EN <= `SD 0;
 end
 
 
@@ -155,6 +162,9 @@ always_comb begin
     updated_result.dest_value = wb_data;
 end
 
+assign fu_packet_out = ins_reg.result;
+
+assign want_to_complete = status == WAITING_OUTPUT;
 
 always_ff @(posedge clock) begin
     if (reset) begin

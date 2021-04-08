@@ -77,6 +77,7 @@ module pipeline(
     , output logic [`LSQ:0]                 filled_num_dis
     , output SQ_ENTRY_PACKET [2**`LSQ-1:0]  older_stores
     , output logic [2**`LSQ-1:0]            older_stores_valid
+    , output LOAD_SQ_PACKET [1:0]           load_sq_pckt_display
     
     // Complete
     , output CDB_T_PACKET               cdb_t_display
@@ -131,6 +132,7 @@ module pipeline(
 `ifdef CACHE_SIM
     , output SQ_ENTRY_PACKET [2:0]          cache_wb_sim
     , output logic [1:0][`XLEN-1:0]         cache_read_addr_sim
+    , output logic [1:0]                    cache_read_start_sim
     , input [1:0][`XLEN-1:0]                cache_read_data_sim
 `endif
     
@@ -214,7 +216,6 @@ logic [2:0][`XLEN-1:0]  pr1_read, pr2_read;
 
 /* Reorder Buffer */
 logic [2:0][`ROB-1:0]           new_rob_index;  // ROB.dispatch_index <-> dispatch.rob_index
-//assign new_rob_index = 5;
 //ROB_ENTRY_PACKET[2:0]           rob_in;       // rob_in = dis_rob_packet
 logic       [2:0]               complete_valid;
 logic       [2:0][`ROB-1:0]     complete_entry;  // which ROB entry is done
@@ -224,6 +225,7 @@ ROB_ENTRY_PACKET [`ROBW-1:0]    rob_entries;
 ROB_ENTRY_PACKET [`ROBW-1:0]    rob_debug;
 logic       [`ROB-1:0]          head;
 logic       [`ROB-1:0]          tail;
+logic       [2:0]               SQRetireEN;
 
 /* functional unit */
 FU_STATE_PACKET                     fu_ready;
@@ -241,6 +243,7 @@ SQ_ENTRY_PACKET [2:0]       cache_wb;
 /* cache */
 logic [1:0][`XLEN-1:0]      cache_read_addr;
 logic [1:0][`XLEN-1:0]      cache_read_data;
+logic [1:0]                 cache_read_start;
 
 /* Complete Stage */
 CDB_T_PACKET                    cdb_t;
@@ -286,6 +289,9 @@ assign fu_packet_out_display = fu_c_in;
 // Maptable
 assign archi_map_display = archi_maptable_out;
 
+// SQ
+assign load_sq_pckt_display = load_lookup;
+
 // Complete
 assign cdb_t_display = cdb_t;
 assign wb_value_display = wb_value;
@@ -296,7 +302,6 @@ assign map_ar_pr_disp = map_ar_pr;
 assign map_ar_disp = map_ar;
 
 // Retire stage
-
 
 `endif
 
@@ -326,6 +331,7 @@ assign fu_ready = fu_ready_debug;
     assign cache_wb_sim = cache_wb;
     assign cache_read_addr_sim = cache_read_addr;
     assign cache_read_data = cache_read_data_sim;
+    assign cache_read_start_sim = cache_read_start;
 `endif
 
 //////////////////////////////////////////////////
@@ -671,7 +677,7 @@ fu_mult fu_mult_2(
     .fu_packet_out(fu_c_in[MULT_2])
 );
 
-fu_load LD_0(
+fu_load fu_load_1(
     .clock(clock),
     .reset(reset),
     .complete_stall(complete_stall.loadstore_1),
@@ -688,7 +694,8 @@ fu_load LD_0(
 
     // Cache
     .addr(cache_read_addr[0]),      // TODO: -> dcache 
-    .cache_data_in(cache_read_data[0]) // TODO: <- dcache 
+    .cache_data_in(cache_read_data[0]), // TODO: <- dcache 
+    .cache_read_EN(cache_read_start[0])
 );
 
 // TODO add more fus
@@ -708,8 +715,6 @@ branch_stage branc(
     .fu_packet_out_reg(fu_c_in[BRANCH])
 );
 
-logic [2:0] retire_store;
-assign retire_store = 3'b111; // TODO: connect this signal to retire stage
 
 SQ SQ_0(
     .clock(clock),
@@ -722,7 +727,7 @@ SQ SQ_0(
     .exe_idx(exe_idx),            // <- alu.exe_idx
     .load_lookup(load_lookup),    // <- load.load_lookup
     .load_forward(load_forward),  // -> load.load_forward
-    .retire(retire_store),              // <- retire. TODO
+    .retire(SQRetireEN),          // <- retire. SQRetireEN
     .cache_wb(cache_wb)           // -> TODO: dcache, currently dangling
     `ifdef TEST_MODE
     , .sq_display(sq_display)
@@ -803,7 +808,8 @@ retire_stage retire_0(
     .FreelistHead(FreelistHead),                // <- Freelist.FreelistHead
     .Retire_EN(RetireEN),                       // -> Freelist.RetireEN
     .Tolds_out(RetireReg),                      // -> Freelist.RetireReg
-    .BPRecoverHead(BPRecoverHead)               // -> Freelist.BPRecoverHead
+    .BPRecoverHead(BPRecoverHead),              // -> Freelist.BPRecoverHead
+    .SQRetireEN(SQRetireEN)                     // -> SQ.retire
 );
 
 //////////////////////////////////////////////////

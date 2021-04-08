@@ -24,7 +24,8 @@ module decoder(
 	                        // keeping track of when to allow the next
 	                        // instruction out of fetch
 	                        // 0 for HALT and illegal instructions (die on halt)
-	output logic 			illegal
+	output logic 			illegal,
+	output logic 			is_store
 
 );
 
@@ -51,6 +52,7 @@ module decoder(
 		op_sel = 0;
 		halt = `FALSE;
 		illegal = `FALSE;
+		is_store = `FALSE;
 		if(valid_inst_in) begin
 			casez (inst) 
 				`RV32_LUI: begin
@@ -183,6 +185,7 @@ module decoder(
 					reg2 = inst.r.rs2;
 					opa_select = OPA_IS_RS1;
 					opb_select = OPB_IS_S_IMM;
+					is_store = `TRUE;
 				end 
 				`RV32_SH: begin
 					fu_sel = ALU_1;
@@ -191,6 +194,7 @@ module decoder(
 					reg2 = inst.r.rs2;
 					opa_select = OPA_IS_RS1;
 					opb_select = OPB_IS_S_IMM;
+					is_store = `TRUE;
 				end
 				`RV32_SW: begin
 					fu_sel = ALU_1;
@@ -199,6 +203,7 @@ module decoder(
 					reg2 = inst.r.rs2;
 					opa_select = OPA_IS_RS1;
 					opb_select = OPB_IS_S_IMM;
+					is_store = `TRUE;
 				end
 				`RV32_ADDI: begin
 					fu_sel = ALU_1;
@@ -468,6 +473,7 @@ logic [2:0][4:0] dest_arch, reg1_arch, reg2_arch;
 ALU_OPA_SELECT [2:0] opa_select;
 ALU_OPB_SELECT [2:0] opb_select;
 logic [2:0] halt;
+logic [2:0]	is_store;
 
 
 decoder decode_0(
@@ -479,7 +485,8 @@ decoder decode_0(
 	.dest_reg(dest_arch[0]),
 	.reg1(reg1_arch[0]), 
 	.reg2(reg2_arch[0]),
-	.halt(halt[0])      // non-zero on a haltn
+	.halt(halt[0]),      // non-zero on a haltn
+	.is_store(is_store[0])
 );
 
 decoder decode_1(
@@ -491,7 +498,8 @@ decoder decode_1(
 	.dest_reg(dest_arch[1]),
 	.reg1(reg1_arch[1]),
 	.reg2(reg2_arch[1]),
-	.halt(halt[1])      // non-zero on a haltn
+	.halt(halt[1]),      // non-zero on a haltn
+	.is_store(is_store[1])
 );
 
 decoder decode_2(
@@ -503,7 +511,8 @@ decoder decode_2(
 	.dest_reg(dest_arch[2]),
 	.reg1(reg1_arch[2]),
 	.reg2(reg2_arch[2]),
-	.halt(halt[2])      // non-zero on a haltn
+	.halt(halt[2]),      // non-zero on a haltn
+	.is_store(is_store[2])
 );
 
 
@@ -535,7 +544,7 @@ assign reg2_ar = reg2_arch;
 always_comb begin
 	sq_alloc = 0;
 	for(int i=0; i<3; i++) begin
-		if (fu_sel[i] == LS_1 & dis_packet[i].valid) sq_alloc[i] = 1;
+		if (is_store[i] & dis_packet[i].valid) sq_alloc[i] = 1;
 	end
 end
 
@@ -549,7 +558,7 @@ always_comb begin
 		rob_in[i].arch_reg = dest_arch[i];
 		rob_in[i].completed = 0;
 		rob_in[i].precise_state_need = 0;
-		rob_in[i].is_store = sq_alloc[i];
+		rob_in[i].is_store = is_store[i];
 		rob_in[i].target_pc = 0;
 	end
 end

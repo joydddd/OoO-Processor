@@ -64,6 +64,8 @@ extern "C" int mem_read(int addr) {
     data += memory[addr + 1] << 8;
     data += memory[addr + 2] << 16;
     data += memory[addr + 3] << 24;
+    printf("Read MEM[%d]: %x\n", addr, data);
+    return data;
 }
 
 extern "C" void mem_print() {

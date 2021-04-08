@@ -81,15 +81,20 @@ end
 always_comb begin
     tail_pos = 0;
     case(dispatch)
+    3'b000: begin
+        tail_pos[2] = tail;
+        tail_pos[1] = tail;
+        tail_pos[0] = tail;
+    end
     3'b001: begin
         tail_pos[2] = tail;
         tail_pos[1] = tail;
         tail_pos[0] = tail;
     end
     3'b010: begin
-        tail_pos[0] = tail;
+        tail_pos[2] = tail;
         tail_pos[1] = tail;
-        tail_pos[2] = tail+1;
+        tail_pos[0] = tail+1;
     end
     3'b011: begin
         tail_pos[2] = tail;

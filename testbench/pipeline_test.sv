@@ -80,6 +80,7 @@ logic [`LSQ-1:0]               tail_dis;
 logic [`LSQ:0]                 filled_num_dis;
 SQ_ENTRY_PACKET [2**`LSQ-1:0]  older_stores;
 logic [2**`LSQ-1:0]            older_stores_valid;
+LOAD_SQ_PACKET [1:0]           load_sq_pckt_display;
 
 // Complete
 CDB_T_PACKET               cdb_t_display;
@@ -129,6 +130,7 @@ CDB_T_PACKET                cdb_t_debug;
 SQ_ENTRY_PACKET [2:0]          cache_wb_sim;
 logic [1:0][`XLEN-1:0]         cache_read_addr_sim;
 logic [1:0][`XLEN-1:0]         cache_read_data_sim;
+logic [1:0]                    cache_read_start_sim;
 
 logic  [3:0]        Imem2proc_response;
 logic [63:0]        Imem2proc_data;
@@ -195,6 +197,7 @@ pipeline tbd(
     , .filled_num_dis(filled_num_dis)
     , .older_stores(older_stores)
     , .older_stores_valid(older_stores_valid)
+    , .load_sq_pckt_display(load_sq_pckt_display)
     // Complete
     , .cdb_t_display(cdb_t_display)
     , .wb_value_display(wb_value_display)
@@ -243,6 +246,7 @@ pipeline tbd(
     , .cache_wb_sim(cache_wb_sim)
     , .cache_read_addr_sim(cache_read_addr_sim)
     , .cache_read_data_sim(cache_read_data_sim)
+    , .cache_read_start_sim(cache_read_start_sim)
 `endif
 );
 
@@ -276,9 +280,9 @@ always @(posedge clock) begin
     end
 end
 
-always @(cache_read_addr_sim) begin
-    cache_read_data_sim[0] = mem_read(cache_read_addr_sim[0]);
-    cache_read_data_sim[1] = mem_read(cache_read_addr_sim[1]);
+always @(cache_read_addr_sim, cache_read_start_sim) begin
+    if (cache_read_start_sim[0]) cache_read_data_sim[0] = mem_read(cache_read_addr_sim[0]);
+    if (cache_read_start_sim[1]) cache_read_data_sim[1] = mem_read(cache_read_addr_sim[1]);
 end
 
 `endif
@@ -341,11 +345,12 @@ always @(negedge clock) begin
         // $display();
         // $display("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
         // $display();
-         print_pipeline;
+        //  print_pipeline;
         // print_is_fifo;
-        print_alu;
+        // print_alu;
         // show_fu_stat;
-        show_sq;
+        // if (cycle_count >= 85 && cycle_count <= 95) show_sq;
+        // if (cycle_count >= 85 && cycle_count <= 95) show_sq_age;
         // show_cdb;
         //  show_complete;
         // show_rs_in;
@@ -418,6 +423,15 @@ task show_sq;
     end
 endtask
 
+task show_sq_age;
+    $display("##### older stores, tail_pos at %d", load_sq_pckt_display[0].tail_pos);
+    $display(" |valid|ready|   addr   |usebytes|   data   |");
+    for(int i=0; i<2**`LSQ; i++) begin
+        $display("%1d|  %d  |  %d  | %8h |  %4b  | %8h |", i, older_stores_valid[i], older_stores[i].ready, older_stores[i].addr, older_stores[i].usebytes, older_stores[i].data);
+    end
+endtask
+
+
 task show_complete;
     $display("fu ready: %8b", fu_ready_display);
     $display("complete stall: %8b", complete_stall_display);
@@ -444,7 +458,7 @@ endtask
 
 task show_rob_table;
     for(int i=2**`ROB-1; i>=0; i--) begin  
-        $display("valid: %d  Tnew: %d  Told: %d  arch_reg: %d  completed: %b  precise_state: %b  target_pc: %3d", rob_entries_display[i].valid, rob_entries_display[i].Tnew, rob_entries_display[i].Told, rob_entries_display[i].arch_reg, rob_entries_display[i].completed, rob_entries_display[i].precise_state_need, rob_entries_display[i].target_pc);
+        $display("valid: %d  Tnew: %d  Told: %d  arch_reg: %d  completed: %b  precise_state: %b  target_pc: %3d is_store: %b", rob_entries_display[i].valid, rob_entries_display[i].Tnew, rob_entries_display[i].Told, rob_entries_display[i].arch_reg, rob_entries_display[i].completed, rob_entries_display[i].precise_state_need, rob_entries_display[i].target_pc, rob_entries_display[i].is_store);
     end
     $display("head:%d tail:%d", head_display, tail_display);
 endtask; // show_rs_table
