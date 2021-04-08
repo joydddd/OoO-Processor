@@ -495,6 +495,9 @@ task print_final;
     for(int i=0; i<64; i++)begin
         $display("|  %2d  |  %10d  |", i, pr_display[i]);
     end
+    `ifdef CACHE_SIM
+    mem_print();
+    `endif
 endtask
 
 task print_retire_wb;

@@ -13,7 +13,7 @@
 #
 #
 
-SOURCE = test_progs/haha.s
+SOURCE := test_progs/rv32_copy.s
 
 CRT = crt.s
 LINKERS = linker.lds

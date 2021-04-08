@@ -70,10 +70,14 @@ extern "C" int mem_read(int addr) {
 
 extern "C" void mem_print() {
     for (int i = 0; i < 8192; i++) {
-        cout << "MEM[" << hex << i * 8 << "] = ";
-        for (int j = 0; j < 8; j++) {
-            cout << hex << memory[i * 8 + j];
+        
+        uint64_t data=0;
+        for (int j = 7; j >=0; j--) {
+            data += (uint64_t)memory[i * 8 + j] << (j*8);
         }
-        cout << endl;
+        if (data != 0) printf("@@@ mem[%5d] = %016llx : %llu\n", i * 8, data, data);
+        // if (data != 0)
+        //     cout << "mem[" << dec << i * 8 << "] = " << hex << data << " : "
+        //          << dec << data << endl;
     }
 }
