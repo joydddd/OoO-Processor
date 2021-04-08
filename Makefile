@@ -105,9 +105,15 @@ REFILES = verilog/re_stage.sv
 RETESTBENCH = testbench/retire_test.sv
 RESYNFILES = synth/retire_stage.vg
 
+# branch fu
 BRANCHFILES = verilog/branch_fu.sv
 BRANCHTESTBENCH = testbench/branchfu_test.sv
 BRANCHSYNFILES = synth/branch_stage.vg
+
+# branch predictor
+BPFILES = verilog/branch_predictor.sv
+BPTESTBENCH = testbench/bp_test.sv
+
 # SIMULATION CONFIG
 
 HEADERS     = $(wildcard *.svh)
@@ -237,6 +243,12 @@ mult: mult_simv
 	./mult_simv | tee mult_sim_program.out
 mult_simv: $(HEADERS) $(MULTFILES) $(MULTTESTBENCH)
 	$(VCS) $^ -o mult_simv
+
+# branch predictor
+bp: bp_simv
+	./bp_simv | tee bp_sim_program.out
+bp_simv: $(HEADERS) $(BPFILES) $(BPTESTBENCH)
+	$(VCS) $^ -o bp_simv
 
 sim:	simv
 	./simv | tee sim_program.out

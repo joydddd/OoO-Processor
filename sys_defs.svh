@@ -293,6 +293,9 @@ typedef struct packed {
 
 `define IS_FIFO_DEPTH 32
 
+`define BP 5
+`define BPW 32
+
 //FU: 3 * Int ALU(+,-,bitwise), 2* load/store, 2* int multi, 1* branch
 
 typedef enum logic [`FU-1:0] {
@@ -354,6 +357,13 @@ typedef enum logic[1:0]{
 		INUSED = 1,
 		COMPLETE = 2
 } ROB_STATE;
+
+typedef enum logic[1:0]{
+		STRONG_NT = 0,
+		WEAK_NT = 1,
+		WEAK_T = 2,
+		STRONG_T = 3
+} BP_STATE;
 
 typedef struct packed{
 	logic branch;
@@ -451,7 +461,7 @@ typedef struct packed{
     logic [`PR-1:0] t2;
  }CDB_T_PACKET;
 
- typedef struct packed {
+typedef struct packed {
 	logic 			valid;
 	logic [`PR-1:0] 	Tnew;
 	logic [`PR-1:0] 	Told;
@@ -461,6 +471,15 @@ typedef struct packed{
 	logic [`XLEN-1:0]	target_pc;
 	logic 			completed;
 } ROB_ENTRY_PACKET;
+
+
+typedef struct packed {
+	logic [`BP-1:0]		lru;
+	logic [`XLEN-1:0] 	pc;
+	BP_STATE			direction;
+	logic [`XLEN-1:0]	target_pc;
+	logic				uncondition;
+} BP_ENTRY_PACKET;
 
 
 `endif // __SYS_DEFS_VH__
