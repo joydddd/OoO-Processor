@@ -46,11 +46,6 @@ endif
 VCS = vcs -V -sverilog +vc -Mupdate -line -full64 +vcs+vcdpluson -debug_pp
 LIB = /afs/umich.edu/class/eecs470/lib/verilog/lec25dscc25.v
 
-# Pipeline without fetch
-PLTESTBENCH = testbench/pipeline_test.sv testbench/mt-fl_sim.cpp testbench/pipe_print.c testbench/mem.sv testbench/cache_simv.cpp
-PLFILES = verilog/dispatch.sv verilog/issue.sv verilog/pipeline.sv verilog/complete_stage.sv verilog/re_stage.sv verilog/ps.sv verilog/fetch_stage.sv verilog/prefetch.sv cache/cachemem.sv cache/icache.sv
-PLSYNFILES = synth/pipeline.vg
-
 # Reservation Station
 RSTESTBENCH = testbench/rs_test.sv testbench/rs_print.c
 RSFILES = verilog/rs.sv verilog/ps.sv
@@ -91,9 +86,6 @@ PRSYNFILES = synth/physical_regfile.vg
 LOADFILES = verilog/fu_load.sv
 # TODO: synfile missed
 
-ALUFILES = verilog/fu_alu.sv
-ALUSYNFILES = synth/fu_alu.vg
-
 LOADFILES = verilog/fu_load.sv
 LOADSYNFILES = synth/fu_load.vg
 
@@ -113,7 +105,6 @@ RESYNFILES = synth/retire_stage.vg
 
 BRANCHFILES = verilog/branch_fu.sv
 BRANCHTESTBENCH = testbench/branchfu_test.sv
-BRANCHSYNFILES = synth/branch_stage.vg
 
 # Load Store Queue
 SQFILES = verilog/lsque.sv verilog/ps.sv
@@ -122,6 +113,16 @@ SQSYNFILES = synth/SQ.vg
 
 LSFILES = $(SQFILES) verilog/fu_alu.sv verilog/fu_load.sv
 LSTESTBENCH = testbench/ls_test.sv
+
+ICACHEFILES =  cache/icache.sv verilog/prefetch.sv # prefetch and DCache
+ICACHESYNFILES = synth/icache.vg
+
+
+# Pipeline without fetch
+PLTESTBENCH = testbench/pipeline_test.sv testbench/mt-fl_sim.cpp testbench/pipe_print.c testbench/mem.sv testbench/cache_simv.cpp
+PLFILES = verilog/dispatch.sv verilog/issue.sv verilog/pipeline.sv verilog/complete_stage.sv verilog/re_stage.sv verilog/ps.sv verilog/fetch_stage.sv cache/cachemem.sv $(BRANCHFILES) verilog/fu_alu.sv
+PLSYNFILES = synth/pipeline.vg
+
 # SIMULATION CONFIG
 
 HEADERS     = $(wildcard *.svh)
@@ -136,6 +137,7 @@ SIMFILES    = $(PIPEFILES) $(CACHEFILES)
 SYNTH_DIR = ./synth
 
 export HEADERS
+export ICACHEFILES
 export PIPEFILES
 export CACHEFILES
 export MTFILES
@@ -148,13 +150,12 @@ export PLFILES
 export ARCHMTFILES
 export PRFILES
 # FUs
-export ALUFILES
 export MULTFILES
 export LOADFILES
-export BRANCHFILES
 export SQFILES
 
-
+export ICACHE_NAME = icache
+# prefetch
 export CACHE_NAME = cache
 export PIPELINE_NAME = pipeline
 export RS_NAME = RS
@@ -165,10 +166,8 @@ export FREELIST_NAME = Freelist
 export ROB_NAME = ROB
 export PR_NAME = physical_regfile
 # FUs
-export ALU_NAME = fu_alu
 export MULT_NAME = fu_mult
 export LOAD_NAME = fu_load
-export BRANCH_NAME = branch_stage
 export SQ_NAME = SQ
 
 export RSFILES
@@ -198,7 +197,7 @@ all:    simv
 # pipeline(currently no fetch)
 pipeline: pl_simv
 	./pl_simv | tee pl_sim_program.out
-pl_simv: $(HEADERS) $(PLFILES) $(RSFILES) $(MTFILES) $(ISFIFOFILE) $(FREELISTFILES) $(ROBFILES) $(PRFILES) $(ALUFILES) $(LSFILES) $(BRANCHFILES) $(MULTFILES) $(PLTESTBENCH)
+pl_simv: $(HEADERS) $(PLFILES) $(RSFILES) $(MTFILES) $(ISFIFOFILE) $(FREELISTFILES) $(ROBFILES) $(PRFILES) $(ALUFILES) $(LSFILES) $(MULTFILES) $(ICACHEFILES) $(PLTESTBENCH)
 	$(VCS) $^ -o pl_simv
 
 # RS
@@ -310,6 +309,9 @@ assembly: assemble disassemble hex
 # 	cd $(SYNTH_DIR) && dc_shell-t -f ./$(PIPELINE_NAME).tcl | tee $(PIPELINE_NAME)_synth.out
 # 	echo -e -n 'H\n1\ni\n`timescale 1ns/100ps\n.\nw\nq\n' | ed $(PIPELINE)
 
+$(ICACHESYNFILES): $(ICACHEFILES) $(SYNTH_DIR)/icache.tcl
+	cd $(SYNTH_DIR) && dc_shell-t -f ./icache.tcl | tee icache_synth.out
+
 $(RSSYNFILES): $(RSFILES) $(SYNTH_DIR)/rs.tcl
 	cd $(SYNTH_DIR) && dc_shell-t -f ./rs.tcl | tee rs_synth.out
 
@@ -332,8 +334,6 @@ $(PRSYNFILES): $(PRFILES) $(SYNTH_DIR)/pr.tcl
 	cd $(SYNTH_DIR) && dc_shell-t -f ./pr.tcl | tee pr_synth.out
 
 # FUs
-$(ALUSYNFILES): $(ALUFILES) $(SYNTH_DIR)/fu_alu.tcl
-	cd $(SYNTH_DIR) && dc_shell-t -f ./fu_alu.tcl | tee alu_synth.out
 $(MULTSYNFILES): $(MULTFILES) $(SYNTH_DIR)/mult.tcl
 	cd $(SYNTH_DIR) && dc_shell-t -f ./mult.tcl | tee mult_synth.out
 
@@ -402,10 +402,6 @@ ret_syn: ret_syn_simv
 ret_syn_simv: $(HEADERS) $(RESYNFILES) $(RETESTBENCH) 
 	$(VCS) $^ $(LIB) +define+SYNTH_TEST +error+20 -o dis_syn_simv 
 
-$(BRANCHSYNFILES):	$(BRANCHFILES) $(SYNTH_DIR)/branch.tcl
-	cd $(SYNTH_DIR) && dc_shell-t -f ./branch.tcl | tee branch_synth.out
-
-branch_syn: $(BRANCHSYNFILES)
 
 mult_syn: mult_syn_simv
 	./mult_syn_simv | tee mult_syn_program.out
@@ -413,7 +409,7 @@ mult_syn_simv: $(HEADERS) $(MULTSYNFILES) $(MULTTESTBENCH)
 	$(VCS) $^ $(LIB) +define+SYNTH_TEST +error+20 -o mult_syn_simv
  
 
-$(PLSYNFILES):	$(PLFILES) $(RSSYNFILES) $(MTSYNFILES) $(ARCHMTSYNFILES) $(ISFIFOSYN) $(FREELISTSYNFILES) $(ROBSYNFILES) $(PRSYNFILES) $(ALUSYNFILES) $(BRANCHSYNFILES) $(MULTSYNFILES) $(SQSYNFILES) $(LOADSYNFILES) $(SYNTH_DIR)/pl.tcl 
+$(PLSYNFILES):	$(PLFILES) $(RSSYNFILES) $(MTSYNFILES) $(ARCHMTSYNFILES) $(ISFIFOSYN) $(FREELISTSYNFILES) $(ROBSYNFILES) $(PRSYNFILES) $(MULTSYNFILES) $(SQSYNFILES) $(LOADSYNFILES) $(ICACHESYNFILES) $(SYNTH_DIR)/pl.tcl 
 	cd $(SYNTH_DIR) && dc_shell-t -f ./pl.tcl | tee pl_synth.out
 
 pl_syn: pl_syn_simv

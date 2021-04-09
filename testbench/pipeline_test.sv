@@ -364,13 +364,13 @@ end
 always @(negedge clock) begin
     if (!reset)  begin
         #1;
-        print_retire_wb();
+        // print_retire_wb();
         // $display();
         // $display("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
         // $display();
         
-        if (cycle_count >= 500 && cycle_count <= 520) print_pipeline;
-        if (cycle_count >= 500 && cycle_count <= 520) print_alu;
+        // if (cycle_count >= 500 && cycle_count <= 520) print_pipeline;
+        // if (cycle_count >= 500 && cycle_count <= 520) print_alu;
         // show_fu_stat;
         // print_is_fifo;
         // show_sq;
@@ -379,8 +379,8 @@ always @(negedge clock) begin
         // show_rs_in;
         
         // show_complete;
-        if (cycle_count >= 500 && cycle_count <= 520) show_rs_table;
-        if (cycle_count >= 510 && cycle_count <= 520) show_rob_table;
+        // if (cycle_count >= 500 && cycle_count <= 520) show_rs_table;
+        // if (cycle_count >= 510 && cycle_count <= 520) show_rob_table;
         // show_rob_in;
         // show_rs_out;
         // show_freelist_table;

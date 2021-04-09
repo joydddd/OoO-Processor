@@ -19,11 +19,10 @@ suppress_message {"VER-130"}
 lappend search_path ../
 
 set headers [getenv HEADERS]
-set sources [getenv ALUFILES]
-set alu_module [getenv ALU_NAME]
+set sources [getenv ICACHEFILES]
 
 read_file -f sverilog [list ${headers} ${sources}]
-set design_name ${alu_module}
+set design_name [getenv ICACHE_NAME]
 set clock_name clock
 set reset_name reset
 set CLK_PERIOD 5
