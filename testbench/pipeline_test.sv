@@ -352,19 +352,19 @@ always @(negedge clock) begin
         // $display();
         // $display("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
         // $display();
-        // print_is_fifo;
-        // print_alu;
+        
+        if (cycle_count >= 500 && cycle_count <= 520) print_pipeline;
+        if (cycle_count >= 500 && cycle_count <= 520) print_alu;
         // show_fu_stat;
-        // if (cycle_count >= 85 && cycle_count <= 95) show_sq;
-        // if (cycle_count >= 85 && cycle_count <= 95) show_sq_age;
+        // print_is_fifo;
+        // show_sq;
+        // show_sq_age;
         // show_cdb;
         // show_rs_in;
-        // print_pipeline;
-        // print_alu;
-        // show_fu_stat;
+        
         // show_complete;
-        // show_rs_table;
-        // show_rob_table;
+        if (cycle_count >= 500 && cycle_count <= 520) show_rs_table;
+        if (cycle_count >= 510 && cycle_count <= 520) show_rob_table;
         // show_rob_in;
         // show_rs_out;
         // show_freelist_table;
@@ -408,7 +408,7 @@ endtask
 task show_rs_table;
     for(int i=2**`RS-1; i>=0; i--) begin  // For RS entry, it allocates from 15-0
         print_stage("*", rs_entries_display[i].inst, rs_entries_display[i].PC[31:0], rs_entries_display[i].valid);
-        $display("dest_pr:%d reg1_pr:%d reg1_ready: %b reg2_pr:%d reg2_ready %b", rs_entries_display[i].dest_pr, rs_entries_display[i].reg1_pr, rs_entries_display[i].reg1_ready, rs_entries_display[i].reg2_pr, rs_entries_display[i].reg2_ready);
+        $display("dest_pr:%d reg1_pr:%d reg1_ready: %b reg2_pr:%d reg2_ready %b rob_entry:%d", rs_entries_display[i].dest_pr, rs_entries_display[i].reg1_pr, rs_entries_display[i].reg1_ready, rs_entries_display[i].reg2_pr, rs_entries_display[i].reg2_ready, rs_entries_display[i].rob_entry);
     end
     $display("structual_stall:%b", rs_stall_display);
 endtask; // show_rs_table
@@ -418,12 +418,12 @@ task show_fu_stat;
     $display("fu ready: %8b", fu_ready_display);
     $display("fu finish: %8b", fu_finish_display);
     $display("| valid | halt | take_branch | target_pc | dest_pr | dest_value | rob_entry |");
-    // for(int i=0; i<2**`FU; i++) begin
-    //     $display("| %1d | %1d | %1d | %4h | %2d | %d | %2d |", 
-    //             fu_packet_out_display[i].valid, fu_packet_out_display[i].halt, fu_packet_out_display[i].if_take_branch,
-    //             fu_packet_out_display[i].target_pc, fu_packet_out_display[i].dest_pr, fu_packet_out_display[i].dest_value,
-    //             fu_packet_out_display[i].rob_entry);
-    // end
+    for(int i=0; i<2**`FU; i++) begin
+        $display("| %1d | %1d | %1d | %4h | %2d | %d | %2d |", 
+                fu_packet_out_display[i].valid, fu_packet_out_display[i].halt, fu_packet_out_display[i].if_take_branch,
+                fu_packet_out_display[i].target_pc, fu_packet_out_display[i].dest_pr, fu_packet_out_display[i].dest_value,
+                fu_packet_out_display[i].rob_entry);
+    end
 endtask; 
 
 task show_sq;
@@ -469,7 +469,7 @@ endtask
 
 task show_rob_table;
     for(int i=2**`ROB-1; i>=0; i--) begin  
-        $display("valid: %d  Tnew: %d  Told: %d  arch_reg: %d  completed: %b  precise_state: %b  target_pc: %3d is_store: %b", rob_entries_display[i].valid, rob_entries_display[i].Tnew, rob_entries_display[i].Told, rob_entries_display[i].arch_reg, rob_entries_display[i].completed, rob_entries_display[i].precise_state_need, rob_entries_display[i].target_pc, rob_entries_display[i].is_store);
+        $display("%d| valid: %d  Tnew: %d  Told: %d  arch_reg: %d  completed: %b  precise_state: %b  target_pc: %3d is_store: %b", i, rob_entries_display[i].valid, rob_entries_display[i].Tnew, rob_entries_display[i].Told, rob_entries_display[i].arch_reg, rob_entries_display[i].completed, rob_entries_display[i].precise_state_need, rob_entries_display[i].target_pc, rob_entries_display[i].is_store);
     end
     $display("head:%d tail:%d", head_display, tail_display);
     $display("structual_stall:%b", rob_stall_display);

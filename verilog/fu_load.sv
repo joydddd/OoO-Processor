@@ -162,9 +162,10 @@ always_comb begin
     updated_result.dest_value = wb_data;
 end
 
-assign fu_packet_out = ins_reg.result;
-
+assign fu_packet_out = updated_result;
 assign want_to_complete = status == WAITING_OUTPUT;
+
+
 
 always_ff @(posedge clock) begin
     if (reset) begin
@@ -172,7 +173,7 @@ always_ff @(posedge clock) begin
         status <= `SD WAITING_INPUT;
     end else case (status)
         WAITING_INPUT: begin
-            status <= `SD fu_packet_in.valid ? WAITING_SQ : WAITING_INPUT;
+            status <= `SD fu_packet_in.valid && ~complete_stall ? WAITING_SQ : WAITING_INPUT;
             ins_reg.result <= `SD new_result_pckt;
             ins_reg.addr <= `SD new_addr;
             ins_reg.tail_pos <= `SD fu_packet_in.sq_tail;
@@ -204,14 +205,7 @@ always_ff @(posedge clock) begin
             ins_reg.aligned_data <= `SD data_after_cache;
         end
         WAITING_OUTPUT: begin
-            status <= `SD complete_stall ? WAITING_OUTPUT : WAITING_INPUT;
-            ins_reg.result <=  `SD updated_result;
-            ins_reg.addr <= `SD ins_reg.addr;
-            ins_reg.tail_pos <= `SD ins_reg.tail_pos;
-            ins_reg.load_sel <= `SD ins_reg.load_sel;
-            ins_reg.usebytes <= `SD ins_reg.usebytes;
-            ins_reg.forward_bytes <= `SD ins_reg.forward_bytes;
-            ins_reg.aligned_data <= `SD ins_reg.aligned_data;
+            status <= `SD WAITING_INPUT;
         end
     endcase
 end

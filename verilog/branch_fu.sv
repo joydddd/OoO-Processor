@@ -62,13 +62,10 @@ module branch_stage(
 	input  		  			complete_stall,			// complete stage structural hazard
 	input ISSUE_FU_PACKET 	fu_packet_in,
 	output 				  	fu_ready,				// TODO: combine complete_stall and the FU currently running, forward to issue stage
-	output logic	 	 	want_to_complete_branch,		// TODO: deal with this value when we have more FUs
-	output FU_COMPLETE_PACKET fu_packet_out_reg
+	output logic	 	 	want_to_complete_branch,
+	output FU_COMPLETE_PACKET fu_packet_out
 );
 
-	FU_COMPLETE_PACKET fu_packet_out;
-
-    // TODO: fu_ready and want_to_complete
 	// Pass-throughs
 	logic fu_complete;    //There is a inst just finished in this cycle
 
@@ -78,7 +75,7 @@ module branch_stage(
 	assign fu_packet_out.halt = fu_packet_in.halt;
 	assign fu_packet_out.valid = fu_packet_in.valid;
 	assign want_to_complete_branch = fu_complete;
-	assign fu_ready = ~(complete_stall);
+	assign fu_ready = 1;
 
 	logic [`XLEN-1:0] opa_mux_out, opb_mux_out;
 	logic brcond_result;
@@ -133,16 +130,5 @@ module branch_stage(
         end
     end
 
-	always_ff @(posedge clock) begin
-		if (reset) begin
-			fu_packet_out_reg <= `SD 0;
-		end
-		else if (complete_stall) begin
-			fu_packet_out_reg <= `SD fu_packet_out_reg;
-		end
-		else begin
-			fu_packet_out_reg <= `SD fu_packet_out;
-		end
-	end
 endmodule 
 `endif 

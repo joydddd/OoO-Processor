@@ -231,6 +231,8 @@ logic       [2:0]               SQRetireEN;
 FU_STATE_PACKET                     fu_ready;
 ISSUE_FU_PACKET     [2**`FU-1:0]    fu_packet_in;
 FU_STATE_PACKET                     complete_stall;
+FU_COMPLETE_PACKET  [2**`FU-1:0]    fu_c_packet;
+FU_STATE_PACKET                     fu_finish;
 
 /* sq */
 logic [2:0]                 exe_valid;
@@ -248,7 +250,7 @@ logic [1:0]                 cache_read_start;
 /* Complete Stage */
 CDB_T_PACKET                    cdb_t;
 FU_COMPLETE_PACKET [2**`FU-1:0]    fu_c_in;
-FU_STATE_PACKET                 fu_finish;
+FU_STATE_PACKET                 fu_to_complete;
 logic       [2:0][`XLEN-1:0]    wb_value;
 logic       [2:0]               precise_state_valid;
 logic       [2:0][`XLEN-1:0]    target_pc;
@@ -586,7 +588,7 @@ issue_stage issue_0(
     .rs_out(is_packet_in),
     .read_rda(pr1_read),
     .read_rdb(pr2_read),
-    .fu_ready(fu_ready),
+    .fu_ready(fu_ready & ~complete_stall),
     // Output
     .rda_idx(is_pr1_idx),
     .rdb_idx(is_pr2_idx),
@@ -627,10 +629,17 @@ physical_regfile pr_0(
 //                IS-FU-Register                //
 //                                              //
 //////////////////////////////////////////////////
+ISSUE_FU_PACKET [2**`FU-1:0] fu_packet_in_next;
+always_comb begin
+    fu_packet_in_next = fu_packet_in;
+    for(int i=0; i<2**`FU; i++) begin
+        if(~complete_stall[i])fu_packet_in_next[i] = is_fu_packet[i];
+    end
+end
 
 always_ff @(posedge clock) begin
     if (reset | BPRecoverEN) fu_packet_in <= `SD 0;
-    else fu_packet_in <= `SD is_fu_packet;
+    else fu_packet_in <= `SD fu_packet_in_next;
 end
 
 //////////////////////////////////////////////////
@@ -639,6 +648,8 @@ end
 //               (Functional Units)             //
 //////////////////////////////////////////////////
 
+// fu should NOT start calculation when compelte stall is high
+
 fu_alu fu_alu_1(
 	.clock(clock),                          // system clock
 	.reset(reset | BPRecoverEN),                          // system reset
@@ -646,7 +657,7 @@ fu_alu fu_alu_1(
 	.fu_packet_in(fu_packet_in[ALU_1]),        // <- issue.issue_2_fu
     .fu_ready(fu_ready.alu_1),                // -> issue.fu_ready
     .want_to_complete(fu_finish.alu_1),// -> complete.fu_finish
-	.fu_packet_out(fu_c_in[ALU_1]),         // -> complete.fu_c_in
+	.fu_packet_out(fu_c_packet[ALU_1]),         //
 
     // STORE
     .if_store(exe_valid[0]),
@@ -661,7 +672,7 @@ fu_alu fu_alu_2(
 	.fu_packet_in(fu_packet_in[ALU_2]),        // <- issue.issue_2_fu
     .fu_ready(fu_ready.alu_2),                // -> issue.fu_ready
     .want_to_complete(fu_finish.alu_2),// -> complete.fu_finish
-	.fu_packet_out(fu_c_in[ALU_2]),         // -> complete.fu_c_in
+	.fu_packet_out(fu_c_packet[ALU_2]),         // 
 
     // STORE
     .if_store(exe_valid[1]),
@@ -676,7 +687,7 @@ fu_alu fu_alu_3(
 	.fu_packet_in(fu_packet_in[ALU_3]),        // <- issue.issue_2_fu
     .fu_ready(fu_ready.alu_3),                // -> issue.fu_ready
     .want_to_complete(fu_finish.alu_3),// -> complete.fu_finish
-	.fu_packet_out(fu_c_in[ALU_3]),         // -> complete.fu_c_in
+	.fu_packet_out(fu_c_packet[ALU_3]),         // -> complete.fu_c_in
 
     // STORE
     .if_store(exe_valid[2]),
@@ -691,7 +702,7 @@ fu_mult fu_mult_1(
     .fu_packet_in(fu_packet_in[MULT_1]),
     .fu_ready(fu_ready.mult_1),
     .want_to_complete(fu_finish.mult_1),
-    .fu_packet_out(fu_c_in[MULT_1])
+    .fu_packet_out(fu_c_packet[MULT_1])
 );
 
 fu_mult fu_mult_2(
@@ -701,19 +712,19 @@ fu_mult fu_mult_2(
     .fu_packet_in(fu_packet_in[MULT_2]),
     .fu_ready(fu_ready.mult_2),
     .want_to_complete(fu_finish.mult_2),
-    .fu_packet_out(fu_c_in[MULT_2])
+    .fu_packet_out(fu_c_packet[MULT_2])
 );
 
 fu_load fu_load_1(
     .clock(clock),
-    .reset(reset),
+    .reset(reset | BPRecoverEN),
     .complete_stall(complete_stall.loadstore_1),
     .fu_packet_in(fu_packet_in[LS_1]),
 
     // output
     .fu_ready(fu_ready.loadstore_1),
     .want_to_complete(fu_finish.loadstore_1),
-    .fu_packet_out(fu_c_in[LS_1]),
+    .fu_packet_out(fu_c_packet[LS_1]),
 
     // SQ
     .sq_lookup(load_lookup[0]),    // -> SQ.load_lookup
@@ -730,7 +741,7 @@ assign fu_finish.loadstore_2 = 0;
 
 assign fu_ready.loadstore_2 = 0;
 
-assign fu_c_in[LS_2] = 0;
+assign fu_c_packet[LS_2] = 0;
 
 branch_stage branc(
     .clock(clock),
@@ -739,13 +750,13 @@ branch_stage branc(
     .fu_packet_in(fu_packet_in[BRANCH]),
     .fu_ready(fu_ready.branch),
     .want_to_complete_branch(fu_finish.branch),
-    .fu_packet_out_reg(fu_c_in[BRANCH])
+    .fu_packet_out(fu_c_packet[BRANCH])
 );
 
 
 SQ SQ_0(
     .clock(clock),
-    .reset(reset),
+    .reset(reset | BPRecoverEN),
     .stall(sq_stall),             // -> dispatch.
     .dispatch(sq_alloc),          // <- dispatch.sq_alloc
     .tail_pos(sq_tail_pos),       // -> dispatch.sq_tail_pos
@@ -765,6 +776,36 @@ SQ SQ_0(
     , .older_stores_valid_display(older_stores_valid)
     `endif
 );
+
+
+//////////////////////////////////////////////////
+//                                              //
+//                FU-C-Register                 //
+//                                              //
+//////////////////////////////////////////////////
+FU_STATE_PACKET fu_result_waiting;
+FU_COMPLETE_PACKET [2**`FU-1:0] fu_c_in_next;
+always_comb begin
+    for(int i=0; i<2**`FU; i++) begin
+        if(fu_finish[i]) fu_c_in_next[i] = fu_c_packet[i]; 
+        else if (complete_stall[i]) fu_c_in_next[i] = fu_c_in[i];
+        else fu_c_in_next[i] = 0;
+    end
+end
+// if something is coming from fu, prioirty is to take it
+// else, if stall, keep the value in reg. 
+
+always_ff @(posedge clock) begin
+    if (reset | BPRecoverEN) begin
+        fu_c_in <= `SD 0;
+        fu_result_waiting <= `SD 0;
+    end else begin
+        fu_c_in <= `SD fu_c_in_next;
+        fu_result_waiting <= `SD complete_stall;
+    end
+end
+
+assign fu_to_complete = fu_result_waiting | fu_finish;
 
 //////////////////////////////////////////////////
 //                                              //
@@ -803,7 +844,7 @@ ROB rob_0(
 complete_stage cs(
     .clock(clock),
     .reset(reset),
-    .fu_finish(fu_finish),                      // <- fu.fu_finish
+    .fu_finish(fu_to_complete),                 // <- fu.fu_finish
     .fu_c_in(fu_c_in),                          // <- fu.fu_c_in
     .fu_c_stall(complete_stall),                // -> fu.complete_stall
     .cdb_t(cdb_t),                              // -> cdb_t broadcast

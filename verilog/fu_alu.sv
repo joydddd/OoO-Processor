@@ -173,15 +173,8 @@ end
 
 
 assign want_to_complete = fu_packet_in.valid;
-assign fu_ready = ~complete_stall;
-/* write result to finish reg */
-always_ff @(posedge clock)begin
-    if (reset) 
-        fu_packet_out <= `SD 0;
-    else if (complete_stall)
-        fu_packet_out <= `SD fu_packet_out;
-    else fu_packet_out <= `SD result;
-end
+assign fu_ready = 1;
+assign fu_packet_out = result;
 
 endmodule // module 
 `endif // __ALU_V__
