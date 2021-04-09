@@ -272,7 +272,10 @@ task wait_until_halt;
 		forever begin : wait_loop
 			@(posedge program_halt);
 			@(negedge clock);
-			if(program_halt) disable wait_until_halt;
+			if(program_halt) begin 
+                @(negedge clock);
+                disable wait_until_halt;
+            end
 		end
 endtask
 
