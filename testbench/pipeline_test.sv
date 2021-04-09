@@ -99,6 +99,7 @@ logic [2**`FU-1:0]          complete_stall_display;
 // Archi Map Table
     logic [2:0][`PR-1:0]       map_ar_pr;
     logic [2:0][4:0]           map_ar;
+    logic [2:0]                RetireEN;
 
     logic [31:0][`PR-1:0]            fl_array_display;
     logic [4:0]                      fl_head_display;
@@ -224,6 +225,7 @@ pipeline tbd(
     // Archi Map Table
     , .map_ar_pr_disp(map_ar_pr)
     , .map_ar_disp(map_ar)
+    , .RetireEN_disp(RetireEN)
 `endif // TEST_MODE
 
 `ifdef DIS_DEBUG
@@ -520,7 +522,7 @@ endtask
 
 task print_retire_wb;
     for(int i=2; i>=0; i--) begin
-        if (map_ar[i] != 0) $display("Cycle: %d: wb r%d = %d", cycle_count, map_ar[i], $signed(pr_display[map_ar_pr[i]]));
+        if (map_ar[i] != 0 && RetireEN[i]==1'b1) $display("Cycle: %d: wb r%d = %d", cycle_count, map_ar[i], $signed(pr_display[map_ar_pr[i]]));
     end
 endtask
 task print_is_fifo;

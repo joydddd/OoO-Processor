@@ -102,6 +102,7 @@ module pipeline(
     // Archi Map Table
     , output logic [2:0][`PR-1:0]       map_ar_pr_disp
     , output logic [2:0][4:0]           map_ar_disp
+    , output logic [2:0]                RetireEN_disp
 `endif
 
 `ifdef DIS_DEBUG
@@ -302,6 +303,7 @@ assign complete_stall_display = complete_stall;
 // Archi Map Table
 assign map_ar_pr_disp = map_ar_pr;
 assign map_ar_disp = map_ar;
+assign RetireEN_disp = RetireEN;
 
 // ROB
 assign rob_stall_display = rob_stall;
