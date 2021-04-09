@@ -37,6 +37,7 @@ import "DPI-C" function void mem_print();
 
 module testbench;
 logic clock, reset;
+logic program_halt;
 
 `ifdef TEST_MODE
 // IF to Dispatch 
@@ -170,7 +171,8 @@ pipeline tbd(
 	.mem2proc_tag(Imem2proc_tag),              // <- mem.mem2proc_tag
 	
 	.proc2mem_command(proc2Imem_command),      // -> mem.proc2Imem_command
-	.proc2mem_addr(proc2Imem_addr)             // -> mem.proc2Imem_addr
+	.proc2mem_addr(proc2Imem_addr),             // -> mem.proc2Imem_addr
+    .halt(program_halt)
 `ifdef TEST_MODE
     // ID
     , .dis_in_display(dis_in_display)
@@ -264,6 +266,15 @@ always begin
 	#(`VERILOG_CLOCK_PERIOD/2.0);
 	clock = ~clock;
 end
+
+/* halt */
+task wait_until_halt;
+		forever begin : wait_loop
+			@(posedge program_halt);
+			@(negedge clock);
+			if(program_halt) disable wait_until_halt;
+		end
+endtask
 
 ////////////////////////////////////////////////////////////
 /////////////       SIMULATORS
@@ -597,11 +608,12 @@ initial begin
     @(posedge clock)
     #2 reset = 1'b0;
     
-
-    for (int i = 0; i < 750; i++) begin
     @(negedge clock);
-    end
-    
+    //for (int i = 0; i < 750; i++) begin
+    //@(negedge clock);
+    //end
+    wait_until_halt;
+
     #2;
     print_final;
     $display("@@@Pass: test finished");

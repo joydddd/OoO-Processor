@@ -16,8 +16,11 @@ module retire_stage (
     output          [2:0][`PR-1:0] 		    Tolds_out,   //3 Tolds connected to Freelist,
     output  logic   [`ROB-1:0]              BPRecoverHead,
     /* retire SQ */
-    output logic [2:0]                      SQRetireEN
+    output logic [2:0]                      SQRetireEN,
+    /* halt the program */
+    output logic                            halt
 );
+
 
 logic [`ROB-1:0] fl_recover_dis;
 logic [`ROB-1:0] fl_recover_dis_stage1;
@@ -56,6 +59,7 @@ always_comb begin
     Retire_EN = 3'b000;
     SQRetireEN = 3'b000;
     BPRecoverEN = 1'b0;
+    halt = 0;
     fl_recover_dis = fl_distance;
     recover_maptable = archi_maptable;
     target_pc = 0;
@@ -71,7 +75,8 @@ always_comb begin
         recover_maptable[rob_head_entry[2].arch_reg] = rob_head_entry[2].Tnew;
         Retire_EN[2] = is_write_bit2;
         SQRetireEN[2] = rob_head_entry[2].is_store;
-        if (rob_head_entry[1].completed==1'b1 && rob_head_entry[1].precise_state_need==1'b1) begin
+        halt = rob_head_entry[2].halt;
+        if (rob_head_entry[2].halt==1'b0 && rob_head_entry[1].completed==1'b1 && rob_head_entry[1].precise_state_need==1'b1) begin
             BPRecoverEN = 1'b1;
             target_pc = rob_head_entry[1].target_pc;
             recover_maptable[rob_head_entry[1].arch_reg] = rob_head_entry[1].Tnew;
@@ -79,11 +84,12 @@ always_comb begin
             SQRetireEN[1] = rob_head_entry[1].is_store;
             fl_recover_dis = fl_recover_dis_stage2;
         end
-        else if (rob_head_entry[1].completed==1'b1 && rob_head_entry[1].precise_state_need==1'b0) begin
+        else if (rob_head_entry[2].halt==1'b0 && rob_head_entry[1].completed==1'b1 && rob_head_entry[1].precise_state_need==1'b0) begin
             recover_maptable[rob_head_entry[1].arch_reg] = rob_head_entry[1].Tnew;
             Retire_EN[1] = is_write_bit1;
             SQRetireEN[1] = rob_head_entry[1].is_store;
-            if (rob_head_entry[0].completed==1'b1 && rob_head_entry[0].precise_state_need==1'b1) begin
+            halt = rob_head_entry[1].halt;
+            if (rob_head_entry[1].halt==1'b0 && rob_head_entry[0].completed==1'b1 && rob_head_entry[0].precise_state_need==1'b1) begin
                 BPRecoverEN = 1'b1;
                 target_pc = rob_head_entry[0].target_pc;
                 recover_maptable[rob_head_entry[0].arch_reg] = rob_head_entry[0].Tnew;
@@ -91,9 +97,10 @@ always_comb begin
                 SQRetireEN[0] = rob_head_entry[0].is_store;
                 fl_recover_dis = fl_recover_dis_stage3;
             end
-            else if (rob_head_entry[0].completed==1'b1 && rob_head_entry[0].precise_state_need==1'b0) begin
+            else if (rob_head_entry[1].halt==1'b0 && rob_head_entry[0].completed==1'b1 && rob_head_entry[0].precise_state_need==1'b0) begin
                 Retire_EN[0] = is_write_bit0;
                 SQRetireEN[0] = rob_head_entry[0].is_store;
+                halt = rob_head_entry[0].halt;
             end
         end
     end

@@ -25,9 +25,11 @@ module pipeline(
 	input [3:0]   mem2proc_tag,              // Tag from memory about current reply
 	
 	output logic [1:0]  proc2mem_command,    // command sent to memory
-	output logic [`XLEN-1:0] proc2mem_addr      // Address sent to memory
+	output logic [`XLEN-1:0] proc2mem_addr,      // Address sent to memory
 	// output logic [63:0] proc2mem_data,      // Data sent to memory
 	// output MEM_SIZE proc2mem_size,          // data size sent to memory
+
+    output logic        halt
 
 	// output logic [3:0]  pipeline_completed_insts,
 	// output EXCEPTION_CODE   pipeline_error_status,
@@ -261,6 +263,7 @@ logic       [2:0][`PR-1:0]			map_ar_pr;
 logic       [2:0][4:0]			    map_ar;
 logic       [31:0][`PR-1:0]         recover_maptable;
 logic       [`XLEN-1:0]             fetch_pc;
+logic                               re_halt;
 //logic 		[2:0] 			        RetireEN;     
 //ROB_ENTRY_PACKET [2:0]              retire_entry;
 
@@ -309,6 +312,7 @@ assign RetireEN_disp = RetireEN;
 assign rob_stall_display = rob_stall;
 
 // Retire stage
+assign halt = re_halt;
 
 `endif
 
@@ -879,7 +883,8 @@ retire_stage retire_0(
     .Retire_EN(RetireEN),                       // -> Freelist.RetireEN
     .Tolds_out(RetireReg),                      // -> Freelist.RetireReg
     .BPRecoverHead(BPRecoverHead),              // -> Freelist.BPRecoverHead
-    .SQRetireEN(SQRetireEN)                     // -> SQ.retire
+    .SQRetireEN(SQRetireEN),                     // -> SQ.retire
+    .halt(re_halt)
 );
 
 //////////////////////////////////////////////////
