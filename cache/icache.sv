@@ -3,9 +3,10 @@ module icache(
     input   clock,
     input   reset,
     input   take_branch,
-    input   [3:0] Imem2proc_response,           // <- mem.mem2proc_response
-    input  [63:0] Imem2proc_data,               // <- mem.mem2proc_data
-    input   [3:0] Imem2proc_tag,                // <- mem.mem2proc_tag
+    input   [3:0] Imem2proc_response,           // <- controller.mem2proc_response
+    input  [63:0] Imem2proc_data,               // <- controller.mem2proc_data
+    input   [3:0] Imem2proc_tag,                // <- controller.mem2proc_tag
+    input         d_request,                    // <- controller.d_request
 
     input  [1:0]  shift,                        // <- fetch_stage.shift
     input  [2:0][`XLEN-1:0] proc2Icache_addr,   // <- fetch_stage.proc2Icache_addr
@@ -30,6 +31,7 @@ module icache(
 
   logic miss_outstanding;
 
+  logic [3:0] real_Imem2proc_response;
   logic [3:0] sync_Imem2proc_response;
 
   logic [4:0]   fetch_index;
@@ -48,6 +50,8 @@ module icache(
   logic [7:0]         prefetch_tag;
   logic               prefetch_wr_enable;
   logic               already_fetched;
+
+  assign real_Imem2proc_response = d_request ? 4'd0 : Imem2proc_response;
 
   assign {current_tag[2], current_index[2]} = proc2Icache_addr[2][`XLEN-1:3];
   assign {current_tag[1], current_index[1]} = proc2Icache_addr[1][`XLEN-1:3];
@@ -105,7 +109,7 @@ module icache(
   prefetch pf (
     .clock(clock),
     .reset(reset),
-    .Imem2pref_response(Imem2proc_response),    // <- (inside icache).Imem2proc_response
+    .Imem2pref_response(real_Imem2proc_response),    // <- (inside icache).real_Imem2proc_response
     .Imem2pref_tag(Imem2proc_tag),              // <- (inside icache).Imem2proc_tag
 
     .give_way(give_way),                        // <- (inside icache).give_way
@@ -172,10 +176,10 @@ module icache(
       fetch_index       <= `SD fetch_index_next;
       fetch_tag         <= `SD fetch_tag_next;
       miss_outstanding <= `SD unanswered_miss;
-      sync_Imem2proc_response <= `SD Imem2proc_response;
+      sync_Imem2proc_response <= `SD real_Imem2proc_response;
       last_fetch_addr <= `SD fetch_addr;
       if(update_mem_tag)
-        current_mem_tag <= `SD Imem2proc_response;
+        current_mem_tag <= `SD real_Imem2proc_response;
     end
   end
 

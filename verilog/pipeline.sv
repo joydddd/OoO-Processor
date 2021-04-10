@@ -26,8 +26,7 @@ module pipeline(
 	
 	output logic [1:0]  proc2mem_command,    // command sent to memory
 	output logic [`XLEN-1:0] proc2mem_addr,      // Address sent to memory
-	// output logic [63:0] proc2mem_data,      // Data sent to memory
-	// output MEM_SIZE proc2mem_size,          // data size sent to memory
+	output logic [63:0] proc2mem_data,      // Data sent to memory
 
     output logic        halt
 
@@ -250,6 +249,30 @@ logic [1:0][`XLEN-1:0]      cache_read_addr;
 logic [1:0][`XLEN-1:0]      cache_read_data;
 logic [1:0]                 cache_read_start;
 
+// icache
+logic [1:0]                 icache2mem_command;
+logic [`XLEN-1:0]           icache2mem_addr;
+
+// dcache
+logic [1:0]                 dcache2ctlr_command;
+logic [`XLEN-1:0]           dcache2ctlr_addr;
+logic [63:0]                dcache2ctlr_data;
+
+// TODO: delete the following assigns when dcache is completed
+assign dcache2ctlr_command = BUS_NONE;
+assign dcache2ctlr_addr = 0;
+assign dcache2ctlr_data = 0;
+
+/* mem controller */
+logic [3:0]                 ctlr2icache_response;
+logic [63:0]                ctlr2icache_data;
+logic [3:0]                 ctlr2icache_tag;
+logic                       d_request;
+
+logic [3:0]                 ctlr2dcache_response;
+logic [63:0]                ctlr2dcache_data;
+logic [3:0]                 ctlr2dcache_tag;
+
 /* Complete Stage */
 CDB_T_PACKET                    cdb_t;
 FU_COMPLETE_PACKET [2**`FU-1:0]    fu_c_in;
@@ -359,7 +382,7 @@ cache ic_mem(
     .rd1_idx(current_index),        // <- icache.current_index
     .wr1_tag(wr_tag),               // <- icache.wr_tag
     .rd1_tag(current_tag),          // <- icache.current_tag
-    .wr1_data(mem2proc_data),       // <- mem.mem2proc_data
+    .wr1_data(ctlr2icache_data),    // <- controller.ctlr2icache_data
 
     .rd1_data(cachemem_data),       // -> icache.cachemem_data
     .rd1_valid(cachemem_valid)      // -> icache.mcachemem_valid
@@ -369,17 +392,18 @@ icache ic(
     .clock(clock),
     .reset(reset),
     .take_branch(BPRecoverEN),
-    .Imem2proc_response(mem2proc_response), // <- mem.mem2proc_response
-    .Imem2proc_data(mem2proc_data),         // <- mem.mem2proc_data
-    .Imem2proc_tag(mem2proc_tag),           // <- mem2proc_tag
+    .Imem2proc_response(ctlr2icache_response), // <- controller.ctlr2icache_response
+    .Imem2proc_data(ctlr2icache_data),         // <- controller.ctlr2icache_data
+    .Imem2proc_tag(ctlr2icache_tag),           // <- controller.ctlr2icache_tag
+    .d_request(d_request),                     // <- controller.d_request
 
     .shift(fetch_shift),                    // <- fetch.shift
     .proc2Icache_addr(proc2Icache_addr),    // <- fetch.proc2Icache_addr
     .cachemem_data(cachemem_data),          // <- cache.rd1_data
     .cachemem_valid(cachemem_valid),        // <- cache.rd1_valid
 
-    .proc2Imem_command(proc2mem_command),   // -> mem.proc2mem_command
-    .proc2Imem_addr(proc2mem_addr),         // -> mem.proc2mem_addr
+    .proc2Imem_command(icache2mem_command), // -> controller.icache2mem_command
+    .proc2Imem_addr(icache2mem_addr),       // -> controller.icache2mem_addr
 
     .Icache_data_out(cache_data),           // -> fetch.cache_data
     .Icache_valid_out(cache_valid),         // -> fetch.cache_valid
@@ -403,6 +427,41 @@ fetch_stage fetch(
     .shift(fetch_shift),                    // -> icache.shift
     .proc2Icache_addr(proc2Icache_addr),    // -> icache.proc2Icache_addr
     .if_packet_out(if_d_packet)             // -> dispatch
+);
+
+//////////////////////////////////////////////////
+//                                              //
+//                 Mem controller               //
+//                                              //
+//////////////////////////////////////////////////
+
+mem_controller mc (
+    /* to mem */
+    .mem2ctlr_response(mem2proc_response),  // <- mem.mem2proc_response
+	.mem2ctlr_data(mem2proc_data),          // <- mem.mem2proc_data
+	.mem2ctlr_tag(mem2proc_tag),            // <- mem.mem2proc_tag
+
+    .ctlr2mem_command(proc2mem_command),    // -> mem.proc2mem_command
+    .ctlr2mem_addr(proc2mem_addr),          // -> mem.proc2mem_addr
+    .ctlr2mem_data(proc2mem_data),          // -> mem.proc2mem_data
+
+    /* to Icache */
+    .icache2ctlr_command(icache2mem_command),   // <- icache.proc2Imem_command
+    .icache2ctlr_addr(icache2mem_addr),         // <- icache.proc2Imem_addr
+
+    .ctlr2icache_response(ctlr2icache_response),
+    .ctlr2icache_data(ctlr2icache_data),              
+    .ctlr2icache_tag(ctlr2icache_tag),          // directly assign
+    .d_request(d_request),                      // if high, mem is assigned to Dcache
+
+    /* to Dcache */
+    .dcache2ctlr_command(dcache2ctlr_command),  // <- dcache TODO
+    .dcache2ctlr_addr(dcache2ctlr_addr),        // <- dcache TODO
+    .dcache2ctlr_data(dcache2ctlr_data),        // <- dcache TODO
+
+    .ctlr2dcache_response(ctlr2dcache_response),// -> dcache TODO
+    .ctlr2dcache_data(ctlr2dcache_data),        // -> dcache TODO
+    .ctlr2dcache_tag(ctlr2dcache_tag)           // -> dcache TODO
 );
 
 //////////////////////////////////////////////////

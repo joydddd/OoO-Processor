@@ -120,7 +120,7 @@ ICACHESYNFILES = synth/icache.vg
 
 # Pipeline without fetch
 PLTESTBENCH = testbench/pipeline_test.sv testbench/mt-fl_sim.cpp testbench/pipe_print.c testbench/mem.sv testbench/cache_simv.cpp
-PLFILES = verilog/dispatch.sv verilog/issue.sv verilog/pipeline.sv verilog/complete_stage.sv verilog/re_stage.sv verilog/ps.sv verilog/fetch_stage.sv cache/cachemem.sv $(BRANCHFILES) verilog/fu_alu.sv
+PLFILES = verilog/dispatch.sv verilog/issue.sv verilog/pipeline.sv verilog/complete_stage.sv verilog/re_stage.sv verilog/ps.sv verilog/fetch_stage.sv verilog/mem_controller.sv cache/cachemem.sv $(BRANCHFILES) verilog/fu_alu.sv
 PLSYNFILES = synth/pipeline.vg
 
 # SIMULATION CONFIG
