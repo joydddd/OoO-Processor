@@ -290,6 +290,8 @@ typedef struct packed {
 `define RSW 16 // = 2**`RS, change ps width in RS as well!! 
 `define OP 4
 `define MUL_STAGE 4
+`define MHSRS 4;
+`define MHSRS_W 16;  // = 4**`MHSRS
 
 `define IS_FIFO_DEPTH 32
 
@@ -461,6 +463,47 @@ typedef struct packed{
 	logic [`XLEN-1:0]	target_pc;
 	logic 			completed;
 } ROB_ENTRY_PACKET;
+
+typedef struct packed {
+    logic                   ready;
+    logic [3:0]             usebytes;
+    logic [`XLEN-1:0]       addr; // must be aligned with words
+    logic [`XLEN-1:0]       data;
+} SQ_ENTRY_PACKET;
+
+typedef struct packed {
+	logic					stall;
+	logic [3:0]				usebytes;
+	logic [`XLEN-1:0]		data;
+} SQ_LOAD_PACKET;
+
+typedef struct packed {
+	logic [`LSQ-1:0]		tail_pos; // the tail position when load is dispatched
+	logic [`XLEN-1:0]		addr; // must align with word! 
+} LOAD_SQ_PACKET;
+
+typedef struct packet{
+     logic [3:0]             usebytes;
+     logic [`XLEN-1:0]       addr; // must be aligned with words
+     logic [`XLEN-1:0]       data;
+} CACHE_IN_PACKET;
+
+typedef struct packet{
+    logic [3:0]             validbtyes;
+    logic                   addr_ready;
+    logic [3:0]			    tag;
+    logic [`XLEN-1:0]       addr; // must be aligned with words
+    logic [`XLEN-1:0]       data;
+} LQ_ENTRY_PACKET;
+
+
+typedef struct packet{
+	logic [`XLEN-1]			addr;  // must be double-aligned
+	logic [1:0]				command;
+	logic [3:0]				mem_tag;
+	logic 					left_or_right;  //If 1, left 4 bytes, if 0, right 4 bytes.
+} MSHRS_ENTRY_PACKET;
+
 
 
 `endif // __SYS_DEFS_VH__

@@ -1,70 +1,144 @@
-// TODO: MSHR
+
 module dcache(
     input   clock,
     input   reset,
-    input   [3:0] Imem2proc_response,
-    input  [63:0] Imem2proc_data,
-    input   [3:0] Imem2proc_tag,
+    /* with mem_controller */
+    input   [3:0] Ctlr2proc_response,
+    input  [63:0] Ctlr2proc_data,
+    input   [3:0] Ctlr2proc_tag,
 
-    input  [63:0] proc2Icache_addr,
-    input  [63:0] cachemem_data,
-    input   cachemem_valid,
+    output [1:0] dcache2ctlr_command,      
+    output [`XLEN-1:0] dcache2ctlr_addr,  
+    output [63:0] dcache2ctlr_data,
+  
 
-    output logic  [1:0] proc2Imem_command,
-    output logic [63:0] proc2Imem_addr,
+    /* with SQ */
+    input SQ_ENTRY_PACKET [2:0] sq_in;
+    output [2:0] sq_stall;
 
-    output logic [2:0][63:0] Icache_data_out, // value is memory[proc2Icache_addr]
-    output logic  Icache_valid_out,      // when this is high
+    /* with Load-FU/LQ */
+    input [1:0] [`XLEN-1:0] ld_addr_in;   // This addr is word aligned !
+    input [1:0] ld_start;
+    output [1:0] is_hit;
+    output [3:0] broadcast_tag;
+    output [`XLEN-1:0] broadcast_data;
 
-    output logic  [2:0][4:0] current_index,
-    output logic  [2:0][7:0] current_tag,
-    output logic  [4:0] last_index,
-    output logic  [7:0] last_tag,
-    output logic  data_write_enable
+    /* with MSHRS */
 
   );
 
-  logic [3:0] current_mem_tag;
+  /* for dcache_mem */
+  logic  [2:0] wr_en;                                    
+  logic  [2:0][4:0] wr_idx;                                 
+  logic  [2:0][7:0] wr_tag;                               
+  logic  [2:0][63:0] wr_data;   
+  logic  [2:0][7:0] used_bytes;                          
 
-  logic miss_outstanding;
+  logic  [1:0][4:0] rd_idx;                        
+  logic  [1:0][7:0] rd_tag;
 
-  assign {current_tag, current_index} = proc2Icache_addr[31:3];
+  logic  [1:0][63:0] rd_data;          
+  logic  [1:0] rd_valid;                  
 
-  wire changed_addr = (current_index != last_index) || (current_tag != last_tag);
+  logic  [2:0] need_write_mem;
+  logic  [2:0][63:0]  wb_mem_data;
 
-  wire send_request = miss_outstanding && !changed_addr;
+  logic  [2:0][`XLEN-1:0] wb_mem_addr;  //This can be directly calculated
 
-  assign Icache_data_out = cachemem_data;
+  logic        wr2_en;        //For the miss load back
+  logic  [4:0] wr2_idx;               
+  logic  [7:0] wr2_tag;                    
+  logic  [63:0] wr2_data;
 
-  assign Icache_valid_out = cachemem_valid;
 
-  assign proc2Imem_addr = {proc2Icache_addr[63:3],3'b0};
-  assign proc2Imem_command = (miss_outstanding && !changed_addr) ?  BUS_LOAD :
-                                                                    BUS_NONE;
-
-  assign data_write_enable =  (current_mem_tag == Imem2proc_tag) &&
-                              (current_mem_tag != 0);
-
-  wire update_mem_tag = changed_addr || miss_outstanding || data_write_enable;
-
-  wire unanswered_miss = changed_addr ? !Icache_valid_out :
-                                        miss_outstanding && (Imem2proc_response == 0);
-
-  // synopsys sync_set_reset "reset"
-  always_ff @(posedge clock) begin
-    if(reset) begin
-      last_index       <= `SD -1;   // These are -1 to get ball rolling when
-      last_tag         <= `SD -1;   // reset goes low because addr "changes"
-      current_mem_tag  <= `SD 0;
-      miss_outstanding <= `SD 0;
-    end else begin
-      last_index       <= `SD current_index;
-      last_tag         <= `SD current_tag;
-      miss_outstanding <= `SD unanswered_miss;
-
-      if(update_mem_tag)
-        current_mem_tag <= `SD Imem2proc_response;
+  always_comb begin : SQ_input_processing
+    for (int i = 2; i>= 0; i--) begin
+      wr_en[i] = sq_in[i].ready;
+      {wr_tag[i], wr_idx[i]} = sq_in[i].addr[`XLEN-1:3];
+      wb_mem_addr[i] = {sq_in[i].addr[`XLEN-1:3], 3'b0};
+      if (sq_in[i].addr[2]==1'b1) begin
+        wr_data = {sq_in[i].data, `XLEN'b0};
+        used_bytes = {sq_in[i].usebytes, 4'b0};
+      end
+      else begin
+        wr_data = {`XLEN'b0, sq_in[i].data};
+        used_bytes = {4'b0, sq_in[i].usebytes};
+      end
     end
   end
+
+  always_comb begin : LQ_input_processing
+    for (int i = 1; i >=0 ; i--) begin
+      {rd_tag[i], rd_idx[i]} = ld_addr_in[i][`XLEN-1:3];
+    end
+  end
+
+  dcache_mem ram(
+    .clock(clock),
+    .reset(reset),
+    .wr1_en(wr_en),
+    .wr1_idx(wr_idx),
+    .wr1_tag(wr_tag),
+    .wr1_data(wr_data),
+    .used_bytes(used_bytes),
+    .rd1_idx(rd_idx),
+    .rd1_tag(rd_tag),
+    .rd1_data(rd_data),
+    .rd1_valid(rd_valid),
+    .need_write_mem(need_write_mem),
+    .wb_mem_data(wb_mem_data),
+    .wr2_en(wr2_en),
+    .wr2_idx(wr2_idx),
+    .wr2_tag(wr2_tag),
+    .wr2_data(wr2_data)
+  );
+
+  assign is_hit = rd_valid;  // no matter this load is started or not
+
+  // MHSRS: 
+  /* For MHSRS */
+  MSHRS_ENTRY_PACKET [`MSHRS_W-1:0] mshrs_table;
+  MSHRS_ENTRY_PACKET [`MSHRS_W-1:0] mshrs_table_next;
+
+  logic [`MSHRS-1:0] head, issue, tail;
+  logic [`MSHRS-1:0] head_next, issue_next, tail_next;
+
+  always_ff @( posedge clock ) begin : MSHRS_reg
+    if (reset) begin
+      mshrs_table <= `SD 0;
+      head <= `SD 0;
+      issue <= `SD 0;
+      tail <= `SD 0;
+    end
+    else begin
+      mshrs_table <= `SD mshrs_table_next;
+      head <= `SD head_next;
+      issue <= `SD issue_next;
+      tail <= `SD tail_next;
+    end
+  end
+
+  always_comb begin : head_logic
+    head_next = head;
+    broadcast_tag = 0;
+    broadcast_data = 0;
+    wr2_en = 0;
+    wr2_idx = 0;
+    wr2_tag = 0;
+    wr2_data = 0;
+    if (Ctlr2proc_tag==mshrs_table[head].mem_tag) begin
+      head_next = head + 1;
+      broadcast_tag = mshrs_table[head].mem_tag;
+      broadcast_data = mshrs_table[head].left_or_right ? Ctlr2proc_data[63:32] : Ctlr2proc_data[31:0];
+      wr2_en = 1'b1;
+      {wr2_tag, wr2_idx} = mshrs_table[head].addr[`XLEN-1:3];
+      wr2_data = Ctlr2proc_data;
+    end
+  end
+
+
+
+
+
 
 endmodule
