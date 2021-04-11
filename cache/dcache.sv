@@ -1,3 +1,4 @@
+`define TEST_MODE
 
 module dcache(
     input   clock,
@@ -25,6 +26,14 @@ module dcache(
     output logic [`XLEN-1:0] broadcast_data,
     output [1:0] ld_stall
 
+    `ifdef TEST_MODE
+      , output logic [31:0] [63:0] cache_data_disp
+      , output logic [31:0] [7:0] cache_tags_disp
+      , output MHSRS_ENTRY_PACKET [`MHSRS_W-1:0] MHSRS_disp
+      , output logic [`MHSRS-1:0] head_pointer
+      , output logic [`MHSRS-1:0] issue_pointer
+      , output logic [`MHSRS-1:0] tail_pointer
+    `endif
   );
 
   /* for dcache_mem */
@@ -91,6 +100,11 @@ module dcache(
     .wr2_idx(wr2_idx),
     .wr2_tag(wr2_tag),
     .wr2_data(wr2_data)
+
+    `ifdef TEST_MODE
+      , .cache_data_disp(cache_data_disp)
+      , .cache_tags_disp(cache_tags_disp)
+    `endif
   );
 
   assign is_hit = rd_valid;  // no matter this load is started or not
@@ -106,13 +120,25 @@ module dcache(
     end
   end
 
+  
   // MHSRS: 
   /* For MHSRS */
   MHSRS_ENTRY_PACKET [`MHSRS_W-1:0] mshrs_table;
   MHSRS_ENTRY_PACKET [`MHSRS_W-1:0] mshrs_table_next;
 
-  logic [`MHSRS-1:0] head, issue, tail;
-  logic [`MHSRS-1:0] head_next, issue_next, tail_next;
+  logic [`MHSRS-1:0] head;
+  logic [`MHSRS-1:0] issue;
+  logic [`MHSRS-1:0] tail;
+  logic [`MHSRS-1:0] head_next;
+  logic [`MHSRS-1:0] issue_next;
+  logic [`MHSRS-1:0] tail_next;
+
+  `ifdef TEST_MODE
+    assign MHSRS_disp = mshrs_table;
+    assign head_pointer = head;
+    assign issue_pointer = issue;
+    assign tail_pointer = tail;
+  `endif
 
   always_ff @( posedge clock ) begin : MSHRS_reg
     if (reset) begin
@@ -169,7 +195,7 @@ module dcache(
       dcache2ctlr_addr = mshrs_table[issue].addr;
       dcache2ctlr_data = mshrs_table[issue].data;
     end
-    if (Ctlr2proc_response!=0) begin
+    if (Ctlr2proc_response!=4'b0) begin
       mshrs_table_next_after_issue[issue].mem_tag = Ctlr2proc_response;
       mshrs_table_next_after_issue[issue].issued = 1'b1;
       issue_next = issue+1;

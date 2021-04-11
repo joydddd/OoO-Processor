@@ -1,4 +1,5 @@
 // cachemem4x64, 3 reading ports, 1 writing port
+`define TEST_MODE
 
 `timescale 1ns/100ps
 
@@ -22,6 +23,11 @@ module dcache_mem(
         input  [4:0] wr2_idx,                                   // 
         input  [7:0] wr2_tag,                                   // 
         input  [63:0] wr2_data
+
+        `ifdef TEST_MODE
+        , output logic [31:0] [63:0] cache_data_disp
+        , output logic [31:0] [7:0] cache_tags_disp
+        `endif 
 );
 
   logic [31:0] [63:0] data;
@@ -33,6 +39,10 @@ module dcache_mem(
 
   logic [2:0] wr1_hit;
   
+  `ifdef TEST_MODE
+    assign cache_data_disp = data;
+    assign cache_tags_disp = tags;
+  `endif
 
   assign rd1_data[1] = data[rd1_idx[1]];
   assign rd1_data[0] = data[rd1_idx[0]];

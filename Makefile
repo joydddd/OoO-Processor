@@ -97,7 +97,7 @@ MULTTESTBENCH = testbench/mult_test.sv
 
 # data cache
 DCFILES = cache/dcache.sv cache/dcachemem.sv
-DCTESTBENCH = 
+DCTESTBENCH = testbench/dcache_test.sv
 
 
 # fetch stage

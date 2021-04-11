@@ -499,7 +499,7 @@ typedef struct packed{
 
 
 typedef struct packed{
-	logic [`XLEN-1:0]			addr;  // must be double-aligned
+	logic [`XLEN-1:0]		addr;  // must be double-aligned
 	logic [1:0]				command;
 	logic [3:0]				mem_tag;
 	logic 					left_or_right;  //If 1, left 4 bytes, if 0, right 4 bytes.
