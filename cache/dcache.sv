@@ -7,23 +7,23 @@ module dcache(
     input  [63:0] Ctlr2proc_data,
     input   [3:0] Ctlr2proc_tag,
 
-    output [1:0] dcache2ctlr_command,      
-    output [`XLEN-1:0] dcache2ctlr_addr,  
-    output [63:0] dcache2ctlr_data,
+    output logic [1:0] dcache2ctlr_command,      
+    output logic [`XLEN-1:0] dcache2ctlr_addr,  
+    output logic [63:0] dcache2ctlr_data,
   
 
     /* with SQ */
-    input SQ_ENTRY_PACKET [2:0] sq_in;
-    output [2:0] sq_stall;
+    input SQ_ENTRY_PACKET [2:0] sq_in,
+    output sq_stall,
 
     /* with Load-FU/LQ */
-    input [1:0] [`XLEN-1:0] ld_addr_in;   // This addr is word aligned !
-    input [1:0] ld_start;
-    output [1:0] is_hit;
-    output [1:0] [`XLEN-1:0] ld_data;    //valid if hit
-    output [3:0] broadcast_tag;
-    output [`XLEN-1:0] broadcast_data;
-    output [1:0] ld_stall;
+    input [1:0] [`XLEN-1:0] ld_addr_in,   // This addr is word aligned !
+    input [1:0] ld_start,
+    output logic [1:0] is_hit,
+    output logic [1:0] [`XLEN-1:0] ld_data,    //valid if hit
+    output logic [3:0] broadcast_tag,
+    output logic [`XLEN-1:0] broadcast_data,
+    output [1:0] ld_stall
 
   );
 
@@ -108,11 +108,11 @@ module dcache(
 
   // MHSRS: 
   /* For MHSRS */
-  MSHRS_ENTRY_PACKET [`MSHRS_W-1:0] mshrs_table;
-  MSHRS_ENTRY_PACKET [`MSHRS_W-1:0] mshrs_table_next;
+  MHSRS_ENTRY_PACKET [`MHSRS_W-1:0] mshrs_table;
+  MHSRS_ENTRY_PACKET [`MHSRS_W-1:0] mshrs_table_next;
 
-  logic [`MSHRS-1:0] head, issue, tail;
-  logic [`MSHRS-1:0] head_next, issue_next, tail_next;
+  logic [`MHSRS-1:0] head, issue, tail;
+  logic [`MHSRS-1:0] head_next, issue_next, tail_next;
 
   always_ff @( posedge clock ) begin : MSHRS_reg
     if (reset) begin
@@ -129,7 +129,8 @@ module dcache(
     end
   end
 
-  MSHRS_ENTRY_PACKET [`MSHRS_W-1:0] mshrs_table_next_after_retire;
+  MHSRS_ENTRY_PACKET [`MHSRS_W-1:0] mshrs_table_next_after_retire;
+
 
   always_comb begin : head_logic
     head_next = head;
@@ -147,13 +148,15 @@ module dcache(
         broadcast_tag = mshrs_table[head].mem_tag;
         broadcast_data = mshrs_table[head].left_or_right ? Ctlr2proc_data[63:32] : Ctlr2proc_data[31:0];
         wr2_en = 1'b1;
+        //wr2_tag = mshrs_table[head].addr[15:8];
+        //wr2_idx = mshrs_table[head].addr[7:3];
         {wr2_tag, wr2_idx} = mshrs_table[head].addr[`XLEN-1:3];
         wr2_data = Ctlr2proc_data;
       end
     end
   end
 
-  MSHRS_ENTRY_PACKET [`MSHRS_W-1:0] mshrs_table_next_after_issue;
+  MHSRS_ENTRY_PACKET [`MHSRS_W-1:0] mshrs_table_next_after_issue;
 
   always_comb begin : issue_logic
     issue_next = issue;
@@ -174,8 +177,8 @@ module dcache(
   end
 
 
-  logic [2:0][`MSHRS-1:0] tail_after_ld;
-  logic [3:0][`MSHRS-1:0] tail_after_wr;
+  logic [2:0][`MHSRS-1:0] tail_after_ld;
+  logic [3:0][`MHSRS-1:0] tail_after_wr;
   logic [2:0] full_after_ld;
   logic [3:0] full_after_wr;
 
@@ -186,7 +189,7 @@ module dcache(
     mshrs_table_next = mshrs_table_next_after_issue;
     tail_after_ld[2] = tail;
     full_after_ld[2] = (tail+1==head);
-    for (i = 1; i >= 0; i--) begin
+    for (int i = 1; i >= 0; i--) begin
       if (!full_after_ld[i+1] && !rd_valid[i] && ld_start[i]) begin   //need mem load
         //allocate
         mshrs_table_next[tail_after_ld[i+1]].addr = {ld_addr_in[i][`XLEN-1:3],3'b0};
@@ -204,7 +207,7 @@ module dcache(
     end
     tail_after_wr[3] = tail_after_ld[0];
     full_after_wr[3] = full_after_ld[0];
-    for (i = 2; i >= 0; i--) begin
+    for (int i = 2; i >= 0; i--) begin
       if (!full_after_wr[i+1] && need_write_mem[i]) begin
         //allocate
         mshrs_table_next[tail_after_wr[i+1]].addr = wb_mem_addr[i];
@@ -218,7 +221,7 @@ module dcache(
       else begin
         tail_after_wr[i] = tail_after_wr[i+1];
       end
-      full_after_wr[i] = (tail_after_wr[i]+1==head)
+      full_after_wr[i] = (tail_after_wr[i]+1==head);
     end
     tail_next = tail_after_wr[0];
   end

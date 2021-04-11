@@ -245,7 +245,7 @@ mult_simv: $(HEADERS) $(MULTFILES) $(MULTTESTBENCH)
 # data cache
 dc: dc_simv
 	./dc_simv | tee dc_sim_program.out
-mult_simv: $(HEADERS) $(DCFILES) $(DCTESTBENCH)
+dc_simv: $(HEADERS) $(DCFILES) $(DCTESTBENCH)
 	$(VCS) $^ -o dc_simv
 
 sim:	simv

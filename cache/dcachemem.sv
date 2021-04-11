@@ -4,7 +4,7 @@
 
 module dcache_mem(
         input clock, reset, 
-        input  [2:0] wr1_en                                     // 
+        input  [2:0] wr1_en,                                     // 
         input  [2:0][4:0] wr1_idx,                                   // 
         input  [2:0][7:0] wr1_tag,                                   // 
         input  [2:0][63:0] wr1_data,                                 //
@@ -68,7 +68,14 @@ module dcache_mem(
             tags_next[wr1_idx[i]] = wr1_tag[i];
             for ( int j = 7; j >= 0 ; j--) begin
               if (used_bytes[i][j]) begin
-                data_next[wr1_idx[i]][(8*j+7):(8*j)] = wr1_data[i][(8*j+7):(8*j)];
+                data_next[wr1_idx[i]][8*j+7] = wr1_data[i][8*j+7];
+                data_next[wr1_idx[i]][8*j+6] = wr1_data[i][8*j+6];
+                data_next[wr1_idx[i]][8*j+5] = wr1_data[i][8*j+5];
+                data_next[wr1_idx[i]][8*j+4] = wr1_data[i][8*j+4];
+                data_next[wr1_idx[i]][8*j+3] = wr1_data[i][8*j+3];
+                data_next[wr1_idx[i]][8*j+2] = wr1_data[i][8*j+2];
+                data_next[wr1_idx[i]][8*j+1] = wr1_data[i][8*j+1];
+                data_next[wr1_idx[i]][8*j+0] = wr1_data[i][8*j+0];
               end
             end
         end
@@ -77,14 +84,16 @@ module dcache_mem(
 
 
   always_ff @(posedge clock) begin
-    if(reset)
+    if(reset) begin
       valids <= `SD 32'b0;
       tags <= `SD 0;
       data <= `SD 0;
-    else
+    end
+    else begin
       valids <= `SD valids_next;
       tags <= `SD tags_next;
       data <= `SD data_next;
+    end
   end
 
 endmodule
