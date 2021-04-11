@@ -20,8 +20,10 @@ module dcache(
     input [1:0] [`XLEN-1:0] ld_addr_in;   // This addr is word aligned !
     input [1:0] ld_start;
     output [1:0] is_hit;
+    output [1:0] [`XLEN-1:0] ld_data;    //valid if hit
     output [3:0] broadcast_tag;
     output [`XLEN-1:0] broadcast_data;
+    output [1:0] ld_stall;
 
   );
 
@@ -92,6 +94,17 @@ module dcache(
   );
 
   assign is_hit = rd_valid;  // no matter this load is started or not
+  always_comb begin : send_hit_data
+    ld_data = 0;
+    for (int i = 1; i >= 0; i--) begin
+      if (ld_addr_in[i][2]==1'b1) begin
+        ld_data[i] = rd_data[i][63:32];
+      end
+      else begin
+        ld_data[i] = rd_data[i][31:0];
+      end
+    end
+  end
 
   // MHSRS: 
   /* For MHSRS */
@@ -116,6 +129,8 @@ module dcache(
     end
   end
 
+  MSHRS_ENTRY_PACKET [`MSHRS_W-1:0] mshrs_table_next_after_retire;
+
   always_comb begin : head_logic
     head_next = head;
     broadcast_tag = 0;
@@ -124,8 +139,10 @@ module dcache(
     wr2_idx = 0;
     wr2_tag = 0;
     wr2_data = 0;
-    if ((head!=tail) && (Ctlr2proc_tag==mshrs_table[head].mem_tag)) begin
+    mshrs_table_next_after_retire = mshrs_table;
+    if ((head!=tail) && (Ctlr2proc_tag==mshrs_table[head].mem_tag) && mshrs_table[head].issued) begin
       head_next = head + 1;
+      mshrs_table_next_after_retire[head].issued = 1'b0;
       if (mshrs_table[head].command==BUS_LOAD) begin
         broadcast_tag = mshrs_table[head].mem_tag;
         broadcast_data = mshrs_table[head].left_or_right ? Ctlr2proc_data[63:32] : Ctlr2proc_data[31:0];
@@ -136,23 +153,75 @@ module dcache(
     end
   end
 
+  MSHRS_ENTRY_PACKET [`MSHRS_W-1:0] mshrs_table_next_after_issue;
+
   always_comb begin : issue_logic
     issue_next = issue;
     dcache2ctlr_command = BUS_NONE;     
     dcache2ctlr_addr = 0;
     dcache2ctlr_data = 0;
-    if ((issue!=tail)) begin
+    mshrs_table_next_after_issue = mshrs_table_next_after_retire;
+    if ((issue!=tail) && mshrs_table[issue].issued==1'b0) begin
       dcache2ctlr_command = mshrs_table[issue].command;     
       dcache2ctlr_addr = mshrs_table[issue].addr;
       dcache2ctlr_data = mshrs_table[issue].data;
     end
     if (Ctlr2proc_response!=0) begin
+      mshrs_table_next_after_issue[issue].mem_tag = Ctlr2proc_response;
+      mshrs_table_next_after_issue[issue].issued = 1'b1;
       issue_next = issue+1;
     end
   end
 
 
+  logic [2:0][`MSHRS-1:0] tail_after_ld;
+  logic [3:0][`MSHRS-1:0] tail_after_wr;
+  logic [2:0] full_after_ld;
+  logic [3:0] full_after_wr;
 
+  assign ld_stall = full_after_ld[2:1];
+  assign sq_stall = full_after_wr[3:1];
+
+  always_comb begin : tail_logic
+    mshrs_table_next = mshrs_table_next_after_issue;
+    tail_after_ld[2] = tail;
+    full_after_ld[2] = (tail+1==head);
+    for (i = 1; i >= 0; i--) begin
+      if (!full_after_ld[i+1] && !rd_valid[i] && ld_start[i]) begin   //need mem load
+        //allocate
+        mshrs_table_next[tail_after_ld[i+1]].addr = {ld_addr_in[i][`XLEN-1:3],3'b0};
+        mshrs_table_next[tail_after_ld[i+1]].command = BUS_LOAD;
+        mshrs_table_next[tail_after_ld[i+1]].mem_tag = 0;
+        mshrs_table_next[tail_after_ld[i+1]].left_or_right = ld_addr_in[i][2] ? 1'b1 : 1'b0;
+        mshrs_table_next[tail_after_ld[i+1]].data = 0;
+        mshrs_table_next[tail_after_ld[i+1]].issued = 0;
+        tail_after_ld[i] = tail_after_ld[i+1] + 1;
+      end
+      else begin
+        tail_after_ld[i] = tail_after_ld[i+1];
+      end
+      full_after_ld[i] = (tail_after_ld[i]+1==head);
+    end
+    tail_after_wr[3] = tail_after_ld[0];
+    full_after_wr[3] = full_after_ld[0];
+    for (i = 2; i >= 0; i--) begin
+      if (!full_after_wr[i+1] && need_write_mem[i]) begin
+        //allocate
+        mshrs_table_next[tail_after_wr[i+1]].addr = wb_mem_addr[i];
+        mshrs_table_next[tail_after_wr[i+1]].command = BUS_STORE;
+        mshrs_table_next[tail_after_wr[i+1]].mem_tag = 0;
+        mshrs_table_next[tail_after_wr[i+1]].left_or_right = 0;
+        mshrs_table_next[tail_after_wr[i+1]].data = wb_mem_data[i];
+        mshrs_table_next[tail_after_wr[i+1]].issued = 0;
+        tail_after_wr[i] = tail_after_wr[i+1] + 1;
+      end
+      else begin
+        tail_after_wr[i] = tail_after_wr[i+1];
+      end
+      full_after_wr[i] = (tail_after_wr[i]+1==head)
+    end
+    tail_next = tail_after_wr[0];
+  end
 
 
 
