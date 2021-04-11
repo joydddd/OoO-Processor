@@ -113,7 +113,7 @@ BRANCHSYNFILES = synth/branch_stage.vg
 # branch predictor
 BPFILES = verilog/branch_predictor.sv
 BPTESTBENCH = testbench/bp_test.sv
-
+BPSYNFILES = synth/branch_predictor.vg
 # SIMULATION CONFIG
 
 HEADERS     = $(wildcard *.svh)
@@ -143,6 +143,7 @@ export PRFILES
 export ALUFILES
 export MULTFILES
 export BRANCHFILES
+export BPFILES
 
 
 export CACHE_NAME = cache
@@ -186,7 +187,7 @@ all:    simv
 # pipeline(currently no fetch)
 pipeline: pl_simv
 	./pl_simv | tee pl_sim_program.out
-pl_simv: $(HEADERS) $(PLFILES) $(RSFILES) $(MTFILES) $(ISFIFOFILE) $(FREELISTFILES) $(ROBFILES) $(PRFILES) $(ALUFILES) $(BRANCHFILES) $(MULTFILES) $(PLTESTBENCH)
+pl_simv: $(HEADERS) $(PLFILES) $(RSFILES) $(MTFILES) $(ISFIFOFILE) $(FREELISTFILES) $(ROBFILES) $(PRFILES) $(ALUFILES) $(BRANCHFILES) $(MULTFILES) $(BPFILES) $(PLTESTBENCH) $(BPFILES)
 	$(VCS) $^ -o pl_simv
 
 # RS
@@ -315,8 +316,12 @@ $(PRSYNFILES): $(PRFILES) $(SYNTH_DIR)/pr.tcl
 # FUs
 $(ALUSYNFILES): $(ALUFILES) $(SYNTH_DIR)/fu_alu.tcl
 	cd $(SYNTH_DIR) && dc_shell-t -f ./fu_alu.tcl | tee alu_synth.out
+
 $(MULTSYNFILES): $(MULTFILES) $(SYNTH_DIR)/mult.tcl
 	cd $(SYNTH_DIR) && dc_shell-t -f ./mult.tcl | tee mult_synth.out
+
+$(BPSYNFILES): $(BPFILES) $(SYNTH_DIR)/branchpredictor.tcl
+	cd $(SYNTH_DIR) && dc_shell-t -f ./branchpredictor.tcl | tee branch_predictor_synth.out
 
 rs_syn:	rs_syn_simv 
 	./rs_syn_simv | tee rs_syn_program.out
@@ -347,7 +352,13 @@ freelist_syn:	freelist_syn_simv
 	./freelist_syn_simv | tee freelist_syn_program.out
 
 freelist_syn_simv:	$(HEADERS) $(FREELISTSYNFILES) $(FREELISTTESTBENCH)
-	$(VCS) $^ $(LIB) +define+SYNTH_TEST +error+20 -o freelist_syn_simv   
+	$(VCS) $^ $(LIB) +define+SYNTH_TEST +error+20 -o freelist_syn_simv
+
+bp_syn:	bp_syn_simv 
+	./bp_syn_simv | tee bp_syn_program.out
+
+bp_syn_simv:	$(HEADERS) $(BPSYNFILES) $(BPTESTBENCH)
+	$(VCS) $^ $(LIB) +define+SYNTH_TEST +error+20 -o bp_syn_simv     
 
 # dispatch pipeline test
 # $(DSYNFILES):	$(RSSYNFILES) $(MTSYNFILES) $(ISFIFOSYN) $(FREELISTSYNFILES) $(ROBSYNFILES) $(DFILES) $(SYNTH_DIR)/dis.tcl  

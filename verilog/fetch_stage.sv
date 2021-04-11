@@ -11,7 +11,12 @@ module fetch_stage (
 
     output  logic [1:0]         shift,              // -> icache.shift
     output  [2:0][`XLEN-1:0]    proc2Icache_addr,   // -> icache.proc2Icache_addr
-    output  IF_ID_PACKET[2:0]   if_packet_out       // output data from fetch stage to dispatch stage
+    output  IF_ID_PACKET[2:0]   if_packet_out,       // output data from fetch stage to dispatch stage
+
+    //branch predictor
+    output   [2:0]               fetch_EN,
+    output   [2:0] [`XLEN-1:0]   fetch_pc
+
 );
 
     logic   [2:0][`XLEN-1:0]    PC_reg;             // the three PC we are currently fetching
@@ -66,6 +71,15 @@ module fetch_stage (
     assign proc2Icache_addr[2] = PC_reg[2];
     assign proc2Icache_addr[1] = PC_reg[1];
     assign proc2Icache_addr[0] = PC_reg[0];
+
+    // branch predictor
+    assign fetch_EN[2] = take_branch ? 0 : if_packet_out[2].valid;
+    assign fetch_EN[1] = take_branch ? 0 : if_packet_out[1].valid;
+    assign fetch_EN[0] = take_branch ? 0 : if_packet_out[0].valid;
+    assign fetch_pc[2] = if_packet_out[2].PC;
+    assign fetch_pc[1] = if_packet_out[1].PC;
+    assign fetch_pc[0] = if_packet_out[0].PC;
+
 
     // synopsys sync_set_reset "reset"
     always_ff @(posedge clock) begin

@@ -265,7 +265,9 @@ typedef struct packed {
 	logic valid; // If low, the data in this struct is garbage
     INST  inst;  // fetched instruction out
 	logic [`XLEN-1:0] NPC; // PC + 4
-	logic [`XLEN-1:0] PC;  // PC 
+	logic [`XLEN-1:0] PC;  // PC
+	logic                predict_direction;
+    logic [`XLEN-1:0]    predict_pc;
 } IF_ID_PACKET;
 
 
@@ -462,20 +464,24 @@ typedef struct packed{
  }CDB_T_PACKET;
 
 typedef struct packed {
+	logic [`XLEN-1:0]   NPC;   // PC + 4
+    logic [`XLEN-1:0]   PC;    // PC
 	logic 			valid;
 	logic [`PR-1:0] 	Tnew;
 	logic [`PR-1:0] 	Told;
 	logic 				halt;
 	logic [4:0] 		arch_reg;
-	logic 			precise_state_need;
+	logic 				precise_state_need;
 	logic [`XLEN-1:0]	target_pc;
-	logic 			completed;
+	logic 				completed;
+	logic               predict_direction;
+    logic [`XLEN-1:0]   predict_pc; 
 } ROB_ENTRY_PACKET;
 
 
 typedef struct packed {
-	logic [`BP-1:0]		lru;
-	logic [`XLEN-1:0] 	pc;
+	logic               valid;
+	logic [`XLEN-1:0] 	tag;
 	BP_STATE			direction;
 	logic [`XLEN-1:0]	target_pc;
 	logic				uncondition;

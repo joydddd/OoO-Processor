@@ -174,7 +174,9 @@ module icache(
       miss_outstanding <= `SD unanswered_miss;
       sync_Imem2proc_response <= `SD Imem2proc_response;
       last_fetch_addr <= `SD fetch_addr;
-      if(update_mem_tag)
+      if(fetch_wr_enable)
+        current_mem_tag <= `SD 0;
+      else if(update_mem_tag)
         current_mem_tag <= `SD Imem2proc_response;
     end
   end

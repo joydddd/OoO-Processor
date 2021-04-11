@@ -63,7 +63,11 @@ module branch_stage(
 	input ISSUE_FU_PACKET 	fu_packet_in,
 	output 				  	fu_ready,				// TODO: combine complete_stall and the FU currently running, forward to issue stage
 	output logic	 	 	want_to_complete_branch,		// TODO: deal with this value when we have more FUs
-	output FU_COMPLETE_PACKET fu_packet_out_reg
+	output FU_COMPLETE_PACKET fu_packet_out_reg,
+	output logic                       update_EN,
+    output logic [`XLEN-1:0]           update_pc,
+    output logic                       update_direction,
+    output logic [`XLEN-1:0]           update_target
 );
 
 	FU_COMPLETE_PACKET fu_packet_out;
@@ -125,12 +129,17 @@ module branch_stage(
 
  	always_comb begin
     	fu_packet_out.if_take_branch = brcond_result;  //TODO: If not "assume all not taken", modify this
-		
+		//$display("%d %d %d###########",fu_packet_in.r1_value, fu_packet_in.r2_value, brcond_result);
+    	update_pc = fu_packet_in.PC;
+		update_direction = brcond_result;
+    	update_target = brcond_result ? (opa_mux_out + opb_mux_out) : 0;
+		update_EN = fu_complete;
     	fu_packet_out.target_pc = brcond_result ? (opa_mux_out + opb_mux_out) : 0;
         fu_packet_out.dest_value = 0;
         if (fu_packet_in.op_sel.br==UNCOND) begin
             fu_packet_out.dest_value = fu_packet_in.NPC;
         end
+		
     end
 
 	always_ff @(posedge clock) begin
