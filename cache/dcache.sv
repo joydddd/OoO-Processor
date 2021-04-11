@@ -57,11 +57,11 @@ module dcache(
       {wr_tag[i], wr_idx[i]} = sq_in[i].addr[`XLEN-1:3];
       wb_mem_addr[i] = {sq_in[i].addr[`XLEN-1:3], 3'b0};
       if (sq_in[i].addr[2]==1'b1) begin
-        wr_data = {sq_in[i].data, `XLEN'b0};
+        wr_data[i] = {sq_in[i].data, `XLEN'b0};
         used_bytes = {sq_in[i].usebytes, 4'b0};
       end
       else begin
-        wr_data = {`XLEN'b0, sq_in[i].data};
+        wr_data[i] = {`XLEN'b0, sq_in[i].data};
         used_bytes = {4'b0, sq_in[i].usebytes};
       end
     end
