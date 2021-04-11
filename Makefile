@@ -95,6 +95,10 @@ MULTFILES = verilog/fu_mult.sv
 MULTSYNFILES = synth/fu_mult.vg
 MULTTESTBENCH = testbench/mult_test.sv
 
+# data cache
+DCFILES = cache/dcache.sv cache/dcachemem.sv
+DCTESTBENCH = 
+
 
 # fetch stage
 FSTESTBENCH = testbench/fetch_test.sv
@@ -237,6 +241,12 @@ mult: mult_simv
 	./mult_simv | tee mult_sim_program.out
 mult_simv: $(HEADERS) $(MULTFILES) $(MULTTESTBENCH)
 	$(VCS) $^ -o mult_simv
+
+# data cache
+dc: dc_simv
+	./dc_simv | tee dc_sim_program.out
+mult_simv: $(HEADERS) $(DCFILES) $(DCTESTBENCH)
+	$(VCS) $^ -o dc_simv
 
 sim:	simv
 	./simv | tee sim_program.out
