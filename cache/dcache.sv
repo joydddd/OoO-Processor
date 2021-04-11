@@ -23,8 +23,6 @@ module dcache(
     output [3:0] broadcast_tag;
     output [`XLEN-1:0] broadcast_data;
 
-    /* with MSHRS */
-
   );
 
   /* for dcache_mem */
@@ -126,13 +124,30 @@ module dcache(
     wr2_idx = 0;
     wr2_tag = 0;
     wr2_data = 0;
-    if (Ctlr2proc_tag==mshrs_table[head].mem_tag) begin
+    if ((head!=tail) && (Ctlr2proc_tag==mshrs_table[head].mem_tag)) begin
       head_next = head + 1;
-      broadcast_tag = mshrs_table[head].mem_tag;
-      broadcast_data = mshrs_table[head].left_or_right ? Ctlr2proc_data[63:32] : Ctlr2proc_data[31:0];
-      wr2_en = 1'b1;
-      {wr2_tag, wr2_idx} = mshrs_table[head].addr[`XLEN-1:3];
-      wr2_data = Ctlr2proc_data;
+      if (mshrs_table[head].command==BUS_LOAD) begin
+        broadcast_tag = mshrs_table[head].mem_tag;
+        broadcast_data = mshrs_table[head].left_or_right ? Ctlr2proc_data[63:32] : Ctlr2proc_data[31:0];
+        wr2_en = 1'b1;
+        {wr2_tag, wr2_idx} = mshrs_table[head].addr[`XLEN-1:3];
+        wr2_data = Ctlr2proc_data;
+      end
+    end
+  end
+
+  always_comb begin : issue_logic
+    issue_next = issue;
+    dcache2ctlr_command = BUS_NONE;     
+    dcache2ctlr_addr = 0;
+    dcache2ctlr_data = 0;
+    if ((issue!=tail)) begin
+      dcache2ctlr_command = mshrs_table[issue].command;     
+      dcache2ctlr_addr = mshrs_table[issue].addr;
+      dcache2ctlr_data = mshrs_table[issue].data;
+    end
+    if (Ctlr2proc_response!=0) begin
+      issue_next = issue+1;
     end
   end
 

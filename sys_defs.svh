@@ -502,6 +502,7 @@ typedef struct packet{
 	logic [1:0]				command;
 	logic [3:0]				mem_tag;
 	logic 					left_or_right;  //If 1, left 4 bytes, if 0, right 4 bytes.
+	logic [63:0]			data;
 } MSHRS_ENTRY_PACKET;
 
 
