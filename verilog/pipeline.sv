@@ -108,6 +108,7 @@ module pipeline(
     //Dcache
     , output logic [31:0] [63:0] cache_data_disp
     , output logic [31:0] [7:0] cache_tags_disp
+    , output logic [31:0]       valids_disp
     , output MHSRS_ENTRY_PACKET [`MHSRS_W-1:0] MHSRS_disp
     , output logic [`MHSRS-1:0] head_pointer
     , output logic [`MHSRS-1:0] issue_pointer
@@ -902,6 +903,7 @@ dcache dche_0(
     `ifdef TEST_MODE
     , .cache_data_disp(cache_data_disp)
     , .cache_tags_disp(cache_tags_disp)
+    , .valids_disp(valids_disp)
     , .MHSRS_disp(MHSRS_disp)
     , .head_pointer(head_pointer)
     , .issue_pointer(issue_pointer)

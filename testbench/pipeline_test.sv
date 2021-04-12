@@ -110,6 +110,7 @@ logic [2**`FU-1:0]          complete_stall_display;
 // Data cache
     logic [31:0] [63:0] cache_data_disp;
     logic [31:0] [7:0] cache_tags_disp;
+    logic [31:0]       valids_disp;
     MHSRS_ENTRY_PACKET [`MHSRS_W-1:0] MHSRS_disp;
     logic [`MHSRS-1:0] head_pointer;
     logic [`MHSRS-1:0] issue_pointer;
@@ -240,6 +241,7 @@ pipeline tbd(
     // Data Cache
     , .cache_data_disp(cache_data_disp)
     , .cache_tags_disp(cache_tags_disp)
+    , .valids_disp(valids_disp)
     , .MHSRS_disp(MHSRS_disp)
     , .head_pointer(head_pointer)
     , .issue_pointer(issue_pointer)
