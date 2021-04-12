@@ -13,7 +13,7 @@
 #
 #
 
-SOURCE := test_progs/rv32_fib_rec.s
+SOURCE := test_progs/rv32_saxpy.s
 
 CRT = crt.s
 LINKERS = linker.lds

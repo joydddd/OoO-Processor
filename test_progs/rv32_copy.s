@@ -30,6 +30,6 @@ loop:	mul	x3,	x6,	x31
 	addi	x2,	x2,	0x8 #
 	addi	x6,	x6,	0x1 #
 	slti	x5,	x6,	16 #
-	bne	x5,	x0,	loop #
+	bne		x5,	x0,	loop #
 	wfi
 

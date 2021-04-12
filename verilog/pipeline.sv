@@ -28,7 +28,8 @@ module pipeline(
 	output logic [`XLEN-1:0] proc2mem_addr,      // Address sent to memory
 	output logic [63:0] proc2mem_data,      // Data sent to memory
 
-    output logic        halt
+    output logic        halt,
+    output logic [1:0]  inst_count
 
 	// output logic [3:0]  pipeline_completed_insts,
 	// output EXCEPTION_CODE   pipeline_error_status,
@@ -923,7 +924,7 @@ ROB rob_0(
 
 complete_stage cs(
     .clock(clock),
-    .reset(reset),
+    .reset(reset | BPRecoverEN),
     .fu_finish(fu_to_complete),                 // <- fu.fu_finish
     .fu_c_in(fu_c_in),                          // <- fu.fu_c_in
     .fu_c_stall(complete_stall),                // -> fu.complete_stall
@@ -958,7 +959,8 @@ retire_stage retire_0(
     .Tolds_out(RetireReg),                      // -> Freelist.RetireReg
     .BPRecoverHead(BPRecoverHead),              // -> Freelist.BPRecoverHead
     .SQRetireEN(SQRetireEN),                     // -> SQ.retire
-    .halt(re_halt)
+    .halt(re_halt),
+    .inst_count(inst_count)
 );
 
 //////////////////////////////////////////////////
