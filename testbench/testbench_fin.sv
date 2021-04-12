@@ -164,7 +164,8 @@ pipeline tbd(
 	.proc2mem_command(proc2Imem_command),      // -> mem.proc2Imem_command
 	.proc2mem_addr(proc2Imem_addr),            // -> mem.proc2Imem_addr
     .proc2mem_data(proc2Imem_data),            // -> mem.proc2Imem_data
-    .halt(program_halt)
+    .halt(program_halt),
+    .inst_count(inst_count)
 `ifdef TEST_MODE
     // ID
     , .dis_in_display(dis_in_display)
