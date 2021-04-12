@@ -366,13 +366,13 @@ end
 always @(negedge clock) begin
     if (!reset)  begin
         #1;
-        // print_retire_wb();
+        print_retire_wb();
         // $display();
         // $display("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
         // $display();
         
-        // if (cycle_count >= 500 && cycle_count <= 520) print_pipeline;
-        // if (cycle_count >= 500 && cycle_count <= 520) print_alu;
+        // print_pipeline;
+        // print_alu;
         // show_fu_stat;
         // print_is_fifo;
         // show_sq;

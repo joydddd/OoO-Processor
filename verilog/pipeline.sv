@@ -801,12 +801,27 @@ fu_load fu_load_1(
     .cache_read_EN(cache_read_start[0])
 );
 
-// TODO add more fus
-assign fu_finish.loadstore_2 = 0;
+fu_load fu_load_2(
+    .clock(clock),
+    .reset(reset | BPRecoverEN),
+    .complete_stall(complete_stall.loadstore_2),
+    .fu_packet_in(fu_packet_in[LS_2]),
 
-assign fu_ready.loadstore_2 = 0;
+    // output
+    .fu_ready(fu_ready.loadstore_2),
+    .want_to_complete(fu_finish.loadstore_2),
+    .fu_packet_out(fu_c_packet[LS_2]),
 
-assign fu_c_packet[LS_2] = 0;
+    // SQ
+    .sq_lookup(load_lookup[1]),    // -> SQ.load_lookup
+    .sq_result(load_forward[1]),   // <- SQ.load_forward
+
+    // Cache
+    .addr(cache_read_addr[1]),      // TODO: -> dcache 
+    .cache_data_in(cache_read_data[1]), // TODO: <- dcache 
+    .cache_read_EN(cache_read_start[1])
+);
+
 
 branch_stage branc(
     .clock(clock),
