@@ -274,9 +274,9 @@ always @(posedge clock) begin
     else halted <= `SD 1;
 end
 always @(negedge clock) begin
-    if (reset) inst_total <= `SD 0;
+    if (reset) inst_total = 0;
     else if (~halted)
-        inst_total <= `SD inst_total + inst_count;
+        inst_total += inst_count;
 end
 
 `ifdef CACHE_SIM
