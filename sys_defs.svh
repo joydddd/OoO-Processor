@@ -515,6 +515,8 @@ typedef struct packed{
 	logic [63:0]			data;
 	logic 					issued;
 	logic [1:0]				broadcast_fu;
+	logic [7:0]				usebytes;
+	logic 					dirty;
 } MHSRS_ENTRY_PACKET;
 
 /*

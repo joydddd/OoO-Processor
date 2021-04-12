@@ -39,6 +39,7 @@ module testbench;
       logic [`MHSRS-1:0] head_pointer;
       logic [`MHSRS-1:0] issue_pointer;
       logic [`MHSRS-1:0] tail_pointer;
+      logic [31:0]       valids_disp;
     `endif
 
     dcache dche(
@@ -61,6 +62,7 @@ module testbench;
         `ifdef TEST_MODE
         , .cache_data_disp(cache_data_disp)
         , .cache_tags_disp(cache_tags_disp)
+        , .valids_disp(valids_disp)
         , .MHSRS_disp(MHSRS_disp)
         , .head_pointer(head_pointer)
         , .issue_pointer(issue_pointer)

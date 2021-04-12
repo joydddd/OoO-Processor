@@ -29,6 +29,7 @@ module dcache(
     `ifdef TEST_MODE
       , output logic [31:0] [63:0] cache_data_disp
       , output logic [31:0] [7:0] cache_tags_disp
+      , output logic [31:0]       valids_disp
       , output MHSRS_ENTRY_PACKET [`MHSRS_W-1:0] MHSRS_disp
       , output logic [`MHSRS-1:0] head_pointer
       , output logic [`MHSRS-1:0] issue_pointer
@@ -41,7 +42,8 @@ module dcache(
   logic  [2:0][4:0] wr_idx;                                 
   logic  [2:0][7:0] wr_tag;                               
   logic  [2:0][63:0] wr_data;   
-  logic  [2:0][7:0] used_bytes;                          
+  logic  [2:0][7:0] used_bytes;
+  logic  [2:0]      wr_hit;      
 
   logic  [1:0][4:0] rd_idx;                        
   logic  [1:0][7:0] rd_tag;
@@ -49,22 +51,25 @@ module dcache(
   logic  [1:0][63:0] rd_data;          
   logic  [1:0] rd_valid;                  
 
-  logic  [2:0] need_write_mem;
-  logic  [2:0][63:0]  wb_mem_data;
+  logic  need_write_mem;
+  logic  [63:0]  wb_mem_data;
+  logic  [`XLEN-1:0] wb_mem_addr;
 
-  logic  [2:0][`XLEN-1:0] wb_mem_addr;  //This can be directly calculated
+  logic  [2:0][`XLEN-1:0] ld_new_mem_addr;  //This can be directly calculated
 
   logic        wr2_en;        //For the miss load back
   logic  [4:0] wr2_idx;               
   logic  [7:0] wr2_tag;                    
   logic  [63:0] wr2_data;
+  logic  [7:0]  wr2_usebytes;
+  logic         wr2_dirty;
 
 
   always_comb begin : SQ_input_processing
     for (int i = 2; i>= 0; i--) begin
       wr_en[i] = sq_in[i].ready;
       {wr_tag[i], wr_idx[i]} = sq_in[i].addr[`XLEN-1:3];
-      wb_mem_addr[i] = {sq_in[i].addr[`XLEN-1:3], 3'b0};
+      ld_new_mem_addr[i] = {sq_in[i].addr[`XLEN-1:3], 3'b0};
       if (sq_in[i].addr[2]==1'b1) begin
         wr_data[i] = {sq_in[i].data, `XLEN'b0};
         used_bytes[i] = {sq_in[i].usebytes, 4'b0};
@@ -90,20 +95,25 @@ module dcache(
     .wr1_tag(wr_tag),
     .wr1_data(wr_data),
     .used_bytes(used_bytes),
+    .wr1_hit(wr_hit),
     .rd1_idx(rd_idx),
     .rd1_tag(rd_tag),
     .rd1_data(rd_data),
     .rd1_valid(rd_valid),
     .need_write_mem(need_write_mem),
     .wb_mem_data(wb_mem_data),
+    .wb_mem_addr(wb_mem_addr),
     .wr2_en(wr2_en),
     .wr2_idx(wr2_idx),
     .wr2_tag(wr2_tag),
-    .wr2_data(wr2_data)
+    .wr2_data(wr2_data),
+    .wr2_usebytes(wr2_usebytes),
+    .wr2_dirty(wr2_dirty)
 
     `ifdef TEST_MODE
       , .cache_data_disp(cache_data_disp)
       , .cache_tags_disp(cache_tags_disp)
+      , .valids_disp(valids_disp)
     `endif
   );
 
@@ -166,19 +176,37 @@ module dcache(
     wr2_idx = 0;
     wr2_tag = 0;
     wr2_data = 0;
+    wr2_dirty = 0;
+    wr2_usebytes = 0;
     mshrs_table_next_after_retire = mshrs_table;
     if ((head!=tail) && (Ctlr2proc_tag==mshrs_table[head].mem_tag) && mshrs_table[head].issued) begin
       head_next = head + 1;
-      mshrs_table_next_after_retire[head].issued = 1'b0;
+      mshrs_table_next_after_retire[head] = 0;
       if (mshrs_table[head].command==BUS_LOAD) begin
-        //broadcast_tag = mshrs_table[head].mem_tag;
-        broadcast_fu = mshrs_table[head].broadcast_fu;
-        broadcast_data = mshrs_table[head].left_or_right ? Ctlr2proc_data[63:32] : Ctlr2proc_data[31:0];
         wr2_en = 1'b1;
-        //wr2_tag = mshrs_table[head].addr[15:8];
-        //wr2_idx = mshrs_table[head].addr[7:3];
         {wr2_tag, wr2_idx} = mshrs_table[head].addr[`XLEN-1:3];
         wr2_data = Ctlr2proc_data;
+        wr2_dirty = mshrs_table[head].dirty;
+        wr2_usebytes = mshrs_table[head].usebytes;
+
+        if (mshrs_table[head].dirty==1'b1) begin
+          for ( int j = 7; j >= 0 ; j--) begin
+            if (mshrs_table[head].usebytes[j]) begin
+              wr2_data[8*j+7] = mshrs_table[head].data[8*j+7];
+              wr2_data[8*j+6] = mshrs_table[head].data[8*j+6];
+              wr2_data[8*j+5] = mshrs_table[head].data[8*j+5];
+              wr2_data[8*j+4] = mshrs_table[head].data[8*j+4];
+              wr2_data[8*j+3] = mshrs_table[head].data[8*j+3];
+              wr2_data[8*j+2] = mshrs_table[head].data[8*j+2];
+              wr2_data[8*j+1] = mshrs_table[head].data[8*j+1];
+              wr2_data[8*j+0] = mshrs_table[head].data[8*j+0];
+            end
+          end
+        end
+        else begin
+          broadcast_fu = mshrs_table[head].broadcast_fu;
+          broadcast_data = mshrs_table[head].left_or_right ? Ctlr2proc_data[63:32] : Ctlr2proc_data[31:0];
+        end
       end
     end
   end
@@ -226,19 +254,25 @@ module dcache(
     end
   end
   
+  logic is_there_store_miss;
 
+  assign is_there_store_miss = mshrs_table[15].dirty | mshrs_table[14].dirty | mshrs_table[13].dirty | mshrs_table[12].dirty
+  | mshrs_table[11].dirty | mshrs_table[10].dirty | mshrs_table[9].dirty | mshrs_table[8].dirty
+  | mshrs_table[7].dirty | mshrs_table[6].dirty | mshrs_table[5].dirty | mshrs_table[4].dirty
+  | mshrs_table[3].dirty | mshrs_table[2].dirty | mshrs_table[1].dirty | mshrs_table[0].dirty;
 
   //assign ld_stall = full_after_ld[2:1];
   assign h_t_distance = head - tail_after_ld[0];
-  assign sq_stall[2] = (h_t_distance==`MHSRS'd1);
-  assign sq_stall[1] = (h_t_distance==`MHSRS'd2);
-  assign sq_stall[0] = (h_t_distance==`MHSRS'd3);
+
+  assign sq_stall[2] = is_there_store_miss ? 1'b1 : (h_t_distance==`MHSRS'd2);
+  assign sq_stall[1] = is_there_store_miss ? 1'b1 : (h_t_distance==`MHSRS'd3);
+  assign sq_stall[0] = is_there_store_miss ? 1'b1 : (h_t_distance==`MHSRS'd4);
 
   always_comb begin : tail_logic
     mshrs_table_next = mshrs_table_next_after_issue;
     ld_request_next = ld_request;
     tail_after_ld[2] = tail;
-    full_after_ld[2] = (tail+1==head);
+    full_after_ld[2] = (tail+2==head);   // +2 because reserve a seat for final possible STORE
     for (int i = 1; i >= 0; i--) begin
       if (!full_after_ld[i+1] && ((!rd_valid[i] && ld_start[i])||ld_request)) begin   //need mem load
         //allocate i
@@ -249,6 +283,8 @@ module dcache(
         mshrs_table_next[tail_after_ld[i+1]].data = 0;
         mshrs_table_next[tail_after_ld[i+1]].issued = 0;
         mshrs_table_next[tail_after_ld[i+1]].broadcast_fu = (i==1) ? 2'b10 : 2'b01;
+        mshrs_table_next[tail_after_ld[i+1]].usebytes = 8'b0;
+        mshrs_table_next[tail_after_ld[i+1]].dirty = 0;
         tail_after_ld[i] = tail_after_ld[i+1] + 1;
         ld_request_next[i] = 1'b0;
       end
@@ -259,30 +295,43 @@ module dcache(
       else begin
         tail_after_ld[i] = tail_after_ld[i+1];
       end
-      full_after_ld[i] = (tail_after_ld[i]+1==head);
+      full_after_ld[i] = (tail_after_ld[i]+2==head);
     end
     tail_after_wr[3] = tail_after_ld[0];
     full_after_wr[3] = full_after_ld[0];
     for (int i = 2; i >= 0; i--) begin
-      if (!full_after_wr[i+1] && need_write_mem[i]) begin
+      if (!full_after_wr[i+1] && !wr_hit[i]) begin
         //allocate
-        mshrs_table_next[tail_after_wr[i+1]].addr = wb_mem_addr[i];
-        mshrs_table_next[tail_after_wr[i+1]].command = BUS_STORE;
+        mshrs_table_next[tail_after_wr[i+1]].addr = ld_new_mem_addr[i];
+        mshrs_table_next[tail_after_wr[i+1]].command = BUS_LOAD;
         mshrs_table_next[tail_after_wr[i+1]].mem_tag = 0;
         mshrs_table_next[tail_after_wr[i+1]].left_or_right = 0;
-        mshrs_table_next[tail_after_wr[i+1]].data = wb_mem_data[i];
+        mshrs_table_next[tail_after_wr[i+1]].data = wr_data[i];
         mshrs_table_next[tail_after_wr[i+1]].issued = 0;
         mshrs_table_next[tail_after_wr[i+1]].broadcast_fu = 0;
+        mshrs_table_next[tail_after_wr[i+1]].usebytes = used_bytes[i];
+        mshrs_table_next[tail_after_wr[i+1]].dirty = 1'b1;
         tail_after_wr[i] = tail_after_wr[i+1] + 1;
       end
       else begin
         tail_after_wr[i] = tail_after_wr[i+1];
       end
-      full_after_wr[i] = (tail_after_wr[i]+1==head);
+      full_after_wr[i] = (tail_after_wr[i]+2==head);
     end
+    
     tail_next = tail_after_wr[0];
+    if (need_write_mem) begin
+        mshrs_table_next[tail_after_wr[0]].addr = wb_mem_addr;
+        mshrs_table_next[tail_after_wr[0]].command = BUS_STORE;
+        mshrs_table_next[tail_after_wr[0]].mem_tag = 0;
+        mshrs_table_next[tail_after_wr[0]].left_or_right = 0;
+        mshrs_table_next[tail_after_wr[0]].data = wb_mem_data;
+        mshrs_table_next[tail_after_wr[0]].issued = 0;
+        mshrs_table_next[tail_after_wr[0]].broadcast_fu = 0;
+        mshrs_table_next[tail_after_wr[0]].usebytes = 0;
+        mshrs_table_next[tail_after_wr[0]].dirty = 0;
+        tail_next = tail_after_wr[0] + 1;
+    end
   end
-
-
 
 endmodule
