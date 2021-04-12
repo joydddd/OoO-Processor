@@ -19,11 +19,10 @@ suppress_message {"VER-130"}
 lappend search_path ../
 
 set rs_module [getenv RS_NAME]
-set mt_module [getenv MAP_TABLE_NAME]
 set is_fifo_module [getenv IS_FIFO_NAME]
 
-read_file -f ddc [list ${rs_module}.ddc ${is_fifo_module}.ddc ${mt_module}.ddc]
-set_dont_touch [list ${rs_module} ${is_fifo_module} ${mt_module}]
+read_file -f ddc [list ${rs_module}.ddc ${is_fifo_module}.ddc]
+set_dont_touch [list ${rs_module} ${is_fifo_module}]
 
 set headers [getenv HEADERS]
 set sources [getenv DFILES]
@@ -50,7 +49,7 @@ set auto_wire_load_selection "false"
 set compile_seqmap_synchronous_extraction "true"
 
 # uncomment this and change number appropriately if on multi-core machine
-set_host_options -max_cores 6
+#set_host_options -max_cores 2
 
 #/***********************************************************/
 #/*  Clk Periods/uncertainty/transition                     */

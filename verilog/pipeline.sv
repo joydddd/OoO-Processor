@@ -28,7 +28,8 @@ module pipeline(
 	output logic [`XLEN-1:0] proc2mem_addr,      // Address sent to memory
 	output logic [63:0] proc2mem_data,      // Data sent to memory
 
-    output logic        halt
+    output logic        halt,
+    output logic [1:0]  inst_count
 
 	// output logic [3:0]  pipeline_completed_insts,
 	// output EXCEPTION_CODE   pipeline_error_status,
@@ -804,12 +805,27 @@ fu_load fu_load_1(
     .cache_read_EN(cache_read_start[0])
 );
 
-// TODO add more fus
-assign fu_finish.loadstore_2 = 0;
+fu_load fu_load_2(
+    .clock(clock),
+    .reset(reset | BPRecoverEN),
+    .complete_stall(complete_stall.loadstore_2),
+    .fu_packet_in(fu_packet_in[LS_2]),
 
-assign fu_ready.loadstore_2 = 0;
+    // output
+    .fu_ready(fu_ready.loadstore_2),
+    .want_to_complete(fu_finish.loadstore_2),
+    .fu_packet_out(fu_c_packet[LS_2]),
 
-assign fu_c_packet[LS_2] = 0;
+    // SQ
+    .sq_lookup(load_lookup[1]),    // -> SQ.load_lookup
+    .sq_result(load_forward[1]),   // <- SQ.load_forward
+
+    // Cache
+    .addr(cache_read_addr[1]),      // TODO: -> dcache 
+    .cache_data_in(cache_read_data[1]), // TODO: <- dcache 
+    .cache_read_EN(cache_read_start[1])
+);
+
 
 branch_stage branc(
     .clock(clock),
@@ -911,7 +927,7 @@ ROB rob_0(
 
 complete_stage cs(
     .clock(clock),
-    .reset(reset),
+    .reset(reset | BPRecoverEN),
     .fu_finish(fu_to_complete),                 // <- fu.fu_finish
     .fu_c_in(fu_c_in),                          // <- fu.fu_c_in
     .fu_c_stall(complete_stall),                // -> fu.complete_stall
@@ -946,7 +962,8 @@ retire_stage retire_0(
     .Tolds_out(RetireReg),                      // -> Freelist.RetireReg
     .BPRecoverHead(BPRecoverHead),              // -> Freelist.BPRecoverHead
     .SQRetireEN(SQRetireEN),                     // -> SQ.retire
-    .halt(re_halt)
+    .halt(re_halt),
+    .inst_count(inst_count)
 );
 
 //////////////////////////////////////////////////

@@ -164,81 +164,83 @@ end
 ///////////////////////////////
 
 // reorder older stores
-SQ_ENTRY_PACKET [2**`LSQ-1:0] older_stores; // the younger, the higher idex
-logic [2**`LSQ-1:0] older_stores_valid;
+SQ_ENTRY_PACKET [1:0][2**`LSQ-1:0] older_stores; // the younger, the higher idex
+logic [1:0][2**`LSQ-1:0] older_stores_valid;
+int     older_stores_num0, older_stores_num1;
+logic [1:0][`LSQ-1:0] load_pos; 
+logic [1:0][2**`LSQ-1:0] waiting_store_addr;
+logic [1:0][3:0][2**`LSQ-1:0] byte_forward_valid;
+logic [1:0][3:0][2**`LSQ-1:0] byte_forward_sel;
+logic [1:0][2**`LSQ-1:0][`LSQ-1:0] org_idx;
+
 
 /* reorder older stores*/
-int older_stores_num;
-logic [`LSQ-1:0] load_pos; 
-assign load_pos = load_lookup[0].tail_pos;
+assign load_pos[0] = load_lookup[0].tail_pos;
 always_comb begin
-    older_stores_num = (head <= load_pos)?
-                        load_pos - head:
-                        2**`LSQ - head + load_pos;
+    older_stores_num0 = (head <= load_pos[0])?
+                        load_pos[0] - head:
+                        2**`LSQ - head + load_pos[0];
 end
 always_comb begin
-    older_stores_valid = 0;
+    older_stores_valid[0] = 0;
     for(int i=0; i<2**`LSQ; i++) begin
-        if (i+older_stores_num >= 2**`LSQ) older_stores_valid[i] = 1;
+        if (i+older_stores_num0 >= 2**`LSQ) older_stores_valid[0][i] = 1;
     end
 end
-logic [2**`LSQ-1:0][`LSQ-1:0] org_idx;
+
 always_comb begin
     for (int i=0; i<2**`LSQ; i++) begin
-        org_idx[i] = i + load_pos;
+        org_idx[0][i] = i + load_pos[0];
     end
 end
 always_comb begin
     for (int i=0; i<2**`LSQ; i++) begin
-        older_stores[i] = sq_reg[org_idx[i]];
+        older_stores[0][i] = sq_reg[org_idx[0][i]];
     end
 end
 
 // determin load stall
-logic [2**`LSQ-1:0] waiting_store_addr;
 always_comb begin
     for(int i=0; i<2**`LSQ; i++) begin
-        waiting_store_addr[i] = ~older_stores[i].ready & older_stores_valid[i];
+        waiting_store_addr[0][i] = ~older_stores[0][i].ready & older_stores_valid[0][i];
     end
 end
-assign load_forward[0].stall = |waiting_store_addr;
+assign load_forward[0].stall = |waiting_store_addr[0];
 
 // determin forwarded data
-logic [3:0][2**`LSQ-1:0] byte_forward_valid;
-logic [3:0][2**`LSQ-1:0] byte_forward_sel;
 always_comb begin
-    byte_forward_valid = 0;
+    byte_forward_valid[0] = 0;
     for(int i=0; i<2**`LSQ; i++) begin
-        if (older_stores_valid[i] && older_stores[i].addr == load_lookup[0].addr) begin
-            byte_forward_valid[0][i] = older_stores[i].usebytes[0];
-            byte_forward_valid[1][i] = older_stores[i].usebytes[1];
-            byte_forward_valid[2][i] = older_stores[i].usebytes[2];
-            byte_forward_valid[3][i] = older_stores[i].usebytes[3];
+        if (older_stores_valid[0][i] && older_stores[0][i].addr == load_lookup[0].addr) begin
+            byte_forward_valid[0][0][i] = older_stores[0][i].usebytes[0];
+            byte_forward_valid[0][1][i] = older_stores[0][i].usebytes[1];
+            byte_forward_valid[0][2][i] = older_stores[0][i].usebytes[2];
+            byte_forward_valid[0][3][i] = older_stores[0][i].usebytes[3];
         end
     end
 end
-ps8 byte_sel_0(.req(byte_forward_valid[0]), .en(1'b1), .gnt(byte_forward_sel[0]));
-ps8 byte_sel_1(.req(byte_forward_valid[1]), .en(1'b1), .gnt(byte_forward_sel[1]));
-ps8 byte_sel_2(.req(byte_forward_valid[2]), .en(1'b1), .gnt(byte_forward_sel[2]));
-ps8 byte_sel_3(.req(byte_forward_valid[3]), .en(1'b1), .gnt(byte_forward_sel[3]));
+ps8 byte_sel_0(.req(byte_forward_valid[0][0]), .en(1'b1), .gnt(byte_forward_sel[0][0]));
+ps8 byte_sel_1(.req(byte_forward_valid[0][1]), .en(1'b1), .gnt(byte_forward_sel[0][1]));
+ps8 byte_sel_2(.req(byte_forward_valid[0][2]), .en(1'b1), .gnt(byte_forward_sel[0][2]));
+ps8 byte_sel_3(.req(byte_forward_valid[0][3]), .en(1'b1), .gnt(byte_forward_sel[0][3]));
 
 always_comb begin
     load_forward[0].data = 0;
     for(int i=0; i<2**`LSQ; i++) begin
-        if (byte_forward_sel[0][i]) 
-            load_forward[0].data[7:0] = older_stores[i].data[7:0];
-        if (byte_forward_sel[1][i]) 
-            load_forward[0].data[15:8] = older_stores[i].data[15:8];
-        if (byte_forward_sel[2][i]) 
-            load_forward[0].data[23:16] = older_stores[i].data[23:16];
-        if (byte_forward_sel[3][i]) 
-            load_forward[0].data[31:24] = older_stores[i].data[31:24];
+        if (byte_forward_sel[0][0][i]) 
+            load_forward[0].data[7:0] = older_stores[0][i].data[7:0];
+        if (byte_forward_sel[0][1][i]) 
+            load_forward[0].data[15:8] = older_stores[0][i].data[15:8];
+        if (byte_forward_sel[0][2][i]) 
+            load_forward[0].data[23:16] = older_stores[0][i].data[23:16];
+        if (byte_forward_sel[0][3][i]) 
+            load_forward[0].data[31:24] = older_stores[0][i].data[31:24];
     end
 end
 
 always_comb begin
     for(int i=0; i<4; i++) begin
-        load_forward[0].usebytes[i] = |byte_forward_valid[i];
+        load_forward[0].usebytes[i] = |byte_forward_valid[0][i];
     end
 end
 
@@ -247,9 +249,81 @@ assign sq_display = sq_reg;
 assign head_dis = head;
 assign tail_dis = tail;
 assign filled_num_dis = filled_num;
-assign older_stores_display = older_stores;
-assign older_stores_valid_display = older_stores_valid;
+assign older_stores_display = older_stores[0];
+assign older_stores_valid_display = older_stores_valid[0];
 `endif
+
+
+/* reorder older stores*/
+assign load_pos[1] = load_lookup[1].tail_pos;
+always_comb begin
+    older_stores_num1 = (head <= load_pos[1])?
+                        load_pos[1] - head:
+                        2**`LSQ - head + load_pos[1];
+end
+always_comb begin
+    older_stores_valid[1] = 0;
+    for(int i=0; i<2**`LSQ; i++) begin
+        if (i+older_stores_num1 >= 2**`LSQ) older_stores_valid[1][i] = 1;
+    end
+end
+always_comb begin
+    for (int i=0; i<2**`LSQ; i++) begin
+        org_idx[1][i] = i + load_pos[1];
+    end
+end
+always_comb begin
+    for (int i=0; i<2**`LSQ; i++) begin
+        older_stores[1][i] = sq_reg[org_idx[1][i]];
+    end
+end
+
+// determin load stall
+always_comb begin
+    for(int i=0; i<2**`LSQ; i++) begin
+        waiting_store_addr[1][i] = ~older_stores[1][i].ready & older_stores_valid[1][i];
+    end
+end
+assign load_forward[1].stall = |waiting_store_addr[1];
+
+// determin forwarded data
+always_comb begin
+    byte_forward_valid[1] = 0;
+    for(int i=0; i<2**`LSQ; i++) begin
+        if (older_stores_valid[1][i] && older_stores[1][i].addr == load_lookup[1].addr) begin
+            byte_forward_valid[1][0][i] = older_stores[1][i].usebytes[0];
+            byte_forward_valid[1][1][i] = older_stores[1][i].usebytes[1];
+            byte_forward_valid[1][2][i] = older_stores[1][i].usebytes[2];
+            byte_forward_valid[1][3][i] = older_stores[1][i].usebytes[3];
+        end
+    end
+end
+ps8 byte_sel_4(.req(byte_forward_valid[1][0]), .en(1'b1), .gnt(byte_forward_sel[1][0]));
+ps8 byte_sel_5(.req(byte_forward_valid[1][1]), .en(1'b1), .gnt(byte_forward_sel[1][1]));
+ps8 byte_sel_6(.req(byte_forward_valid[1][2]), .en(1'b1), .gnt(byte_forward_sel[1][2]));
+ps8 byte_sel_7(.req(byte_forward_valid[1][3]), .en(1'b1), .gnt(byte_forward_sel[1][3]));
+
+always_comb begin
+    load_forward[1].data = 0;
+    for(int i=0; i<2**`LSQ; i++) begin
+        if (byte_forward_sel[1][0][i]) 
+            load_forward[1].data[7:0] = older_stores[1][i].data[7:0];
+        if (byte_forward_sel[1][1][i]) 
+            load_forward[1].data[15:8] = older_stores[1][i].data[15:8];
+        if (byte_forward_sel[1][2][i]) 
+            load_forward[1].data[23:16] = older_stores[1][i].data[23:16];
+        if (byte_forward_sel[1][3][i]) 
+            load_forward[1].data[31:24] = older_stores[1][i].data[31:24];
+    end
+end
+
+always_comb begin
+    for(int i=0; i<4; i++) begin
+        load_forward[1].usebytes[i] = |byte_forward_valid[1][i];
+    end
+end
+
+
 
 endmodule
 

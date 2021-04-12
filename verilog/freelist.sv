@@ -224,6 +224,8 @@ always_comb begin
 		3'b000: begin
 			
 		end
+		default: begin
+		end
 	endcase
 end
 

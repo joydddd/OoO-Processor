@@ -38,6 +38,7 @@ import "DPI-C" function void mem_print();
 module testbench;
 logic clock, reset;
 logic program_halt;
+logic [1:0] inst_count;
 
 `ifdef TEST_MODE
 // IF to Dispatch 
@@ -174,7 +175,8 @@ pipeline tbd(
 	.proc2mem_command(proc2Imem_command),      // -> mem.proc2Imem_command
 	.proc2mem_addr(proc2Imem_addr),            // -> mem.proc2Imem_addr
     .proc2mem_data(proc2Imem_data),            // -> mem.proc2Imem_data
-    .halt(program_halt)
+    .halt(program_halt),
+    .inst_count(inst_count)
 `ifdef TEST_MODE
     // ID
     , .dis_in_display(dis_in_display)
@@ -287,7 +289,21 @@ endtask
 
 int cycle_count; 
 always @(posedge clock) begin
-    cycle_count++;
+    if (reset) cycle_count = 0;
+    else cycle_count++;
+end
+
+int inst_total;
+logic halted;
+always @(posedge clock) begin
+    if (reset) halted <= `SD 0;
+    else if (~halted) halted <= `SD program_halt;
+    else halted <= `SD 1;
+end
+always @(negedge clock) begin
+    if (reset) inst_total = 0;
+    else if (~halted)
+        inst_total += inst_count;
 end
 
 `ifdef CACHE_SIM
@@ -366,13 +382,14 @@ end
 always @(negedge clock) begin
     if (!reset)  begin
         #1;
-        // print_retire_wb();
+        print_retire_wb();
+        // $display("Cycle: %d inst_count: %d, cum: %d", cycle_count, inst_count, inst_total);
         // $display();
         // $display("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
         // $display();
         
-        // if (cycle_count >= 500 && cycle_count <= 520) print_pipeline;
-        // if (cycle_count >= 500 && cycle_count <= 520) print_alu;
+        // print_pipeline;
+        // print_alu;
         // show_fu_stat;
         // print_is_fifo;
         // show_sq;
@@ -382,7 +399,7 @@ always @(negedge clock) begin
         
         // show_complete;
         // if (cycle_count >= 500 && cycle_count <= 520) show_rs_table;
-        // if (cycle_count >= 510 && cycle_count <= 520) show_rob_table;
+        // show_rob_table;
         // show_rob_in;
         // show_rs_out;
         // show_freelist_table;
@@ -579,6 +596,17 @@ task show_mpt_entry;
     end
 endtask
 
+task print_cpi;
+    real cpi;
+    begin
+        cpi = (cycle_count) / (inst_total -1.0);
+        $display("@@  %0d cycles / %0d instrs = %f CPI\n@@",
+                    cycle_count, inst_total - 1, cpi);
+        $display("@@  %4.2f ns total time to execute\n@@\n",
+                    cycle_count*`VERILOG_CLOCK_PERIOD);
+    end
+endtask
+
 //////////////////////////////////////////////////////////
 ///////////////         SET      
 /////////////////////////////////////////////////////////
@@ -593,10 +621,10 @@ endtask
 //     if_d_packet_debug[i].valid = 1;
 // endtask
 
-task set_if_d_packet_invalid;
-    input int i;
-    if_d_packet_debug[i].valid = 0;
-endtask
+// task set_if_d_packet_invalid;
+//     input int i;
+//     if_d_packet_debug[i].valid = 0;
+// endtask
 
 // int PC; 
 initial begin
@@ -621,7 +649,11 @@ initial begin
 
     #2;
     print_final;
-    $display("@@@Pass: test finished");
+    $display("@@  %t : System halted\n@@", $realtime);
+    $display("@@");
+    $display("@@@ System halted on WFI instruction");
+    $display("@@@");
+    print_cpi;
     $finish;
 end
 

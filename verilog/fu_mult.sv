@@ -125,6 +125,7 @@ always_comb begin
             sign[1] = 0;
         end
         MULHU:sign = 2'b00;
+		default:sign = 2'b00;
     endcase
 end
 

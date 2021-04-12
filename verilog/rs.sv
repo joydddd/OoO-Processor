@@ -127,6 +127,7 @@ always_comb begin
             LS_1: entry_fu_ready[i] = ~fu_fifo_stall.ls;
             MULT_1: entry_fu_ready[i] = ~fu_fifo_stall.mult;
             BRANCH: entry_fu_ready[i] = ~fu_fifo_stall.branch;
+            default: entry_fu_ready[i] = 0;
         endcase
     end
 end
