@@ -615,7 +615,7 @@ task show_MHSRS;
         $display("----------------------------------------------------------------- ");
     end
 endtask
-
+/*
 task show_Dcache_input;
     begin
         $display("=====   Input   =====");
@@ -649,7 +649,7 @@ task show_Dcache_output;
         $display("SQ stall: %b", sq_stall);
     end
 endtask
-
+*/
 
 
 //////////////////////////////////////////////////////////

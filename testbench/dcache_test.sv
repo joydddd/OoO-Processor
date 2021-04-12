@@ -22,14 +22,14 @@ module testbench;
 
     /* with SQ */
     SQ_ENTRY_PACKET [2:0] sq_in;
-    logic sq_stall;
+    logic [2:0] sq_stall;
 
     /* with Load-FU/LQ */
     logic [1:0] [`XLEN-1:0] ld_addr_in;   // This addr is word aligned !
     logic [1:0] ld_start;
     logic [1:0] is_hit;
     logic [1:0] [`XLEN-1:0] ld_data;    //valid if hit
-    logic [1:0] broadcast_tag;
+    logic [1:0] broadcast_fu;
     logic [`XLEN-1:0] broadcast_data;
 
     `ifdef TEST_MODE
@@ -137,7 +137,7 @@ task show_output;
         $display("Load_output");
         $display("| No.| is_hit |  ld_data |");
         for (int i=1; i>=0; --i) begin
-            $display("| %1d: |      %b | %h |        %b |", i, is_hit[i], ld_data[i]);
+            $display("| %1d: |      %b | %h |", i, is_hit[i], ld_data[i]);
         end
         $display("---------------------");
         $display("broadcast_fu : %d ,   broadcast_data : %h", broadcast_fu, broadcast_data);

@@ -295,7 +295,7 @@ typedef struct packed {
 `define MHSRS_W 16  // = 4**`MHSRS
 
 `define IS_FIFO_DEPTH 32
-`define LSQ   3 // 8 entries for LSQ
+
 
 //FU: 3 * Int ALU(+,-,bitwise), 2* load/store, 2* int multi, 1* branch
 
@@ -517,7 +517,7 @@ typedef struct packed{
 	logic [1:0]				broadcast_fu;
 } MHSRS_ENTRY_PACKET;
 
-
+/*
 
 typedef struct packed {
     logic                   ready;
@@ -537,11 +537,13 @@ typedef struct packed {
 	logic [`XLEN-1:0]		addr; // must align with word! 
 } LOAD_SQ_PACKET;
 
+*/
 // typedef struct packet{
 //     logic [3:0]             usebytes;
 //     logic [`XLEN-1:0]       addr; // must be aligned with words
 //     logic [`XLEN-1:0]       data;
 // } CACHE_IN_PACKET;
+
 
 // typedef struct packet{
 //     logic [3:0]             validbtyes;

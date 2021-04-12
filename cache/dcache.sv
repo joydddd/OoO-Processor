@@ -23,7 +23,7 @@ module dcache(
     output logic [1:0] is_hit,
     output logic [1:0] [`XLEN-1:0] ld_data,    //valid if hit
     output logic [1:0] broadcast_fu,
-    output logic [`XLEN-1:0] broadcast_data,
+    output logic [`XLEN-1:0] broadcast_data
 
 
     `ifdef TEST_MODE

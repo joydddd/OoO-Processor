@@ -50,6 +50,7 @@ logic [`ROB-1:0] input_start_incre3;
 logic [2:0] input_num;
 logic [`ROB-1:0] head_next;
 logic [`ROB-1:0] tail_next;
+logic [2:0] head_incre_temp;
 logic [2:0] head_incre;
 logic [2:0]  tail_incre;
 logic [`ROB-1:0] head_tail_diff;
@@ -81,17 +82,75 @@ assign struct_stall = 	(space_left == 0) ? 3'b111 :
 /* move head */
 
 always_comb begin
-	head_incre = 0;
+	head_incre_temp = 0;
 	empty_temp = empty;
 	if(rob_entries[head].completed) begin
-		head_incre = 1;
+		head_incre_temp = 1;
 		if(rob_entries[head_incre1].completed) begin
-			head_incre = 2;
+			head_incre_temp = 2;
 			if(rob_entries[head_incre2].completed) begin
-				head_incre = 3;			
+				head_incre_temp = 3;			
 			end
 		end
 	end
+	priority case (sq_stall)
+		3'b111: begin
+			if (rob_entries[head].is_store) begin
+				head_incre = 0;
+			end
+			else if (rob_entries[head_incre1].is_store) begin
+				head_incre = (head_incre_temp >= 1) ? 1 : head_incre_temp;
+			end
+			else if (rob_entries[head_incre2].is_store) begin
+				head_incre = (head_incre_temp >= 2) ? 2 : head_incre_temp;
+			end
+			else begin
+				head_incre = head_incre_temp;
+			end
+		end
+		3'b011: begin
+			if (rob_entries[head].is_store) begin
+				if (rob_entries[head_incre1].is_store) begin
+					head_incre = (head_incre_temp >= 1) ? 1 : head_incre_temp;
+				end
+				else if (rob_entries[head_incre2].is_store) begin
+					head_incre = (head_incre_temp >= 2) ? 2 : head_incre_temp;
+				end
+				else begin
+					head_incre = head_incre_temp;
+				end
+			end
+			else if (rob_entries[head_incre1].is_store) begin
+				if (rob_entries[head_incre2].is_store) begin
+					head_incre = (head_incre_temp >= 2) ? 2 : head_incre_temp;
+				end
+				else begin
+					head_incre = head_incre_temp;
+				end
+			end
+			else begin
+				head_incre = head_incre_temp;
+			end
+		end
+		3'b001: begin
+			if (rob_entries[head].is_store) begin
+				if (rob_entries[head_incre1].is_store && rob_entries[head_incre2].is_store) begin
+					head_incre = (head_incre_temp >= 2) ? 2 : head_incre_temp;
+				end
+				else begin
+					head_incre = head_incre_temp;
+				end
+			end
+			else begin
+				head_incre = head_incre_temp;
+			end
+		end
+		3'b000: begin
+			head_incre = head_incre_temp;
+		end
+		default:
+			head_incre = head_incre_temp;
+	endcase
 	priority case (head_incre)
 		3: begin
 			if (head_incre2 == tail) begin
