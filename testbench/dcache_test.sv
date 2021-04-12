@@ -244,7 +244,11 @@ initial begin
     @(posedge clock)
     set_mem_in(4, 64'h4444444444444444, 2); 
     @(posedge clock)
-    set_mem_in(0, 64'h5555555555555555, 3); 
+    set_mem_in(5, 64'h5555555555555555, 3); 
+    @(posedge clock)
+    set_mem_in(0, 64'h6666666666666666, 5);
+    @(posedge clock)
+    @(posedge clock)
     @(posedge clock)
 
     
