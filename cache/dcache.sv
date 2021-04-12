@@ -300,7 +300,7 @@ module dcache(
     tail_after_wr[3] = tail_after_ld[0];
     full_after_wr[3] = full_after_ld[0];
     for (int i = 2; i >= 0; i--) begin
-      if (!full_after_wr[i+1] && !wr_hit[i]) begin
+      if (!full_after_wr[i+1] && wr_en[i] && !wr_hit[i]) begin
         //allocate
         mshrs_table_next[tail_after_wr[i+1]].addr = ld_new_mem_addr[i];
         mshrs_table_next[tail_after_wr[i+1]].command = BUS_LOAD;
@@ -318,7 +318,7 @@ module dcache(
       end
       full_after_wr[i] = (tail_after_wr[i]+2==head);
     end
-    
+
     tail_next = tail_after_wr[0];
     if (need_write_mem) begin
         mshrs_table_next[tail_after_wr[0]].addr = wb_mem_addr;
