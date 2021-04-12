@@ -15,7 +15,7 @@ module dcache(
 
     /* with SQ */
     input SQ_ENTRY_PACKET [2:0] sq_in,
-    output sq_stall,
+    output [2:0] sq_stall,
 
     /* with Load-FU/LQ */
     input [1:0] [`XLEN-1:0] ld_addr_in,   // This addr is word aligned !
@@ -207,9 +207,13 @@ module dcache(
   logic [3:0][`MHSRS-1:0] tail_after_wr;
   logic [2:0] full_after_ld;
   logic [3:0] full_after_wr;
+  logic [`MHSRS-1:0] h_t_distance;
 
   assign ld_stall = full_after_ld[2:1];
-  assign sq_stall = full_after_wr[3:1];
+  assign h_t_distance = head - tail_after_ld[0];
+  assign sq_stall[2] = (h_t_distance==`MHSRS'd1);
+  assign sq_stall[1] = (h_t_distance==`MHSRS'd2);
+  assign sq_stall[0] = (h_t_distance==`MHSRS'd3);
 
   always_comb begin : tail_logic
     mshrs_table_next = mshrs_table_next_after_issue;

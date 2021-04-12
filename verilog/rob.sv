@@ -17,6 +17,7 @@ module ROB(
 	input [2:0] precise_state_valid,
 	input [2:0][`XLEN-1:0] target_pc,
 	input BPRecoverEN,
+	input [2:0] sq_stall,
 	output logic [2:0][`ROB-1:0] dispatch_index,
 	output ROB_ENTRY_PACKET[2:0]  retire_entry,  // which ENTRY to be retired
 
