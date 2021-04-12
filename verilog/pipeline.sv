@@ -507,6 +507,9 @@ always_comb begin
         3'b111: begin
             dis_packet_in_next = dis_packet_in;
         end
+        default: begin
+            dis_packet_in_next = dis_packet_in;
+        end
     endcase
 end
 

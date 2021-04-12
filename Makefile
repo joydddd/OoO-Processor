@@ -13,7 +13,7 @@
 #
 #
 
-SOURCE := test_progs/rv32_fib_rec.s
+SOURCE := test_progs/mult_no_lsq.s
 
 CRT = crt.s
 LINKERS = linker.lds
@@ -122,6 +122,9 @@ ICACHESYNFILES = synth/icache.vg
 PLTESTBENCH = testbench/pipeline_test.sv testbench/mt-fl_sim.cpp testbench/pipe_print.c testbench/mem.sv testbench/cache_simv.cpp
 PLFILES = verilog/dispatch.sv verilog/issue.sv verilog/pipeline.sv verilog/complete_stage.sv verilog/re_stage.sv verilog/ps.sv verilog/fetch_stage.sv verilog/mem_controller.sv cache/cachemem.sv $(BRANCHFILES) verilog/fu_alu.sv
 PLSYNFILES = synth/pipeline.vg
+
+# Final pipeline
+FINTESTBENCH = testbench/testbench_fin.sv testbench/mt-fl_sim.cpp testbench/pipe_print.c testbench/mem.sv testbench/cache_simv.cpp
 
 # SIMULATION CONFIG
 
@@ -270,8 +273,7 @@ ls_simv: $(HEADERS) $(LSFILES) $(LSTESTBENCH)
 
 sim:	simv
 	./simv | tee sim_program.out
-
-simv:	$(HEADERS) $(SIMFILES) $(TESTBENCH)
+simv: $(HEADERS) $(PLFILES) $(RSFILES) $(MTFILES) $(ISFIFOFILE) $(FREELISTFILES) $(ROBFILES) $(PRFILES) $(ALUFILES) $(LSFILES) $(MULTFILES) $(ICACHEFILES) $(FINTESTBENCH)
 	$(VCS) $^ -o simv
 
 .PHONY: sim
@@ -418,11 +420,11 @@ pl_syn: pl_syn_simv
 pl_syn_simv: $(HEADERS) $(PLSYNFILES) $(PLTESTBENCH)
 	$(VCS) $^ $(LIB) +define+SYNTH_TEST +error+20 -o pl_syn_simv
 
-syn:	syn_simv 
+syn:	syn_simv
 	./syn_simv | tee syn_program.out
 
-syn_simv:	$(HEADERS) $(SYNFILES) $(TESTBENCH)
-	$(VCS) $^ $(LIB) +define+SYNTH_TEST -o syn_simv 
+syn_simv:	$(HEADERS) $(PLSYNFILES) $(PLTESTBENCH)
+	$(VCS) $^ $(LIB) +define+SYNTH_TEST +error+20 -o syn_simv
 
 .PHONY: syn
 
