@@ -17,16 +17,16 @@ module dcache_mem(
         output [1:0][63:0] rd1_data,            // 
         output [1:0] rd1_valid,                  // 
 
-        output need_write_mem,
-        output [63:0] wb_mem_data,
-        output [`XLEN-1:0] wb_mem_addr,
+        output logic need_write_mem,
+        output logic [63:0] wb_mem_data,
+        output logic [`XLEN-1:0] wb_mem_addr,
 
         input        wr2_en,        //For the miss load back
         input  [4:0] wr2_idx,                                   // 
         input  [7:0] wr2_tag,                                   // 
         input  [63:0] wr2_data,
         input  [7:0] wr2_usebytes,
-        input       wr2_dirty,
+        input       wr2_dirty
 
         `ifdef TEST_MODE
         , output logic [31:0] [63:0] cache_data_disp
@@ -83,7 +83,7 @@ module dcache_mem(
     dirties_next = dirties;
     dirties_next2 = dirties_next;
     for (int i = 2; i >= 0; i--) begin
-        if(wr1_en[i] && wir_hit[i]) begin
+        if(wr1_en[i] && wr1_hit[i]) begin
             valids_next[wr1_idx[i]] = 1'b1;
             tags_next[wr1_idx[i]] = wr1_tag[i];
             dirties_next[wr1_idx[i]] = 1'b1;
