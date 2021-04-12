@@ -13,6 +13,7 @@
 
 `define TEST_MODE
 `define DIS_DEBUG
+`define CACHE_SIM // TODO: comment this line when we have Dcache
 
 `timescale 1ns/100ps
 
@@ -24,9 +25,10 @@ module pipeline(
 	input [3:0]   mem2proc_tag,              // Tag from memory about current reply
 	
 	output logic [1:0]  proc2mem_command,    // command sent to memory
-	output logic [`XLEN-1:0] proc2mem_addr      // Address sent to memory
-	// output logic [63:0] proc2mem_data,      // Data sent to memory
-	// output MEM_SIZE proc2mem_size,          // data size sent to memory
+	output logic [`XLEN-1:0] proc2mem_addr,      // Address sent to memory
+	output logic [63:0] proc2mem_data,      // Data sent to memory
+
+    output logic        halt
 
 	// output logic [3:0]  pipeline_completed_insts,
 	// output EXCEPTION_CODE   pipeline_error_status,
@@ -67,6 +69,15 @@ module pipeline(
     , output FU_STATE_PACKET            fu_ready_display
     , output FU_STATE_PACKET            fu_finish_display
     , output FU_COMPLETE_PACKET [2**`FU-1:0]         fu_packet_out_display
+
+    // SQ
+    , output SQ_ENTRY_PACKET [0:2**`LSQ-1]  sq_display
+    , output logic [`LSQ-1:0]               head_dis
+    , output logic [`LSQ-1:0]               tail_dis
+    , output logic [`LSQ:0]                 filled_num_dis
+    , output SQ_ENTRY_PACKET [2**`LSQ-1:0]  older_stores
+    , output logic [2**`LSQ-1:0]            older_stores_valid
+    , output LOAD_SQ_PACKET [1:0]           load_sq_pckt_display
     
     // Complete
     , output CDB_T_PACKET               cdb_t_display
@@ -92,6 +103,7 @@ module pipeline(
     // Archi Map Table
     , output logic [2:0][`PR-1:0]       map_ar_pr_disp
     , output logic [2:0][4:0]           map_ar_disp
+    , output logic [2:0]                RetireEN_disp
 `endif
 
 `ifdef DIS_DEBUG
@@ -117,6 +129,13 @@ module pipeline(
     // , input [2:0]                       rob_stall_debug
     // , input FU_STATE_PACKET             fu_ready_debug
     // , input CDB_T_PACKET                cdb_t_debug
+`endif
+
+`ifdef CACHE_SIM
+    , output SQ_ENTRY_PACKET [2:0]          cache_wb_sim
+    , output logic [1:0][`XLEN-1:0]         cache_read_addr_sim
+    , output logic [1:0]                    cache_read_start_sim
+    , input [1:0][`XLEN-1:0]                cache_read_data_sim
 `endif
     
 );
@@ -149,6 +168,10 @@ logic [2:0][`PR-1:0]	maptable_allocate_pr;
 logic [2:0][4:0]		maptable_allocate_ar;
 logic [2:0][4:0]		maptable_lookup_reg1_ar;
 logic [2:0][4:0]		maptable_lookup_reg2_ar;
+// go to SQ
+logic [2:0]				sq_stall;
+logic [2:0]				sq_alloc;
+logic [2:0][`LSQ-1:0]	sq_tail_pos;
 
 /* Reservation Station */
 logic                   rs_reset;
@@ -191,14 +214,10 @@ logic [2:0][`PR-1:0]    is_pr1_idx, is_pr2_idx; // access pr
 
 /* physical register */
 logic [2:0][`XLEN-1:0]  pr1_read, pr2_read;
-// TODO: plug in pr
-// assign pr1_read = 0;
-// assign pr2_read = 0;
 
 
 /* Reorder Buffer */
 logic [2:0][`ROB-1:0]           new_rob_index;  // ROB.dispatch_index <-> dispatch.rob_index
-//assign new_rob_index = 5;
 //ROB_ENTRY_PACKET[2:0]           rob_in;       // rob_in = dis_rob_packet
 logic       [2:0]               complete_valid;
 logic       [2:0][`ROB-1:0]     complete_entry;  // which ROB entry is done
@@ -208,17 +227,56 @@ ROB_ENTRY_PACKET [`ROBW-1:0]    rob_entries;
 ROB_ENTRY_PACKET [`ROBW-1:0]    rob_debug;
 logic       [`ROB-1:0]          head;
 logic       [`ROB-1:0]          tail;
+logic       [2:0]               SQRetireEN;
 
 /* functional unit */
 FU_STATE_PACKET                     fu_ready;
 ISSUE_FU_PACKET     [2**`FU-1:0]    fu_packet_in;
 FU_STATE_PACKET                     complete_stall;
+FU_COMPLETE_PACKET  [2**`FU-1:0]    fu_c_packet;
+FU_STATE_PACKET                     fu_finish;
 
+/* sq */
+logic [2:0]                 exe_valid;
+SQ_ENTRY_PACKET [2:0]       exe_store;
+logic [2:0][`LSQ-1:0]       exe_idx;
+LOAD_SQ_PACKET [1:0]        load_lookup;
+SQ_LOAD_PACKET [1:0]        load_forward;
+SQ_ENTRY_PACKET [2:0]       cache_wb;
+
+/* cache */
+logic [1:0][`XLEN-1:0]      cache_read_addr;
+logic [1:0][`XLEN-1:0]      cache_read_data;
+logic [1:0]                 cache_read_start;
+
+// icache
+logic [1:0]                 icache2mem_command;
+logic [`XLEN-1:0]           icache2mem_addr;
+
+// dcache
+logic [1:0]                 dcache2ctlr_command;
+logic [`XLEN-1:0]           dcache2ctlr_addr;
+logic [63:0]                dcache2ctlr_data;
+
+// TODO: delete the following assigns when dcache is completed
+assign dcache2ctlr_command = BUS_NONE;
+assign dcache2ctlr_addr = 0;
+assign dcache2ctlr_data = 0;
+
+/* mem controller */
+logic [3:0]                 ctlr2icache_response;
+logic [63:0]                ctlr2icache_data;
+logic [3:0]                 ctlr2icache_tag;
+logic                       d_request;
+
+logic [3:0]                 ctlr2dcache_response;
+logic [63:0]                ctlr2dcache_data;
+logic [3:0]                 ctlr2dcache_tag;
 
 /* Complete Stage */
 CDB_T_PACKET                    cdb_t;
 FU_COMPLETE_PACKET [2**`FU-1:0]    fu_c_in;
-FU_STATE_PACKET                 fu_finish;
+FU_STATE_PACKET                 fu_to_complete;
 logic       [2:0][`XLEN-1:0]    wb_value;
 logic       [2:0]               precise_state_valid;
 logic       [2:0][`XLEN-1:0]    target_pc;
@@ -228,6 +286,7 @@ logic       [2:0][`PR-1:0]			map_ar_pr;
 logic       [2:0][4:0]			    map_ar;
 logic       [31:0][`PR-1:0]         recover_maptable;
 logic       [`XLEN-1:0]             fetch_pc;
+logic                               re_halt;
 //logic 		[2:0] 			        RetireEN;     
 //ROB_ENTRY_PACKET [2:0]              retire_entry;
 
@@ -259,6 +318,9 @@ assign fu_packet_out_display = fu_c_in;
 // Maptable
 assign archi_map_display = archi_maptable_out;
 
+// SQ
+assign load_sq_pckt_display = load_lookup;
+
 // Complete
 assign cdb_t_display = cdb_t;
 assign wb_value_display = wb_value;
@@ -267,12 +329,13 @@ assign complete_stall_display = complete_stall;
 // Archi Map Table
 assign map_ar_pr_disp = map_ar_pr;
 assign map_ar_disp = map_ar;
+assign RetireEN_disp = RetireEN;
 
 // ROB
 assign rob_stall_display = rob_stall;
 
 // Retire stage
-
+assign halt = re_halt;
 
 `endif
 
@@ -298,6 +361,12 @@ assign fu_ready = fu_ready_debug;
 //assign rob_stall = rob_stall_debug;  
 //assign cdb_t = cdb_t_debug;
 `endif
+`ifdef CACHE_SIM
+    assign cache_wb_sim = cache_wb;
+    assign cache_read_addr_sim = cache_read_addr;
+    assign cache_read_data = cache_read_data_sim;
+    assign cache_read_start_sim = cache_read_start;
+`endif
 
 //////////////////////////////////////////////////
 //                                              //
@@ -313,7 +382,7 @@ cache ic_mem(
     .rd1_idx(current_index),        // <- icache.current_index
     .wr1_tag(wr_tag),               // <- icache.wr_tag
     .rd1_tag(current_tag),          // <- icache.current_tag
-    .wr1_data(mem2proc_data),       // <- mem.mem2proc_data
+    .wr1_data(ctlr2icache_data),    // <- controller.ctlr2icache_data
 
     .rd1_data(cachemem_data),       // -> icache.cachemem_data
     .rd1_valid(cachemem_valid)      // -> icache.mcachemem_valid
@@ -323,17 +392,18 @@ icache ic(
     .clock(clock),
     .reset(reset),
     .take_branch(BPRecoverEN),
-    .Imem2proc_response(mem2proc_response), // <- mem.mem2proc_response
-    .Imem2proc_data(mem2proc_data),         // <- mem.mem2proc_data
-    .Imem2proc_tag(mem2proc_tag),           // <- mem2proc_tag
+    .Imem2proc_response(ctlr2icache_response), // <- controller.ctlr2icache_response
+    .Imem2proc_data(ctlr2icache_data),         // <- controller.ctlr2icache_data
+    .Imem2proc_tag(ctlr2icache_tag),           // <- controller.ctlr2icache_tag
+    .d_request(d_request),                     // <- controller.d_request
 
     .shift(fetch_shift),                    // <- fetch.shift
     .proc2Icache_addr(proc2Icache_addr),    // <- fetch.proc2Icache_addr
     .cachemem_data(cachemem_data),          // <- cache.rd1_data
     .cachemem_valid(cachemem_valid),        // <- cache.rd1_valid
 
-    .proc2Imem_command(proc2mem_command),   // -> mem.proc2mem_command
-    .proc2Imem_addr(proc2mem_addr),         // -> mem.proc2mem_addr
+    .proc2Imem_command(icache2mem_command), // -> controller.icache2mem_command
+    .proc2Imem_addr(icache2mem_addr),       // -> controller.icache2mem_addr
 
     .Icache_data_out(cache_data),           // -> fetch.cache_data
     .Icache_valid_out(cache_valid),         // -> fetch.cache_valid
@@ -357,6 +427,41 @@ fetch_stage fetch(
     .shift(fetch_shift),                    // -> icache.shift
     .proc2Icache_addr(proc2Icache_addr),    // -> icache.proc2Icache_addr
     .if_packet_out(if_d_packet)             // -> dispatch
+);
+
+//////////////////////////////////////////////////
+//                                              //
+//                 Mem controller               //
+//                                              //
+//////////////////////////////////////////////////
+
+mem_controller mc (
+    /* to mem */
+    .mem2ctlr_response(mem2proc_response),  // <- mem.mem2proc_response
+	.mem2ctlr_data(mem2proc_data),          // <- mem.mem2proc_data
+	.mem2ctlr_tag(mem2proc_tag),            // <- mem.mem2proc_tag
+
+    .ctlr2mem_command(proc2mem_command),    // -> mem.proc2mem_command
+    .ctlr2mem_addr(proc2mem_addr),          // -> mem.proc2mem_addr
+    .ctlr2mem_data(proc2mem_data),          // -> mem.proc2mem_data
+
+    /* to Icache */
+    .icache2ctlr_command(icache2mem_command),   // <- icache.proc2Imem_command
+    .icache2ctlr_addr(icache2mem_addr),         // <- icache.proc2Imem_addr
+
+    .ctlr2icache_response(ctlr2icache_response),
+    .ctlr2icache_data(ctlr2icache_data),              
+    .ctlr2icache_tag(ctlr2icache_tag),          // directly assign
+    .d_request(d_request),                      // if high, mem is assigned to Dcache
+
+    /* to Dcache */
+    .dcache2ctlr_command(dcache2ctlr_command),  // <- dcache TODO
+    .dcache2ctlr_addr(dcache2ctlr_addr),        // <- dcache TODO
+    .dcache2ctlr_data(dcache2ctlr_data),        // <- dcache TODO
+
+    .ctlr2dcache_response(ctlr2dcache_response),// -> dcache TODO
+    .ctlr2dcache_data(ctlr2dcache_data),        // -> dcache TODO
+    .ctlr2dcache_tag(ctlr2dcache_tag)           // -> dcache TODO
 );
 
 //////////////////////////////////////////////////
@@ -442,6 +547,10 @@ dispatch_stage dipatch_0(
     // allocate new PR 
     .free_reg_valid(free_pr_valid),
     .free_pr_in(free_pr),
+    /* allocate new SQ */
+	.sq_stall(sq_stall),
+	.sq_alloc(sq_alloc), //--> SQ::dispatch
+	.sq_tail_pos(sq_tail_pos), // <-- SQ::tail_pos
     .maptable_new_pr(maptable_allocate_pr),
     .maptable_ar(maptable_allocate_ar),
     .maptable_old_pr(maptable_old_pr),
@@ -544,7 +653,7 @@ issue_stage issue_0(
     .rs_out(is_packet_in),
     .read_rda(pr1_read),
     .read_rdb(pr2_read),
-    .fu_ready(fu_ready),
+    .fu_ready(fu_ready & ~complete_stall),
     // Output
     .rda_idx(is_pr1_idx),
     .rdb_idx(is_pr2_idx),
@@ -585,10 +694,17 @@ physical_regfile pr_0(
 //                IS-FU-Register                //
 //                                              //
 //////////////////////////////////////////////////
+ISSUE_FU_PACKET [2**`FU-1:0] fu_packet_in_next;
+always_comb begin
+    fu_packet_in_next = fu_packet_in;
+    for(int i=0; i<2**`FU; i++) begin
+        if(~complete_stall[i])fu_packet_in_next[i] = is_fu_packet[i];
+    end
+end
 
 always_ff @(posedge clock) begin
     if (reset | BPRecoverEN) fu_packet_in <= `SD 0;
-    else fu_packet_in <= `SD is_fu_packet;
+    else fu_packet_in <= `SD fu_packet_in_next;
 end
 
 //////////////////////////////////////////////////
@@ -597,6 +713,8 @@ end
 //               (Functional Units)             //
 //////////////////////////////////////////////////
 
+// fu should NOT start calculation when compelte stall is high
+
 fu_alu fu_alu_1(
 	.clock(clock),                          // system clock
 	.reset(reset | BPRecoverEN),                          // system reset
@@ -604,7 +722,12 @@ fu_alu fu_alu_1(
 	.fu_packet_in(fu_packet_in[ALU_1]),        // <- issue.issue_2_fu
     .fu_ready(fu_ready.alu_1),                // -> issue.fu_ready
     .want_to_complete(fu_finish.alu_1),// -> complete.fu_finish
-	.fu_packet_out(fu_c_in[ALU_1])         // -> complete.fu_c_in
+	.fu_packet_out(fu_c_packet[ALU_1]),         //
+
+    // STORE
+    .if_store(exe_valid[0]),
+    .store_pckt(exe_store[0]),
+    .sq_idx(exe_idx[0])
 );
 
 fu_alu fu_alu_2(
@@ -614,7 +737,12 @@ fu_alu fu_alu_2(
 	.fu_packet_in(fu_packet_in[ALU_2]),        // <- issue.issue_2_fu
     .fu_ready(fu_ready.alu_2),                // -> issue.fu_ready
     .want_to_complete(fu_finish.alu_2),// -> complete.fu_finish
-	.fu_packet_out(fu_c_in[ALU_2])         // -> complete.fu_c_in
+	.fu_packet_out(fu_c_packet[ALU_2]),         // 
+
+    // STORE
+    .if_store(exe_valid[1]),
+    .store_pckt(exe_store[1]),
+    .sq_idx(exe_idx[1])
 );
 
 fu_alu fu_alu_3(
@@ -624,7 +752,12 @@ fu_alu fu_alu_3(
 	.fu_packet_in(fu_packet_in[ALU_3]),        // <- issue.issue_2_fu
     .fu_ready(fu_ready.alu_3),                // -> issue.fu_ready
     .want_to_complete(fu_finish.alu_3),// -> complete.fu_finish
-	.fu_packet_out(fu_c_in[ALU_3])         // -> complete.fu_c_in
+	.fu_packet_out(fu_c_packet[ALU_3]),         // -> complete.fu_c_in
+
+    // STORE
+    .if_store(exe_valid[2]),
+    .store_pckt(exe_store[2]),
+    .sq_idx(exe_idx[2])
 );
 
 fu_mult fu_mult_1(
@@ -634,7 +767,7 @@ fu_mult fu_mult_1(
     .fu_packet_in(fu_packet_in[MULT_1]),
     .fu_ready(fu_ready.mult_1),
     .want_to_complete(fu_finish.mult_1),
-    .fu_packet_out(fu_c_in[MULT_1])
+    .fu_packet_out(fu_c_packet[MULT_1])
 );
 
 fu_mult fu_mult_2(
@@ -644,18 +777,51 @@ fu_mult fu_mult_2(
     .fu_packet_in(fu_packet_in[MULT_2]),
     .fu_ready(fu_ready.mult_2),
     .want_to_complete(fu_finish.mult_2),
-    .fu_packet_out(fu_c_in[MULT_2])
+    .fu_packet_out(fu_c_packet[MULT_2])
 );
 
-// TODO add more fus
-assign fu_finish.loadstore_1 = 0;
-assign fu_finish.loadstore_2 = 0;
+fu_load fu_load_1(
+    .clock(clock),
+    .reset(reset | BPRecoverEN),
+    .complete_stall(complete_stall.loadstore_1),
+    .fu_packet_in(fu_packet_in[LS_1]),
 
+    // output
+    .fu_ready(fu_ready.loadstore_1),
+    .want_to_complete(fu_finish.loadstore_1),
+    .fu_packet_out(fu_c_packet[LS_1]),
 
-assign fu_ready.loadstore_1 = 0;
-assign fu_ready.loadstore_2 = 0;
+    // SQ
+    .sq_lookup(load_lookup[0]),    // -> SQ.load_lookup
+    .sq_result(load_forward[0]),   // <- SQ.load_forward
 
-assign fu_c_in[LS_2:LS_1] = 0;
+    // Cache
+    .addr(cache_read_addr[0]),      // TODO: -> dcache 
+    .cache_data_in(cache_read_data[0]), // TODO: <- dcache 
+    .cache_read_EN(cache_read_start[0])
+);
+
+fu_load fu_load_2(
+    .clock(clock),
+    .reset(reset | BPRecoverEN),
+    .complete_stall(complete_stall.loadstore_2),
+    .fu_packet_in(fu_packet_in[LS_2]),
+
+    // output
+    .fu_ready(fu_ready.loadstore_2),
+    .want_to_complete(fu_finish.loadstore_2),
+    .fu_packet_out(fu_c_packet[LS_2]),
+
+    // SQ
+    .sq_lookup(load_lookup[1]),    // -> SQ.load_lookup
+    .sq_result(load_forward[1]),   // <- SQ.load_forward
+
+    // Cache
+    .addr(cache_read_addr[1]),      // TODO: -> dcache 
+    .cache_data_in(cache_read_data[1]), // TODO: <- dcache 
+    .cache_read_EN(cache_read_start[1])
+);
+
 
 branch_stage branc(
     .clock(clock),
@@ -664,11 +830,62 @@ branch_stage branc(
     .fu_packet_in(fu_packet_in[BRANCH]),
     .fu_ready(fu_ready.branch),
     .want_to_complete_branch(fu_finish.branch),
-    .fu_packet_out_reg(fu_c_in[BRANCH])
+    .fu_packet_out(fu_c_packet[BRANCH])
 );
 
 
+SQ SQ_0(
+    .clock(clock),
+    .reset(reset | BPRecoverEN),
+    .stall(sq_stall),             // -> dispatch.
+    .dispatch(sq_alloc),          // <- dispatch.sq_alloc
+    .tail_pos(sq_tail_pos),       // -> dispatch.sq_tail_pos
+    .exe_valid(exe_valid),        // <- alu.exe_valid
+    .exe_store(exe_store),        // <- alu.exe_store
+    .exe_idx(exe_idx),            // <- alu.exe_idx
+    .load_lookup(load_lookup),    // <- load.load_lookup
+    .load_forward(load_forward),  // -> load.load_forward
+    .retire(SQRetireEN),          // <- retire. SQRetireEN
+    .cache_wb(cache_wb)           // -> TODO: dcache, currently dangling
+    `ifdef TEST_MODE
+    , .sq_display(sq_display)
+    , .head_dis(head_dis)
+    , .tail_dis(tail_dis)
+    , .filled_num_dis(filled_num_dis)
+    , .older_stores_display(older_stores)
+    , .older_stores_valid_display(older_stores_valid)
+    `endif
+);
 
+
+//////////////////////////////////////////////////
+//                                              //
+//                FU-C-Register                 //
+//                                              //
+//////////////////////////////////////////////////
+FU_STATE_PACKET fu_result_waiting;
+FU_COMPLETE_PACKET [2**`FU-1:0] fu_c_in_next;
+always_comb begin
+    for(int i=0; i<2**`FU; i++) begin
+        if(fu_finish[i]) fu_c_in_next[i] = fu_c_packet[i]; 
+        else if (complete_stall[i]) fu_c_in_next[i] = fu_c_in[i];
+        else fu_c_in_next[i] = 0;
+    end
+end
+// if something is coming from fu, prioirty is to take it
+// else, if stall, keep the value in reg. 
+
+always_ff @(posedge clock) begin
+    if (reset | BPRecoverEN) begin
+        fu_c_in <= `SD 0;
+        fu_result_waiting <= `SD 0;
+    end else begin
+        fu_c_in <= `SD fu_c_in_next;
+        fu_result_waiting <= `SD complete_stall;
+    end
+end
+
+assign fu_to_complete = fu_result_waiting | fu_finish;
 
 //////////////////////////////////////////////////
 //                                              //
@@ -707,7 +924,7 @@ ROB rob_0(
 complete_stage cs(
     .clock(clock),
     .reset(reset),
-    .fu_finish(fu_finish),                      // <- fu.fu_finish
+    .fu_finish(fu_to_complete),                 // <- fu.fu_finish
     .fu_c_in(fu_c_in),                          // <- fu.fu_c_in
     .fu_c_stall(complete_stall),                // -> fu.complete_stall
     .cdb_t(cdb_t),                              // -> cdb_t broadcast
@@ -739,7 +956,9 @@ retire_stage retire_0(
     .FreelistHead(FreelistHead),                // <- Freelist.FreelistHead
     .Retire_EN(RetireEN),                       // -> Freelist.RetireEN
     .Tolds_out(RetireReg),                      // -> Freelist.RetireReg
-    .BPRecoverHead(BPRecoverHead)               // -> Freelist.BPRecoverHead
+    .BPRecoverHead(BPRecoverHead),              // -> Freelist.BPRecoverHead
+    .SQRetireEN(SQRetireEN),                     // -> SQ.retire
+    .halt(re_halt)
 );
 
 //////////////////////////////////////////////////

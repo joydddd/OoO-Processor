@@ -18,7 +18,6 @@ module mem_controller (
 	input [3:0] mem2ctlr_tag,       // <- mem
 
     output logic [1:0] ctlr2mem_command,  // -> mem
-    output MEM_SIZE ctlr2mem_size,  // -> mem
     output logic [`XLEN-1:0] ctlr2mem_addr, // ->mem
     output logic [63:0] ctlr2mem_data,
 
@@ -38,7 +37,7 @@ module mem_controller (
 
     output  logic [3:0] ctlr2dcache_response,           
     output  logic [63:0] ctlr2dcache_data,              
-    output  logic [3:0] ctlr2dcache_tag,  
+    output  logic [3:0] ctlr2dcache_tag
 
 );
 

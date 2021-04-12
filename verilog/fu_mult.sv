@@ -107,11 +107,7 @@ FU_COMPLETE_PACKET result_pckt;
 logic [`MUL_STAGE:0] dones;
 ISSUE_FU_PACKET fu_in_reg;
 
-logic result_in_reg;
-logic result_in_reg_next;
-logic output_from_reg;
-
-assign start = fu_packet_in.valid;
+assign start = fu_packet_in.valid & ~complete_stall;
 assign rs1 = fu_packet_in.r1_value;
 assign rs2 = fu_packet_in.r2_value;
 always_comb begin
@@ -166,39 +162,10 @@ always_comb begin
 end
 
 // ctrl signals
-assign want_to_complete = dones[`MUL_STAGE-1] | result_in_reg_next;
-assign fu_ready = ~(|dones[`MUL_STAGE-2:0]) & ~complete_stall;
+assign want_to_complete = dones[`MUL_STAGE];
+assign fu_ready = ~(|dones[`MUL_STAGE-1:0]);
+assign fu_packet_out = result_pckt;
 
-// reg that holds result
-FU_COMPLETE_PACKET result_reg;
-
-always_comb begin
-    result_in_reg_next = 0;
-    if (complete_stall & dones[`MUL_STAGE]) result_in_reg_next = 1;
-    if (result_in_reg & ~output_from_reg) result_in_reg_next = 1;
-end
-
-always_ff @(posedge clock) begin
-    if (reset) result_in_reg <= `SD 0;
-    else result_in_reg <= `SD result_in_reg_next;
-end
-
-always_ff @(posedge clock) begin
-    if (reset) output_from_reg <= `SD 0;
-    else if (~complete_stall & ~output_from_reg) output_from_reg <= `SD result_in_reg;
-    else output_from_reg <= `SD 0;
-end
-
-always_ff @(posedge clock) begin
-    if (reset) result_reg <= `SD 0;
-    else if (dones[`MUL_STAGE]) result_reg <= `SD result_pckt;
-end
-
-
-always_comb begin
-    fu_packet_out = result_pckt;
-    if (result_in_reg) fu_packet_out = result_reg;
-end
 
 
 

@@ -19,10 +19,11 @@ suppress_message {"VER-130"}
 lappend search_path ../
 
 set headers [getenv HEADERS]
-set sources [getenv BRANCHFILES]
+set sources [getenv LOADFILES]
+set load_module [getenv LOAD_NAME]
 
 read_file -f sverilog [list ${headers} ${sources}]
-set design_name branch_stage
+set design_name ${load_module}
 set clock_name clock
 set reset_name reset
 set CLK_PERIOD 5
