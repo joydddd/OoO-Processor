@@ -14,17 +14,17 @@ module dcache(
   
 
     /* with SQ */
-    input SQ_ENTRY_PACKET [2:0] sq_in,
+    input SQ_ENTRY_PACKET [2:0] sq_in,   // <- cache_wb
     output [2:0] sq_stall,
 
-    /* with Load-FU/LQ */
+    /* with Load-FU/LQ */                 // <- cache_read_addr
     input [1:0] [`XLEN-1:0] ld_addr_in,   // This addr is word aligned !
-    input [1:0] ld_start,
+    input [1:0] ld_start,                 // <- cache_read_start
     output logic [1:0] is_hit,
     output logic [1:0] [`XLEN-1:0] ld_data,    //valid if hit
-    output logic [3:0] broadcast_tag,
+    output logic [1:0] broadcast_fu,
     output logic [`XLEN-1:0] broadcast_data,
-    output [1:0] ld_stall
+
 
     `ifdef TEST_MODE
       , output logic [31:0] [63:0] cache_data_disp
@@ -160,7 +160,7 @@ module dcache(
 
   always_comb begin : head_logic
     head_next = head;
-    broadcast_tag = 0;
+    broadcast_fu = 0;
     broadcast_data = 0;
     wr2_en = 0;
     wr2_idx = 0;
@@ -171,7 +171,8 @@ module dcache(
       head_next = head + 1;
       mshrs_table_next_after_retire[head].issued = 1'b0;
       if (mshrs_table[head].command==BUS_LOAD) begin
-        broadcast_tag = mshrs_table[head].mem_tag;
+        //broadcast_tag = mshrs_table[head].mem_tag;
+        broadcast_fu = mshrs_table[head].broadcast_fu;
         broadcast_data = mshrs_table[head].left_or_right ? Ctlr2proc_data[63:32] : Ctlr2proc_data[31:0];
         wr2_en = 1'b1;
         //wr2_tag = mshrs_table[head].addr[15:8];
@@ -209,7 +210,25 @@ module dcache(
   logic [3:0] full_after_wr;
   logic [`MHSRS-1:0] h_t_distance;
 
-  assign ld_stall = full_after_ld[2:1];
+
+  logic [1:0] ld_request;
+  logic [1:0] ld_request_next;
+
+  //assign ld_request_next[1] = ld_stall[1] && !rd_valid[1] && ld_start[1];
+  //assign ld_request_next[0] = ld_stall[0] && !rd_valid[0] && ld_start[0];
+
+  always_ff @( posedge clock ) begin
+    if (reset) begin
+      ld_request <= `SD 0;
+    end
+    else begin
+      ld_request <= ld_request_next;
+    end
+  end
+  
+
+
+  //assign ld_stall = full_after_ld[2:1];
   assign h_t_distance = head - tail_after_ld[0];
   assign sq_stall[2] = (h_t_distance==`MHSRS'd1);
   assign sq_stall[1] = (h_t_distance==`MHSRS'd2);
@@ -217,18 +236,25 @@ module dcache(
 
   always_comb begin : tail_logic
     mshrs_table_next = mshrs_table_next_after_issue;
+    ld_request_next = ld_request;
     tail_after_ld[2] = tail;
     full_after_ld[2] = (tail+1==head);
     for (int i = 1; i >= 0; i--) begin
-      if (!full_after_ld[i+1] && !rd_valid[i] && ld_start[i]) begin   //need mem load
-        //allocate
+      if (!full_after_ld[i+1] && ((!rd_valid[i] && ld_start[i])||ld_request)) begin   //need mem load
+        //allocate i
         mshrs_table_next[tail_after_ld[i+1]].addr = {ld_addr_in[i][`XLEN-1:3],3'b0};
         mshrs_table_next[tail_after_ld[i+1]].command = BUS_LOAD;
         mshrs_table_next[tail_after_ld[i+1]].mem_tag = 0;
         mshrs_table_next[tail_after_ld[i+1]].left_or_right = ld_addr_in[i][2] ? 1'b1 : 1'b0;
         mshrs_table_next[tail_after_ld[i+1]].data = 0;
         mshrs_table_next[tail_after_ld[i+1]].issued = 0;
+        mshrs_table_next[tail_after_ld[i+1]].broadcast_fu = (i==1) ? 2'b10 : 2'b01;
         tail_after_ld[i] = tail_after_ld[i+1] + 1;
+        ld_request_next[i] = 1'b0;
+      end
+      else if (!full_after_ld[i+1] && !rd_valid[i] && ld_start[i]) begin
+        tail_after_ld[i] = tail_after_ld[i+1];
+        ld_request_next[i] = 1'b1;
       end
       else begin
         tail_after_ld[i] = tail_after_ld[i+1];
@@ -246,6 +272,7 @@ module dcache(
         mshrs_table_next[tail_after_wr[i+1]].left_or_right = 0;
         mshrs_table_next[tail_after_wr[i+1]].data = wb_mem_data[i];
         mshrs_table_next[tail_after_wr[i+1]].issued = 0;
+        mshrs_table_next[tail_after_wr[i+1]].broadcast_fu = 0;
         tail_after_wr[i] = tail_after_wr[i+1] + 1;
       end
       else begin

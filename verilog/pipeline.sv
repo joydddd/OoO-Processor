@@ -13,7 +13,7 @@
 
 `define TEST_MODE
 `define DIS_DEBUG
-`define CACHE_SIM // TODO: comment this line when we have Dcache
+
 
 `timescale 1ns/100ps
 
@@ -104,6 +104,14 @@ module pipeline(
     , output logic [2:0][`PR-1:0]       map_ar_pr_disp
     , output logic [2:0][4:0]           map_ar_disp
     , output logic [2:0]                RetireEN_disp
+
+    //Dcache
+    , output logic [31:0] [63:0] cache_data_disp
+    , output logic [31:0] [7:0] cache_tags_disp
+    , output MHSRS_ENTRY_PACKET [`MHSRS_W-1:0] MHSRS_disp
+    , output logic [`MHSRS-1:0] head_pointer
+    , output logic [`MHSRS-1:0] issue_pointer
+    , output logic [`MHSRS-1:0] tail_pointer
 `endif
 
 `ifdef DIS_DEBUG
@@ -131,12 +139,14 @@ module pipeline(
     // , input CDB_T_PACKET                cdb_t_debug
 `endif
 
+/*
 `ifdef CACHE_SIM
     , output SQ_ENTRY_PACKET [2:0]          cache_wb_sim
     , output logic [1:0][`XLEN-1:0]         cache_read_addr_sim
     , output logic [1:0]                    cache_read_start_sim
     , input [1:0][`XLEN-1:0]                cache_read_data_sim
 `endif
+*/
     
 );
 /* Fetch Stage */
@@ -244,24 +254,24 @@ LOAD_SQ_PACKET [1:0]        load_lookup;
 SQ_LOAD_PACKET [1:0]        load_forward;
 SQ_ENTRY_PACKET [2:0]       cache_wb;
 
-/* cache */
-logic [1:0][`XLEN-1:0]      cache_read_addr;
-logic [1:0][`XLEN-1:0]      cache_read_data;
-logic [1:0]                 cache_read_start;
 
 // icache
 logic [1:0]                 icache2mem_command;
 logic [`XLEN-1:0]           icache2mem_addr;
 
-// dcache
+// Dcache
+logic [1:0][`XLEN-1:0]      cache_read_addr;
+logic [1:0]                 cache_read_start;
+
 logic [1:0]                 dcache2ctlr_command;
 logic [`XLEN-1:0]           dcache2ctlr_addr;
 logic [63:0]                dcache2ctlr_data;
 
-// TODO: delete the following assigns when dcache is completed
-assign dcache2ctlr_command = BUS_NONE;
-assign dcache2ctlr_addr = 0;
-assign dcache2ctlr_data = 0;
+logic [2:0]                 sq_stall_cache;
+logic [1:0]                 is_hit;
+logic [1:0][`XLEN-1:0]      ld_data;
+logic [1:0]                 broadcast_fu;
+logic [`XLEN-1:0]           broadcast_data;
 
 /* mem controller */
 logic [3:0]                 ctlr2icache_response;
@@ -361,12 +371,15 @@ assign fu_ready = fu_ready_debug;
 //assign rob_stall = rob_stall_debug;  
 //assign cdb_t = cdb_t_debug;
 `endif
+
+/*
 `ifdef CACHE_SIM
     assign cache_wb_sim = cache_wb;
     assign cache_read_addr_sim = cache_read_addr;
     assign cache_read_data = cache_read_data_sim;
     assign cache_read_start_sim = cache_read_start;
 `endif
+*/
 
 //////////////////////////////////////////////////
 //                                              //
@@ -455,13 +468,13 @@ mem_controller mc (
     .d_request(d_request),                      // if high, mem is assigned to Dcache
 
     /* to Dcache */
-    .dcache2ctlr_command(dcache2ctlr_command),  // <- dcache TODO
-    .dcache2ctlr_addr(dcache2ctlr_addr),        // <- dcache TODO
-    .dcache2ctlr_data(dcache2ctlr_data),        // <- dcache TODO
+    .dcache2ctlr_command(dcache2ctlr_command),  // <- dcache 
+    .dcache2ctlr_addr(dcache2ctlr_addr),        // <- dcache 
+    .dcache2ctlr_data(dcache2ctlr_data),        // <- dcache 
 
-    .ctlr2dcache_response(ctlr2dcache_response),// -> dcache TODO
-    .ctlr2dcache_data(ctlr2dcache_data),        // -> dcache TODO
-    .ctlr2dcache_tag(ctlr2dcache_tag)           // -> dcache TODO
+    .ctlr2dcache_response(ctlr2dcache_response),// -> dcache 
+    .ctlr2dcache_data(ctlr2dcache_data),        // -> dcache
+    .ctlr2dcache_tag(ctlr2dcache_tag)           // -> dcache 
 );
 
 //////////////////////////////////////////////////
@@ -797,8 +810,11 @@ fu_load fu_load_1(
 
     // Cache
     .addr(cache_read_addr[0]),      // TODO: -> dcache 
-    .cache_data_in(cache_read_data[0]), // TODO: <- dcache 
-    .cache_read_EN(cache_read_start[0])
+    .cache_data_in(ld_data[0]), // TODO: <- dcache 
+    .cache_read_EN(cache_read_start[0]),
+    .is_hit(is_hit[0]),
+    .broadcast_en(broadcast_fu[0]),
+    .broadcast_data(broadcast_data)
 );
 
 fu_load fu_load_2(
@@ -818,8 +834,11 @@ fu_load fu_load_2(
 
     // Cache
     .addr(cache_read_addr[1]),      // TODO: -> dcache 
-    .cache_data_in(cache_read_data[1]), // TODO: <- dcache 
-    .cache_read_EN(cache_read_start[1])
+    .cache_data_in(ld_data[1]), // TODO: <- dcache 
+    .cache_read_EN(cache_read_start[1]),
+    .is_hit(is_hit[1]),
+    .broadcast_en(broadcast_fu[1]),
+    .broadcast_data(broadcast_data)
 );
 
 
@@ -856,6 +875,40 @@ SQ SQ_0(
     , .older_stores_valid_display(older_stores_valid)
     `endif
 );
+
+//////////////////////////////////////////////////
+//                                              //
+//                 Data-Cache                   //
+//                                              //
+//////////////////////////////////////////////////
+
+dcache dche_0(
+    .clock(clock),
+    .reset(reset),
+    .Ctlr2proc_response(ctlr2dcache_response),
+    .Ctlr2proc_data(ctlr2dcache_data),
+    .Ctlr2proc_tag(ctlr2dcache_tag),
+    .dcache2ctlr_command(dcache2ctlr_command),
+    .dcache2ctlr_addr(dcache2ctlr_addr),
+    .dcache2ctlr_data(dcache2ctlr_data),
+    .sq_in(cache_wb),
+    .sq_stall(sq_stall_cache),
+    .ld_addr_in(cache_read_addr),
+    .ld_start(cache_read_start),
+    .is_hit(is_hit),
+    .ld_data(ld_data),
+    .broadcast_fu(broadcast_fu),
+    .broadcast_data(broadcast_data)
+    `ifdef TEST_MODE
+    , .cache_data_disp(cache_data_disp)
+    , .cache_tags_disp(cache_tags_disp)
+    , .MHSRS_disp(MHSRS_disp)
+    , .head_pointer(head_pointer)
+    , .issue_pointer(issue_pointer)
+    , .tail_pointer(tail_pointer)
+    `endif
+);
+
 
 
 //////////////////////////////////////////////////
@@ -902,6 +955,7 @@ ROB rob_0(
     .precise_state_valid(precise_state_valid),  // <- complete.precise_state_valid
     .target_pc(target_pc),                      // <- complete.target_pc
     .BPRecoverEN(BPRecoverEN),                  // <- retire.BPRecoverEN
+    .sq_stall(sq_stall_cache),
     .dispatch_index(new_rob_index),             // -> dispatch.rob_index
     .retire_entry(rob_retire_entry),                // -> retire.rob_head_entry
     .struct_stall(rob_stall)                    // -> dispatch.rob_stall
@@ -957,6 +1011,7 @@ retire_stage retire_0(
     .Retire_EN(RetireEN),                       // -> Freelist.RetireEN
     .Tolds_out(RetireReg),                      // -> Freelist.RetireReg
     .BPRecoverHead(BPRecoverHead),              // -> Freelist.BPRecoverHead
+    .sq_stall(sq_stall_cache),
     .SQRetireEN(SQRetireEN),                     // -> SQ.retire
     .halt(re_halt)
 );

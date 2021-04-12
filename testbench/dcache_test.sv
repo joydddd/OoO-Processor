@@ -29,9 +29,8 @@ module testbench;
     logic [1:0] ld_start;
     logic [1:0] is_hit;
     logic [1:0] [`XLEN-1:0] ld_data;    //valid if hit
-    logic [3:0] broadcast_tag;
+    logic [1:0] broadcast_tag;
     logic [`XLEN-1:0] broadcast_data;
-    logic [1:0] ld_stall;
 
     `ifdef TEST_MODE
       logic [31:0] [63:0] cache_data_disp;
@@ -57,15 +56,16 @@ module testbench;
         .ld_start(ld_start),
         .is_hit(is_hit),
         .ld_data(ld_data),
-        .broadcast_tag(broadcast_tag),
-        .broadcast_data(broadcast_data),
-        .ld_stall(ld_stall),
-        .cache_data_disp(cache_data_disp),
-        .cache_tags_disp(cache_tags_disp),
-        .MHSRS_disp(MHSRS_disp),
-        .head_pointer(head_pointer),
-        .issue_pointer(issue_pointer),
-        .tail_pointer(tail_pointer)
+        .broadcast_fu(broadcast_fu),
+        .broadcast_data(broadcast_data)
+        `ifdef TEST_MODE
+        , .cache_data_disp(cache_data_disp)
+        , .cache_tags_disp(cache_tags_disp)
+        , .MHSRS_disp(MHSRS_disp)
+        , .head_pointer(head_pointer)
+        , .issue_pointer(issue_pointer)
+        , .tail_pointer(tail_pointer)
+        `endif
     );
         
 
@@ -135,12 +135,12 @@ task show_output;
         $display("=====   Output   =====");
         $display("m_command: %d,  m_addr: %b,  m_data: %h", dcache2ctlr_command, dcache2ctlr_addr, dcache2ctlr_data);
         $display("Load_output");
-        $display("| No.| is_hit |  ld_data | ld_stall |");
+        $display("| No.| is_hit |  ld_data |");
         for (int i=1; i>=0; --i) begin
-            $display("| %1d: |      %b | %h |        %b |", i, is_hit[i], ld_data[i], ld_stall[i]);
+            $display("| %1d: |      %b | %h |        %b |", i, is_hit[i], ld_data[i]);
         end
         $display("---------------------");
-        $display("broadcast_tag : %d ,   broadcast_data : %h", broadcast_tag, broadcast_data);
+        $display("broadcast_fu : %d ,   broadcast_data : %h", broadcast_fu, broadcast_data);
         $display("SQ stall: %b", sq_stall);
     end
 endtask

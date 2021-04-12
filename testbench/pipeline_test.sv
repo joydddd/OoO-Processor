@@ -5,7 +5,6 @@
 `define TEST_MODE 
 `define DIS_DEBUG
 `define CACHE_MODE
-`define CACHE_SIM // TODO: comment this line to use real cache instead of simulation
 
 /* import freelist simulator */
 import "DPI-C" function void fl_init();
@@ -107,6 +106,14 @@ logic [2**`FU-1:0]          complete_stall_display;
     logic [4:0]                      fl_tail_display;
     logic                            fl_empty_display;
 
+
+// Data cache
+    logic [31:0] [63:0] cache_data_disp;
+    logic [31:0] [7:0] cache_tags_disp;
+    MHSRS_ENTRY_PACKET [`MHSRS_W-1:0] MHSRS_disp;
+    logic [`MHSRS-1:0] head_pointer;
+    logic [`MHSRS-1:0] issue_pointer;
+    logic [`MHSRS-1:0] tail_pointer;
 `endif
 
 `ifdef DIS_DEBUG
@@ -230,6 +237,13 @@ pipeline tbd(
     , .map_ar_pr_disp(map_ar_pr)
     , .map_ar_disp(map_ar)
     , .RetireEN_disp(RetireEN)
+    // Data Cache
+    , .cache_data_disp(cache_data_disp)
+    , .cache_tags_disp(cache_tags_disp)
+    , .MHSRS_disp(MHSRS_disp)
+    , .head_pointer(head_pointer)
+    , .issue_pointer(issue_pointer)
+    , .tail_pointer(tail_pointer)
 `endif // TEST_MODE
 
 `ifdef DIS_DEBUG
@@ -578,6 +592,65 @@ task show_mpt_entry;
         $display(" ");
     end
 endtask
+
+task show_dcache;
+    begin
+        $display("=====   Cache ram   =====");
+        $display("|  Entry(idx) |      Tag |             data |");
+        for (int i=0; i<32; ++i) begin
+            $display("| %d | %b | %h |", i, cache_tags_disp[i], cache_data_disp[i]);
+        end
+        $display("-------------------------------------------------");
+    end
+endtask
+
+task show_MHSRS;
+    begin
+        $display("=====   MHSRS   =====");
+        $display("head: %d, issue: %d, tail: %d", head_pointer, issue_pointer, tail_pointer);
+        $display("|         No. |                              addr  |command|mem_tag|left_or_right|            data |issued|");
+        for (int i = 0; i < 16; i++) begin
+            $display("| %d |  %b  |     %d |    %d |           %b | %h | %b |", i, MHSRS_disp[i].addr, MHSRS_disp[i].command, MHSRS_disp[i].mem_tag, MHSRS_disp[i].left_or_right, MHSRS_disp[i].data, MHSRS_disp[i].issued);
+        end
+        $display("----------------------------------------------------------------- ");
+    end
+endtask
+
+task show_Dcache_input;
+    begin
+        $display("=====   Input   =====");
+        $display("m_response: %d,  m_data: %h,  m_tag: %d", Ctlr2proc_response, Ctlr2proc_data, Ctlr2proc_tag);
+        $display("Load_input");
+        $display("| No.|                         addr_in |start|");
+        for (int i=1; i>=0; --i) begin
+            $display("| %1d: | %b | %b |", i, ld_addr_in[i], ld_start[i]);
+        end
+        $display("----------");
+        $display("Store_input");
+        $display("|No.| ready |usebytes|                             addr |     data |");
+        for (int i=2; i>=0; --i) begin
+            $display("| %1d |     %b |   %b | %b | %h |", i, sq_in[i].ready, sq_in[i].usebytes, sq_in[i].addr, sq_in[i].data);
+        end
+        $display("----------------------------------------------------------------- ");
+    end
+endtask
+
+task show_Dcache_output;
+    begin
+        $display("=====   Output   =====");
+        $display("m_command: %d,  m_addr: %b,  m_data: %h", dcache2ctlr_command, dcache2ctlr_addr, dcache2ctlr_data);
+        $display("Load_output");
+        $display("| No.| is_hit |  ld_data |");
+        for (int i=1; i>=0; --i) begin
+            $display("| %1d: |      %b | %h |        %b |", i, is_hit[i], ld_data[i]);
+        end
+        $display("---------------------");
+        $display("broadcast_fu : %d ,   broadcast_data : %h", broadcast_fu, broadcast_data);
+        $display("SQ stall: %b", sq_stall);
+    end
+endtask
+
+
 
 //////////////////////////////////////////////////////////
 ///////////////         SET      
