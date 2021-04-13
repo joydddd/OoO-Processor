@@ -161,7 +161,7 @@ mem memory(
     .proc2mem_addr(proc2Imem_addr),         // <- pipeline.proc2mem_addr
     //support for memory model with byte level addressing
     // TODO: change when we have store and load
-    .proc2mem_data(64'b0),                  // write data, no need for this test 
+    .proc2mem_data(proc2Imem_data),         // write data, no need for this test 
 `ifndef CACHE_MODE  
     .proc2mem_size(DOUBLE),                 //BYTE, HALF, WORD or DOUBLE, no need for this test
 `endif
