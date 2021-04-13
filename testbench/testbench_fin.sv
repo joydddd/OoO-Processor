@@ -5,7 +5,6 @@
 `define TEST_MODE 
 `define DIS_DEBUG
 `define CACHE_MODE
-`define CACHE_SIM // TODO: comment this line to use real cache instead of simulation
 
 /* import freelist simulator */
 import "DPI-C" function void fl_init();
@@ -301,28 +300,6 @@ always @(negedge clock) begin
         inst_total += inst_count;
 end
 
-`ifdef CACHE_SIM
-always @(posedge clock) begin
-    if (reset) begin
-        mem_init();
-    end
-end
-
-always @(posedge clock) begin
-    if (!reset) begin
-        mem_write(cache_wb_sim[0].addr, cache_wb_sim[0].data, cache_wb_sim[0].usebytes[3], cache_wb_sim[0].usebytes[2], cache_wb_sim[0].usebytes[1], cache_wb_sim[0].usebytes[0]);
-        mem_write(cache_wb_sim[1].addr, cache_wb_sim[1].data, cache_wb_sim[1].usebytes[3], cache_wb_sim[1].usebytes[2], cache_wb_sim[1].usebytes[1], cache_wb_sim[1].usebytes[0]);
-        mem_write(cache_wb_sim[2].addr, cache_wb_sim[2].data, cache_wb_sim[2].usebytes[3], cache_wb_sim[2].usebytes[2], cache_wb_sim[2].usebytes[1], cache_wb_sim[2].usebytes[0]);
-    end
-end
-
-always @(cache_read_addr_sim, cache_read_start_sim) begin
-    if (cache_read_start_sim[0]) cache_read_data_sim[0] = mem_read(cache_read_addr_sim[0]);
-    if (cache_read_start_sim[1]) cache_read_data_sim[1] = mem_read(cache_read_addr_sim[1]);
-end
-
-`endif
-
 //////////////////////////////////////////////////////////////
 //////////////                  DISPLAY
 /////////////////////////////////////////////////////////////
@@ -353,33 +330,33 @@ task show_mem_with_decimal;
             for (int i = head_pointer; i < tail_pointer; i=i+1) begin
                 if (MHSRS_disp[i].command == BUS_STORE) begin
                     if (MHSRS_disp[i].left_or_right)
-                        memory_final[MHSRS_disp[i].addr][63:32] = MHSRS_disp[i].data[63:32];
+                        memory_final[MHSRS_disp[i].addr >> 3][63:32] = MHSRS_disp[i].data[63:32];
                     else
-                        memory_final[MHSRS_disp[i].addr][31:0] = MHSRS_disp[i].data[31:0];
+                        memory_final[MHSRS_disp[i].addr >> 3][31:0] = MHSRS_disp[i].data[31:0];
                 end
             end
         end else begin
             for (int i = head_pointer; i <= `MHSRS_W-1; i=i+1) begin
                 if (MHSRS_disp[i].command == BUS_STORE) begin
                     if (MHSRS_disp[i].left_or_right)
-                        memory_final[MHSRS_disp[i].addr][63:32] = MHSRS_disp[i].data[63:32];
+                        memory_final[MHSRS_disp[i].addr >> 3][63:32] = MHSRS_disp[i].data[63:32];
                     else
-                        memory_final[MHSRS_disp[i].addr][31:0] = MHSRS_disp[i].data[31:0];
+                        memory_final[MHSRS_disp[i].addr >> 3][31:0] = MHSRS_disp[i].data[31:0];
                 end
             end
             for (int i = 0; i < tail_pointer; i=i+1) begin
                 if (MHSRS_disp[i].command == BUS_STORE) begin
                     if (MHSRS_disp[i].left_or_right)
-                        memory_final[MHSRS_disp[i].addr][63:32] = MHSRS_disp[i].data[63:32];
+                        memory_final[MHSRS_disp[i].addr >> 3][63:32] = MHSRS_disp[i].data[63:32];
                     else
-                        memory_final[MHSRS_disp[i].addr][31:0] = MHSRS_disp[i].data[31:0];
+                        memory_final[MHSRS_disp[i].addr >> 3][31:0] = MHSRS_disp[i].data[31:0];
                 end
             end
         end
         // write back all stores in dcache
         for (int i = 0; i < 32; i=i+1) begin
-            if (valids_disp) begin
-                memory_final[{cache_tags_disp, i[4:0], 3'b000}] = cache_data_disp[i];
+            if (valids_disp[i]) begin
+                memory_final[{cache_tags_disp[i], i[4:0]}] = cache_data_disp[i];
             end
         end
 
