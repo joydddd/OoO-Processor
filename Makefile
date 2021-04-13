@@ -13,7 +13,7 @@
 #
 #
 
-SOURCE := test_progs/rv32_copy_long.s
+SOURCE := test_progs/mult_no_lsq.s
 
 CRT = crt.s
 LINKERS = linker.lds
