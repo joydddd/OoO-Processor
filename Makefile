@@ -96,6 +96,7 @@ MULTTESTBENCH = testbench/mult_test.sv
 # data cache
 DCFILES = cache/dcache.sv cache/dcachemem.sv
 DCTESTBENCH = testbench/dcache_test.sv
+DCSYNFILES = synth/dcache.vg
 
 
 # fetch stage
@@ -173,6 +174,10 @@ export PR_NAME = physical_regfile
 export MULT_NAME = fu_mult
 export LOAD_NAME = fu_load
 export SQ_NAME = SQ
+
+#dcache
+export DCACHE_NAME = dcache
+export DCFILES
 
 export RSFILES
 export ROBFILES
@@ -342,6 +347,9 @@ $(ISFIFOSYN): $(ISFIFOFILE) $(SYNTH_DIR)/is_fifo.tcl
 $(PRSYNFILES): $(PRFILES) $(SYNTH_DIR)/pr.tcl
 	cd $(SYNTH_DIR) && dc_shell-t -f ./pr.tcl | tee pr_synth.out
 
+$(DCSYNFILES): $(DCFILES) $(SYNTH_DIR)/dcache.tcl
+	cd $(SYNTH_DIR) && dc_shell-t -f ./dcache.tcl | tee dcache_synth.out
+
 # FUs
 $(MULTSYNFILES): $(MULTFILES) $(SYNTH_DIR)/mult.tcl
 	cd $(SYNTH_DIR) && dc_shell-t -f ./mult.tcl | tee mult_synth.out
@@ -389,6 +397,12 @@ sq_syn: sq_syn_simv
 sq_syn_simv: $(HEADERS) $(SQSYNFILES) $(SQTESTBENCH)
 	$(VCS) $^ $(LIB) +define+SYNTH_TEST +error+20 -o sq_syn_simv
 
+dc_syn: dc_syn_simv
+	./dc_syn_simv | tee dc_syn_program.out
+
+dc_syn_simv: $(HEADERS) $(DCSYNFILES) $(DCTESTBENCH)
+	$(VCS) $^ $(LIB) +define+SYNTH_TEST +error+20 -o dc_syn_simv
+
 
 # dispatch pipeline test
 # $(DSYNFILES):	$(RSSYNFILES) $(MTSYNFILES) $(ISFIFOSYN) $(FREELISTSYNFILES) $(ROBSYNFILES) $(DFILES) $(SYNTH_DIR)/dis.tcl  
@@ -418,7 +432,7 @@ mult_syn_simv: $(HEADERS) $(MULTSYNFILES) $(MULTTESTBENCH)
 	$(VCS) $^ $(LIB) +define+SYNTH_TEST +error+20 -o mult_syn_simv
  
 
-$(PLSYNFILES):	$(PLFILES) $(RSSYNFILES) $(MTSYNFILES) $(ARCHMTSYNFILES) $(ISFIFOSYN) $(FREELISTSYNFILES) $(ROBSYNFILES) $(PRSYNFILES) $(MULTSYNFILES) $(SQSYNFILES) $(LOADSYNFILES) $(ICACHESYNFILES) $(SYNTH_DIR)/pl.tcl 
+$(PLSYNFILES):	$(PLFILES) $(RSSYNFILES) $(MTSYNFILES) $(ARCHMTSYNFILES) $(ISFIFOSYN) $(FREELISTSYNFILES) $(ROBSYNFILES) $(PRSYNFILES) $(MULTSYNFILES) $(SQSYNFILES) $(LOADSYNFILES) $(ICACHESYNFILES) $(DCFILES) $(SYNTH_DIR)/pl.tcl 
 	cd $(SYNTH_DIR) && dc_shell-t -f ./pl.tcl | tee pl_synth.out
 
 pl_syn: pl_syn_simv
@@ -430,7 +444,7 @@ pl_syn_simv: $(HEADERS) $(PLSYNFILES) $(PLTESTBENCH)
 syn:	syn_simv 
 	./syn_simv | tee syn_program.out
 
-syn_simv:	$(HEADERS) $(SYNFILES) $(TESTBENCH)
+syn_simv:	$(HEADERS) $(PLSYNFILES) $(PLTESTBENCH)
 	$(VCS) $^ $(LIB) +define+SYNTH_TEST -o syn_simv 
 
 .PHONY: syn
