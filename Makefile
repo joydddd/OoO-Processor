@@ -444,7 +444,7 @@ pl_syn_simv: $(HEADERS) $(PLSYNFILES) $(PLTESTBENCH)
 syn:	syn_simv 
 	./syn_simv | tee syn_program.out
 
-syn_simv:	$(HEADERS) $(PLSYNFILES) $(PLTESTBENCH)
+syn_simv:	$(HEADERS) $(PLSYNFILES) $(FINTESTBENCH)
 	$(VCS) $^ $(LIB) +define+SYNTH_TEST -o syn_simv 
 
 .PHONY: syn
