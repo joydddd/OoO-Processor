@@ -1,0 +1,6 @@
+riscv gcc -mno-relax -march=rv32im -mabi=ilp32 -nostartfiles -Wno-main -mstrict-align test_progs/rv32_fib_rec.s -T aslinker.lds -o program.elf 
+cp program.elf program.debug.elf
+riscv objdump -SD -M no-aliases  program.debug.elf > program.dump
+riscv objdump -SD -M numeric,no-aliases program.debug.elf > program.debug.dump
+rm program.debug.elf
+riscv elf2hex 8 8192 program.elf > program.mem
