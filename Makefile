@@ -93,6 +93,10 @@ MULTFILES = verilog/fu_mult.sv
 MULTSYNFILES = synth/fu_mult.vg
 MULTTESTBENCH = testbench/mult_test.sv
 
+# data cache
+DCFILES = cache/dcache.sv cache/dcachemem.sv
+DCTESTBENCH = testbench/dcache_test.sv
+
 
 # fetch stage
 FSTESTBENCH = testbench/fetch_test.sv
@@ -200,7 +204,7 @@ all:    simv
 # pipeline(currently no fetch)
 pipeline: pl_simv
 	./pl_simv | tee pl_sim_program.out
-pl_simv: $(HEADERS) $(PLFILES) $(RSFILES) $(MTFILES) $(ISFIFOFILE) $(FREELISTFILES) $(ROBFILES) $(PRFILES) $(ALUFILES) $(LSFILES) $(MULTFILES) $(ICACHEFILES) $(PLTESTBENCH)
+pl_simv: $(HEADERS) $(PLFILES) $(RSFILES) $(MTFILES) $(ISFIFOFILE) $(FREELISTFILES) $(ROBFILES) $(PRFILES) $(ALUFILES) $(LSFILES) $(MULTFILES) $(ICACHEFILES) $(PLTESTBENCH) $(DCFILES)
 	$(VCS) $^ -o pl_simv
 
 # RS
@@ -258,6 +262,11 @@ mult: mult_simv
 mult_simv: $(HEADERS) $(MULTFILES) $(MULTTESTBENCH)
 	$(VCS) $^ -o mult_simv
 
+# data cache
+dc: dc_simv
+	./dc_simv | tee dc_sim_program.out
+dc_simv: $(HEADERS) $(DCFILES) $(DCTESTBENCH)
+	$(VCS) $^ -o dc_simv
 # sq
 sq: sq_simv
 	./sq_simv | tee sq_sim_program.out
@@ -273,7 +282,7 @@ ls_simv: $(HEADERS) $(LSFILES) $(LSTESTBENCH)
 
 sim:	simv
 	./simv | tee sim_program.out
-simv: $(HEADERS) $(PLFILES) $(RSFILES) $(MTFILES) $(ISFIFOFILE) $(FREELISTFILES) $(ROBFILES) $(PRFILES) $(ALUFILES) $(LSFILES) $(MULTFILES) $(ICACHEFILES) $(FINTESTBENCH)
+simv: $(HEADERS) $(PLFILES) $(RSFILES) $(MTFILES) $(ISFIFOFILE) $(FREELISTFILES) $(ROBFILES) $(PRFILES) $(ALUFILES) $(LSFILES) $(MULTFILES) $(ICACHEFILES) $(PLTESTBENCH) $(DCFILES)
 	$(VCS) $^ -o simv
 
 .PHONY: sim

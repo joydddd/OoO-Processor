@@ -35,6 +35,10 @@ import "DPI-C" function void mem_write(int addr, int data, int byte3, byte2, byt
 import "DPI-C" function int mem_read(int addr);
 import "DPI-C" function void mem_print();
 
+/* print memory */
+import "DPI-C" function void mem_copy(int addr_int, int data_int);
+import "DPI-C" function void mem_final_print();
+
 module testbench;
 logic clock, reset;
 logic program_halt;
@@ -107,6 +111,15 @@ logic [2**`FU-1:0]          complete_stall_display;
     logic [4:0]                      fl_head_display;
     logic [4:0]                      fl_tail_display;
     logic                            fl_empty_display;
+
+// Data cache
+    logic [31:0] [63:0] cache_data_disp;
+    logic [31:0] [7:0] cache_tags_disp;
+    logic [31:0]       valids_disp;
+    MHSRS_ENTRY_PACKET [`MHSRS_W-1:0] MHSRS_disp;
+    logic [`MHSRS-1:0] head_pointer;
+    logic [`MHSRS-1:0] issue_pointer;
+    logic [`MHSRS-1:0] tail_pointer;
 
 `endif
 
@@ -221,6 +234,14 @@ pipeline tbd(
     , .map_ar_pr_disp(map_ar_pr)
     , .map_ar_disp(map_ar)
     , .RetireEN_disp(RetireEN)
+    // Data Cache
+    , .cache_data_disp(cache_data_disp)
+    , .cache_tags_disp(cache_tags_disp)
+    , .valids_disp(valids_disp)
+    , .MHSRS_disp(MHSRS_disp)
+    , .head_pointer(head_pointer)
+    , .issue_pointer(issue_pointer)
+    , .tail_pointer(tail_pointer)
 `endif // TEST_MODE
 
 `ifdef DIS_DEBUG
@@ -323,19 +344,71 @@ task show_mem_with_decimal;
 	input [31:0] start_addr;
 	input [31:0] end_addr;
 	int showing_data;
+    logic [63:0] memory_final  [`MEM_64BIT_LINES - 1:0];
 	begin
-		$display("@@@");
+        // copy the current memory
+        memory_final = memory.unified_memory;
+        // write back all stores in MHSRS
+        if (head_pointer <= tail_pointer) begin
+            for (int i = head_pointer; i < tail_pointer; i=i+1) begin
+                if (MHSRS_disp[i].command == BUS_STORE) begin
+                    if (MHSRS_disp[i].left_or_right)
+                        memory_final[MHSRS_disp[i].addr][63:32] = MHSRS_disp[i].data[63:32];
+                    else
+                        memory_final[MHSRS_disp[i].addr][31:0] = MHSRS_disp[i].data[31:0];
+                end
+            end
+        end else begin
+            for (int i = head_pointer; i <= `MHSRS_W-1; i=i+1) begin
+                if (MHSRS_disp[i].command == BUS_STORE) begin
+                    if (MHSRS_disp[i].left_or_right)
+                        memory_final[MHSRS_disp[i].addr][63:32] = MHSRS_disp[i].data[63:32];
+                    else
+                        memory_final[MHSRS_disp[i].addr][31:0] = MHSRS_disp[i].data[31:0];
+                end
+            end
+            for (int i = 0; i < tail_pointer; i=i+1) begin
+                if (MHSRS_disp[i].command == BUS_STORE) begin
+                    if (MHSRS_disp[i].left_or_right)
+                        memory_final[MHSRS_disp[i].addr][63:32] = MHSRS_disp[i].data[63:32];
+                    else
+                        memory_final[MHSRS_disp[i].addr][31:0] = MHSRS_disp[i].data[31:0];
+                end
+            end
+        end
+        // write back all stores in dcache
+        for (int i = 0; i < 32; i=i+1) begin
+            if (valids_disp) begin
+                memory_final[{cache_tags_disp, i[4:0], 3'b000}] = cache_data_disp[i];
+            end
+        end
+
+        // print out
+        $display("@@@");
 		showing_data=0;
 		for(int k=start_addr;k<=end_addr; k=k+1)
-			if (memory.unified_memory[k] != 0) begin
-				$display("@@@ mem[%5d] = %x : %0d", k*8, memory.unified_memory[k], 
-			                                            memory.unified_memory[k]);
+			if (memory_final[k] != 0) begin
+				$display("@@@ mem[%5d] = %x : %0d", k*8, memory_final[k], memory_final[k]);
 				showing_data=1;
 			end else if(showing_data!=0) begin
 				$display("@@@");
 				showing_data=0;
 			end
 		$display("@@@");
+        // // copy the current memory
+        // for(int k=0;k<=`MEM_64BIT_LINES-1; k=k+1) begin
+        //     for (int j = 0; j <= 1; j=j+1) begin
+        //         if (j != 0) begin
+        //             mem_copy(k*8+j*4, memory.unified_memory[k][63:32]);
+        //         end else begin
+        //             mem_copy(k*8+j*4, memory.unified_memory[k][31:0]);
+        //         end
+        //     end
+        // end
+        // // write back all entries in MHSRS
+
+        // // print out
+		// mem_final_print();
 	end
 endtask  // task show_mem_with_decimal
 
