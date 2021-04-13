@@ -35,7 +35,7 @@ module fu_load(
     // Cache
     output logic [`XLEN-1:0]    addr,
     output logic                cache_read_EN,             
-    input [`XLEN-1:0]           cache_data_in,             // if hit, just read data from here
+    input [`XLEN-1:0]           cache_data_in,             // if hit, just read data from here    ATTENTION: Any time this is 1 (even though the status is waiting for cache), you should get data from this port
     input                       is_hit,                   // "if the data hits". this value is independent to cache_read_EN, when is_hit is 0 and cache_read_EN is 1, the data "miss" and wait for broadcast
     input                       broadcast_en,
     input [`XLEN-1:0]           broadcast_data            // if broadcast_en is 1, read data from here, otherwise this data is invalid
@@ -96,8 +96,8 @@ assign sq_forward = (sq_forward_bytes == ins_reg.usebytes);
 assign addr = {ins_reg.addr[`XLEN-1:2], 2'b0};
 logic waiting_for_cache;
 logic [`XLEN-1:0] cache_data, data_after_cache;
-assign waiting_for_cache = 0; // TODO: change this when we have cache       zhy: I think it should be   !is_hit && cache_read_EN 
-assign cache_data = cache_data_in;
+assign waiting_for_cache = !is_hit && !broadcast_en; // TODO: change this when we have cache       zhy: I think it should be   !is_hit && cache_read_EN 
+assign cache_data = is_hit ? cache_data_in : (broadcast_en ? broadcast_data : 0);
 always_comb begin
     data_after_cache = cache_data;
     if (ins_reg.forward_bytes[3]) data_after_cache[31:24] = ins_reg.aligned_data[31:24];

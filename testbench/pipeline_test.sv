@@ -399,7 +399,9 @@ always @(negedge clock) begin
     if (!reset)  begin
         #1;
         print_retire_wb();
-        // $display("Cycle: %d inst_count: %d, cum: %d", cycle_count, inst_count, inst_total);
+         $display("Cycle: %d inst_count: %d, cum: %d", cycle_count, inst_count, inst_total);
+        show_dcache;
+        show_MHSRS;
         // $display();
         // $display("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
         // $display();
@@ -638,9 +640,9 @@ task show_MHSRS;
     begin
         $display("=====   MHSRS   =====");
         $display("head: %d, issue: %d, tail: %d", head_pointer, issue_pointer, tail_pointer);
-        $display("|         No. |                              addr  |command|mem_tag|left_or_right|            data |issued|");
+        $display("|         No. |                              addr  |command|mem_tag|left_or_right|            data |issued| usedbytes | dirty |");
         for (int i = 0; i < 16; i++) begin
-            $display("| %d |  %b  |     %d |    %d |           %b | %h | %b |", i, MHSRS_disp[i].addr, MHSRS_disp[i].command, MHSRS_disp[i].mem_tag, MHSRS_disp[i].left_or_right, MHSRS_disp[i].data, MHSRS_disp[i].issued);
+            $display("| %d |  %b  |     %d |    %d |           %b | %h | %b | %b |  %b |", i, MHSRS_disp[i].addr, MHSRS_disp[i].command, MHSRS_disp[i].mem_tag, MHSRS_disp[i].left_or_right, MHSRS_disp[i].data, MHSRS_disp[i].issued, MHSRS_disp[i].usebytes, MHSRS_disp[i].dirty);
         end
         $display("----------------------------------------------------------------- ");
     end

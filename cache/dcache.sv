@@ -224,7 +224,7 @@ module dcache(
       dcache2ctlr_addr = mshrs_table[issue].addr;
       dcache2ctlr_data = mshrs_table[issue].data;
     end
-    if (Ctlr2proc_response!=4'b0) begin
+    if (mshrs_table[issue].command!= BUS_NONE && Ctlr2proc_response!=4'b0) begin
       mshrs_table_next_after_issue[issue].mem_tag = Ctlr2proc_response;
       mshrs_table_next_after_issue[issue].issued = 1'b1;
       issue_next = issue+1;

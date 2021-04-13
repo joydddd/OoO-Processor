@@ -13,7 +13,7 @@
 #
 #
 
-SOURCE := test_progs/mult_no_lsq.s
+SOURCE := test_progs/rv32_copy_long.s
 
 CRT = crt.s
 LINKERS = linker.lds
@@ -446,13 +446,8 @@ pl_syn_simv: $(HEADERS) $(PLSYNFILES) $(PLTESTBENCH)
 syn:	syn_simv
 	./syn_simv | tee syn_program.out
 
-<<<<<<< HEAD
-syn_simv:	$(HEADERS) $(PLSYNFILES) $(PLTESTBENCH)
-	$(VCS) $^ $(LIB) +define+SYNTH_TEST +error+20 -o syn_simv
-=======
 syn_simv:	$(HEADERS) $(PLSYNFILES) $(FINTESTBENCH)
 	$(VCS) $^ $(LIB) +define+SYNTH_TEST -o syn_simv 
->>>>>>> Dcache
 
 .PHONY: syn
 
