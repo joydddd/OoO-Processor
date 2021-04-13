@@ -351,29 +351,29 @@ task show_mem_with_decimal;
         // write back all stores in MHSRS
         if (head_pointer <= tail_pointer) begin
             for (int i = head_pointer; i < tail_pointer; i=i+1) begin
-                //if (MHSRS_disp[i].command == BUS_STORE) begin
+                if (MHSRS_disp[i].command != BUS_NONE) begin
                     if (MHSRS_disp[i].left_or_right)
                         memory_final[MHSRS_disp[i].addr >> 3][63:32] = MHSRS_disp[i].data[63:32];
                     else
                         memory_final[MHSRS_disp[i].addr >> 3][31:0] = MHSRS_disp[i].data[31:0];
-                //end
+                end
             end
         end else begin
             for (int i = head_pointer; i <= `MHSRS_W-1; i=i+1) begin
-                //if (MHSRS_disp[i].command == BUS_STORE) begin
+                if (MHSRS_disp[i].command != BUS_NONE) begin
                     if (MHSRS_disp[i].left_or_right)
                         memory_final[MHSRS_disp[i].addr >> 3][63:32] = MHSRS_disp[i].data[63:32];
                     else
                         memory_final[MHSRS_disp[i].addr >> 3][31:0] = MHSRS_disp[i].data[31:0];
-                //end
+                end
             end
             for (int i = 0; i < tail_pointer; i=i+1) begin
-                //if (MHSRS_disp[i].command == BUS_STORE) begin
+                if (MHSRS_disp[i].command != BUS_NONE) begin
                     if (MHSRS_disp[i].left_or_right)
                         memory_final[MHSRS_disp[i].addr >> 3][63:32] = MHSRS_disp[i].data[63:32];
                     else
                         memory_final[MHSRS_disp[i].addr >> 3][31:0] = MHSRS_disp[i].data[31:0];
-                //end
+                end
             end
         end
         // write back all stores in dcache
