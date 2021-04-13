@@ -345,41 +345,83 @@ task show_mem_with_decimal;
 	input [31:0] end_addr;
 	int showing_data;
     logic [63:0] memory_final  [`MEM_64BIT_LINES - 1:0];
+    //logic [31:0] [63:0] cache_data_final;
 	begin
         // copy the current memory
         memory_final = memory.unified_memory;
-        // write back all stores in MHSRS
-        if (head_pointer <= tail_pointer) begin
-            for (int i = head_pointer; i < tail_pointer; i=i+1) begin
-                if (MHSRS_disp[i].command != BUS_NONE) begin
-                    if (MHSRS_disp[i].left_or_right)
-                        memory_final[MHSRS_disp[i].addr >> 3][63:32] = MHSRS_disp[i].data[63:32];
-                    else
-                        memory_final[MHSRS_disp[i].addr >> 3][31:0] = MHSRS_disp[i].data[31:0];
-                end
-            end
-        end else begin
-            for (int i = head_pointer; i <= `MHSRS_W-1; i=i+1) begin
-                if (MHSRS_disp[i].command != BUS_NONE) begin
-                    if (MHSRS_disp[i].left_or_right)
-                        memory_final[MHSRS_disp[i].addr >> 3][63:32] = MHSRS_disp[i].data[63:32];
-                    else
-                        memory_final[MHSRS_disp[i].addr >> 3][31:0] = MHSRS_disp[i].data[31:0];
-                end
-            end
-            for (int i = 0; i < tail_pointer; i=i+1) begin
-                if (MHSRS_disp[i].command != BUS_NONE) begin
-                    if (MHSRS_disp[i].left_or_right)
-                        memory_final[MHSRS_disp[i].addr >> 3][63:32] = MHSRS_disp[i].data[63:32];
-                    else
-                        memory_final[MHSRS_disp[i].addr >> 3][31:0] = MHSRS_disp[i].data[31:0];
-                end
-            end
-        end
+        // copy the current dcache
+        // cache_data_final = cache_data_disp;
         // write back all stores in dcache
         for (int i = 0; i < 32; i=i+1) begin
             if (valids_disp[i]) begin
                 memory_final[{cache_tags_disp[i], i[4:0]}] = cache_data_disp[i];
+            end
+        end
+        // write back all stores in MHSRS
+        if (head_pointer <= tail_pointer) begin
+            for (int i = head_pointer; i < tail_pointer; i=i+1) begin
+                if (MHSRS_disp[i].command == BUS_STORE) begin
+                    if (MHSRS_disp[i].left_or_right)
+                        memory_final[MHSRS_disp[i].addr >> 3][63:32] = MHSRS_disp[i].data[63:32];
+                    else
+                        memory_final[MHSRS_disp[i].addr >> 3][31:0] = MHSRS_disp[i].data[31:0];
+                end else if (MHSRS_disp[i].command == BUS_LOAD && MHSRS_disp[i].dirty) begin
+                    for (int j = 0; j < 8; j=j+1) begin
+                        if (MHSRS_disp[i].usebytes[j]) begin
+                            memory_final[MHSRS_disp[i].addr >> 3][8*j+7] = MHSRS_disp[i].data[8*j+7];
+                            memory_final[MHSRS_disp[i].addr >> 3][8*j+6] = MHSRS_disp[i].data[8*j+6];
+                            memory_final[MHSRS_disp[i].addr >> 3][8*j+5] = MHSRS_disp[i].data[8*j+5];
+                            memory_final[MHSRS_disp[i].addr >> 3][8*j+4] = MHSRS_disp[i].data[8*j+4];
+                            memory_final[MHSRS_disp[i].addr >> 3][8*j+3] = MHSRS_disp[i].data[8*j+3];
+                            memory_final[MHSRS_disp[i].addr >> 3][8*j+2] = MHSRS_disp[i].data[8*j+2];
+                            memory_final[MHSRS_disp[i].addr >> 3][8*j+1] = MHSRS_disp[i].data[8*j+1];
+                            memory_final[MHSRS_disp[i].addr >> 3][8*j+0] = MHSRS_disp[i].data[8*j+0];
+                        end
+                    end
+                end
+            end
+        end else begin
+            for (int i = head_pointer; i <= `MHSRS_W-1; i=i+1) begin
+                if (MHSRS_disp[i].command == BUS_STORE) begin
+                    if (MHSRS_disp[i].left_or_right)
+                        memory_final[MHSRS_disp[i].addr >> 3][63:32] = MHSRS_disp[i].data[63:32];
+                    else
+                        memory_final[MHSRS_disp[i].addr >> 3][31:0] = MHSRS_disp[i].data[31:0];
+                end else if (MHSRS_disp[i].command == BUS_LOAD && MHSRS_disp[i].dirty) begin
+                    for (int j = 0; j < 8; j=j+1) begin
+                        if (MHSRS_disp[i].usebytes[j]) begin
+                            memory_final[MHSRS_disp[i].addr >> 3][8*j+7] = MHSRS_disp[i].data[8*j+7];
+                            memory_final[MHSRS_disp[i].addr >> 3][8*j+6] = MHSRS_disp[i].data[8*j+6];
+                            memory_final[MHSRS_disp[i].addr >> 3][8*j+5] = MHSRS_disp[i].data[8*j+5];
+                            memory_final[MHSRS_disp[i].addr >> 3][8*j+4] = MHSRS_disp[i].data[8*j+4];
+                            memory_final[MHSRS_disp[i].addr >> 3][8*j+3] = MHSRS_disp[i].data[8*j+3];
+                            memory_final[MHSRS_disp[i].addr >> 3][8*j+2] = MHSRS_disp[i].data[8*j+2];
+                            memory_final[MHSRS_disp[i].addr >> 3][8*j+1] = MHSRS_disp[i].data[8*j+1];
+                            memory_final[MHSRS_disp[i].addr >> 3][8*j+0] = MHSRS_disp[i].data[8*j+0];
+                        end
+                    end
+                end
+            end
+            for (int i = 0; i < tail_pointer; i=i+1) begin
+                if (MHSRS_disp[i].command == BUS_STORE) begin
+                    if (MHSRS_disp[i].left_or_right)
+                        memory_final[MHSRS_disp[i].addr >> 3][63:32] = MHSRS_disp[i].data[63:32];
+                    else
+                        memory_final[MHSRS_disp[i].addr >> 3][31:0] = MHSRS_disp[i].data[31:0];
+                end else if (MHSRS_disp[i].command == BUS_LOAD && MHSRS_disp[i].dirty) begin
+                    for (int j = 0; j < 8; j=j+1) begin
+                        if (MHSRS_disp[i].usebytes[j]) begin
+                            memory_final[MHSRS_disp[i].addr >> 3][8*j+7] = MHSRS_disp[i].data[8*j+7];
+                            memory_final[MHSRS_disp[i].addr >> 3][8*j+6] = MHSRS_disp[i].data[8*j+6];
+                            memory_final[MHSRS_disp[i].addr >> 3][8*j+5] = MHSRS_disp[i].data[8*j+5];
+                            memory_final[MHSRS_disp[i].addr >> 3][8*j+4] = MHSRS_disp[i].data[8*j+4];
+                            memory_final[MHSRS_disp[i].addr >> 3][8*j+3] = MHSRS_disp[i].data[8*j+3];
+                            memory_final[MHSRS_disp[i].addr >> 3][8*j+2] = MHSRS_disp[i].data[8*j+2];
+                            memory_final[MHSRS_disp[i].addr >> 3][8*j+1] = MHSRS_disp[i].data[8*j+1];
+                            memory_final[MHSRS_disp[i].addr >> 3][8*j+0] = MHSRS_disp[i].data[8*j+0];
+                        end
+                    end
+                end
             end
         end
 
