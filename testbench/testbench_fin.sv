@@ -315,6 +315,29 @@ task print_cpi;
     end
 endtask
 
+task show_dcache;
+    begin
+        $display("=====   Cache ram   =====");
+        $display("|  Entry(idx) |      Tag |             data |");
+        for (int i=0; i<32; ++i) begin
+            $display("| %d | %b | %h |", i, cache_tags_disp[i], cache_data_disp[i]);
+        end
+        $display("-------------------------------------------------");
+    end
+endtask
+
+task show_MHSRS;
+    begin
+        $display("=====   MHSRS   =====");
+        $display("head: %d, issue: %d, tail: %d", head_pointer, issue_pointer, tail_pointer);
+        $display("|         No. |                              addr  |command|mem_tag|left_or_right|            data |issued|");
+        for (int i = 0; i < 16; i++) begin
+            $display("| %d |  %b  |     %d |    %d |           %b | %h | %b |", i, MHSRS_disp[i].addr, MHSRS_disp[i].command, MHSRS_disp[i].mem_tag, MHSRS_disp[i].left_or_right, MHSRS_disp[i].data, MHSRS_disp[i].issued);
+        end
+        $display("----------------------------------------------------------------- ");
+    end
+endtask
+
 
 // Show contents of a range of Unified Memory, in both hex and decimal
 task show_mem_with_decimal;
@@ -328,29 +351,29 @@ task show_mem_with_decimal;
         // write back all stores in MHSRS
         if (head_pointer <= tail_pointer) begin
             for (int i = head_pointer; i < tail_pointer; i=i+1) begin
-                if (MHSRS_disp[i].command == BUS_STORE) begin
+                //if (MHSRS_disp[i].command == BUS_STORE) begin
                     if (MHSRS_disp[i].left_or_right)
                         memory_final[MHSRS_disp[i].addr >> 3][63:32] = MHSRS_disp[i].data[63:32];
                     else
                         memory_final[MHSRS_disp[i].addr >> 3][31:0] = MHSRS_disp[i].data[31:0];
-                end
+                //end
             end
         end else begin
             for (int i = head_pointer; i <= `MHSRS_W-1; i=i+1) begin
-                if (MHSRS_disp[i].command == BUS_STORE) begin
+                //if (MHSRS_disp[i].command == BUS_STORE) begin
                     if (MHSRS_disp[i].left_or_right)
                         memory_final[MHSRS_disp[i].addr >> 3][63:32] = MHSRS_disp[i].data[63:32];
                     else
                         memory_final[MHSRS_disp[i].addr >> 3][31:0] = MHSRS_disp[i].data[31:0];
-                end
+                //end
             end
             for (int i = 0; i < tail_pointer; i=i+1) begin
-                if (MHSRS_disp[i].command == BUS_STORE) begin
+                //if (MHSRS_disp[i].command == BUS_STORE) begin
                     if (MHSRS_disp[i].left_or_right)
                         memory_final[MHSRS_disp[i].addr >> 3][63:32] = MHSRS_disp[i].data[63:32];
                     else
                         memory_final[MHSRS_disp[i].addr >> 3][31:0] = MHSRS_disp[i].data[31:0];
-                end
+                //end
             end
         end
         // write back all stores in dcache
@@ -372,6 +395,8 @@ task show_mem_with_decimal;
 				showing_data=0;
 			end
 		$display("@@@");
+        //show_dcache;
+        //show_MHSRS;
         // // copy the current memory
         // for(int k=0;k<=`MEM_64BIT_LINES-1; k=k+1) begin
         //     for (int j = 0; j <= 1; j=j+1) begin
