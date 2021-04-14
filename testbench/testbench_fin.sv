@@ -315,6 +315,7 @@ task print_cpi;
     end
 endtask
 
+
 task show_dcache;
     begin
         $display("=====   Cache ram   =====");
@@ -330,11 +331,19 @@ task show_MHSRS;
     begin
         $display("=====   MHSRS   =====");
         $display("head: %d, issue: %d, tail: %d", head_pointer, issue_pointer, tail_pointer);
-        $display("|         No. |                              addr  |command|mem_tag|left_or_right|            data |issued|");
+        $display("|         No. |                              addr  |command|mem_tag|left_or_right|            data |issued| usedbytes | dirty |");
         for (int i = 0; i < 16; i++) begin
-            $display("| %d |  %b  |     %d |    %d |           %b | %h | %b |", i, MHSRS_disp[i].addr, MHSRS_disp[i].command, MHSRS_disp[i].mem_tag, MHSRS_disp[i].left_or_right, MHSRS_disp[i].data, MHSRS_disp[i].issued);
+            $display("| %d |  %b  |     %d |    %d |           %b | %h | %b | %b |  %b |", i, MHSRS_disp[i].addr, MHSRS_disp[i].command, MHSRS_disp[i].mem_tag, MHSRS_disp[i].left_or_right, MHSRS_disp[i].data, MHSRS_disp[i].issued, MHSRS_disp[i].usebytes, MHSRS_disp[i].dirty);
         end
         $display("----------------------------------------------------------------- ");
+    end
+endtask
+
+task show_mem_response;
+    begin
+        $display("Mem Response: %d", Imem2proc_response);
+        $display("Mem Tag     : %d", Imem2proc_tag);
+        $display("Mem Data    : %016h", Imem2proc_data);
     end
 endtask
 
@@ -456,6 +465,16 @@ task show_mem_with_decimal;
 	end
 endtask  // task show_mem_with_decimal
 
+always @(posedge clock) begin
+    $display("Cycle: %d", cycle_count);
+    show_dcache;
+    show_MHSRS;
+end
+
+always @(negedge clock) begin
+    show_mem_response;
+end
+
 always @(negedge clock) begin
     if(reset) begin
 		$display("@@\n@@  %t : System STILL at reset, can't show anything\n@@",
@@ -466,7 +485,8 @@ always @(negedge clock) begin
 		`SD;
 		
 		// deal with any halting conditions
-		if(pipeline_error_status != NO_ERROR || debug_counter > 50000000) begin
+		//if(pipeline_error_status != NO_ERROR || debug_counter > 50000000) begin
+        if(pipeline_error_status != NO_ERROR || debug_counter > 2000) begin
 			$display("@@@ Unified Memory contents hex on left, decimal on right: ");
 			show_mem_with_decimal(0,`MEM_64BIT_LINES - 1); 
 			// 8Bytes per line, 16kB total
