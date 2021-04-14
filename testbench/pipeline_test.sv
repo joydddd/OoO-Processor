@@ -106,6 +106,10 @@ logic [2**`FU-1:0]          complete_stall_display;
     logic [4:0]                      fl_head_display;
     logic [4:0]                      fl_tail_display;
     logic                            fl_empty_display;
+// Branch Predictor
+    BP_ENTRY_PACKET [`BPW-1:0] bp_entries_display;
+    logic       [2:0]                   predict_direction_display;
+    logic       [2:0] [`XLEN-1:0]       predict_pc_display;
 
 
 // Data cache
@@ -248,6 +252,10 @@ pipeline tbd(
     , .head_pointer(head_pointer)
     , .issue_pointer(issue_pointer)
     , .tail_pointer(tail_pointer)
+
+    , .bp_entries_display(bp_entries_display)
+    , .predict_direction_display(predict_direction_display)
+    , .predict_pc_display(predict_pc_display)
 `endif // TEST_MODE
 
 `ifdef DIS_DEBUG
@@ -422,6 +430,10 @@ always @(negedge clock) begin
         // show_rs_out;
         // show_freelist_table;
         // show_mpt_entry;
+        // show_bp_entry;
+        // for (int i = 0; i < 64; i++) begin
+        //     $display("PR: %d Value: %d", i, pr_display[i]);
+        // end
     end
 end
 
@@ -522,7 +534,7 @@ endtask
 
 task show_rob_table;
     for(int i=2**`ROB-1; i>=0; i--) begin  
-        $display("%d| valid: %d  Tnew: %d  Told: %d  arch_reg: %d  completed: %b  precise_state: %b  target_pc: %3d is_store: %b", i, rob_entries_display[i].valid, rob_entries_display[i].Tnew, rob_entries_display[i].Told, rob_entries_display[i].arch_reg, rob_entries_display[i].completed, rob_entries_display[i].precise_state_need, rob_entries_display[i].target_pc, rob_entries_display[i].is_store);
+        $display("%d| valid: %d  Tnew: %d  Told: %d  arch_reg: %d  completed: %b  precise_state: %b  target_pc: %3d is_store: %b predicted_direction: %b  predicted_pc: %3d", i, rob_entries_display[i].valid, rob_entries_display[i].Tnew, rob_entries_display[i].Told, rob_entries_display[i].arch_reg, rob_entries_display[i].completed, rob_entries_display[i].precise_state_need, rob_entries_display[i].target_pc, rob_entries_display[i].is_store, rob_entries_display[i].predict_direction, rob_entries_display[i].predict_pc);
     end
     $display("head:%d tail:%d", head_display, tail_display);
     $display("structual_stall:%b", rob_stall_display);
@@ -549,7 +561,7 @@ task print_pipeline;
     for(int i=2; i>=0; i--) begin
         `ifdef DIS_DEBUG
         /* IF debug */
-        $display("%h", if_d_packet_debug[i].inst);
+        $display("%5d", dis_in_display[i].predict_pc);
         `endif
     end
 endtask
@@ -608,7 +620,7 @@ task show_mpt_entry;
         $display("=====   Maptable Entry   =====");
         $display("| AR |   PR   | ready |");
         for (int i = 0; i < 32; i++) begin
-            $display("| %2d |   %d   |   %b  |", i, archi_map_display[i], ready_array_display[i]);
+            $display("| %2d |   %d   |   %b  |", i, map_array_display[i], ready_array_display[i]);
         end
         $display(" ");
     end
@@ -683,6 +695,19 @@ task show_Dcache_output;
 endtask
 */
 
+
+
+task show_bp_entry;
+    begin
+        $display("=====   Branch Predictor Entry   =====");
+        for(int i=`BPW - 1; i>=0; i--) begin
+            $display("Index: %2d  Valid: %2d  Tag: %5d  Direction: %1d  Target_pc: %5d", i, bp_entries_display[i].valid, bp_entries_display[i].tag, bp_entries_display[i].direction, bp_entries_display[i].target_pc);
+        end
+        for (int i = 2; i >= 0; i--) begin
+            $display("Index: %1d Direction: %b   PC: %5d ",i, predict_direction_display[i], predict_pc_display[i]);
+        end
+    end
+endtask
 
 //////////////////////////////////////////////////////////
 ///////////////         SET      

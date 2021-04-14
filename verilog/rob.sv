@@ -21,7 +21,12 @@ module ROB(
 	output logic [2:0][`ROB-1:0] dispatch_index,
 	output ROB_ENTRY_PACKET[2:0]  retire_entry,  // which ENTRY to be retired
 
-	output logic [2:0] struct_stall
+	output logic [2:0] struct_stall,
+
+	output logic                      	update_EN,
+    output logic [`XLEN-1:0]           update_pc,
+    output logic                       update_direction,
+    output logic [`XLEN-1:0]           update_target
 	`ifdef TEST_MODE
     	, output ROB_ENTRY_PACKET [`ROBW-1:0] rob_entries_display
 		, output [`ROB-1:0] head_display
@@ -264,19 +269,19 @@ always_comb begin
 			retire_entry[2] = rob_entries[head];
 			retire_entry[1] = rob_entries[head_incre1];
 			retire_entry[0] = rob_entries[head_incre2];
-			rob_entries_next[head].completed = 0;
-			rob_entries_next[head_incre1].completed = 0;
-			rob_entries_next[head_incre2].completed = 0;		
+			rob_entries_next[head] = 0;
+			rob_entries_next[head_incre1] = 0;
+			rob_entries_next[head_incre2] = 0;		
 		end
 		2: begin
 			retire_entry[2] = rob_entries[head];
 			retire_entry[1] = rob_entries[head_incre1];
-			rob_entries_next[head].completed = 0;
-			rob_entries_next[head_incre1].completed = 0;
+			rob_entries_next[head] = 0;
+			rob_entries_next[head_incre1] = 0;
 		end
 		1: begin
 			retire_entry[2] = rob_entries[head];
-			rob_entries_next[head].completed = 0;
+			rob_entries_next[head] = 0;
 		end
 		default: begin
 			retire_entry = 0;
@@ -307,9 +312,25 @@ always_comb begin
 	endcase
 	for (int i = 0; i < 3; i++) begin
 		if (complete_valid[i]) begin
+			//$display("%b %b %5d*************", precise_state_valid[i], rob_entries[complete_entry[i]].predict_direction, rob_entries[complete_entry[i]].NPC);
 			rob_entries_next[complete_entry[i]].completed = 1;
-			rob_entries_next[complete_entry[i]].precise_state_need = (precise_state_valid[i]) ? 1 : 0;
-			rob_entries_next[complete_entry[i]].target_pc = (precise_state_valid[i]) ? target_pc[i] : 0;
+			rob_entries_next[complete_entry[i]].precise_state_need = 0;
+			if (precise_state_valid[i] == 0 && rob_entries[complete_entry[i]].predict_direction == 1) begin
+				rob_entries_next[complete_entry[i]].precise_state_need = 1;
+				rob_entries_next[complete_entry[i]].target_pc = rob_entries[complete_entry[i]].NPC;
+			end
+			else if (precise_state_valid[i] == 1 && rob_entries[complete_entry[i]].predict_direction == 0) begin
+				rob_entries_next[complete_entry[i]].precise_state_need = 1;
+				rob_entries_next[complete_entry[i]].target_pc = target_pc[i];
+			end
+			else if (precise_state_valid[i] == 1 && rob_entries[complete_entry[i]].predict_direction == 1 && target_pc[i] != rob_entries[complete_entry[i]].predict_pc) begin
+				rob_entries_next[complete_entry[i]].precise_state_need = 1;
+				rob_entries_next[complete_entry[i]].target_pc = target_pc[i];
+			end
+			else begin
+				rob_entries_next[complete_entry[i]].precise_state_need = 0;
+				rob_entries_next[complete_entry[i]].target_pc = 0;
+			end
 		end
 	end
 	//$display("%d %d %d %d******%d",head, tail, head_tail_diff, head_incre, space_left);	

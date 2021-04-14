@@ -265,7 +265,9 @@ typedef struct packed {
 	logic valid; // If low, the data in this struct is garbage
     INST  inst;  // fetched instruction out
 	logic [`XLEN-1:0] NPC; // PC + 4
-	logic [`XLEN-1:0] PC;  // PC 
+	logic [`XLEN-1:0] PC;  // PC
+	logic                predict_direction;
+    logic [`XLEN-1:0]    predict_pc;
 } IF_ID_PACKET;
 
 
@@ -298,6 +300,8 @@ typedef struct packed {
 
 `define PREF 12   // prefetch 16 lines ahead
 
+`define BP 5
+`define BPW 32
 
 //FU: 3 * Int ALU(+,-,bitwise), 2* load/store, 2* int multi, 1* branch
 
@@ -365,6 +369,13 @@ typedef enum logic[1:0]{
 		INUSED = 1,
 		COMPLETE = 2
 }ROB_STATE;
+
+typedef enum logic[1:0]{
+		STRONG_NT = 0,
+		WEAK_NT = 1,
+		WEAK_T = 2,
+		STRONG_T = 3
+} BP_STATE;
 
 typedef struct packed{
 	logic branch;
@@ -464,8 +475,10 @@ typedef struct packed{
     logic [`PR-1:0] t2;
  }CDB_T_PACKET;
 
- typedef struct packed {
-	logic 			    valid;
+typedef struct packed {
+	logic [`XLEN-1:0]   NPC;   // PC + 4
+    logic [`XLEN-1:0]   PC;    // PC
+	logic 			valid;
 	logic [`PR-1:0] 	Tnew;
 	logic [`PR-1:0] 	Told;
 	logic 				halt;
@@ -474,6 +487,8 @@ typedef struct packed{
 	logic 				is_store; // TODO: pass this down to retire
 	logic [`XLEN-1:0]	target_pc;
 	logic 			    completed;
+	logic               predict_direction;
+    logic [`XLEN-1:0]   predict_pc;
 } ROB_ENTRY_PACKET;
 
 typedef struct packed {
@@ -556,5 +571,14 @@ typedef struct packed {
 //     logic [`XLEN-1:0]       addr; // must be aligned with words
 //     logic [`XLEN-1:0]       data;
 // } LQ_ENTRY_PACKET;
+
+typedef struct packed {
+	logic               valid;
+	logic [`XLEN-1:0] 	tag;
+	BP_STATE			direction;
+	logic [`XLEN-1:0]	target_pc;
+	logic				uncondition;
+} BP_ENTRY_PACKET;
+
 
 `endif // __SYS_DEFS_VH__
