@@ -399,15 +399,15 @@ always @(negedge clock) begin
     if (!reset)  begin
         #1;
         print_retire_wb();
-         $display("Cycle: %d inst_count: %d, cum: %d", cycle_count, inst_count, inst_total);
-        show_dcache;
-        show_MHSRS;
+        //  $display("Cycle: %d inst_count: %d, cum: %d", cycle_count, inst_count, inst_total);
+        // show_dcache;
+        // show_MHSRS;
         // $display();
         // $display("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
         // $display();
         
-        // print_pipeline;
-        // print_alu;
+        if(cycle_count > 1100 && cycle_count < 1190)print_pipeline;
+        // if(cycle_count > 1100 && cycle_count < 1150)print_alu;
         // show_fu_stat;
         // print_is_fifo;
         // show_sq;
@@ -416,8 +416,8 @@ always @(negedge clock) begin
         // show_rs_in;
         
         // show_complete;
-        // if (cycle_count >= 500 && cycle_count <= 520) show_rs_table;
-        // show_rob_table;
+        // if(cycle_count > 1100 && cycle_count < 1150) show_rs_table;
+        // if(cycle_count > 1100 && cycle_count < 1150) show_rob_table;
         // show_rob_in;
         // show_rs_out;
         // show_freelist_table;
@@ -573,7 +573,7 @@ endtask
 
 task print_retire_wb;
     for(int i=2; i>=0; i--) begin
-        if (map_ar[i] != 0 && RetireEN[i]==1'b1) $display("Cycle: %d: wb r%d = %d", cycle_count, map_ar[i], $signed(pr_display[map_ar_pr[i]]));
+        if (map_ar[i] != 0 && RetireEN[i]==1'b1) $display("Cycle: %d inst: %d: wb r%d = %d", cycle_count, inst_total, map_ar[i], $signed(pr_display[map_ar_pr[i]]));
     end
 endtask
 task print_is_fifo;
