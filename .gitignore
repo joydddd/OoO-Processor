@@ -87,3 +87,5 @@ synth/*.rep
 synth/*.out
 synth/*.chk
 synth/*.vg
+default.svf
+synth/default.svf
