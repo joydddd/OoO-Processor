@@ -1,4 +1,3 @@
-`define PREF 12   // prefetch 16 lines ahead
 //`define TEST_MODE
 
 `timescale 1ns/100ps

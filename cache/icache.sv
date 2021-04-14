@@ -51,6 +51,11 @@ module icache(
   logic               prefetch_wr_enable;
   logic               already_fetched;
 
+  logic [7:0]                 pref_count_display;
+  logic [`PREF-1:0][3:0]      mem_tag_display;
+  logic [`PREF-1:0][4:0]      store_prefetch_index_display;
+  logic [`PREF-1:0][7:0]      store_prefetch_tag_display;
+
   assign real_Imem2proc_response = d_request ? 4'd0 : Imem2proc_response;
 
   assign {current_tag[2], current_index[2]} = proc2Icache_addr[2][`XLEN-1:3];

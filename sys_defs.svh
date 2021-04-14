@@ -296,6 +296,8 @@ typedef struct packed {
 
 `define IS_FIFO_DEPTH 32
 
+`define PREF 12   // prefetch 16 lines ahead
+
 
 //FU: 3 * Int ALU(+,-,bitwise), 2* load/store, 2* int multi, 1* branch
 
