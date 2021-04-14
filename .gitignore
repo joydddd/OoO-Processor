@@ -82,3 +82,8 @@ vc_hdrs.h
 *.mem
 debug_bin
 .vscode/*
+synth/*.ddc
+synth/*.rep
+synth/*.out
+synth/*.chk
+synth/*.vg
