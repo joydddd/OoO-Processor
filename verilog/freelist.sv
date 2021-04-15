@@ -51,9 +51,31 @@ end
 /* sent to diapatch */
 assign head_next = head + DispatchEN[0] + DispatchEN[1] + DispatchEN[2];
 always_comb begin
-	FreeReg[2] = array[head];
-	FreeReg[1] = array[head_inc1];
-	FreeReg[0] = array[head_inc2];
+	FreeReg = 0;
+	case(DispatchEN)
+	3'b000: begin
+	end
+	3'b001: FreeReg[0] = array[head];
+	3'b010: FreeReg[1] = array[head];
+	3'b011: begin
+		FreeReg[0] = array[head_inc1];
+		FreeReg[1] = array[head];
+	end
+	3'b100: FreeReg[2] = array[head];
+	3'b101: begin
+		FreeReg[2] = array[head];
+		FreeReg[0] = array[head_inc1];
+	end
+	3'b110: begin
+		FreeReg[2] = array[head];
+		FreeReg[1] = array[head_inc1];
+	end
+	3'b111: begin
+		FreeReg[2] = array[head];
+		FreeReg[1] = array[head_inc1];
+		FreeReg[0] = array[head_inc2];
+	end
+	endcase
 end
 
 /* retire add to tail */
