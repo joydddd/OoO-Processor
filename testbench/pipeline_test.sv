@@ -24,6 +24,8 @@ import "DPI-C" function void mt_map(int ar, int pr);
 import "DPI-C" function void print_header(string str);
 import "DPI-C" function void print_num(int num);
 import "DPI-C" function void print_stage(string div, int inst, int npc, int valid_inst);
+import "DPI-C" function void print_wb(int reg_index, int value);
+import "DPI-C" function void print_inst(int inst_total);
 
 /* import print rs */ 
 import "DPI-C" function void print_select(int index,  int valid, int inst,  int npc, int fu_select, int op_select);
@@ -37,7 +39,7 @@ import "DPI-C" function void mem_print();
 module testbench;
 logic clock, reset;
 logic program_halt;
-logic [1:0] inst_count;
+logic [2:0] inst_count;
 
 `ifdef TEST_MODE
 // IF to Dispatch 
@@ -116,6 +118,9 @@ logic [2**`FU-1:0]          complete_stall_display;
     logic [`MHSRS-1:0] head_pointer;
     logic [`MHSRS-1:0] issue_pointer;
     logic [`MHSRS-1:0] tail_pointer;
+
+// Retire
+    ROB_ENTRY_PACKET [2:0]  retire_display;
 `endif
 
 `ifdef DIS_DEBUG
@@ -248,6 +253,8 @@ pipeline tbd(
     , .head_pointer(head_pointer)
     , .issue_pointer(issue_pointer)
     , .tail_pointer(tail_pointer)
+    // Retire
+    , .retire_display(retire_display)
 `endif // TEST_MODE
 
 `ifdef DIS_DEBUG
@@ -319,7 +326,7 @@ end
 always @(negedge clock) begin
     if (reset) inst_total = 0;
     else if (~halted)
-        inst_total += inst_count;
+        inst_total = inst_total + inst_count[0] + inst_count[1] + inst_count[2];
 end
 
 `ifdef CACHE_SIM
@@ -398,6 +405,8 @@ end
 always @(negedge clock) begin
     if (!reset)  begin
         #1;
+        // print_inst(inst_total);
+        // $display("Cycle: %d", cycle_count);
         print_retire_wb();
         //  $display("Cycle: %d inst_count: %d, cum: %d", cycle_count, inst_count, inst_total);
         // show_dcache;
@@ -406,8 +415,8 @@ always @(negedge clock) begin
         // $display("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
         // $display();
         
-        if(cycle_count > 1100 && cycle_count < 1190)print_pipeline;
-        // if(cycle_count > 1100 && cycle_count < 1150)print_alu;
+        // if(cycle_count > 3300 && cycle_count < 3400)print_pipeline;
+        // if(cycle_count > 3300 && cycle_count < 3400)print_alu;
         // show_fu_stat;
         // print_is_fifo;
         // show_sq;
@@ -417,11 +426,13 @@ always @(negedge clock) begin
         
         // show_complete;
         // if(cycle_count > 1100 && cycle_count < 1150) show_rs_table;
-        // if(cycle_count > 1100 && cycle_count < 1150) show_rob_table;
+        // if(cycle_count > 3300 && cycle_count < 3400) show_rob_table;
         // show_rob_in;
         // show_rs_out;
         // show_freelist_table;
         // show_mpt_entry;
+    end else begin
+        print_header("####### Reset ##########\n");
     end
 end
 
@@ -544,6 +555,7 @@ task print_pipeline;
         // print_stage("|", dis_rs_packet_display[i].inst, dis_rs_packet_display[i].PC, dis_rs_packet_display[i].valid);
         /* IS */
         print_stage("|", is_in_display[i].inst, is_in_display[i].PC, is_in_display[i].valid);
+        print_stage("|", retire_display[i].inst, retire_display[i].PC, inst_count[i]);
         print_header("|\n");
     end
     for(int i=2; i>=0; i--) begin
@@ -572,8 +584,11 @@ task print_final;
 endtask
 
 task print_retire_wb;
-    for(int i=2; i>=0; i--) begin
-        if (map_ar[i] != 0 && RetireEN[i]==1'b1) $display("Cycle: %d inst: %d: wb r%d = %d", cycle_count, inst_total, map_ar[i], $signed(pr_display[map_ar_pr[i]]));
+    for(int i=2; i>=0; i--) begin;
+        if (inst_count[i]) begin
+            print_stage("\n|", retire_display[i].inst, retire_display[i].PC+4, inst_count[i]);
+        end
+        if (map_ar[i] != 0 && RetireEN[i]==1'b1) print_wb(map_ar[i], $signed(pr_display[map_ar_pr[i]]));
     end
 endtask
 task print_is_fifo;
@@ -705,7 +720,7 @@ endtask
 
 // int PC; 
 initial begin
-    $dumpvars;
+    // $dumpvars;
     clock = 1'b0;
     reset = 1'b1;
     cycle_count = 0;

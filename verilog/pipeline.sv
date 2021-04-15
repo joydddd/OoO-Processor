@@ -29,7 +29,7 @@ module pipeline(
 	output logic [63:0] proc2mem_data,      // Data sent to memory
 
     output logic        halt,
-    output logic [1:0]  inst_count
+    output logic [2:0]  inst_count
 
 	// output logic [3:0]  pipeline_completed_insts,
 	// output EXCEPTION_CODE   pipeline_error_status,
@@ -114,6 +114,9 @@ module pipeline(
     , output logic [`MHSRS-1:0] head_pointer
     , output logic [`MHSRS-1:0] issue_pointer
     , output logic [`MHSRS-1:0] tail_pointer
+
+    // Retire
+    , output ROB_ENTRY_PACKET [2:0]     retire_display
 `endif
 
 `ifdef DIS_DEBUG
@@ -255,6 +258,7 @@ logic [2:0][`LSQ-1:0]       exe_idx;
 LOAD_SQ_PACKET [1:0]        load_lookup;
 SQ_LOAD_PACKET [1:0]        load_forward;
 SQ_ENTRY_PACKET [2:0]       cache_wb;
+logic [2**`LSQ-1:0]         load_tail_ready;
 
 
 // icache
@@ -348,6 +352,7 @@ assign rob_stall_display = rob_stall;
 
 // Retire stage
 assign halt = re_halt;
+assign retire_display = rob_retire_entry;
 
 `endif
 
@@ -636,6 +641,7 @@ RS RS_0(
     .rs_in(dis_rs_packet),
     .cdb_t(cdb_t),
     .fu_fifo_stall(fu_fifo_stall),
+    .load_tail_ready(load_tail_ready), //-> SQ 
     
     // Outputs
     .issue_insts(rs_is_packet),
@@ -864,6 +870,7 @@ SQ SQ_0(
     .stall(sq_stall),             // -> dispatch.
     .dispatch(sq_alloc),          // <- dispatch.sq_alloc
     .tail_pos(sq_tail_pos),       // -> dispatch.sq_tail_pos
+    .load_tail_ready(load_tail_ready),
     .exe_valid(exe_valid),        // <- alu.exe_valid
     .exe_store(exe_store),        // <- alu.exe_store
     .exe_idx(exe_idx),            // <- alu.exe_idx

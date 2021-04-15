@@ -20,7 +20,7 @@ module retire_stage (
     output logic    [2:0]                   SQRetireEN,
     /* halt the program */
     output logic                            halt,
-    output logic [1:0]                      inst_count
+    output logic [2:0]                      inst_count
 );
 
 
@@ -117,6 +117,6 @@ always_comb begin
     end
 end
 
-assign inst_count = retire_valid[0] + retire_valid[1] + retire_valid[2];
+assign inst_count = retire_valid;
 
 endmodule

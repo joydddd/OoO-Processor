@@ -12,6 +12,7 @@ module RS(
     input RS_IN_PACKET [2:0]    rs_in,
     input CDB_T_PACKET          cdb_t,
     input FU_FIFO_PACKET        fu_fifo_stall,  // high if fu FIFO has < 3 available
+    input [2**`LSQ-1:0]         load_tail_ready,
     output RS_S_PACKET [2:0]    issue_insts,
     output logic [2:0]           struct_stall    // if high, stall corresponding dispatch, dependent on fu_req
 `ifdef TEST_MODE
@@ -116,7 +117,7 @@ logic [2:0][`RSW-1:0] tag_issue_separate;
 /* determine which entries are ready */
 always_comb begin
     for(int i=0; i<`RSW; i++) begin
-        tag_ready[i] = reg1_ready_next[i] & reg2_ready_next[i] & rs_entries[i].valid;
+        tag_ready[i] = reg1_ready_next[i] & reg2_ready_next[i] & rs_entries[i].valid & load_tail_ready[rs_entries[i].sq_tail];
     end
 end
 always_comb begin

@@ -560,6 +560,8 @@ always_comb begin
 		rob_in[i].precise_state_need = 0;
 		rob_in[i].is_store = is_store[i];
 		rob_in[i].target_pc = 0;
+		rob_in[i].inst = dis_packet[i].inst;
+		rob_in[i].PC = dis_packet[i].PC;
 	end
 end
 

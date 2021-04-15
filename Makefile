@@ -13,7 +13,7 @@
 #
 #
 
-SOURCE := test_progs/alexnet.c
+SOURCE := test_progs/backtrack.c
 
 CRT = crt.s
 LINKERS = linker.lds

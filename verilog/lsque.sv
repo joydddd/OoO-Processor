@@ -11,6 +11,9 @@ module SQ(
     output logic [2:0][`LSQ-1:0] tail_pos, 
     // the newly allocated entry idx or the tail position if no allocation
 
+    // rs 
+    output logic [2**`LSQ-1:0]  load_tail_ready,
+
     // exe store (from alu)
     input [2:0]                 exe_valid,
     input SQ_ENTRY_PACKET [2:0] exe_store,
@@ -323,37 +326,23 @@ always_comb begin
     end
 end
 
-
+////////////////////////////////////////
+////////////   Load Tail Ready
+////////////////////////////////////////
+always_comb begin 
+    for(int i=0; i<2**`LSQ; i++) begin // for each tail position
+        load_tail_ready[i] = 1;
+        for(int j=0; j<2**`LSQ; j++) begin // for each entry
+            if( i >= head && j >= head && j < i) // is older than load tail
+                if (sq_reg[j].ready == 0) load_tail_ready[i] = 0;
+            if ( i < head && (j < i || j >= head))
+                if (sq_reg[j].ready == 0) load_tail_ready[i] = 0;
+        end
+    end
+end
 
 endmodule
 
-
-// module LQ(
-//     output logic [2:0]          lq_stall
-// );
-
-// endmodule
-
-// module LSQ(
-//     input                       clock,
-//     input                       reset,
-//     // DISPATCH
-//     input [2:0]                 dis_load, 
-//     // hot coding for dispatching load ins. (rule out stall first)
-//     input [2:0]                 dis_store,
-//     output [2:0][`LSQ:0]        new_lsq_idx,
-//     output [2:0]                stall,
-
-//     // Write from store exe
-//     intput          
-
-//     // Send data to memory
-
-// );
-// assign lsq_stall = lq_stall | sq_stall;
-
-
-// endmodule
 
 
 `endif // __LSQUE_V__

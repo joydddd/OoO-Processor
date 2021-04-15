@@ -466,9 +466,8 @@ task show_mem_with_decimal;
 endtask  // task show_mem_with_decimal
 
 always @(posedge clock) begin
-    // $display("Cycle: %d", cycle_count);
-    // show_dcache;
-    // show_MHSRS;
+    if (cycle_count % 1000 == 0)
+        $display("DEBUG: cycle %d", cycle_count);
 end
 
 always @(negedge clock) begin
@@ -485,7 +484,7 @@ always @(negedge clock) begin
 		`SD;
 		
 		// deal with any halting conditions
-		if(pipeline_error_status != NO_ERROR || debug_counter > 50000000) begin
+		if(pipeline_error_status != NO_ERROR || debug_counter > 1000000) begin
 			$display("@@@ Unified Memory contents hex on left, decimal on right: ");
 			show_mem_with_decimal(0,`MEM_64BIT_LINES - 1); 
 			// 8Bytes per line, 16kB total

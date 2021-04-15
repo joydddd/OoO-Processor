@@ -22,6 +22,14 @@ void print_header(char* str) {
 
 void print_num(int num) { printf( "%d", num); }
 
+void print_wb(int reg_index, int value){
+    printf("r%d=%d\n", reg_index, value);
+}
+
+void print_inst(int inst_total){
+    printf(" instr %5d: ", inst_total);
+}
+
 void print_stage(char* div, int inst, int npc, int valid_inst) {
     int opcode, funct3, funct7, funct12;
     char* str;
