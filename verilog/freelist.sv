@@ -245,7 +245,7 @@ always_ff @(posedge clock) begin
 		array <= `SD array_next;
 		head <= `SD BPRecoverHead;
 		tail <= `SD tail_next;
-		FreeRegValid <= `SD FreeRegValid_next;
+		FreeRegValid <= `SD 3'b111;
 	end
     else begin 
         array <= `SD array_next;
