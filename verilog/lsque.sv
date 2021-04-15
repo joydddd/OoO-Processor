@@ -127,12 +127,16 @@ always_comb begin
     endcase
 end
 
+logic [`LSQ-1:0]  head_inc_1, head_inc_2;
+assign head_inc_1 = head+1;
+assign head_inc_2 = head+2;
+
 // writeback retire stores
 always_comb begin
     cache_wb = 0;
     if (num_retire >= 1) cache_wb[2] = sq_reg[head];
-    if (num_retire >= 2) cache_wb[1] = sq_reg[head+1];
-    if (num_retire >= 3) cache_wb[0] = sq_reg[head+2];
+    if (num_retire >= 2) cache_wb[1] = sq_reg[head_inc_1];
+    if (num_retire >= 3) cache_wb[0] = sq_reg[head_inc_2];
 end
 
 
@@ -144,8 +148,8 @@ SQ_ENTRY_PACKET [0:2**`LSQ-1] sq_reg_next;
 always_comb begin
     sq_reg_after_retire = sq_reg;
     if (num_retire >= 1) sq_reg_after_retire[head] = 0;
-    if (num_retire >= 2) sq_reg_after_retire[head+1] = 0;
-    if (num_retire >= 3) sq_reg_after_retire[head+2] = 0;
+    if (num_retire >= 2) sq_reg_after_retire[head_inc_1] = 0;
+    if (num_retire >= 3) sq_reg_after_retire[head_inc_2] = 0;
 end
 
 always_comb begin

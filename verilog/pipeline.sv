@@ -146,14 +146,14 @@ module pipeline(
     // , input CDB_T_PACKET                cdb_t_debug
 `endif
 
-/*
-`ifdef CACHE_SIM
+
+// `ifdef CACHE_SIM
     , output SQ_ENTRY_PACKET [2:0]          cache_wb_sim
-    , output logic [1:0][`XLEN-1:0]         cache_read_addr_sim
-    , output logic [1:0]                    cache_read_start_sim
-    , input [1:0][`XLEN-1:0]                cache_read_data_sim
-`endif
-*/
+//     , output logic [1:0][`XLEN-1:0]         cache_read_addr_sim
+//     , output logic [1:0]                    cache_read_start_sim
+//     , input [1:0][`XLEN-1:0]                cache_read_data_sim
+// `endif
+// */
     
 );
 /* Fetch Stage */
@@ -384,10 +384,10 @@ assign fu_ready = fu_ready_debug;
 //assign rob_stall = rob_stall_debug;  
 //assign cdb_t = cdb_t_debug;
 `endif
-
+assign cache_wb_sim = cache_wb;
 /*
 `ifdef CACHE_SIM
-    assign cache_wb_sim = cache_wb;
+
     assign cache_read_addr_sim = cache_read_addr;
     assign cache_read_data = cache_read_data_sim;
     assign cache_read_start_sim = cache_read_start;

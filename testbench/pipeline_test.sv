@@ -255,8 +255,9 @@ pipeline tbd(
     , .if_d_packet_debug(if_d_packet_debug)
     , .dis_new_pr_en_out(dis_new_pr_en_out)
 `endif
-`ifdef CACHE_SIM
     , .cache_wb_sim(cache_wb_sim)
+`ifdef CACHE_SIM
+
     , .cache_read_addr_sim(cache_read_addr_sim)
     , .cache_read_data_sim(cache_read_data_sim)
     , .cache_read_start_sim(cache_read_start_sim)
@@ -310,24 +311,24 @@ endtask
 
 
 `ifdef CACHE_SIM
-always @(posedge clock) begin
-    if (reset) begin
-        mem_init();
-    end
-end
+// always @(posedge clock) begin
+//     if (reset) begin
+//         mem_init();
+//     end
+// end
 
-always @(posedge clock) begin
-    if (!reset) begin
-        mem_write(cache_wb_sim[0].addr, cache_wb_sim[0].data, cache_wb_sim[0].usebytes[3], cache_wb_sim[0].usebytes[2], cache_wb_sim[0].usebytes[1], cache_wb_sim[0].usebytes[0]);
-        mem_write(cache_wb_sim[1].addr, cache_wb_sim[1].data, cache_wb_sim[1].usebytes[3], cache_wb_sim[1].usebytes[2], cache_wb_sim[1].usebytes[1], cache_wb_sim[1].usebytes[0]);
-        mem_write(cache_wb_sim[2].addr, cache_wb_sim[2].data, cache_wb_sim[2].usebytes[3], cache_wb_sim[2].usebytes[2], cache_wb_sim[2].usebytes[1], cache_wb_sim[2].usebytes[0]);
-    end
-end
+// always @(posedge clock) begin
+//     if (!reset) begin
+//         mem_write(cache_wb_sim[0].addr, cache_wb_sim[0].data, cache_wb_sim[0].usebytes[3], cache_wb_sim[0].usebytes[2], cache_wb_sim[0].usebytes[1], cache_wb_sim[0].usebytes[0]);
+//         mem_write(cache_wb_sim[1].addr, cache_wb_sim[1].data, cache_wb_sim[1].usebytes[3], cache_wb_sim[1].usebytes[2], cache_wb_sim[1].usebytes[1], cache_wb_sim[1].usebytes[0]);
+//         mem_write(cache_wb_sim[2].addr, cache_wb_sim[2].data, cache_wb_sim[2].usebytes[3], cache_wb_sim[2].usebytes[2], cache_wb_sim[2].usebytes[1], cache_wb_sim[2].usebytes[0]);
+//     end
+// end
 
-always @(cache_read_addr_sim, cache_read_start_sim) begin
-    if (cache_read_start_sim[0]) cache_read_data_sim[0] = mem_read(cache_read_addr_sim[0]);
-    if (cache_read_start_sim[1]) cache_read_data_sim[1] = mem_read(cache_read_addr_sim[1]);
-end
+// always @(cache_read_addr_sim, cache_read_start_sim) begin
+//     if (cache_read_start_sim[0]) cache_read_data_sim[0] = mem_read(cache_read_addr_sim[0]);
+//     if (cache_read_start_sim[1]) cache_read_data_sim[1] = mem_read(cache_read_addr_sim[1]);
+// end
 
 `endif
 // /* free list simulator */
@@ -388,7 +389,8 @@ always @(negedge clock) begin
         // print_inst(inst_total);
         // $display("Cycle: %d", cycle_count);
         print_retire_wb();
-        //  $display("Cycle: %d inst_count: %d, cum: %d", cycle_count, inst_count, inst_total);
+        show_retire_store;
+          $display("Cycle: %d inst_count: %d, cum: %d", cycle_count, inst_count, inst_total);
         // show_dcache;
         // show_MHSRS;
         // $display();
@@ -399,7 +401,7 @@ always @(negedge clock) begin
         // if(cycle_count > 3300 && cycle_count < 3400)print_alu;
         // show_fu_stat;
         // print_is_fifo;
-        // show_sq;
+         if (cycle_count > 730 && cycle_count < 760)show_sq;
         // show_sq_age;
         // show_cdb;
         // show_rs_in;
@@ -409,6 +411,8 @@ always @(negedge clock) begin
         // if(cycle_count > 3300 && cycle_count < 3400) show_rob_table;
         // show_rs_out;
         // show_freelist_table;
+    end else
+    print_header("### Reset ###\n");
 end
 
 
@@ -635,6 +639,13 @@ task show_MHSRS;
             $display("| %d |  %b  |     %d |    %d |           %b | %h | %b | %b |  %b |", i, MHSRS_disp[i].addr, MHSRS_disp[i].command, MHSRS_disp[i].mem_tag, MHSRS_disp[i].left_or_right, MHSRS_disp[i].data, MHSRS_disp[i].issued, MHSRS_disp[i].usebytes, MHSRS_disp[i].dirty);
         end
         $display("----------------------------------------------------------------- ");
+    end
+endtask
+
+task show_retire_store;
+    for(int i=0; i<3; i++) begin
+        if (cache_wb_sim[i].ready)
+        $display("MEM[%d]=%d, use%b", cache_wb_sim[i].addr, cache_wb_sim[i].data, cache_wb_sim[i].usebytes );
     end
 endtask
 /*
