@@ -2,6 +2,8 @@
 
 touch autotest_result.txt    # Use this to record all cases' result
 touch make_messages.txt      # Use this to prevent printing make messages to the command line, so that we can see the results easily
+rm -rf testout
+mkdir testout
 make clean > make_messages.txt 
 make simv                         # than generate our output
 
@@ -15,6 +17,8 @@ for file in test_progs/*.s; do
 
 
     file=$(echo $file | cut -d'/' -f2)
+
+    cp program.out testout/$file.out
 
     cat program.out | grep "^@@@[^\n]*" > new_program.out
     diff new_program.out std_output/$file.program.out > program.diff.out
@@ -38,6 +42,8 @@ for file in test_progs/*.c; do                                       # Similar p
     ./simv > program.out
 
     file=$(echo $file | cut -d'/' -f2)
+
+    cp program.out testout/$file.out
 
     cat program.out | grep "^@@@[^\n]*" > new_program.out
     diff new_program.out std_output/$file.program.out > program.diff.out
