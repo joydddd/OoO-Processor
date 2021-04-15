@@ -79,6 +79,7 @@ module pipeline(
     , output SQ_ENTRY_PACKET [2**`LSQ-1:0]  older_stores
     , output logic [2**`LSQ-1:0]            older_stores_valid
     , output LOAD_SQ_PACKET [1:0]           load_sq_pckt_display
+    , output [2:0]                          sq_stall_display
     
     // Complete
     , output CDB_T_PACKET               cdb_t_display
@@ -97,6 +98,7 @@ module pipeline(
     , output [4:0]                      fl_head_display
     , output [4:0]                      fl_tail_display
     , output                            fl_empty_display
+    , output [2:0]                      free_pr_valid_display
 
     // PR
     , output logic [2**`PR-1:0][`XLEN-1:0] pr_display
@@ -336,6 +338,10 @@ assign archi_map_display = archi_maptable_out;
 
 // SQ
 assign load_sq_pckt_display = load_lookup;
+assign sq_stall_display = sq_stall;
+
+// Freelist
+assign free_pr_valid_display = free_pr_valid;
 
 // Complete
 assign cdb_t_display = cdb_t;
