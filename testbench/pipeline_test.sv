@@ -84,6 +84,10 @@ logic [`LSQ:0]                 filled_num_dis;
 SQ_ENTRY_PACKET [2**`LSQ-1:0]  older_stores;
 logic [2**`LSQ-1:0]            older_stores_valid;
 LOAD_SQ_PACKET [1:0]           load_sq_pckt_display;
+logic [2:0]                    sq_stall_display;
+
+// Freelist
+logic [2:0]                    free_pr_valid_display;
 
 // Complete
 CDB_T_PACKET               cdb_t_display;
@@ -109,7 +113,6 @@ logic [2**`FU-1:0]          complete_stall_display;
     logic [4:0]                      fl_tail_display;
     logic                            fl_empty_display;
 
-
 // Data cache
     logic [31:0] [63:0] cache_data_disp;
     logic [31:0] [7:0] cache_tags_disp;
@@ -130,19 +133,6 @@ logic [2:0]                 dis_new_pr_en_out;
 logic [2:0]                 free_pr_valid_debug;
 logic [2:0][`PR-1:0]        free_pr_debug;
 
-/* maptable simulation */
-/*
-logic [2:0] [4:0]           maptable_lookup_reg1_ar_out;
-logic [2:0] [4:0]           maptable_lookup_reg2_ar_out;
-logic [2:0] [4:0]           maptable_allocate_ar_out;
-logic [2:0] [`PR-1:0]       maptable_allocate_pr_out;
-logic [2:0][`PR-1:0]        maptable_old_pr_debug;
-logic [2:0][`PR-1:0]        maptable_reg1_pr_debug;
-logic [2:0][`PR-1:0]        maptable_reg2_pr_debug;
-logic [2:0]                 maptable_reg1_ready_debug;
-logic [2:0]                 maptable_reg2_ready_debug;
-*/
-
 logic [2:0]                 rob_stall_debug;
 FU_STATE_PACKET             fu_ready_debug;
 CDB_T_PACKET                cdb_t_debug;
@@ -161,6 +151,9 @@ logic [`XLEN-1:0]   proc2Imem_addr;
 logic [1:0]         proc2Imem_command;
 logic [63:0]        proc2Imem_data;
 
+logic [63:0]        debug_counter;
+EXCEPTION_CODE      pipeline_error_status;
+
 mem memory(
     .clk(clock),                            // Memory clock
     .proc2mem_addr(proc2Imem_addr),         // <- pipeline.proc2mem_addr
@@ -170,7 +163,6 @@ mem memory(
 `ifndef CACHE_MODE  
     .proc2mem_size(DOUBLE),                 //BYTE, HALF, WORD or DOUBLE, no need for this test
 `endif
-    // TODO: when we have store and load FU, this signal connection needs to be modified
     .proc2mem_command(proc2Imem_command),   // `BUS_NONE `BUS_LOAD or `BUS_STORE
     
     .mem2proc_response(Imem2proc_response), // 0 = can't accept, other=tag of transaction
@@ -224,6 +216,7 @@ pipeline tbd(
     , .older_stores(older_stores)
     , .older_stores_valid(older_stores_valid)
     , .load_sq_pckt_display(load_sq_pckt_display)
+    , .sq_stall_display(sq_stall_display)
     // Complete
     , .cdb_t_display(cdb_t_display)
     , .wb_value_display(wb_value_display)
@@ -239,6 +232,7 @@ pipeline tbd(
     , .fl_head_display(fl_head_display)
     , .fl_tail_display(fl_tail_display)
     , .fl_empty_display(fl_empty_display)
+    , .free_pr_valid_display(free_pr_valid_display)
     // PR
     , .pr_display(pr_display)
     // Archi Map Table
@@ -260,25 +254,6 @@ pipeline tbd(
 `ifdef DIS_DEBUG
     , .if_d_packet_debug(if_d_packet_debug)
     , .dis_new_pr_en_out(dis_new_pr_en_out)
-    /* free list simulation */
-    // , .free_pr_valid_debug(free_pr_valid_debug)
-    // , .free_pr_debug(free_pr_debug)
-    /* maptable simulation */
-    /*
-    , .maptable_lookup_reg1_ar_out(maptable_lookup_reg1_ar_out)
-    , .maptable_lookup_reg2_ar_out(maptable_lookup_reg2_ar_out)
-    , .maptable_allocate_ar_out(maptable_allocate_ar_out)
-    , .maptable_allocate_pr_out(maptable_allocate_pr_out)
-    , .maptable_old_pr_debug(maptable_old_pr_debug)
-    , .maptable_reg1_pr_debug(maptable_reg1_pr_debug)
-    , .maptable_reg2_pr_debug(maptable_reg2_pr_debug)
-    , .maptable_reg1_ready_debug(maptable_reg1_ready_debug)
-    , .maptable_reg2_ready_debug(maptable_reg2_ready_debug)
-    */
-
-    // , .rob_stall_debug(rob_stall_debug)
-    // , .fu_ready_debug(fu_ready_debug)
-    // , .cdb_t_debug(cdb_t_debug)
 `endif
 `ifdef CACHE_SIM
     , .cache_wb_sim(cache_wb_sim)
@@ -293,22 +268,6 @@ always begin
 	#(`VERILOG_CLOCK_PERIOD/2.0);
 	clock = ~clock;
 end
-
-/* halt */
-task wait_until_halt;
-		forever begin : wait_loop
-			@(posedge program_halt);
-			@(negedge clock);
-			if(program_halt) begin 
-                @(negedge clock);
-                disable wait_until_halt;
-            end
-		end
-endtask
-
-////////////////////////////////////////////////////////////
-/////////////       SIMULATORS
-///////////////////////////////////////////////////////////
 
 int cycle_count; 
 always @(posedge clock) begin
@@ -328,6 +287,27 @@ always @(negedge clock) begin
     else if (~halted)
         inst_total = inst_total + inst_count[0] + inst_count[1] + inst_count[2];
 end
+
+/* halt */
+task wait_until_halt;
+		forever begin : wait_loop
+			@(posedge program_halt);
+			@(negedge clock);
+            if (cycle_count > 50000) begin
+                $display("NOOOOOOO!!!!!!");
+                $finish;
+            end
+			if(program_halt) begin 
+                @(negedge clock);
+                disable wait_until_halt;
+            end
+		end
+endtask
+
+////////////////////////////////////////////////////////////
+/////////////       SIMULATORS
+///////////////////////////////////////////////////////////
+
 
 `ifdef CACHE_SIM
 always @(posedge clock) begin
@@ -427,13 +407,8 @@ always @(negedge clock) begin
         // show_complete;
         // if(cycle_count > 1100 && cycle_count < 1150) show_rs_table;
         // if(cycle_count > 3300 && cycle_count < 3400) show_rob_table;
-        // show_rob_in;
         // show_rs_out;
         // show_freelist_table;
-        // show_mpt_entry;
-    end else begin
-        print_header("####### Reset ##########\n");
-    end
 end
 
 
@@ -734,10 +709,10 @@ initial begin
     #2 reset = 1'b0;
     
     @(negedge clock);
-    //for (int i = 0; i < 750; i++) begin
-    //@(negedge clock);
-    //end
-    wait_until_halt;
+    for (int i = 0; i < 50000; i++) begin
+    @(negedge clock);
+    end
+    //wait_until_halt;
 
     #2;
     print_final;
