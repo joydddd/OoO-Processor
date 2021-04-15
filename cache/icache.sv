@@ -80,15 +80,18 @@ module icache(
 
   wire new_read = fetch_addr != last_fetch_addr;
 
-  wire unanswered_miss = changed_addr ? cache_miss :
-                         new_read     ? cache_miss :
-                         miss_outstanding && (sync_Imem2proc_response == 0);
+  wire last_miss = miss_outstanding && (sync_Imem2proc_response == 0);
 
-  wire update_mem_tag = changed_addr || unanswered_miss || fetch_wr_enable;
+  wire unanswered_miss = take_branch  ? cache_miss :
+                         changed_addr ? cache_miss :
+                         new_read     ? cache_miss :
+                         last_miss;
 
   wire want_to_fetch = ~reset & unanswered_miss;
 
   wire require_load = want_to_fetch & ~already_fetched;
+
+  wire update_mem_tag = (changed_addr && require_load) || (unanswered_miss && require_load) || fetch_wr_enable || take_branch;
 
   wire prefetch_require = !require_load && prefetch_command == BUS_LOAD;
 
