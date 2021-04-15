@@ -121,6 +121,7 @@ logic [2**`FU-1:0]          complete_stall_display;
     logic [`MHSRS-1:0] head_pointer;
     logic [`MHSRS-1:0] issue_pointer;
     logic [`MHSRS-1:0] tail_pointer;
+    logic [2:0]        sq_stall_cache_display;
 
 // Retire
     ROB_ENTRY_PACKET [2:0]  retire_display;
@@ -247,6 +248,7 @@ pipeline tbd(
     , .head_pointer(head_pointer)
     , .issue_pointer(issue_pointer)
     , .tail_pointer(tail_pointer)
+    , .sq_stall_cache_display(sq_stall_cache_display)
     // Retire
     , .retire_display(retire_display)
 `endif // TEST_MODE
@@ -256,11 +258,13 @@ pipeline tbd(
     , .dis_new_pr_en_out(dis_new_pr_en_out)
 `endif
     , .cache_wb_sim(cache_wb_sim)
+    , .cache_read_addr_sim(cache_read_addr_sim)
+    , .cache_read_start_sim(cache_read_start_sim)
 `ifdef CACHE_SIM
 
-    , .cache_read_addr_sim(cache_read_addr_sim)
+
     , .cache_read_data_sim(cache_read_data_sim)
-    , .cache_read_start_sim(cache_read_start_sim)
+
 `endif
 );
 
@@ -390,27 +394,35 @@ always @(negedge clock) begin
         // $display("Cycle: %d", cycle_count);
         print_retire_wb();
         show_retire_store;
-          $display("Cycle: %d inst_count: %d, cum: %d", cycle_count, inst_count, inst_total);
+        if(cycle_count < 1200) begin
+            // $dumpvars;
+            // if (cache_read_start_sim[0]) $display("Cache Read: %d", cache_read_addr_sim[0]);
+            // if (cache_read_start_sim[1]) $display("Cache Read: %d", cache_read_addr_sim[1]);
+        
+        //   $display("Cycle: %d inst_count: %d, cum: %d", cycle_count, inst_count, inst_total);
         // show_dcache;
         // show_MHSRS;
         // $display();
         // $display("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
         // $display();
         
-        // if(cycle_count > 3300 && cycle_count < 3400)print_pipeline;
-        // if(cycle_count > 3300 && cycle_count < 3400)print_alu;
+        print_pipeline;
+        print_alu;
         // show_fu_stat;
-        // print_is_fifo;
-         if (cycle_count > 730 && cycle_count < 760)show_sq;
+        // if(cycle_count > 660 && cycle_count < 700) print_is_fifo;
+        show_sq;
         // show_sq_age;
         // show_cdb;
         // show_rs_in;
         
         // show_complete;
-        // if(cycle_count > 1100 && cycle_count < 1150) show_rs_table;
-        // if(cycle_count > 3300 && cycle_count < 3400) show_rob_table;
+        show_rs_table;
+        show_rob_table;
+            $display(" dis_stall: %b, sq_stall: %b, rob_stall: %b, rs_stall: %b, free_reg_valid: %b", dis_stall_display, sq_stall_display, rob_stall_display, rs_stall_display, free_pr_valid_display);
+            $display( "sq cache stall: %b", sq_stall_cache_display);
         // show_rs_out;
-        // show_freelist_table;
+        // if(cycle_count > 660 && cycle_count < 700) show_freelist_table;
+        end
     end else
     print_header("### Reset ###\n");
 end
@@ -721,16 +733,20 @@ initial begin
     
     @(negedge clock);
     for (int i = 0; i < 50000; i++) begin
+        if (halted) begin
+            $display("Halt on WFI");
+        $finish;
+        end
     @(negedge clock);
     end
     //wait_until_halt;
 
     #2;
     print_final;
-    $display("@@  %t : System halted\n@@", $realtime);
-    $display("@@");
-    $display("@@@ System halted on WFI instruction");
-    $display("@@@");
+    // $display("@@  %t : System halted\n@@", $realtime);
+    // $display("@@");
+    // $display("@@@ System halted on WFI instruction");
+    // $display("@@@");
     print_cpi;
     $finish;
 end

@@ -25,7 +25,8 @@ module SQ(
     
     // retire
     input [2:0]                     retire,
-    output SQ_ENTRY_PACKET [2:0]    cache_wb
+    output SQ_ENTRY_PACKET [2:0]    cache_wb,
+    output SQ_ENTRY_PACKET [2:0]    sq_head
 
     `ifdef TEST_MODE
     , output SQ_ENTRY_PACKET [0:2**`LSQ-1]  sq_display
@@ -137,6 +138,12 @@ always_comb begin
     if (num_retire >= 1) cache_wb[2] = sq_reg[head];
     if (num_retire >= 2) cache_wb[1] = sq_reg[head_inc_1];
     if (num_retire >= 3) cache_wb[0] = sq_reg[head_inc_2];
+end
+
+always_comb begin
+    sq_head[2] = sq_reg[head];
+    sq_head[1] = sq_reg[head_inc_1];
+    sq_head[0] = sq_reg[head_inc_2];
 end
 
 

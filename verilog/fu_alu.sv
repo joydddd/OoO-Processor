@@ -143,15 +143,15 @@ always_comb begin
 		end
 		2'b01: begin
 			store_pckt.usebytes = 4'b0010;
-			store_pckt.data[15:8] = store_val[15:8];
+			store_pckt.data[15:8] = store_val[7:0];
 		end
 		2'b10: begin
 			store_pckt.usebytes = 4'b0100;
-			store_pckt.data[23:16] = store_val[23:16];
+			store_pckt.data[23:16] = store_val[7:0];
 		end
 		2'b11: begin
 			store_pckt.usebytes = 4'b1000;
-			store_pckt.data[31:24] = store_val[31:24];
+			store_pckt.data[31:24] = store_val[7:0];
 		end
 		endcase
 	SH: case(alu_result[1:0])

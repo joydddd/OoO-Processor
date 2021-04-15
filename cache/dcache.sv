@@ -15,6 +15,7 @@ module dcache(
 
     /* with SQ */
     input SQ_ENTRY_PACKET [2:0] sq_in,   // <- cache_wb
+    input SQ_ENTRY_PACKET [2:0] sq_head,
     output [2:0] sq_stall,
 
     /* with Load-FU/LQ */                 // <- cache_read_addr
@@ -65,6 +66,33 @@ module dcache(
   logic         wr2_dirty;
 
 
+  logic [2:0] sq_head_stall;
+  logic [2:0] sq_head_hit;
+  logic [2:0][7:0] wrh_tag;
+  logic [2:0][4:0] wrh_idx;
+
+  always_comb begin
+    case(sq_head_hit)
+      3'b000: sq_head_stall = 3'b011;
+      3'b001: sq_head_stall = 3'b011;
+      3'b010: sq_head_stall = 3'b011;
+      3'b011: sq_head_stall = 3'b011;
+      3'b100: sq_head_stall = 3'b001;
+      3'b101: sq_head_stall = 3'b001;
+      3'b110: sq_head_stall = 3'b000;
+      3'b111: sq_head_stall = 3'b000;
+    endcase
+  end
+  // assign sq_head_stall[2] = 1'b0;
+  // assign sq_head_stall[1] = sq_head_hit[2] ? 1'b0 : 1'b1; 
+  // assign sq_head_stall[0] = sq_head_stall[1] ? 1'b1 : (sq_head_hit[1] ? 1'b0 : 1'b1);
+
+
+
+  assign {wrh_tag[2], wrh_idx[2]} = sq_head[2].addr[`XLEN-1:3];
+  assign {wrh_tag[1], wrh_idx[1]} = sq_head[1].addr[`XLEN-1:3];
+  assign {wrh_tag[0], wrh_idx[0]} = sq_head[0].addr[`XLEN-1:3];
+
   always_comb begin : SQ_input_processing
     for (int i = 2; i>= 0; i--) begin
       wr_en[i] = sq_in[i].ready;
@@ -96,6 +124,9 @@ module dcache(
     .wr1_data(wr_data),
     .used_bytes(used_bytes),
     .wr1_hit(wr_hit),
+    .wrh_idx(wrh_idx),
+    .wrh_tag(wrh_tag),
+    .wrh_hit(sq_head_hit),
     .rd1_idx(rd_idx),
     .rd1_tag(rd_tag),
     .rd1_data(rd_data),
@@ -264,9 +295,13 @@ module dcache(
   //assign ld_stall = full_after_ld[2:1];
   assign h_t_distance = head - tail_after_ld[0];
 
-  assign sq_stall[2] = is_there_store_miss ? 1'b1 : (h_t_distance==`MHSRS'd2);
-  assign sq_stall[1] = is_there_store_miss ? 1'b1 : (h_t_distance==`MHSRS'd3);
-  assign sq_stall[0] = is_there_store_miss ? 1'b1 : (h_t_distance==`MHSRS'd4);
+  assign sq_stall[2] = sq_head_stall[2] | (is_there_store_miss ? 1'b1 : (h_t_distance==`MHSRS'd2));
+  assign sq_stall[1] = sq_head_stall[1] | (is_there_store_miss ? 1'b1 : (h_t_distance==`MHSRS'd3));
+  assign sq_stall[0] = sq_head_stall[0] | (is_there_store_miss ? 1'b1 : (h_t_distance==`MHSRS'd4));
+
+  // assign sq_stall[2] = (is_there_store_miss ? 1'b1 : (h_t_distance==`MHSRS'd2));
+  // assign sq_stall[1] = (is_there_store_miss ? 1'b1 : (h_t_distance==`MHSRS'd3));
+  // assign sq_stall[0] = (is_there_store_miss ? 1'b1 : (h_t_distance==`MHSRS'd4));
 
   always_comb begin : tail_logic
     mshrs_table_next = mshrs_table_next_after_issue;

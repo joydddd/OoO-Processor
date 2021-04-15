@@ -13,7 +13,7 @@
 #
 #
 
-SOURCE := test_progs/backtrack.c
+SOURCE := test_progs/mergesort.c
 
 CRT = crt.s
 LINKERS = linker.lds

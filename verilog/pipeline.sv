@@ -116,6 +116,7 @@ module pipeline(
     , output logic [`MHSRS-1:0] head_pointer
     , output logic [`MHSRS-1:0] issue_pointer
     , output logic [`MHSRS-1:0] tail_pointer
+    , output logic [2:0]        sq_stall_cache_display
 
     // Retire
     , output ROB_ENTRY_PACKET [2:0]     retire_display
@@ -149,8 +150,8 @@ module pipeline(
 
 // `ifdef CACHE_SIM
     , output SQ_ENTRY_PACKET [2:0]          cache_wb_sim
-//     , output logic [1:0][`XLEN-1:0]         cache_read_addr_sim
-//     , output logic [1:0]                    cache_read_start_sim
+    , output logic [1:0][`XLEN-1:0]         cache_read_addr_sim
+    , output logic [1:0]                    cache_read_start_sim
 //     , input [1:0][`XLEN-1:0]                cache_read_data_sim
 // `endif
 // */
@@ -260,6 +261,7 @@ logic [2:0][`LSQ-1:0]       exe_idx;
 LOAD_SQ_PACKET [1:0]        load_lookup;
 SQ_LOAD_PACKET [1:0]        load_forward;
 SQ_ENTRY_PACKET [2:0]       cache_wb;
+SQ_ENTRY_PACKET [2:0]       sq_head;
 logic [2**`LSQ-1:0]         load_tail_ready;
 
 
@@ -365,6 +367,7 @@ assign retire_display = rob_retire_entry;
 `ifdef DIS_DEBUG
 assign if_d_packet_debug = if_d_packet; 
 assign dis_new_pr_en_out = dis_new_pr_en;
+assign sq_stall_cache_display = sq_stall_cache;
 /* free list simulation */
 // assign free_pr_valid = free_pr_valid_debug;
 // assign free_pr = free_pr_debug;
@@ -385,12 +388,14 @@ assign fu_ready = fu_ready_debug;
 //assign cdb_t = cdb_t_debug;
 `endif
 assign cache_wb_sim = cache_wb;
+assign cache_read_addr_sim = cache_read_addr;
+assign cache_read_start_sim = cache_read_start;
 /*
 `ifdef CACHE_SIM
 
-    assign cache_read_addr_sim = cache_read_addr;
+
     assign cache_read_data = cache_read_data_sim;
-    assign cache_read_start_sim = cache_read_start;
+
 `endif
 */
 
@@ -883,7 +888,8 @@ SQ SQ_0(
     .load_lookup(load_lookup),    // <- load.load_lookup
     .load_forward(load_forward),  // -> load.load_forward
     .retire(SQRetireEN),          // <- retire. SQRetireEN
-    .cache_wb(cache_wb)           // -> TODO: dcache, currently dangling
+    .cache_wb(cache_wb),           // -> TODO: dcache, currently dangling
+    .sq_head(sq_head)
     `ifdef TEST_MODE
     , .sq_display(sq_display)
     , .head_dis(head_dis)
@@ -910,6 +916,7 @@ dcache dche_0(
     .dcache2ctlr_addr(dcache2ctlr_addr),
     .dcache2ctlr_data(dcache2ctlr_data),
     .sq_in(cache_wb),
+    .sq_head(sq_head),
     .sq_stall(sq_stall_cache),
     .ld_addr_in(cache_read_addr),
     .ld_start(cache_read_start),
