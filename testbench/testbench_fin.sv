@@ -41,7 +41,7 @@ import "DPI-C" function void mem_final_print();
 module testbench;
 logic clock, reset;
 logic program_halt;
-logic [1:0] inst_count;
+logic [2:0] inst_count;
 
 `ifdef TEST_MODE
 // IF to Dispatch 
@@ -86,6 +86,10 @@ logic [`LSQ:0]                 filled_num_dis;
 SQ_ENTRY_PACKET [2**`LSQ-1:0]  older_stores;
 logic [2**`LSQ-1:0]            older_stores_valid;
 LOAD_SQ_PACKET [1:0]           load_sq_pckt_display;
+logic [2:0]                    sq_stall_display;
+
+// Freelist
+logic [2:0]                    free_pr_valid_display;
 
 // Complete
 CDB_T_PACKET               cdb_t_display;
@@ -212,6 +216,7 @@ pipeline tbd(
     , .older_stores(older_stores)
     , .older_stores_valid(older_stores_valid)
     , .load_sq_pckt_display(load_sq_pckt_display)
+    , .sq_stall_display(sq_stall_display)
     // Complete
     , .cdb_t_display(cdb_t_display)
     , .wb_value_display(wb_value_display)
@@ -227,6 +232,7 @@ pipeline tbd(
     , .fl_head_display(fl_head_display)
     , .fl_tail_display(fl_tail_display)
     , .fl_empty_display(fl_empty_display)
+    , .free_pr_valid_display(free_pr_valid_display)
     // PR
     , .pr_display(pr_display)
     // Archi Map Table
@@ -297,7 +303,7 @@ end
 always @(negedge clock) begin
     if (reset) inst_total = 0;
     else if (~halted)
-        inst_total += inst_count;
+        inst_total = inst_total + inst_count[0] + inst_count[1] + inst_count[2];
 end
 
 //////////////////////////////////////////////////////////////

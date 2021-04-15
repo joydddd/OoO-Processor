@@ -288,7 +288,7 @@ module dcache(
         tail_after_ld[i] = tail_after_ld[i+1] + 1;
         ld_request_next[i] = 1'b0;
       end
-      else if (!full_after_ld[i+1] && !rd_valid[i] && ld_start[i]) begin
+      else if (full_after_ld[i+1] && !rd_valid[i] && ld_start[i]) begin
         tail_after_ld[i] = tail_after_ld[i+1];
         ld_request_next[i] = 1'b1;
       end
