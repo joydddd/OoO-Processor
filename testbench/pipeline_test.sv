@@ -390,11 +390,11 @@ end
 always @(negedge clock) begin
     if (!reset)  begin
         #1;
-        // print_inst(inst_total);
-        // $display("Cycle: %d", cycle_count);
+        print_inst(inst_total);
+        $display("Cycle: %d", cycle_count);
         print_retire_wb();
-        show_retire_store;
-        if(cycle_count < 1200) begin
+        // show_retire_store;
+        if(cycle_count > 80000 && cycle_count < 83000) begin
             // $dumpvars;
             // if (cache_read_start_sim[0]) $display("Cache Read: %d", cache_read_addr_sim[0]);
             // if (cache_read_start_sim[1]) $display("Cache Read: %d", cache_read_addr_sim[1]);
@@ -406,22 +406,22 @@ always @(negedge clock) begin
         // $display("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
         // $display();
         
-        print_pipeline;
-        print_alu;
+        // print_pipeline;
+        // print_alu;
         // show_fu_stat;
         // if(cycle_count > 660 && cycle_count < 700) print_is_fifo;
-        show_sq;
+        // show_sq;
         // show_sq_age;
         // show_cdb;
         // show_rs_in;
         
         // show_complete;
-        show_rs_table;
-        show_rob_table;
+        // show_rs_table;
+        // show_rob_table;
             $display(" dis_stall: %b, sq_stall: %b, rob_stall: %b, rs_stall: %b, free_reg_valid: %b", dis_stall_display, sq_stall_display, rob_stall_display, rs_stall_display, free_pr_valid_display);
-            $display( "sq cache stall: %b", sq_stall_cache_display);
+            // $display( "sq cache stall: %b", sq_stall_cache_display);
         // show_rs_out;
-        // if(cycle_count > 660 && cycle_count < 700) show_freelist_table;
+        show_freelist_table;
         end
     end else
     print_header("### Reset ###\n");
@@ -524,7 +524,7 @@ endtask
 
 task show_rob_table;
     for(int i=2**`ROB-1; i>=0; i--) begin  
-        $display("%d| valid: %d  Tnew: %d  Told: %d  arch_reg: %d  completed: %b  precise_state: %b  target_pc: %3d is_store: %b", i, rob_entries_display[i].valid, rob_entries_display[i].Tnew, rob_entries_display[i].Told, rob_entries_display[i].arch_reg, rob_entries_display[i].completed, rob_entries_display[i].precise_state_need, rob_entries_display[i].target_pc, rob_entries_display[i].is_store);
+        $display("%d| valid: %d  Tnew: %d  Told: %d  arch_reg: %d  completed: %b  precise_state: %b  target_pc: %3d is_store: %b pc: %d", i, rob_entries_display[i].valid, rob_entries_display[i].Tnew, rob_entries_display[i].Told, rob_entries_display[i].arch_reg, rob_entries_display[i].completed, rob_entries_display[i].precise_state_need, rob_entries_display[i].target_pc, rob_entries_display[i].is_store, rob_entries_display[i].PC);
     end
     $display("head:%d tail:%d", head_display, tail_display);
     $display("structual_stall:%b", rob_stall_display);
@@ -718,7 +718,7 @@ endtask
 
 // int PC; 
 initial begin
-    // $dumpvars;
+    $dumpvars;
     clock = 1'b0;
     reset = 1'b1;
     cycle_count = 0;
@@ -732,7 +732,7 @@ initial begin
     #2 reset = 1'b0;
     
     @(negedge clock);
-    for (int i = 0; i < 50000; i++) begin
+    for (int i = 0; i < 50; i++) begin
         if (halted) begin
             $display("Halt on WFI");
         $finish;
