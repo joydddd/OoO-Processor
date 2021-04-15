@@ -82,6 +82,10 @@ logic [`LSQ:0]                 filled_num_dis;
 SQ_ENTRY_PACKET [2**`LSQ-1:0]  older_stores;
 logic [2**`LSQ-1:0]            older_stores_valid;
 LOAD_SQ_PACKET [1:0]           load_sq_pckt_display;
+logic [2:0]                    sq_stall_display;
+
+// Freelist
+logic [2:0]                    free_pr_valid_display;
 
 // Complete
 CDB_T_PACKET               cdb_t_display;
@@ -107,7 +111,6 @@ logic [2**`FU-1:0]          complete_stall_display;
     logic [4:0]                      fl_tail_display;
     logic                            fl_empty_display;
 
-
 // Data cache
     logic [31:0] [63:0] cache_data_disp;
     logic [31:0] [7:0] cache_tags_disp;
@@ -116,6 +119,7 @@ logic [2**`FU-1:0]          complete_stall_display;
     logic [`MHSRS-1:0] head_pointer;
     logic [`MHSRS-1:0] issue_pointer;
     logic [`MHSRS-1:0] tail_pointer;
+
 `endif
 
 `ifdef DIS_DEBUG
@@ -124,19 +128,6 @@ logic [2:0]                 dis_new_pr_en_out;
 /* free list simulation */
 logic [2:0]                 free_pr_valid_debug;
 logic [2:0][`PR-1:0]        free_pr_debug;
-
-/* maptable simulation */
-/*
-logic [2:0] [4:0]           maptable_lookup_reg1_ar_out;
-logic [2:0] [4:0]           maptable_lookup_reg2_ar_out;
-logic [2:0] [4:0]           maptable_allocate_ar_out;
-logic [2:0] [`PR-1:0]       maptable_allocate_pr_out;
-logic [2:0][`PR-1:0]        maptable_old_pr_debug;
-logic [2:0][`PR-1:0]        maptable_reg1_pr_debug;
-logic [2:0][`PR-1:0]        maptable_reg2_pr_debug;
-logic [2:0]                 maptable_reg1_ready_debug;
-logic [2:0]                 maptable_reg2_ready_debug;
-*/
 
 logic [2:0]                 rob_stall_debug;
 FU_STATE_PACKET             fu_ready_debug;
@@ -156,6 +147,9 @@ logic [`XLEN-1:0]   proc2Imem_addr;
 logic [1:0]         proc2Imem_command;
 logic [63:0]        proc2Imem_data;
 
+logic [63:0]        debug_counter;
+EXCEPTION_CODE      pipeline_error_status;
+
 mem memory(
     .clk(clock),                            // Memory clock
     .proc2mem_addr(proc2Imem_addr),         // <- pipeline.proc2mem_addr
@@ -165,7 +159,6 @@ mem memory(
 `ifndef CACHE_MODE  
     .proc2mem_size(DOUBLE),                 //BYTE, HALF, WORD or DOUBLE, no need for this test
 `endif
-    // TODO: when we have store and load FU, this signal connection needs to be modified
     .proc2mem_command(proc2Imem_command),   // `BUS_NONE `BUS_LOAD or `BUS_STORE
     
     .mem2proc_response(Imem2proc_response), // 0 = can't accept, other=tag of transaction
@@ -219,6 +212,7 @@ pipeline tbd(
     , .older_stores(older_stores)
     , .older_stores_valid(older_stores_valid)
     , .load_sq_pckt_display(load_sq_pckt_display)
+    , .sq_stall_display(sq_stall_display)
     // Complete
     , .cdb_t_display(cdb_t_display)
     , .wb_value_display(wb_value_display)
@@ -234,6 +228,7 @@ pipeline tbd(
     , .fl_head_display(fl_head_display)
     , .fl_tail_display(fl_tail_display)
     , .fl_empty_display(fl_empty_display)
+    , .free_pr_valid_display(free_pr_valid_display)
     // PR
     , .pr_display(pr_display)
     // Archi Map Table
@@ -253,25 +248,6 @@ pipeline tbd(
 `ifdef DIS_DEBUG
     , .if_d_packet_debug(if_d_packet_debug)
     , .dis_new_pr_en_out(dis_new_pr_en_out)
-    /* free list simulation */
-    // , .free_pr_valid_debug(free_pr_valid_debug)
-    // , .free_pr_debug(free_pr_debug)
-    /* maptable simulation */
-    /*
-    , .maptable_lookup_reg1_ar_out(maptable_lookup_reg1_ar_out)
-    , .maptable_lookup_reg2_ar_out(maptable_lookup_reg2_ar_out)
-    , .maptable_allocate_ar_out(maptable_allocate_ar_out)
-    , .maptable_allocate_pr_out(maptable_allocate_pr_out)
-    , .maptable_old_pr_debug(maptable_old_pr_debug)
-    , .maptable_reg1_pr_debug(maptable_reg1_pr_debug)
-    , .maptable_reg2_pr_debug(maptable_reg2_pr_debug)
-    , .maptable_reg1_ready_debug(maptable_reg1_ready_debug)
-    , .maptable_reg2_ready_debug(maptable_reg2_ready_debug)
-    */
-
-    // , .rob_stall_debug(rob_stall_debug)
-    // , .fu_ready_debug(fu_ready_debug)
-    // , .cdb_t_debug(cdb_t_debug)
 `endif
 `ifdef CACHE_SIM
     , .cache_wb_sim(cache_wb_sim)
@@ -286,22 +262,6 @@ always begin
 	#(`VERILOG_CLOCK_PERIOD/2.0);
 	clock = ~clock;
 end
-
-/* halt */
-task wait_until_halt;
-		forever begin : wait_loop
-			@(posedge program_halt);
-			@(negedge clock);
-			if(program_halt) begin 
-                @(negedge clock);
-                disable wait_until_halt;
-            end
-		end
-endtask
-
-////////////////////////////////////////////////////////////
-/////////////       SIMULATORS
-///////////////////////////////////////////////////////////
 
 int cycle_count; 
 always @(posedge clock) begin
@@ -321,6 +281,27 @@ always @(negedge clock) begin
     else if (~halted)
         inst_total += inst_count;
 end
+
+/* halt */
+task wait_until_halt;
+		forever begin : wait_loop
+			@(posedge program_halt);
+			@(negedge clock);
+            if (cycle_count > 50000) begin
+                $display("NOOOOOOO!!!!!!");
+                $finish;
+            end
+			if(program_halt) begin 
+                @(negedge clock);
+                disable wait_until_halt;
+            end
+		end
+endtask
+
+////////////////////////////////////////////////////////////
+/////////////       SIMULATORS
+///////////////////////////////////////////////////////////
+
 
 `ifdef CACHE_SIM
 always @(posedge clock) begin
@@ -398,16 +379,31 @@ end
 always @(negedge clock) begin
     if (!reset)  begin
         #1;
-        print_retire_wb();
-        //  $display("Cycle: %d inst_count: %d, cum: %d", cycle_count, inst_count, inst_total);
-        // show_dcache;
-        // show_MHSRS;
+        // print_retire_wb();
+        $display("Cycle: %d inst_count: %d, cum: %d", cycle_count, inst_count, inst_total);
+        //show_dcache;
+        //show_MHSRS;
+        print_pipeline;
+        // $display("Take branch? %d", );
+        // $display("Branch to: %8h", TODO);
+        //show_dcache;
+        //show_MHSRS;
+        $display("Dispatch stall: %b", dis_stall_display);
+        $display("RS stall      : %b", rs_stall_display);
+        $display("ROB stall     : %b", rob_stall_display);
+        $display("SQ stall      : %b", sq_stall_display);
+        $display("Freelist valid: %b", free_pr_valid_display);
+        if (cycle_count > 40630 && cycle_count < 40730) begin
+            show_rob_table;
+            print_is_fifo;
+            print_alu;
+        end
         // $display();
         // $display("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
         // $display();
         
-        if(cycle_count > 1100 && cycle_count < 1190)print_pipeline;
-        // if(cycle_count > 1100 && cycle_count < 1150)print_alu;
+        // print_pipeline;
+        // print_alu;
         // show_fu_stat;
         // print_is_fifo;
         // show_sq;
@@ -416,8 +412,8 @@ always @(negedge clock) begin
         // show_rs_in;
         
         // show_complete;
-        // if(cycle_count > 1100 && cycle_count < 1150) show_rs_table;
-        // if(cycle_count > 1100 && cycle_count < 1150) show_rob_table;
+        // if (cycle_count >= 500 && cycle_count <= 520) show_rs_table;
+        // show_rob_table;
         // show_rob_in;
         // show_rs_out;
         // show_freelist_table;
@@ -573,7 +569,7 @@ endtask
 
 task print_retire_wb;
     for(int i=2; i>=0; i--) begin
-        if (map_ar[i] != 0 && RetireEN[i]==1'b1) $display("Cycle: %d inst: %d: wb r%d = %d", cycle_count, inst_total, map_ar[i], $signed(pr_display[map_ar_pr[i]]));
+        if (map_ar[i] != 0 && RetireEN[i]==1'b1) $display("Cycle: %d: wb r%d = %d", cycle_count, map_ar[i], $signed(pr_display[map_ar_pr[i]]));
     end
 endtask
 task print_is_fifo;
@@ -705,7 +701,7 @@ endtask
 
 // int PC; 
 initial begin
-    $dumpvars;
+    //$dumpvars;
     clock = 1'b0;
     reset = 1'b1;
     cycle_count = 0;
@@ -719,10 +715,10 @@ initial begin
     #2 reset = 1'b0;
     
     @(negedge clock);
-    //for (int i = 0; i < 750; i++) begin
-    //@(negedge clock);
-    //end
-    wait_until_halt;
+    for (int i = 0; i < 50000; i++) begin
+    @(negedge clock);
+    end
+    //wait_until_halt;
 
     #2;
     print_final;
