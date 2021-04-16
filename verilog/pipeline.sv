@@ -269,6 +269,7 @@ logic [2**`LSQ-1:0]         load_tail_ready;
 // icache
 logic [1:0]                 icache2mem_command;
 logic [`XLEN-1:0]           icache2mem_addr;
+logic                       hit_but_stall;
 
 // Dcache
 logic [1:0][`XLEN-1:0]      cache_read_addr;
@@ -435,6 +436,8 @@ icache ic(
     .cachemem_data(cachemem_data),          // <- cache.rd1_data
     .cachemem_valid(cachemem_valid),        // <- cache.rd1_valid
 
+    .hit_but_stall(hit_but_stall),              
+
     .proc2Imem_command(icache2mem_command), // -> controller.icache2mem_command
     .proc2Imem_addr(icache2mem_addr),       // -> controller.icache2mem_addr
 
@@ -457,6 +460,7 @@ fetch_stage fetch(
     .target_pc(fetch_pc),                   // <- retire.target_pc
     .dis_stall(dis_stall),                  // <- dispatch.stall
     
+    .hit_but_stall(hit_but_stall),          // -> icache.hit_but_stall
     .shift(fetch_shift),                    // -> icache.shift
     .proc2Icache_addr(proc2Icache_addr),    // -> icache.proc2Icache_addr
     .if_packet_out(if_d_packet)             // -> dispatch

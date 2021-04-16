@@ -13,6 +13,8 @@ module icache(
     input  [2:0][63:0] cachemem_data,           // <- cache.rd1_data
     input  [2:0] cachemem_valid,                // <- cache.rd1_valid
 
+    input         hit_but_stall,                // <- fetch.hit_but_stall
+
     output logic  [1:0] proc2Imem_command,      // -> mem.proc2mem_command
     output logic  [`XLEN-1:0] proc2Imem_addr,   // -> mem.proc2mem_addr
 
@@ -89,7 +91,7 @@ module icache(
                          new_read     ? cache_miss :
                          last_miss;
 
-  wire want_to_fetch = ~reset & unanswered_miss;
+  wire want_to_fetch = ~reset & unanswered_miss & ~hit_but_stall;
 
   wire require_load = want_to_fetch & ~already_fetched;
 
