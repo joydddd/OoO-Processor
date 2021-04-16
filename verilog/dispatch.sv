@@ -449,7 +449,10 @@ module dispatch_stage (
 	input [2:0][`PR-1:0]		reg2_pr,
 	input [2:0]					reg1_ready,
 	input [2:0]					reg2_ready,
-	output logic [2:0]			d_stall // if is 1, corresponding inst stall due to structural hazard. 
+	output logic [2:0]			d_stall, // if is 1, corresponding inst stall due to structural hazard. 
+
+	output logic [2:0]                 bp_EN,
+    output logic [2:0] [`XLEN-1:0]     bp_pc
 );
 /* rule out invalid inst and struct stall */
 IF_ID_PACKET [2:0] dis_packet;
@@ -461,9 +464,10 @@ assign d_stall = rs_stall | rob_stall | ~free_reg_valid | sq_stall;
 
 always_comb begin
 	dis_packet = if_id_packet_in;
-	for(int i=0; i<3; i++) begin
-		dis_packet[i].valid = if_id_packet_in[i].valid & ~d_stall[i];
-	end
+	dis_packet[2].valid = if_id_packet_in[2].valid & ~d_stall[2];
+	dis_packet[1].valid = (if_id_packet_in[2].predict_direction) ? 0 : if_id_packet_in[1].valid & ~d_stall[1];
+	dis_packet[0].valid = (if_id_packet_in[2].predict_direction | if_id_packet_in[1].predict_direction) ? 0 : if_id_packet_in[0].valid & ~d_stall[0];
+	
 end
 
 /* decode */
@@ -551,6 +555,8 @@ end
 /* allocate rob */
 always_comb begin
 	for(int i=0; i<3; i++) begin
+		rob_in[i].NPC = dis_packet[i].NPC;
+		rob_in[i].PC = dis_packet[i].PC;
 		rob_in[i].valid = dis_packet[i].valid;
 		rob_in[i].Tnew = dest_pr[i];
 		rob_in[i].Told = maptable_old_pr[i];
@@ -563,6 +569,12 @@ always_comb begin
 		rob_in[i].inst = dis_packet[i].inst;
 		rob_in[i].PC = dis_packet[i].PC;
 	end
+		rob_in[2].predict_direction = dis_packet[2].predict_direction;
+		rob_in[2].predict_pc = (dis_packet[2].predict_direction) ? dis_packet[2].predict_pc : 0;
+		rob_in[1].predict_direction = (~dis_packet[2].predict_direction) ? dis_packet[1].predict_direction : 0;
+		rob_in[1].predict_pc = (~dis_packet[2].predict_direction && dis_packet[1].predict_direction) ? dis_packet[1].predict_pc : 0;
+		rob_in[0].predict_direction = (~dis_packet[2].predict_direction && ~dis_packet[1].predict_direction) ? dis_packet[0].predict_direction : 0;
+		rob_in[0].predict_pc = (~dis_packet[2].predict_direction && ~dis_packet[1].predict_direction && dis_packet[0].predict_direction) ? dis_packet[0].predict_pc : 0;
 end
 
 /* allocate rs */
@@ -584,6 +596,18 @@ always_comb begin
 		rs_in[i].reg1_ready = reg1_ready[i];
 		rs_in[i].reg2_pr = reg2_pr[i];
 		rs_in[i].reg2_ready = reg2_ready[i];
+	end
+end
+
+/* allocate bp */
+always_comb begin
+	bp_EN = 0;
+	bp_pc = 0;
+	for(int i=0; i<3; i++) begin
+		if (dis_packet[i].valid && fu_sel[i] == BRANCH) begin
+			bp_EN[i] = 1;
+			bp_pc[i] = dis_packet[i].PC;
+		end
 	end
 end
 

@@ -13,7 +13,7 @@
 #
 #
 
-SOURCE := test_progs/matrix_mult_rec.c
+SOURCE := test_progs/basic_malloc.c
 
 CRT = crt.s
 LINKERS = linker.lds
@@ -108,6 +108,7 @@ REFILES = verilog/re_stage.sv
 RETESTBENCH = testbench/retire_test.sv
 RESYNFILES = synth/retire_stage.vg
 
+# branch fu
 BRANCHFILES = verilog/branch_fu.sv
 BRANCHTESTBENCH = testbench/branchfu_test.sv
 
@@ -131,6 +132,10 @@ PLSYNFILES = synth/pipeline.vg
 # Final pipeline
 FINTESTBENCH = testbench/testbench_fin.sv testbench/mt-fl_sim.cpp testbench/pipe_print.c testbench/mem.sv testbench/cache_simv.cpp
 
+# branch predictor
+BPFILES = verilog/branch_predictor.sv
+BPTESTBENCH = testbench/bp_test.sv
+BPSYNFILES = synth/branch_predictor.vg
 # SIMULATION CONFIG
 
 HEADERS     = $(wildcard *.svh)
@@ -161,6 +166,9 @@ export PRFILES
 export MULTFILES
 export LOADFILES
 export SQFILES
+export BRANCHFILES
+export BPFILES
+
 
 export ICACHE_NAME = icache
 # prefetch
@@ -209,7 +217,7 @@ all:    simv
 # pipeline(currently no fetch)
 pipeline: pl_simv
 	./pl_simv | tee pl_sim_program.out
-pl_simv: $(HEADERS) $(PLFILES) $(RSFILES) $(MTFILES) $(ISFIFOFILE) $(FREELISTFILES) $(ROBFILES) $(PRFILES) $(ALUFILES) $(LSFILES) $(MULTFILES) $(ICACHEFILES) $(PLTESTBENCH) $(DCFILES)
+pl_simv: $(HEADERS) $(PLFILES) $(RSFILES) $(MTFILES) $(ISFIFOFILE) $(FREELISTFILES) $(ROBFILES) $(PRFILES) $(ALUFILES) $(LSFILES) $(MULTFILES) $(ICACHEFILES) $(PLTESTBENCH) $(DCFILES) $(BPFILES)
 	$(VCS) $^ -o pl_simv
 
 # RS
@@ -284,10 +292,15 @@ ls: ls_simv
 ls_simv: $(HEADERS) $(LSFILES) $(LSTESTBENCH)
 	$(VCS) $^ -o ls_simv
 
+# branch predictor
+bp: bp_simv
+	./bp_simv | tee bp_sim_program.out
+bp_simv: $(HEADERS) $(BPFILES) $(BPTESTBENCH)
+	$(VCS) $^ -o bp_simv
 
 sim:	simv
 	./simv | tee sim_program.out
-simv: $(HEADERS) $(PLFILES) $(RSFILES) $(MTFILES) $(ISFIFOFILE) $(FREELISTFILES) $(ROBFILES) $(PRFILES) $(ALUFILES) $(LSFILES) $(MULTFILES) $(ICACHEFILES) $(FINTESTBENCH) $(DCFILES)
+simv: $(HEADERS) $(PLFILES) $(RSFILES) $(MTFILES) $(ISFIFOFILE) $(FREELISTFILES) $(ROBFILES) $(PRFILES) $(ALUFILES) $(LSFILES) $(MULTFILES) $(ICACHEFILES) $(FINTESTBENCH) $(DCFILES) $(BPFILES)
 	$(VCS) $^ -o simv
 
 .PHONY: sim
@@ -362,6 +375,9 @@ $(LOADSYNFILES): $(LOADFILES) $(SYNTH_DIR)/fu_load.tcl
 $(SQSYNFILES): $(SQFILES) $(SYNTH_DIR)/SQ.tcl
 	cd $(SYNTH_DIR) && dc_shell-t -f ./SQ.tcl | tee SQ_synth.out
 
+$(BPSYNFILES): $(BPFILES) $(SYNTH_DIR)/branchpredictor.tcl
+	cd $(SYNTH_DIR) && dc_shell-t -f ./branchpredictor.tcl | tee branch_predictor_synth.out
+
 rs_syn:	rs_syn_simv 
 	./rs_syn_simv | tee rs_syn_program.out
 
@@ -391,7 +407,13 @@ freelist_syn:	freelist_syn_simv
 	./freelist_syn_simv | tee freelist_syn_program.out
 
 freelist_syn_simv:	$(HEADERS) $(FREELISTSYNFILES) $(FREELISTTESTBENCH)
-	$(VCS) $^ $(LIB) +define+SYNTH_TEST +error+20 -o freelist_syn_simv   
+	$(VCS) $^ $(LIB) +define+SYNTH_TEST +error+20 -o freelist_syn_simv
+
+bp_syn:	bp_syn_simv 
+	./bp_syn_simv | tee bp_syn_program.out
+
+bp_syn_simv:	$(HEADERS) $(BPSYNFILES) $(BPTESTBENCH)
+	$(VCS) $^ $(LIB) +define+SYNTH_TEST +error+20 -o bp_syn_simv     
 
 sq_syn: sq_syn_simv
 	./sq_syn_simv | tee sq_syn_program.out

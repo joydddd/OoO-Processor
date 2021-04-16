@@ -121,6 +121,12 @@ module pipeline(
     // Retire
     , output ROB_ENTRY_PACKET [2:0]     retire_display
     , output                            BPRecoverEN_display
+
+    
+    // Branch Predictor
+    , output BP_ENTRY_PACKET [`BPW-1:0] bp_entries_display
+    , output logic       [2:0]                   predict_direction_display
+    , output logic       [2:0] [`XLEN-1:0]       predict_pc_display
 `endif
 
 `ifdef DIS_DEBUG
@@ -173,6 +179,9 @@ logic    [2:0][7:0]          current_tag;
 logic    [4:0]               wr_index;
 logic    [7:0]               wr_tag;
 logic                        data_write_enable;
+
+logic                        branchEN;
+logic [`XLEN-1:0]            branch_target_pc;
 
 /* Dispatch Stage */
 // Inputs
@@ -311,6 +320,23 @@ logic                               re_halt;
 //logic 		[2:0] 			        RetireEN;     
 //ROB_ENTRY_PACKET [2:0]              retire_entry;
 
+/* Branch Predictor */
+logic                               update_EN;
+logic       [`XLEN-1:0]             update_pc;
+logic                               update_direction;
+logic       [`XLEN-1:0]             update_target;
+logic       [2:0]                   dispatch_EN;
+logic       [2:0] [`XLEN-1:0]       dispatch_pc;
+logic       [2:0]                   fetch_EN;
+logic       [2:0] [`XLEN-1:0]       bp_fetch_pc;
+logic       [2:0]                   predict_direction_next;
+logic       [2:0] [`XLEN-1:0]       predict_pc_next;
+logic       [2:0]                   predict_direction_mid;
+logic       [2:0] [`XLEN-1:0]       predict_pc_mid;
+logic       [2:0]                   predict_direction;
+logic       [2:0] [`XLEN-1:0]       predict_pc;
+logic       [2:0]                   predict_found;
+
 /////////////////////////////////////////////////////////
 //          DEBUG  IN/OUTPUT                
 ////////////////////////////////////////////////////////
@@ -364,6 +390,10 @@ assign halt = re_halt;
 assign retire_display = rob_retire_entry;
 assign BPRecoverEN_display = BPRecoverEN;
 
+
+// Branch Predictor
+assign predict_direction_display = predict_direction;
+assign predict_pc_display = predict_pc;
 `endif
 
 `ifdef DIS_DEBUG
@@ -424,7 +454,7 @@ cache ic_mem(
 icache ic(
     .clock(clock),
     .reset(reset),
-    .take_branch(BPRecoverEN),
+    .take_branch(branchEN),
     .Imem2proc_response(ctlr2icache_response), // <- controller.ctlr2icache_response
     .Imem2proc_data(ctlr2icache_data),         // <- controller.ctlr2icache_data
     .Imem2proc_tag(ctlr2icache_tag),           // <- controller.ctlr2icache_tag
@@ -448,18 +478,31 @@ icache ic(
     .data_write_enable(data_write_enable)   // -> cache.wr1_en
 );
 
+assign branchEN =   (BPRecoverEN) ? 1 :
+                    (predict_direction[2]) ? 1 :
+                    (predict_direction[1]) ? 1 :
+                    (predict_direction[0]) ? 1 : 0;
+
+assign branch_target_pc =   (BPRecoverEN) ? fetch_pc :
+                            (predict_direction[2]) ? predict_pc[2] :
+                            (predict_direction[1]) ? predict_pc[1] :
+                            (predict_direction[0]) ? predict_pc[0] : 0;
+
 fetch_stage fetch(
     .clock(clock), 
     .reset(reset), 
     .cache_data(cache_data),                // <- icache.Icache_data_out
     .cache_valid(cache_valid),              // <- icache.Icache_valid_out
-    .take_branch(BPRecoverEN),              // <- retire.BPRecoverEN
-    .target_pc(fetch_pc),                   // <- retire.target_pc
+    .take_branch(branchEN),              // <- retire.BPRecoverEN
+    .target_pc(branch_target_pc),                   // <- retire.target_pc
     .dis_stall(dis_stall),                  // <- dispatch.stall
     
     .shift(fetch_shift),                    // -> icache.shift
     .proc2Icache_addr(proc2Icache_addr),    // -> icache.proc2Icache_addr
-    .if_packet_out(if_d_packet)             // -> dispatch
+    .if_packet_out(if_d_packet),             // -> dispatch
+
+    .fetch_EN(fetch_EN),
+    .fetch_pc(bp_fetch_pc)
 );
 
 //////////////////////////////////////////////////
@@ -503,45 +546,83 @@ mem_controller mc (
 //                                              //
 //////////////////////////////////////////////////
 IF_ID_PACKET [2:0]      dis_packet_in_next;
+IF_ID_PACKET [2:0]      dis_packet_in_branch;
+
+
+
+
 always_comb begin
+    dis_packet_in_branch = dis_packet_in;
+    if (dis_packet_in[2].predict_direction) begin
+        dis_packet_in_branch[1] = 0;
+        dis_packet_in_branch[0] = 0;
+    end
+    if (dis_packet_in[1].predict_direction) begin
+        dis_packet_in_branch[0] = 0;
+    end
+end
+
+always_comb begin
+    //$display("%b#######",dis_stall);
     priority case(dis_stall)
-        3'b000: dis_packet_in_next = if_d_packet;
+        3'b000: begin
+            dis_packet_in_next = predict_direction ? 0 : if_d_packet;
+            dis_packet_in_next[2].predict_direction = predict_direction ? 0 : predict_direction_next[2];
+            dis_packet_in_next[1].predict_direction = predict_direction ? 0 : predict_direction_next[1];
+            dis_packet_in_next[0].predict_direction = predict_direction ? 0 : predict_direction_next[0];
+            dis_packet_in_next[2].predict_pc = predict_direction ? 0 : predict_pc_next[2];
+            dis_packet_in_next[1].predict_pc = predict_direction ? 0 : predict_pc_next[1];
+            dis_packet_in_next[0].predict_pc = predict_direction ? 0 : predict_pc_next[0];
+        end
         3'b001: begin
-            if (dis_packet_in[0].valid) begin
-                dis_packet_in_next[2] = dis_packet_in[0];
-                dis_packet_in_next[1:0] = if_d_packet[2:1];
+            if (dis_packet_in_branch[0].valid) begin
+                dis_packet_in_next[2] = dis_packet_in_branch[0];
+                dis_packet_in_next[1:0] = predict_direction ? 0 : if_d_packet[2:1];
+                dis_packet_in_next[1].predict_direction = predict_direction ? 0 : predict_direction_next[2];
+                dis_packet_in_next[0].predict_direction = predict_direction ? 0 : predict_direction_next[1];
+                dis_packet_in_next[1].predict_pc = predict_direction ? 0 : predict_pc_next[2];
+                dis_packet_in_next[0].predict_pc = predict_direction ? 0 : predict_pc_next[1];
             end
             else begin
-                dis_packet_in_next[2:1] = if_d_packet[2:1];
-                dis_packet_in_next[0] = dis_packet_in[0];
+                dis_packet_in_next[2:1] = predict_direction ? 0 : if_d_packet[2:1];
+                dis_packet_in_next[2].predict_direction = predict_direction ? 0 : predict_direction_next[2];
+                dis_packet_in_next[1].predict_direction = predict_direction ? 0 : predict_direction_next[1];
+                dis_packet_in_next[2].predict_pc = predict_direction ? 0 : predict_pc_next[2];
+                dis_packet_in_next[1].predict_pc = predict_direction ? 0 : predict_pc_next[1];
+                dis_packet_in_next[0] = dis_packet_in_branch[0];
             end
         end
         3'b011: begin
-            if (dis_packet_in[1].valid & dis_packet_in[0].valid) begin
-                dis_packet_in_next[2:1] = dis_packet_in[1:0];
-                dis_packet_in_next[0] = if_d_packet[2];
+            if (dis_packet_in_branch[1].valid & dis_packet_in_branch[0].valid) begin
+                dis_packet_in_next[2:1] = dis_packet_in_branch[1:0];
+                dis_packet_in_next[0] = predict_direction ? 0 : if_d_packet[2];
+                dis_packet_in_next[0].predict_direction = predict_direction ? 0 : predict_direction_next[2];
+                dis_packet_in_next[0].predict_pc = predict_direction ? 0 : predict_pc_next[2];
             end
-            else if (~dis_packet_in[1].valid & dis_packet_in[0].valid) begin
-                dis_packet_in_next[2] = dis_packet_in[0];
-                dis_packet_in_next[1] = if_d_packet[2];
-                dis_packet_in_next[0] = dis_packet_in[1];
+            else if (~dis_packet_in_branch[1].valid & dis_packet_in_branch[0].valid) begin
+                dis_packet_in_next[2] = dis_packet_in_branch[0];
+                dis_packet_in_next[1] = predict_direction ? 0 : if_d_packet[2];
+                dis_packet_in_next[1].predict_direction = predict_direction ? 0 : predict_direction_next[2];
+                dis_packet_in_next[1].predict_pc = predict_direction ? 0 : predict_pc_next[2];
+                dis_packet_in_next[0] = dis_packet_in_branch[1];
             end
-            else if (dis_packet_in[1].valid & ~dis_packet_in[0].valid) begin
-                dis_packet_in_next[2] = dis_packet_in[1];
-                dis_packet_in_next[1] = if_d_packet[2];
-                dis_packet_in_next[0] = dis_packet_in[0];
+            else if (dis_packet_in_branch[1].valid & ~dis_packet_in_branch[0].valid) begin
+                dis_packet_in_next[2] = dis_packet_in_branch[1];
+                dis_packet_in_next[1] = predict_direction ? 0 : if_d_packet[2];
+                dis_packet_in_next[1].predict_direction = predict_direction ? 0 : predict_direction_next[2];
+                dis_packet_in_next[1].predict_pc = predict_direction ? 0 : predict_pc_next[2];
+                dis_packet_in_next[0] = dis_packet_in_branch[0];
             end
             else begin
-                dis_packet_in_next[2] = if_d_packet[2];
-                dis_packet_in_next[1] = dis_packet_in[1];
-                dis_packet_in_next[0] = dis_packet_in[0];
+                dis_packet_in_next[2] = predict_direction ? 0 : if_d_packet[2];
+                dis_packet_in_next[2].predict_direction = predict_direction ? 0 : predict_direction_next[2];
+                dis_packet_in_next[2].predict_pc = predict_direction ? 0 : predict_pc_next[2];
+                dis_packet_in_next[1] = dis_packet_in_branch[1];
+                dis_packet_in_next[0] = dis_packet_in_branch[0];
             end
         end
         3'b111: begin
-            dis_packet_in_next = dis_packet_in;
-        end
-        default: begin
-            dis_packet_in_next = dis_packet_in;
+            dis_packet_in_next = dis_packet_in_branch;
         end
     endcase
 end
@@ -554,8 +635,20 @@ always_ff @(posedge clock) begin
             dis_packet_in[i].inst <= `SD `NOP;
             dis_packet_in[i].NPC <= `SD 0;
             dis_packet_in[i].PC <= `SD 0;
+            dis_packet_in[i].predict_direction <= `SD 0;
+            dis_packet_in[i].predict_pc <= `SD 0;
         end
-    end else dis_packet_in <= `SD dis_packet_in_next;
+    end 
+    else begin
+        for(int i=0; i<3; i++) begin
+            dis_packet_in[i].valid <= `SD dis_packet_in_next[i].valid;
+            dis_packet_in[i].inst <= `SD dis_packet_in_next[i].inst;
+            dis_packet_in[i].NPC <= `SD dis_packet_in_next[i].NPC;
+            dis_packet_in[i].PC <= `SD dis_packet_in_next[i].PC;
+            dis_packet_in[i].predict_direction <= `SD dis_packet_in_next[i].predict_direction;
+            dis_packet_in[i].predict_pc <= `SD dis_packet_in_next[i].predict_pc;
+        end
+    end
 end
 
 
@@ -599,7 +692,10 @@ dispatch_stage dipatch_0(
 
 
     .new_pr_en(dis_new_pr_en),
-    .d_stall(dis_stall)
+    .d_stall(dis_stall),
+
+    .bp_EN(dispatch_EN), 
+    .bp_pc(dispatch_pc)
 
 );
 
@@ -873,7 +969,11 @@ branch_stage branc(
     .fu_packet_in(fu_packet_in[BRANCH]),
     .fu_ready(fu_ready.branch),
     .want_to_complete_branch(fu_finish.branch),
-    .fu_packet_out(fu_c_packet[BRANCH])
+    .fu_packet_out(fu_c_packet[BRANCH]),
+    .update_EN(update_EN), 
+    .update_pc(update_pc), 
+    .update_direction(update_direction),
+    .update_target(update_target)
 );
 
 
@@ -1070,6 +1170,105 @@ Freelist fl_0(
     , .empty_display(fl_empty_display)          // -> display
     `endif
 );
+
+
+
+//////////////////////////////////////////////////
+//                                              //
+//            Branch Predictor                  //
+//                                              //
+//////////////////////////////////////////////////
+
+branch_predictor bp_0(
+    .clock(clock), 
+    .reset(reset), 
+    .update_EN(update_EN), 
+    .update_pc(update_pc), 
+    .update_direction(update_direction), 
+    .update_target(update_target), 
+    .dispatch_EN(dispatch_EN), 
+    .dispatch_pc(dispatch_pc),
+    .fetch_EN(fetch_EN), 
+    .fetch_pc(bp_fetch_pc),
+    .predict_found(predict_found), 
+    .predict_direction(predict_direction_next), 
+    .predict_pc(predict_pc_next)
+    `ifdef TEST_MODE
+    , .bp_entries_display(bp_entries_display)
+    `endif
+);
+
+
+
+always_comb begin
+    priority case(dis_stall)
+        3'b000: begin
+            predict_direction_mid = predict_direction_next;
+            predict_pc_mid = predict_pc_next;
+        end
+        3'b001: begin
+            if (predict_direction[0]) begin
+                predict_direction_mid[2] = predict_direction[0];
+                predict_direction_mid[1:0] = predict_direction_next[2:1];
+                predict_pc_mid[2] = predict_pc[0];
+                predict_pc_mid[1:0] = predict_pc_next[2:1];
+            end
+            else begin
+                predict_direction_mid[2:1] = predict_direction_next[2:1];
+                predict_direction_mid[0] = 0;
+                predict_pc_mid[2:1] = predict_pc_next[2:1];
+                predict_pc_mid[0] = 0;
+            end
+        end
+        3'b011: begin
+            if (predict_direction[1] & predict_direction[0]) begin
+                predict_direction_mid[2:1] = predict_direction[1:0];
+                predict_direction_mid[0] = predict_direction_next[2];
+                predict_pc_mid[2:1] = predict_pc[1:0];
+                predict_pc_mid[0] = predict_pc_next[2];
+            end
+            else if (~predict_direction[1] & predict_direction[0]) begin
+                predict_direction_mid[2] = predict_direction[0];
+                predict_direction_mid[1] = predict_direction_next[2];
+                predict_direction_mid[0] = 0;
+                predict_pc_mid[2] = predict_pc[0];
+                predict_pc_mid[1] = predict_pc_next[2];
+                predict_pc_mid[0] = 0;
+            end
+            else if (predict_direction[1] & ~predict_direction[0]) begin
+                predict_direction_mid[2] = predict_direction[1];
+                predict_direction_mid[1] = predict_direction_next[2];
+                predict_direction_mid[0] = 0;
+                predict_pc_mid[2] = predict_pc[1];
+                predict_pc_mid[1] = predict_pc_next[2];
+                predict_pc_mid[0] = 0;
+            end
+            else begin
+                predict_direction_mid[2] = predict_direction_next[2];
+                predict_direction_mid[1] = 0;
+                predict_direction_mid[0] = 0;
+                predict_pc_mid[2] = predict_pc_next[2];
+                predict_pc_mid[1] = 0;
+                predict_pc_mid[0] = 0;
+            end
+        end
+        3'b111: begin
+            predict_direction_mid = predict_direction;
+            predict_pc_mid = predict_pc;
+        end
+    endcase
+end
+
+always_ff @(posedge clock) begin
+    if (reset | BPRecoverEN) begin
+        predict_direction <= `SD 0;
+        predict_pc <= `SD 0;
+    end
+    else begin
+        predict_direction <= `SD predict_direction_mid;
+        predict_pc <= `SD predict_pc_mid;
+    end
+end
 
 
 endmodule
