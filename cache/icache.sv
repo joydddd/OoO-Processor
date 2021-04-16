@@ -62,6 +62,8 @@ module icache(
   assign {current_tag[1], current_index[1]} = proc2Icache_addr[1][`XLEN-1:3];
   assign {current_tag[0], current_index[0]} = proc2Icache_addr[0][`XLEN-1:3];
 
+  assign {fetch_tag_next, fetch_index_next} = fetch_addr[`XLEN-1:3];
+
   wire changed_addr = (current_index[2] != fetch_index) || (current_tag[2] != fetch_tag); // still needed for "update_mem_tag"
   wire cache_miss = ~cachemem_valid[2] | ~cachemem_valid[1] | ~cachemem_valid[0];
 
@@ -157,18 +159,18 @@ module icache(
       fetch_addr = {proc2Icache_addr[2][`XLEN-1:3],3'b0};
     end
 
-    if (shift == 2'd2) begin
-      fetch_index_next = current_index[0];
-      fetch_tag_next   = current_tag[0];
-    end
-    else if (shift == 2'd1) begin
-      fetch_index_next = current_index[1];
-      fetch_tag_next   = current_tag[1];
-    end
-    else begin
-      fetch_index_next = current_index[2];
-      fetch_tag_next   = current_tag[2];
-    end
+  //   if (shift == 2'd2) begin
+  //     fetch_index_next = current_index[0];
+  //     fetch_tag_next   = current_tag[0];
+  //   end
+  //   else if (shift == 2'd1) begin
+  //     fetch_index_next = current_index[1];
+  //     fetch_tag_next   = current_tag[1];
+  //   end
+  //   else begin
+  //     fetch_index_next = current_index[2];
+  //     fetch_tag_next   = current_tag[2];
+  //   end
   end
 
   // synopsys sync_set_reset "reset"
