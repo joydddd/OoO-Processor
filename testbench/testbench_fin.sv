@@ -345,13 +345,7 @@ task show_MHSRS;
     end
 endtask
 
-task show_mem_response;
-    begin
-        $display("Mem Response: %d", Imem2proc_response);
-        $display("Mem Tag     : %d", Imem2proc_tag);
-        $display("Mem Data    : %016h", Imem2proc_data);
-    end
-endtask
+
 
 
 // Show contents of a range of Unified Memory, in both hex and decimal

@@ -156,7 +156,7 @@ always_comb begin
         endcase
     LHU: case(ins_reg.addr[1:0])
         2'b00: wb_data[15:0] = ins_reg.aligned_data[15:0];
-        2'b10: wb_data[31:16] = ins_reg.aligned_data[31:16];
+        2'b10: wb_data[15:0] = ins_reg.aligned_data[31:16];
         endcase
     endcase
 end

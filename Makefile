@@ -13,7 +13,7 @@
 #
 #
 
-SOURCE := test_progs/matrix_mult_rec.c
+SOURCE := test_progs/dft.c
 
 CRT = crt.s
 LINKERS = linker.lds

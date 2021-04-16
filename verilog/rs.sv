@@ -107,9 +107,7 @@ end
 
 logic [`RSW-1:0] tag_ready;
 logic [`RSW-1:0] entry_fu_ready;
-logic [`RSW-1:0] entry_ready;
-logic [`RSW-1:0] entry_ready_two2one;
-logic [`RSW-1:0] entry_ready_one2zero;
+
 
 logic [2:0][`RSW-1:0] tag_issue_separate;
 
@@ -132,15 +130,26 @@ always_comb begin
         endcase
     end
 end
+
+logic [`RSW-1:0] entry_ready, entry_ready_rev;
+logic [`RSW-1:0] entry_ready_rev_two2one;
+logic [`RSW-1:0] entry_ready_rev_one2zero;
+logic [2:0][`RSW-1:0] tag_issue_separate_rev;
+
 assign entry_ready = tag_ready & entry_fu_ready;
 
 /* select which entry to issue */
+assign entry_ready_rev = {<<{entry_ready}};
 
-ps16 is_ps_2(.req(entry_ready), .en(1'b1), .gnt(tag_issue_separate[2]));
-assign entry_ready_two2one = entry_ready & ~tag_issue_separate[2];
-ps16 is_ps_1(.req(entry_ready_two2one), .en(1'b1), .gnt(tag_issue_separate[1]));
-assign entry_ready_one2zero = entry_ready_two2one & ~tag_issue_separate[1];
-ps16 is_ps_0(.req(entry_ready_one2zero), .en(1'b1), .gnt(tag_issue_separate[0]));
+ps16 is_ps_2(.req(entry_ready_rev), .en(1'b1), .gnt(tag_issue_separate_rev[2]));
+assign entry_ready_rev_two2one = entry_ready_rev & ~tag_issue_separate_rev[2];
+ps16 is_ps_1(.req(entry_ready_rev_two2one), .en(1'b1), .gnt(tag_issue_separate_rev[1]));
+assign entry_ready_rev_one2zero = entry_ready_rev_two2one & ~tag_issue_separate_rev[1];
+ps16 is_ps_0(.req(entry_ready_rev_one2zero), .en(1'b1), .gnt(tag_issue_separate_rev[0]));
+
+assign tag_issue_separate[0] = {<<{tag_issue_separate_rev[0]}};
+assign tag_issue_separate[1] = {<<{tag_issue_separate_rev[1]}};
+assign tag_issue_separate[2] = {<<{tag_issue_separate_rev[2]}};
 
 
 /* assign issue packet */

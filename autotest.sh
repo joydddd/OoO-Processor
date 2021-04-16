@@ -34,7 +34,6 @@ for file in test_progs/*.s; do
 done
 
 for file in test_progs/*.c; do                                       # Similar procedure for c files
- 
     file=$(echo $file | cut -d'.' -f1)
 
     echo "Testing $file" 
