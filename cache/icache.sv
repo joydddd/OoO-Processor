@@ -93,7 +93,7 @@ module icache(
 
   wire require_load = want_to_fetch & ~already_fetched;
 
-  wire update_mem_tag = (changed_addr && require_load) || (unanswered_miss && require_load) || fetch_wr_enable || take_branch;
+  wire update_mem_tag = (changed_addr && require_load) || (unanswered_miss && require_load) || fetch_wr_enable;
 
   wire prefetch_require = !require_load && prefetch_command == BUS_LOAD;
 
@@ -158,19 +158,6 @@ module icache(
     else begin
       fetch_addr = {proc2Icache_addr[2][`XLEN-1:3],3'b0};
     end
-
-  //   if (shift == 2'd2) begin
-  //     fetch_index_next = current_index[0];
-  //     fetch_tag_next   = current_tag[0];
-  //   end
-  //   else if (shift == 2'd1) begin
-  //     fetch_index_next = current_index[1];
-  //     fetch_tag_next   = current_tag[1];
-  //   end
-  //   else begin
-  //     fetch_index_next = current_index[2];
-  //     fetch_tag_next   = current_tag[2];
-  //   end
   end
 
   // synopsys sync_set_reset "reset"
@@ -188,7 +175,7 @@ module icache(
       miss_outstanding <= `SD unanswered_miss;
       sync_Imem2proc_response <= `SD real_Imem2proc_response;
       last_fetch_addr <= `SD fetch_addr;
-      if(fetch_wr_enable)
+      if(fetch_wr_enable || take_branch)
         current_mem_tag <= `SD 0;
       else if(update_mem_tag)
         current_mem_tag <= `SD real_Imem2proc_response;
