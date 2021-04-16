@@ -396,7 +396,7 @@ always @(negedge clock) begin
         $display("Cycle: %d", cycle_count);
         print_retire_wb();
         // show_retire_store;
-        if(cycle_count > 80000 && cycle_count < 83000) begin
+        if(cycle_count > 82000 && cycle_count < 83200) begin
             // $dumpvars;
             // if (cache_read_start_sim[0]) $display("Cache Read: %d", cache_read_addr_sim[0]);
             // if (cache_read_start_sim[1]) $display("Cache Read: %d", cache_read_addr_sim[1]);
@@ -408,8 +408,8 @@ always @(negedge clock) begin
         // $display("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
         // $display();
         
-        // print_pipeline;
-        // print_alu;
+        print_pipeline;
+        print_alu;
         // show_fu_stat;
         // if(cycle_count > 660 && cycle_count < 700) print_is_fifo;
         // show_sq;
@@ -418,12 +418,12 @@ always @(negedge clock) begin
         // show_rs_in;
         
         // show_complete;
-        // show_rs_table;
-        // show_rob_table;
+        show_rs_table;
+        show_rob_table;
             // $display(" dis_stall: %b, sq_stall: %b, rob_stall: %b, rs_stall: %b, free_reg_valid: %b", dis_stall_display, sq_stall_display, rob_stall_display, rs_stall_display, free_pr_valid_display);
             // $display( "sq cache stall: %b", sq_stall_cache_display);
         // show_rs_out;
-        // show_freelist_table;
+        show_freelist_table;
         end
     end else
     print_header("### Reset ###\n");

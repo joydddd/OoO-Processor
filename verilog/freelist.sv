@@ -37,8 +37,8 @@ assign tail_inc1 = tail + 1;
 assign tail_inc2 = tail + 2;
 assign tail_inc3 = tail + 3;
 
-logic [6:0] available_num;
-logic [5:0] available_num_temp; 
+logic [5:0] available_num;
+logic [4:0] available_num_temp; 
 assign available_num_temp = tail-head;
 assign available_num = full ? 32 : available_num_temp;
 always_comb begin
