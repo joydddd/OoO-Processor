@@ -13,7 +13,7 @@
 #
 #
 
-SOURCE := test_progs/rv32_mult.s
+SOURCE := test_progs/insertionsort.c
 
 CRT = crt.s
 LINKERS = linker.lds
