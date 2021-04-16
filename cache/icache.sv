@@ -144,13 +144,13 @@ module icache(
   );
 
   always_comb begin
-    if (!cachemem_valid[2]) begin
+    if (shift == 2'd0) begin
       fetch_addr = {proc2Icache_addr[2][`XLEN-1:3],3'b0};
     end
-    else if (!cachemem_valid[1]) begin
+    else if (shift == 2'd1) begin
       fetch_addr = {proc2Icache_addr[1][`XLEN-1:3],3'b0};
     end
-    else if (!cachemem_valid[0]) begin
+    else if (shift == 2'd2) begin
       fetch_addr = {proc2Icache_addr[0][`XLEN-1:3],3'b0};
     end
     else begin
