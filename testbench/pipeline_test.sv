@@ -400,39 +400,39 @@ end
 always @(negedge clock) begin
     if (!reset)  begin
         #1;
-        print_inst(inst_total);
+        //print_inst(inst_total);
         $display("Cycle: %d", cycle_count);
         print_retire_wb();
-        // show_retire_store;
-        if(cycle_count < 2000) begin
-            // $dumpvars;
-            // if (cache_read_start_sim[0]) $display("Cache Read: %d", cache_read_addr_sim[0]);
-            // if (cache_read_start_sim[1]) $display("Cache Read: %d", cache_read_addr_sim[1]);
+        //show_retire_store;
+        // if(cycle_count < 2000) begin
+        //     // $dumpvars;
+        //     // if (cache_read_start_sim[0]) $display("Cache Read: %d", cache_read_addr_sim[0]);
+        //     // if (cache_read_start_sim[1]) $display("Cache Read: %d", cache_read_addr_sim[1]);
         
-        //   $display("Cycle: %d inst_count: %d, cum: %d", cycle_count, inst_count, inst_total);
-        // show_dcache;
-        // show_MHSRS;
-        // $display();
-        // $display("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-        // $display();
+        // //   $display("Cycle: %d inst_count: %d, cum: %d", cycle_count, inst_count, inst_total);
+        // // show_dcache;
+        // // show_MHSRS;
+        // // $display();
+        // // $display("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+        // // $display();
         
-        print_pipeline;
-        print_alu;
-        // show_fu_stat;
-        // if(cycle_count > 660 && cycle_count < 700) print_is_fifo;
-        // show_sq;
-        // show_sq_age;
-        // show_cdb;
-        // show_rs_in;
-        show_rs_table;
-        // show_complete;
-        show_rs_table;
-        show_rob_table;
-        $display(" dis_stall: %b, sq_stall: %b, rob_stall: %b, rs_stall: %b, free_reg_valid: %b", dis_stall_display, sq_stall_display, rob_stall_display, rs_stall_display, free_pr_valid_display);
-        $display( "sq cache stall: %b", sq_stall_cache_display);
-        // show_rs_out;
-        show_bp_entry;
-        end
+        // print_pipeline;
+        // print_alu;
+        // // show_fu_stat;
+        // // if(cycle_count > 660 && cycle_count < 700) print_is_fifo;
+        // // show_sq;
+        // // show_sq_age;
+        // // show_cdb;
+        // // show_rs_in;
+        // show_rs_table;
+        // // show_complete;
+        // show_rs_table;
+        // show_rob_table;
+        // $display(" dis_stall: %b, sq_stall: %b, rob_stall: %b, rs_stall: %b, free_reg_valid: %b", dis_stall_display, sq_stall_display, rob_stall_display, rs_stall_display, free_pr_valid_display);
+        // $display( "sq cache stall: %b", sq_stall_cache_display);
+        // // show_rs_out;
+        // show_bp_entry;
+        // end
     end else
     print_header("### Reset ###\n");
 end
@@ -671,16 +671,16 @@ task show_retire_store;
     end
 endtask
 
-always @(posedge clock) begin
-    int total_pr;
-    total_pr=0;
-    for (int i=0; i< 32; i++) begin
-        total_pr += fl_array_display[i];
-        total_pr += archi_map_display[i];
-    end
-        $display("CYCLE: %d, Total PR: %d ", cycle_count, total_pr);
-        if (total_pr != 2016) $display("ERRRRRRRRRRRRRRRRRRORRRRRR missing PR");
-end
+// always @(posedge clock) begin
+//     int total_pr;
+//     total_pr=0;
+//     for (int i=0; i< 32; i++) begin
+//         total_pr += fl_array_display[i];
+//         total_pr += archi_map_display[i];
+//     end
+//         $display("CYCLE: %d, Total PR: %d ", cycle_count, total_pr);
+//         if (total_pr != 2016) $display("ERRRRRRRRRRRRRRRRRRORRRRRR missing PR");
+// end
 
 
 
@@ -769,7 +769,7 @@ initial begin
     #2 reset = 1'b0;
     
     @(negedge clock);
-    for (int i = 0; i < 100000; i++) begin
+    for (int i = 0; i < 1000000; i++) begin
         if (halted) begin
             $display("Halt on WFI");
         $finish;

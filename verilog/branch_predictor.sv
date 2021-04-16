@@ -103,6 +103,8 @@ module branch_predictor(
                 STRONG_T: begin
                     bp_entries_next[update_pc[`BP-1:0]].direction = update_direction ? STRONG_T : WEAK_T;
                 end
+                default: begin
+                end
             endcase
         end
     end

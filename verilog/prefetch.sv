@@ -84,7 +84,10 @@ module prefetch (
                      mem_reject  ? 0 :
                      1;
 
-    assign non_sync_prefetch_addr = {first_miss_addr[`XLEN-1:3], 3'b000} + 8 * pref_count;
+    wire start_zero = {first_miss_addr[`XLEN-1:3], 3'b000} == 0;
+
+    assign non_sync_prefetch_addr = start_zero ? ({first_miss_addr[`XLEN-1:3], 3'b000} + 8 * pref_count) :
+                                    ({first_miss_addr[`XLEN-1:3], 3'b000} + 8 * pref_count - 8);
 
 
     wire pref_count_negative = (pref_count_last == 0 && backward > forward) || (pref_count_last == 1 && backward > forward + 1);

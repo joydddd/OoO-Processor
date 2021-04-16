@@ -478,6 +478,12 @@ end
 
 always @(negedge clock) begin
     // show_mem_response;
+    if (cycle_count == 142100) begin
+        $dumpon;
+    end
+    else if (cycle_count == 142350) begin
+        $dumpoff;
+    end
 end
 
 always @(negedge clock) begin
@@ -518,7 +524,8 @@ end
 
 // int PC; 
 initial begin
-    // $dumpvars;
+    $dumpvars;
+    $dumpoff;
     clock = 1'b0;
     reset = 1'b0;
     pipeline_error_status = NO_ERROR;       // TODO
