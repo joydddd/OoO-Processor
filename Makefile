@@ -13,7 +13,7 @@
 #
 #
 
-SOURCE := test_progs/basic_malloc.c
+SOURCE := test_progs/rv32_mult.s
 
 CRT = crt.s
 LINKERS = linker.lds
