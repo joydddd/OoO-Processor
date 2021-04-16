@@ -47,6 +47,7 @@ module prefetch (
 
     logic                       store_new_tag;
     logic [`XLEN-1:0]           first_miss_addr;
+    logic [`XLEN-1:0]           non_sync_prefetch_addr;
 
     logic                       found_a_loc;
 
@@ -83,7 +84,7 @@ module prefetch (
                      mem_reject  ? 0 :
                      1;
 
-    assign prefetch_addr = {first_miss_addr[`XLEN-1:3], 3'b000} + 8 * pref_count;
+    assign non_sync_prefetch_addr = {first_miss_addr[`XLEN-1:3], 3'b000} + 8 * pref_count;
 
 
     wire pref_count_negative = (pref_count_last == 0 && backward > forward) || (pref_count_last == 1 && backward > forward + 1);
@@ -137,6 +138,7 @@ module prefetch (
             store_prefetch_index <= `SD 0;
             sync_Imem2pref_response <= `SD 0;
             pref_count_last <= `SD 0;
+            prefetch_addr <= `SD 0;
         end
         else begin
             mem_tag <= `SD mem_tag_next;
@@ -144,6 +146,7 @@ module prefetch (
             store_prefetch_index <= `SD store_prefetch_index_next;
             sync_Imem2pref_response <= `SD Imem2pref_response;
             pref_count_last <= `SD pref_count;
+            prefetch_addr <= `SD non_sync_prefetch_addr;
         end
     end
 

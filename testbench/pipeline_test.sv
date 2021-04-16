@@ -406,31 +406,32 @@ end
 always @(negedge clock) begin
     if (!reset)  begin
         #1;
+        // $display("%d", cycle_count);
         print_retire_wb();
-         $display("Cycle: %d inst_count: %d, cum: %d", cycle_count, inst_count, inst_total);
-        show_dcache;
-        show_MHSRS;
+        // $display("Cycle: %d inst_count: %d, cum: %d", cycle_count, inst_count, inst_total);
         // $display();
         // $display("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
         // $display();
         
-        // print_pipeline;
-        // print_alu;
+        print_pipeline;
+        print_alu;
         // show_fu_stat;
         // print_is_fifo;
         // show_sq;
         // show_sq_age;
         // show_cdb;
         // show_rs_in;
-        
+        show_rs_table;
         // show_complete;
         // if (cycle_count >= 500 && cycle_count <= 520) show_rs_table;
-        // show_rob_table;
+        show_rob_table;
         // show_rob_in;
         // show_rs_out;
-        // show_freelist_table;
+        show_freelist_table;
         // show_mpt_entry;
-        // show_bp_entry;
+        show_bp_entry;
+        show_dcache;
+        show_MHSRS;
         // for (int i = 0; i < 64; i++) begin
         //     $display("PR: %d Value: %d", i, pr_display[i]);
         // end
@@ -534,7 +535,7 @@ endtask
 
 task show_rob_table;
     for(int i=2**`ROB-1; i>=0; i--) begin  
-        $display("%d| valid: %d  Tnew: %d  Told: %d  arch_reg: %d  completed: %b  precise_state: %b  target_pc: %3d is_store: %b predicted_direction: %b  predicted_pc: %3d", i, rob_entries_display[i].valid, rob_entries_display[i].Tnew, rob_entries_display[i].Told, rob_entries_display[i].arch_reg, rob_entries_display[i].completed, rob_entries_display[i].precise_state_need, rob_entries_display[i].target_pc, rob_entries_display[i].is_store, rob_entries_display[i].predict_direction, rob_entries_display[i].predict_pc);
+        $display("%2d| valid: %d  Tnew: %d  Told: %d  arch_reg: %d  completed: %b  precise_state: %b  target_pc: %3d is_store: %b predicted_direction: %b  predicted_pc: %3d PC: %3d", i, rob_entries_display[i].valid, rob_entries_display[i].Tnew, rob_entries_display[i].Told, rob_entries_display[i].arch_reg, rob_entries_display[i].completed, rob_entries_display[i].precise_state_need, rob_entries_display[i].target_pc, rob_entries_display[i].is_store, rob_entries_display[i].predict_direction, rob_entries_display[i].predict_pc, rob_entries_display[i].PC);
     end
     $display("head:%d tail:%d", head_display, tail_display);
     $display("structual_stall:%b", rob_stall_display);

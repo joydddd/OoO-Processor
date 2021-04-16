@@ -179,7 +179,7 @@ module dcache(
     wr2_dirty = 0;
     wr2_usebytes = 0;
     mshrs_table_next_after_retire = mshrs_table;
-    if ((head!=tail) && (Ctlr2proc_tag==mshrs_table[head].mem_tag) && mshrs_table[head].issued) begin
+    if ((head!=tail) && mshrs_table[head].issued &&(mshrs_table[head].command==BUS_STORE || (mshrs_table[head].command==BUS_LOAD && (Ctlr2proc_tag==mshrs_table[head].mem_tag)))) begin
       head_next = head + 1;
       mshrs_table_next_after_retire[head] = 0;
       if (mshrs_table[head].command==BUS_LOAD) begin
@@ -288,7 +288,7 @@ module dcache(
         tail_after_ld[i] = tail_after_ld[i+1] + 1;
         ld_request_next[i] = 1'b0;
       end
-      else if (!full_after_ld[i+1] && !rd_valid[i] && ld_start[i]) begin
+      else if (full_after_ld[i+1] && !rd_valid[i] && ld_start[i]) begin
         tail_after_ld[i] = tail_after_ld[i+1];
         ld_request_next[i] = 1'b1;
       end

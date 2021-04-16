@@ -436,7 +436,7 @@ cache ic_mem(
 icache ic(
     .clock(clock),
     .reset(reset),
-    .take_branch(BPRecoverEN),
+    .take_branch(branchEN),
     .Imem2proc_response(ctlr2icache_response), // <- controller.ctlr2icache_response
     .Imem2proc_data(ctlr2icache_data),         // <- controller.ctlr2icache_data
     .Imem2proc_tag(ctlr2icache_tag),           // <- controller.ctlr2icache_tag
@@ -528,69 +528,83 @@ mem_controller mc (
 //                                              //
 //////////////////////////////////////////////////
 IF_ID_PACKET [2:0]      dis_packet_in_next;
+IF_ID_PACKET [2:0]      dis_packet_in_branch;
+
+
+
+
 always_comb begin
+    dis_packet_in_branch = dis_packet_in;
+    if (dis_packet_in[2].predict_direction) begin
+        dis_packet_in_branch[1] = 0;
+        dis_packet_in_branch[0] = 0;
+    end
+    if (dis_packet_in[1].predict_direction) begin
+        dis_packet_in_branch[0] = 0;
+    end
+end
+
+always_comb begin
+    //$display("%b#######",dis_stall);
     priority case(dis_stall)
         3'b000: begin
-            dis_packet_in_next = if_d_packet;
-            dis_packet_in_next[2].predict_direction = predict_direction_mid[2];
-            dis_packet_in_next[1].predict_direction = predict_direction_mid[1];
-            dis_packet_in_next[0].predict_direction = predict_direction_mid[0];
-            dis_packet_in_next[2].predict_pc = predict_pc_mid[2];
-            dis_packet_in_next[1].predict_pc = predict_pc_mid[1];
-            dis_packet_in_next[0].predict_pc = predict_pc_mid[0];
+            dis_packet_in_next = predict_direction ? 0 : if_d_packet;
+            dis_packet_in_next[2].predict_direction = predict_direction ? 0 : predict_direction_next[2];
+            dis_packet_in_next[1].predict_direction = predict_direction ? 0 : predict_direction_next[1];
+            dis_packet_in_next[0].predict_direction = predict_direction ? 0 : predict_direction_next[0];
+            dis_packet_in_next[2].predict_pc = predict_direction ? 0 : predict_pc_next[2];
+            dis_packet_in_next[1].predict_pc = predict_direction ? 0 : predict_pc_next[1];
+            dis_packet_in_next[0].predict_pc = predict_direction ? 0 : predict_pc_next[0];
         end
         3'b001: begin
-            if (dis_packet_in[0].valid) begin
-                dis_packet_in_next[2] = dis_packet_in[0];
+            if (dis_packet_in_branch[0].valid) begin
+                dis_packet_in_next[2] = dis_packet_in_branch[0];
                 dis_packet_in_next[1:0] = predict_direction ? 0 : if_d_packet[2:1];
-                dis_packet_in_next[1].predict_direction = predict_direction ? 0 : predict_direction_mid[2];
-                dis_packet_in_next[0].predict_direction = predict_direction ? 0 : predict_direction_mid[1];
+                dis_packet_in_next[1].predict_direction = predict_direction ? 0 : predict_direction_next[2];
+                dis_packet_in_next[0].predict_direction = predict_direction ? 0 : predict_direction_next[1];
                 dis_packet_in_next[1].predict_pc = predict_direction ? 0 : predict_pc_next[2];
                 dis_packet_in_next[0].predict_pc = predict_direction ? 0 : predict_pc_next[1];
             end
             else begin
                 dis_packet_in_next[2:1] = predict_direction ? 0 : if_d_packet[2:1];
-                dis_packet_in_next[2].predict_direction = predict_direction ? 0 : predict_direction_mid[2];
-                dis_packet_in_next[1].predict_direction = predict_direction ? 0 : predict_direction_mid[1];
-                dis_packet_in_next[2].predict_pc = predict_direction ? 0 : predict_pc_mid[2];
-                dis_packet_in_next[1].predict_pc = predict_direction ? 0 : predict_pc_mid[1];
-                dis_packet_in_next[0] = dis_packet_in[0];
+                dis_packet_in_next[2].predict_direction = predict_direction ? 0 : predict_direction_next[2];
+                dis_packet_in_next[1].predict_direction = predict_direction ? 0 : predict_direction_next[1];
+                dis_packet_in_next[2].predict_pc = predict_direction ? 0 : predict_pc_next[2];
+                dis_packet_in_next[1].predict_pc = predict_direction ? 0 : predict_pc_next[1];
+                dis_packet_in_next[0] = dis_packet_in_branch[0];
             end
         end
         3'b011: begin
-            if (dis_packet_in[1].valid & dis_packet_in[0].valid) begin
-                dis_packet_in_next[2:1] = dis_packet_in[1:0];
+            if (dis_packet_in_branch[1].valid & dis_packet_in_branch[0].valid) begin
+                dis_packet_in_next[2:1] = dis_packet_in_branch[1:0];
                 dis_packet_in_next[0] = predict_direction ? 0 : if_d_packet[2];
-                dis_packet_in_next[0].predict_direction = predict_direction ? 0 : predict_direction_mid[2];
-                dis_packet_in_next[0].predict_pc = predict_direction ? 0 : predict_pc_mid[2];
+                dis_packet_in_next[0].predict_direction = predict_direction ? 0 : predict_direction_next[2];
+                dis_packet_in_next[0].predict_pc = predict_direction ? 0 : predict_pc_next[2];
             end
-            else if (~dis_packet_in[1].valid & dis_packet_in[0].valid) begin
-                dis_packet_in_next[2] = dis_packet_in[0];
+            else if (~dis_packet_in_branch[1].valid & dis_packet_in_branch[0].valid) begin
+                dis_packet_in_next[2] = dis_packet_in_branch[0];
                 dis_packet_in_next[1] = predict_direction ? 0 : if_d_packet[2];
-                dis_packet_in_next[1].predict_direction = predict_direction ? 0 : predict_direction_mid[2];
-                dis_packet_in_next[1].predict_pc = predict_direction ? 0 : predict_pc_mid[2];
-                dis_packet_in_next[0] = dis_packet_in[1];
+                dis_packet_in_next[1].predict_direction = predict_direction ? 0 : predict_direction_next[2];
+                dis_packet_in_next[1].predict_pc = predict_direction ? 0 : predict_pc_next[2];
+                dis_packet_in_next[0] = dis_packet_in_branch[1];
             end
-            else if (dis_packet_in[1].valid & ~dis_packet_in[0].valid) begin
-                dis_packet_in_next[2] = dis_packet_in[1];
+            else if (dis_packet_in_branch[1].valid & ~dis_packet_in_branch[0].valid) begin
+                dis_packet_in_next[2] = dis_packet_in_branch[1];
                 dis_packet_in_next[1] = predict_direction ? 0 : if_d_packet[2];
-                dis_packet_in_next[1].predict_direction = predict_direction ? 0 : predict_direction_mid[2];
-                dis_packet_in_next[1].predict_pc = predict_direction ? 0 : predict_pc_mid[2];
-                dis_packet_in_next[0] = dis_packet_in[0];
+                dis_packet_in_next[1].predict_direction = predict_direction ? 0 : predict_direction_next[2];
+                dis_packet_in_next[1].predict_pc = predict_direction ? 0 : predict_pc_next[2];
+                dis_packet_in_next[0] = dis_packet_in_branch[0];
             end
             else begin
                 dis_packet_in_next[2] = predict_direction ? 0 : if_d_packet[2];
-                dis_packet_in_next[2].predict_direction = predict_direction ? 0 : predict_direction_mid[2];
-                dis_packet_in_next[2].predict_pc = predict_direction ? 0 : predict_pc_mid[2];
-                dis_packet_in_next[1] = dis_packet_in[1];
-                dis_packet_in_next[0] = dis_packet_in[0];
+                dis_packet_in_next[2].predict_direction = predict_direction ? 0 : predict_direction_next[2];
+                dis_packet_in_next[2].predict_pc = predict_direction ? 0 : predict_pc_next[2];
+                dis_packet_in_next[1] = dis_packet_in_branch[1];
+                dis_packet_in_next[0] = dis_packet_in_branch[0];
             end
         end
         3'b111: begin
-            dis_packet_in_next = dis_packet_in;
-        end
-        default: begin
-            dis_packet_in_next = dis_packet_in;
+            dis_packet_in_next = dis_packet_in_branch;
         end
     endcase
 end
@@ -1163,6 +1177,7 @@ branch_predictor bp_0(
 );
 
 
+
 always_comb begin
     priority case(dis_stall)
         3'b000: begin
@@ -1223,7 +1238,7 @@ always_comb begin
 end
 
 always_ff @(posedge clock) begin
-    if (reset) begin
+    if (reset | BPRecoverEN) begin
         predict_direction <= `SD 0;
         predict_pc <= `SD 0;
     end

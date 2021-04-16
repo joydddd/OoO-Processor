@@ -1,5 +1,5 @@
-riscv gcc -mno-relax -march=rv32im -mabi=ilp32 -nostartfiles -Wno-main -mstrict-align test_progs/rv32_fib_rec.s -T aslinker.lds -o program.elf 
-cp program.elf program.debug.elf
+riscv gcc -mno-relax -march=rv32im -mabi=ilp32 -nostartfiles -std=gnu11 -mstrict-align -mno-div  -O0 crt.s test_progs/alexnet.c -T linker.lds -o program.elf
+riscv gcc -mno-relax -march=rv32im -mabi=ilp32 -nostartfiles -std=gnu11 -mstrict-align -mno-div  -g crt.s test_progs/alexnet.c -T linker.lds -o program.debug.elf
 riscv objdump -SD -M no-aliases  program.debug.elf > program.dump
 riscv objdump -SD -M numeric,no-aliases program.debug.elf > program.debug.dump
 rm program.debug.elf

@@ -464,9 +464,10 @@ assign d_stall = rs_stall | rob_stall | ~free_reg_valid | sq_stall;
 
 always_comb begin
 	dis_packet = if_id_packet_in;
-	for(int i=0; i<3; i++) begin
-		dis_packet[i].valid = if_id_packet_in[i].valid & ~d_stall[i];
-	end
+	dis_packet[2].valid = if_id_packet_in[2].valid & ~d_stall[2];
+	dis_packet[1].valid = (if_id_packet_in[2].predict_direction) ? 0 : if_id_packet_in[1].valid & ~d_stall[1];
+	dis_packet[0].valid = (if_id_packet_in[2].predict_direction | if_id_packet_in[1].predict_direction) ? 0 : if_id_packet_in[0].valid & ~d_stall[0];
+	
 end
 
 /* decode */

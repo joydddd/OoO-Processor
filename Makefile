@@ -13,7 +13,7 @@
 #
 #
 
-SOURCE := test_progs/mult_no_lsq.s
+SOURCE := test_progs/basic_malloc.c
 
 CRT = crt.s
 LINKERS = linker.lds
@@ -300,7 +300,7 @@ bp_simv: $(HEADERS) $(BPFILES) $(BPTESTBENCH)
 
 sim:	simv
 	./simv | tee sim_program.out
-simv: $(HEADERS) $(PLFILES) $(RSFILES) $(MTFILES) $(ISFIFOFILE) $(FREELISTFILES) $(ROBFILES) $(PRFILES) $(ALUFILES) $(LSFILES) $(MULTFILES) $(ICACHEFILES) $(FINTESTBENCH) $(DCFILES)
+simv: $(HEADERS) $(PLFILES) $(RSFILES) $(MTFILES) $(ISFIFOFILE) $(FREELISTFILES) $(ROBFILES) $(PRFILES) $(ALUFILES) $(LSFILES) $(MULTFILES) $(ICACHEFILES) $(FINTESTBENCH) $(DCFILES) $(BPFILES)
 	$(VCS) $^ -o simv
 
 .PHONY: sim
@@ -377,7 +377,7 @@ $(SQSYNFILES): $(SQFILES) $(SYNTH_DIR)/SQ.tcl
 
 $(BPSYNFILES): $(BPFILES) $(SYNTH_DIR)/branchpredictor.tcl
 	cd $(SYNTH_DIR) && dc_shell-t -f ./branchpredictor.tcl | tee branch_predictor_synth.out
-	
+
 rs_syn:	rs_syn_simv 
 	./rs_syn_simv | tee rs_syn_program.out
 
