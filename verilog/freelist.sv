@@ -132,5 +132,9 @@ always_ff @(posedge clock) begin
 	end
 end
 
+assign array_display = array;
+assign head_display = head;
+assign tail_display = tail;
+
 endmodule
 `endif

@@ -120,6 +120,7 @@ module pipeline(
 
     // Retire
     , output ROB_ENTRY_PACKET [2:0]     retire_display
+    , output                            BPRecoverEN_display
 `endif
 
 `ifdef DIS_DEBUG
@@ -361,6 +362,7 @@ assign rob_stall_display = rob_stall;
 // Retire stage
 assign halt = re_halt;
 assign retire_display = rob_retire_entry;
+assign BPRecoverEN_display = BPRecoverEN;
 
 `endif
 

@@ -125,6 +125,7 @@ logic [2**`FU-1:0]          complete_stall_display;
 
 // Retire
     ROB_ENTRY_PACKET [2:0]  retire_display;
+    logic BPRecoverEN_display;
 `endif
 
 `ifdef DIS_DEBUG
@@ -251,6 +252,7 @@ pipeline tbd(
     , .sq_stall_cache_display(sq_stall_cache_display)
     // Retire
     , .retire_display(retire_display)
+    , .BPRecoverEN_display(BPRecoverEN_display)
 `endif // TEST_MODE
 
 `ifdef DIS_DEBUG
@@ -418,10 +420,10 @@ always @(negedge clock) begin
         // show_complete;
         // show_rs_table;
         // show_rob_table;
-            $display(" dis_stall: %b, sq_stall: %b, rob_stall: %b, rs_stall: %b, free_reg_valid: %b", dis_stall_display, sq_stall_display, rob_stall_display, rs_stall_display, free_pr_valid_display);
+            // $display(" dis_stall: %b, sq_stall: %b, rob_stall: %b, rs_stall: %b, free_reg_valid: %b", dis_stall_display, sq_stall_display, rob_stall_display, rs_stall_display, free_pr_valid_display);
             // $display( "sq cache stall: %b", sq_stall_cache_display);
         // show_rs_out;
-        show_freelist_table;
+        // show_freelist_table;
         end
     end else
     print_header("### Reset ###\n");
@@ -660,6 +662,20 @@ task show_retire_store;
         $display("MEM[%d]=%d, use%b", cache_wb_sim[i].addr, cache_wb_sim[i].data, cache_wb_sim[i].usebytes );
     end
 endtask
+
+always @(posedge clock) begin
+    int total_pr;
+    total_pr=0;
+    for (int i=0; i< 32; i++) begin
+        total_pr += fl_array_display[i];
+        total_pr += archi_map_display[i];
+    end
+        $display("CYCLE: %d, Total PR: %d ", cycle_count, total_pr);
+        if (total_pr != 2016) $display("ERRRRRRRRRRRRRRRRRRORRRRRR missing PR");
+end
+
+
+
 /*
 task show_Dcache_input;
     begin
@@ -718,7 +734,7 @@ endtask
 
 // int PC; 
 initial begin
-    $dumpvars;
+    // $dumpvars;
     clock = 1'b0;
     reset = 1'b1;
     cycle_count = 0;
@@ -732,7 +748,7 @@ initial begin
     #2 reset = 1'b0;
     
     @(negedge clock);
-    for (int i = 0; i < 50; i++) begin
+    for (int i = 0; i < 100000; i++) begin
         if (halted) begin
             $display("Halt on WFI");
         $finish;

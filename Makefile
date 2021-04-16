@@ -13,7 +13,7 @@
 #
 #
 
-SOURCE := test_progs/haha.s
+SOURCE := test_progs/matrix_mult_rec.c
 
 CRT = crt.s
 LINKERS = linker.lds
