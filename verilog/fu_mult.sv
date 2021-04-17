@@ -146,7 +146,7 @@ always_comb begin
     else result = product[`XLEN*2-1:`XLEN];
 end
 
-always_comb begin
+always_ff @(posedge clock) begin
     if (reset) fu_in_reg <= `SD 0;
     else if (fu_packet_in.valid) fu_in_reg <= `SD fu_packet_in;
     else fu_in_reg <= `SD fu_in_reg;
