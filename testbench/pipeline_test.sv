@@ -401,17 +401,19 @@ always @(negedge clock) begin
     if (!reset)  begin
         #1;
         //print_inst(inst_total);
-        $display("Cycle: %d", cycle_count);
+        // $display("Cycle: %d", cycle_count);
         print_retire_wb();
-        //show_retire_store;
-        // if(cycle_count < 2000) begin
+        // show_retire_store;
+        if (cycle_count == 25800 ) $dumpon;
+        if (cycle_count == 25900) $dumpoff;
+        if(cycle_count > 25800 && cycle_count < 25900) begin
         //     // $dumpvars;
-        //     // if (cache_read_start_sim[0]) $display("Cache Read: %d", cache_read_addr_sim[0]);
-        //     // if (cache_read_start_sim[1]) $display("Cache Read: %d", cache_read_addr_sim[1]);
+            // if (cache_read_start_sim[0]) $display("Cache Read: %d", cache_read_addr_sim[0]);
+            // if (cache_read_start_sim[1]) $display("Cache Read: %d", cache_read_addr_sim[1]);
         
         // //   $display("Cycle: %d inst_count: %d, cum: %d", cycle_count, inst_count, inst_total);
-        // // show_dcache;
-        // // show_MHSRS;
+        // show_dcache;
+        // show_MHSRS;
         // // $display();
         // // $display("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
         // // $display();
@@ -432,9 +434,9 @@ always @(negedge clock) begin
         // $display( "sq cache stall: %b", sq_stall_cache_display);
         // // show_rs_out;
         // show_bp_entry;
-        // end
+        end
     end else
-    print_header("### Reset ###\n");
+        print_header("### Reset ###\n");
 end
 
 
@@ -588,8 +590,9 @@ task print_retire_wb;
     for(int i=2; i>=0; i--) begin;
         if (inst_count[i]) begin
             print_stage("\n|", retire_display[i].inst, retire_display[i].PC+4, inst_count[i]);
+            if (map_ar[i] != 0 && RetireEN[i]==1'b1) print_wb(map_ar[i], $signed(pr_display[map_ar_pr[i]]));
+            else print_header("\n");
         end
-        if (map_ar[i] != 0 && RetireEN[i]==1'b1) print_wb(map_ar[i], $signed(pr_display[map_ar_pr[i]]));
     end
 endtask
 task print_is_fifo;
@@ -756,6 +759,7 @@ endtask
 // int PC; 
 initial begin
     $dumpvars;
+    $dumpoff;
     clock = 1'b0;
     reset = 1'b1;
     cycle_count = 0;
@@ -769,7 +773,7 @@ initial begin
     #2 reset = 1'b0;
     
     @(negedge clock);
-    for (int i = 0; i < 1000000; i++) begin
+    for (int i = 0; i < 100000; i++) begin
         if (halted) begin
             $display("Halt on WFI");
             print_final;
