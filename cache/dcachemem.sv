@@ -9,7 +9,6 @@ module dcache_mem(
         input  [2:0][4:0] wr1_idx,                                   // 
         input  [2:0][7:0] wr1_tag,                                   // 
         input  [2:0][63:0] wr1_data,                                 //
-        input  [2:0] wr1_pending,
         input  [2:0][7:0] used_bytes, 
         output [2:0] wr1_hit,
         input  [2:0][4:0] wrh_idx,                                   // 
@@ -49,8 +48,6 @@ module dcache_mem(
   logic [31:0]        dirties;
   logic [31:0]        dirties_next;
   logic [31:0]        dirties_next2;
-  logic [31:0]        waiting;
-  logic [31:0]        waiting_next;
 
   
   `ifdef TEST_MODE
@@ -61,8 +58,8 @@ module dcache_mem(
 
   assign rd1_data[1] = data[rd1_idx[1]];
   assign rd1_data[0] = data[rd1_idx[0]];
-  assign rd1_valid[1] = valids[rd1_idx[1]] && (tags[rd1_idx[1]] == rd1_tag[1]) && !waiting[rd1_idx[1]];
-  assign rd1_valid[0] = valids[rd1_idx[0]] && (tags[rd1_idx[0]] == rd1_tag[0]) && !waiting[rd1_idx[0]];
+  assign rd1_valid[1] = valids[rd1_idx[1]] && (tags[rd1_idx[1]] == rd1_tag[1]);
+  assign rd1_valid[0] = valids[rd1_idx[0]] && (tags[rd1_idx[0]] == rd1_tag[0]);
 
   assign wr1_hit[2] = valids[wr1_idx[2]] && (tags[wr1_idx[2]] == wr1_tag[2]);
   assign wr1_hit[1] = valids[wr1_idx[1]] && (tags[wr1_idx[1]] == wr1_tag[1]);
@@ -92,7 +89,6 @@ module dcache_mem(
     wb_mem_addr = 0;
     dirties_next = dirties;
     dirties_next2 = dirties_next;
-    waiting_next = waiting;
     for (int i = 2; i >= 0; i--) begin
         if(wr1_en[i] && wr1_hit[i]) begin
             valids_next[wr1_idx[i]] = 1'b1;
@@ -111,9 +107,6 @@ module dcache_mem(
               end
             end
         end
-        else if(wr1_en[i] && !wr1_hit[i]) begin
-          waiting_next[wr1_idx[i]] = 1'b1;
-        end
     end
     data_next2 = data_next;
     dirties_next2 = dirties_next;
@@ -123,14 +116,10 @@ module dcache_mem(
         tags_next[wr2_idx] = wr2_tag;
         data_next2[wr2_idx] = wr2_data;
         dirties_next2[wr2_idx] = wr2_dirty;
-        if (wr2_dirty==1'b1) begin
-          waiting_next[wr2_idx] = 1'b0;
-        end
       end
       else if (tags[wr2_idx]==wr2_tag) begin
         if (wr2_dirty==1'b1) begin
           dirties_next2[wr2_idx] = 1'b1;
-          waiting_next[wr2_idx] = 1'b0;
           for ( int j = 7; j >= 0 ; j--) begin
             if (wr2_usebytes[j]) begin
               data_next2[wr2_idx][8*j+7] = wr2_data[8*j+7];
@@ -154,9 +143,6 @@ module dcache_mem(
         tags_next[wr2_idx] = wr2_tag;
         data_next2[wr2_idx] = wr2_data;
         dirties_next2[wr2_idx] = wr2_dirty;
-        if (wr2_dirty==1'b1) begin
-          waiting_next[wr2_idx] = 1'b0;
-        end
       end
     end
   end
@@ -168,14 +154,12 @@ module dcache_mem(
       tags <= `SD 0;
       data <= `SD 0;
       dirties <= `SD 0;
-      waiting <= `SD 0;
     end
     else begin
       valids <= `SD valids_next;
       tags <= `SD tags_next;
       data <= `SD data_next2;
       dirties <= `SD dirties_next2;
-      waiting <= `SD waiting_next;
     end
   end
 
