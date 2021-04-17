@@ -9,7 +9,7 @@ module fetch_stage (
 	input   [`XLEN-1:0]         target_pc,          // target pc: use if take_branch is TRUE
     input   [2:0]               dis_stall,
 
-    output  logic               hit_but_stall,
+    output  logic               hit_but_stall,      // -> icache.hit_but_stall
     output  logic [1:0]         shift,              // -> icache.shift
     output  [2:0][`XLEN-1:0]    proc2Icache_addr,   // -> icache.proc2Icache_addr
     output  IF_ID_PACKET[2:0]   if_packet_out,       // output data from fetch stage to dispatch stage
@@ -63,7 +63,6 @@ module fetch_stage (
                          2'd3;       
 
     assign hit_but_stall = first_hit == 2'd2 && first_stall != 2'd3 && PC_reg[first_hit][`XLEN-1:3] == PC_reg[first_stall][`XLEN-1:3];
-                    
 
     // Pass PC and NPC down pipeline w/instruction
 	assign if_packet_out[2].NPC = PC_reg[2] + 4;

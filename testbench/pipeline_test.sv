@@ -755,7 +755,7 @@ endtask
 
 // int PC; 
 initial begin
-    // $dumpvars;
+    $dumpvars;
     clock = 1'b0;
     reset = 1'b1;
     cycle_count = 0;
@@ -772,7 +772,9 @@ initial begin
     for (int i = 0; i < 1000000; i++) begin
         if (halted) begin
             $display("Halt on WFI");
-        $finish;
+            print_final;
+            print_cpi;
+            $finish;
         end
     @(negedge clock);
     end

@@ -13,7 +13,7 @@
 #
 #
 
-SOURCE := test_progs/insertionsort.c
+SOURCE := test_progs/quicksort.c
 
 CRT = crt.s
 LINKERS = linker.lds

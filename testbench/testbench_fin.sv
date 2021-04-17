@@ -2,6 +2,7 @@
 `ifndef __TESTBENCH_FIN_SV__
 `define __TESTBENCH_FIN_SV__
 
+`define MAX_CYCLE 5000000
 `define TEST_MODE 
 `define DIS_DEBUG
 `define CACHE_MODE
@@ -345,13 +346,7 @@ task show_MHSRS;
     end
 endtask
 
-task show_mem_response;
-    begin
-        $display("Mem Response: %d", Imem2proc_response);
-        $display("Mem Tag     : %d", Imem2proc_tag);
-        $display("Mem Data    : %016h", Imem2proc_data);
-    end
-endtask
+
 
 
 // Show contents of a range of Unified Memory, in both hex and decimal
@@ -471,20 +466,14 @@ task show_mem_with_decimal;
 	end
 endtask  // task show_mem_with_decimal
 
-always @(posedge clock) begin
-    if (cycle_count % 1000 == 0)
-        $display("DEBUG: cycle %d", cycle_count);
-end
+// always @(posedge clock) begin
+//     if (cycle_count % 1000 == 0)
+//         $display("DEBUG: cycle %d", cycle_count);
+// end
 
-always @(negedge clock) begin
-    // show_mem_response;
-    if (cycle_count == 142100) begin
-        $dumpon;
-    end
-    else if (cycle_count == 142350) begin
-        $dumpoff;
-    end
-end
+// always @(negedge clock) begin
+//     // show_mem_response;
+// end
 
 always @(negedge clock) begin
     if(reset) begin
@@ -496,7 +485,7 @@ always @(negedge clock) begin
 		`SD;
 		
 		// deal with any halting conditions
-		if(pipeline_error_status != NO_ERROR || debug_counter > 1000000) begin
+		if(pipeline_error_status != NO_ERROR || debug_counter > `MAX_CYCLE) begin
 			$display("@@@ Unified Memory contents hex on left, decimal on right: ");
 			show_mem_with_decimal(0,`MEM_64BIT_LINES - 1); 
 			// 8Bytes per line, 16kB total
