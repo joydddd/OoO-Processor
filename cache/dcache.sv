@@ -148,7 +148,6 @@ module dcache(
     `endif
   );
 
-  assign is_hit = rd_valid;  // no matter this load is started or not
   always_comb begin : send_hit_data
     ld_data = 0;
     for (int i = 1; i >= 0; i--) begin
@@ -198,11 +197,12 @@ module dcache(
 
   MHSRS_ENTRY_PACKET [`MHSRS_W-1:0] mshrs_table_next_after_retire;
 
+  assign   broadcast_fu = 0;
+  assign  broadcast_data = 0;
+
 
   always_comb begin : head_logic
     head_next = head;
-    broadcast_fu = 0;
-    broadcast_data = 0;
     wr2_en = 0;
     wr2_idx = 0;
     wr2_tag = 0;
@@ -233,10 +233,6 @@ module dcache(
               wr2_data[8*j+0] = mshrs_table[head].data[8*j+0];
             end
           end
-        end
-        else begin
-          broadcast_fu = mshrs_table[head].broadcast_fu;
-          broadcast_data = mshrs_table[head].left_or_right ? Ctlr2proc_data[63:32] : Ctlr2proc_data[31:0];
         end
       end
     end
@@ -286,11 +282,38 @@ module dcache(
   end
   
   logic is_there_store_miss;
+  logic [1:0] is_there_load_hazard;
 
-  assign is_there_store_miss = mshrs_table[15].dirty | mshrs_table[14].dirty | mshrs_table[13].dirty | mshrs_table[12].dirty
-  | mshrs_table[11].dirty | mshrs_table[10].dirty | mshrs_table[9].dirty | mshrs_table[8].dirty
-  | mshrs_table[7].dirty | mshrs_table[6].dirty | mshrs_table[5].dirty | mshrs_table[4].dirty
+  assign is_there_load_hazard[1] = ((mshrs_table[7].command==BUS_STORE)&&(mshrs_table[7].addr[`XLEN-1:3]==ld_addr_in[1][`XLEN-1:3])) || 
+  ((mshrs_table[6].command==BUS_STORE)&&(mshrs_table[6].addr[`XLEN-1:3]==ld_addr_in[1][`XLEN-1:3])) || 
+  ((mshrs_table[5].command==BUS_STORE)&&(mshrs_table[5].addr[`XLEN-1:3]==ld_addr_in[1][`XLEN-1:3])) || 
+  ((mshrs_table[4].command==BUS_STORE)&&(mshrs_table[4].addr[`XLEN-1:3]==ld_addr_in[1][`XLEN-1:3])) || 
+  ((mshrs_table[3].command==BUS_STORE)&&(mshrs_table[3].addr[`XLEN-1:3]==ld_addr_in[1][`XLEN-1:3])) || 
+  ((mshrs_table[2].command==BUS_STORE)&&(mshrs_table[2].addr[`XLEN-1:3]==ld_addr_in[1][`XLEN-1:3])) || 
+  ((mshrs_table[1].command==BUS_STORE)&&(mshrs_table[1].addr[`XLEN-1:3]==ld_addr_in[1][`XLEN-1:3])) ||
+  ((mshrs_table[0].command==BUS_STORE)&&(mshrs_table[0].addr[`XLEN-1:3]==ld_addr_in[1][`XLEN-1:3]));
+
+
+  assign is_there_load_hazard[0] = ((mshrs_table[7].command==BUS_STORE)&&(mshrs_table[7].addr[`XLEN-1:3]==ld_addr_in[0][`XLEN-1:3])) || 
+  ((mshrs_table[6].command==BUS_STORE)&&(mshrs_table[6].addr[`XLEN-1:3]==ld_addr_in[0][`XLEN-1:3])) || 
+  ((mshrs_table[5].command==BUS_STORE)&&(mshrs_table[5].addr[`XLEN-1:3]==ld_addr_in[0][`XLEN-1:3])) || 
+  ((mshrs_table[4].command==BUS_STORE)&&(mshrs_table[4].addr[`XLEN-1:3]==ld_addr_in[0][`XLEN-1:3])) || 
+  ((mshrs_table[3].command==BUS_STORE)&&(mshrs_table[3].addr[`XLEN-1:3]==ld_addr_in[0][`XLEN-1:3])) || 
+  ((mshrs_table[2].command==BUS_STORE)&&(mshrs_table[2].addr[`XLEN-1:3]==ld_addr_in[0][`XLEN-1:3])) || 
+  ((mshrs_table[1].command==BUS_STORE)&&(mshrs_table[1].addr[`XLEN-1:3]==ld_addr_in[0][`XLEN-1:3])) ||
+  ((mshrs_table[0].command==BUS_STORE)&&(mshrs_table[0].addr[`XLEN-1:3]==ld_addr_in[0][`XLEN-1:3]));
+
+  assign is_there_store_miss = mshrs_table[7].dirty | mshrs_table[6].dirty | mshrs_table[5].dirty | mshrs_table[4].dirty
   | mshrs_table[3].dirty | mshrs_table[2].dirty | mshrs_table[1].dirty | mshrs_table[0].dirty;
+
+
+
+  //assign is_hit[1] =  rd_valid[1];  // no matter this load is started or not
+ // assign is_hit[0] =  rd_valid[0]; 
+
+  assign is_hit[1] = is_there_load_hazard[1] ? 0 : rd_valid[1];  // no matter this load is started or not
+  assign is_hit[0] = is_there_load_hazard[0] ? 0 : rd_valid[0];  // no matter this load is started or not
+  
 
   //assign ld_stall = full_after_ld[2:1];
   assign h_t_distance = head - tail_after_ld[0];
@@ -309,7 +332,7 @@ module dcache(
     tail_after_ld[2] = tail;
     full_after_ld[2] = (tail+2==head);   // +2 because reserve a seat for final possible STORE
     for (int i = 1; i >= 0; i--) begin
-      if (!full_after_ld[i+1] && ((!rd_valid[i] && ld_start[i])||ld_request)) begin   //need mem load
+      if (!full_after_ld[i+1] && !is_there_load_hazard[i] && ((!rd_valid[i] && ld_start[i])||ld_request)) begin   //need mem load
         //allocate i
         mshrs_table_next[tail_after_ld[i+1]].addr = {ld_addr_in[i][`XLEN-1:3],3'b0};
         mshrs_table_next[tail_after_ld[i+1]].command = BUS_LOAD;
@@ -323,7 +346,7 @@ module dcache(
         tail_after_ld[i] = tail_after_ld[i+1] + 1;
         ld_request_next[i] = 1'b0;
       end
-      else if (full_after_ld[i+1] && !rd_valid[i] && ld_start[i]) begin
+      else if ((full_after_ld[i+1] || is_there_load_hazard[i]) && !rd_valid[i] && ld_start[i]) begin
         tail_after_ld[i] = tail_after_ld[i+1];
         ld_request_next[i] = 1'b1;
       end
@@ -333,9 +356,8 @@ module dcache(
       full_after_ld[i] = (tail_after_ld[i]+2==head);
     end
     tail_after_wr[3] = tail_after_ld[0];
-    full_after_wr[3] = full_after_ld[0];
     for (int i = 2; i >= 0; i--) begin
-      if (!full_after_wr[i+1] && wr_en[i] && !wr_hit[i]) begin
+      if (wr_en[i] && !wr_hit[i]) begin
         //allocate
         mshrs_table_next[tail_after_wr[i+1]].addr = ld_new_mem_addr[i];
         mshrs_table_next[tail_after_wr[i+1]].command = BUS_LOAD;
@@ -351,7 +373,6 @@ module dcache(
       else begin
         tail_after_wr[i] = tail_after_wr[i+1];
       end
-      full_after_wr[i] = (tail_after_wr[i]+2==head);
     end
 
     tail_next = tail_after_wr[0];

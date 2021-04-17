@@ -279,7 +279,6 @@ logic [2**`LSQ-1:0]         load_tail_ready;
 logic                       hit_but_stall;
 logic [1:0]                 icache2mem_command;
 logic [`XLEN-1:0]           icache2mem_addr;
-logic                       hit_but_stall;
 
 // Dcache
 logic [1:0][`XLEN-1:0]      cache_read_addr;
