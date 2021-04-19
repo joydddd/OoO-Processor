@@ -33,7 +33,7 @@ set dcache_module [getenv DCACHE_NAME]
 set bp_module [getenv BP_NAME]
 
 
-read_file -f ddc [list ${rs_module}.ddc ${mt_module}.ddc ${arch_mt_module}.ddc ${is_fifo_module}.ddc ${freelist_module}.ddc ${rob_module}.ddc ${pr_module}.ddc ${mult_module}.ddc ${sq_module}.ddc ${load_module}.ddc ${icache_module}.ddc ${dcache_module}.dcc ${bp_module}.dcc]
+read_file -f ddc [list ${rs_module}.ddc ${mt_module}.ddc ${arch_mt_module}.ddc ${is_fifo_module}.ddc ${freelist_module}.ddc ${rob_module}.ddc ${pr_module}.ddc ${mult_module}.ddc ${sq_module}.ddc ${load_module}.ddc ${icache_module}.ddc ${dcache_module}.ddc ${bp_module}.ddc]
 set_dont_touch [list ${rs_module} ${mt_module} ${arch_mt_module} ${is_fifo_module} ${freelist_module} ${rob_module} ${pr_module} ${mult_module} ${sq_module} ${load_module} ${icache_module} ${dcache_module} ${bp_module}]
 
 
@@ -44,7 +44,7 @@ read_file -f sverilog [list ${headers} ${sources}]
 set design_name pipeline
 set clock_name clock
 set reset_name reset
-set CLK_PERIOD 17
+set CLK_PERIOD 13.1
 
 
 #/***********************************************************/

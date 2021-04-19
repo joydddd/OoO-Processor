@@ -403,10 +403,10 @@ always @(negedge clock) begin
         //print_inst(inst_total);
         // $display("Cycle: %d", cycle_count);
         print_retire_wb();
-        // show_retire_store;
-        if (cycle_count == 25800 ) $dumpon;
-        if (cycle_count == 25900) $dumpoff;
-        if(cycle_count > 25800 && cycle_count < 25900) begin
+        show_retire_store;
+        if (cycle_count == 1 ) $dumpon;
+        if (cycle_count == 500) $dumpoff;
+        if(cycle_count > 0 && cycle_count < 500) begin
         //     // $dumpvars;
             // if (cache_read_start_sim[0]) $display("Cache Read: %d", cache_read_addr_sim[0]);
             // if (cache_read_start_sim[1]) $display("Cache Read: %d", cache_read_addr_sim[1]);
@@ -773,7 +773,7 @@ initial begin
     #2 reset = 1'b0;
     
     @(negedge clock);
-    for (int i = 0; i < 100000; i++) begin
+    for (int i = 0; i < 1000; i++) begin
         if (halted) begin
             $display("Halt on WFI");
             print_final;

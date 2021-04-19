@@ -73,7 +73,7 @@ end
 
 // stall (dependent only on retire)
 logic [`LSQ:0] num_empty_entries;
-assign num_empty_entries = 2**`LSQ - filled_num + num_retire;
+assign num_empty_entries = 2**`LSQ - filled_num;
 always_comb begin
     if (num_empty_entries < 2) stall = 3'b111;
     else if (num_empty_entries < 3) stall = 3'b011;

@@ -308,8 +308,9 @@ end
   assign is_there_load_hazard[0] = ld_start[0] ? |load_hazard_next[0] : |load_hazard[0];
   assign is_there_load_hazard[1] = ld_start[1] ? |load_hazard_next[1] : |load_hazard[1];
 
-  assign is_there_store_miss = mshrs_table[7].dirty | mshrs_table[6].dirty | mshrs_table[5].dirty | mshrs_table[4].dirty
-  | mshrs_table[3].dirty | mshrs_table[2].dirty | mshrs_table[1].dirty | mshrs_table[0].dirty;
+  assign is_there_store_miss = 0;
+  //mshrs_table[7].dirty | mshrs_table[6].dirty | mshrs_table[5].dirty | mshrs_table[4].dirty
+  //| mshrs_table[3].dirty | mshrs_table[2].dirty | mshrs_table[1].dirty | mshrs_table[0].dirty;
 
 
 

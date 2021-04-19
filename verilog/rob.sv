@@ -88,7 +88,6 @@ assign struct_stall = 	(space_left == 0) ? 3'b111 :
 
 always_comb begin
 	head_incre_temp = 0;
-	empty_temp = empty;
 	if(rob_entries[head].completed) begin
 		head_incre_temp = 1;
 		if(rob_entries[head_incre1].completed) begin
@@ -98,6 +97,8 @@ always_comb begin
 			end
 		end
 	end
+end
+always_comb begin
 	priority case (sq_stall)
 		3'b111: begin
 			if (rob_entries[head].is_store) begin
@@ -156,6 +157,9 @@ always_comb begin
 		default:
 			head_incre = head_incre_temp;
 	endcase
+end
+always_comb begin
+	empty_temp = empty;
 	priority case (head_incre)
 		3: begin
 			if (head_incre2 == tail) begin
@@ -199,6 +203,7 @@ always_comb begin
 	tail_next = tail + tail_incre;
 	input_start = tail + 1;
 	empty_next = 0;
+	input_num = 0;
 	if (tail == head_next && empty_temp) begin
 		input_start = tail;
 		tail_next = (tail_incre > 0) ? tail + tail_incre - 1 : tail;
