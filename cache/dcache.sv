@@ -317,11 +317,11 @@ end
   
 
   //assign ld_stall = full_after_ld[2:1];
-  assign h_t_distance = head - tail_after_ld[0];
+  assign h_t_distance = head - tail;
 
-  assign sq_stall[2] = sq_head_stall[2] | (is_there_store_miss ? 1'b1 : (h_t_distance==`MHSRS'd2));
-  assign sq_stall[1] = sq_head_stall[1] | (is_there_store_miss ? 1'b1 : (h_t_distance==`MHSRS'd3));
-  assign sq_stall[0] = sq_head_stall[0] | (is_there_store_miss ? 1'b1 : (h_t_distance==`MHSRS'd4));
+  assign sq_stall[2] = sq_head_stall[2] | (is_there_store_miss ? 1'b1 : (h_t_distance==`MHSRS'd4));
+  assign sq_stall[1] = sq_head_stall[1] | (is_there_store_miss ? 1'b1 : (h_t_distance==`MHSRS'd5));
+  assign sq_stall[0] = sq_head_stall[0] | (is_there_store_miss ? 1'b1 : (h_t_distance==`MHSRS'd6));
 
   // assign sq_stall[2] = (is_there_store_miss ? 1'b1 : (h_t_distance==`MHSRS'd2));
   // assign sq_stall[1] = (is_there_store_miss ? 1'b1 : (h_t_distance==`MHSRS'd3));
