@@ -86,6 +86,10 @@ module dcache(
   // assign sq_head_stall[2] = 1'b0;
   // assign sq_head_stall[1] = sq_head_hit[2] ? 1'b0 : 1'b1; 
   // assign sq_head_stall[0] = sq_head_stall[1] ? 1'b1 : (sq_head_hit[1] ? 1'b0 : 1'b1);
+  always_comb begin
+    for(int i=0; i<3; i++)
+      wr_hit[i] = sq_in[i].ready & sq_head_hit[i];
+  end
 
 
 

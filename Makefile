@@ -190,6 +190,9 @@ export SQ_NAME = SQ
 export DCACHE_NAME = dcache
 export DCFILES
 
+export BP_NAME = branch_predictor
+export BPFILES
+
 export RSFILES
 export ROBFILES
 export FREELISTFILES

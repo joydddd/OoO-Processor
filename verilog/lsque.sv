@@ -134,10 +134,10 @@ assign head_inc_2 = head+2;
 
 // writeback retire stores
 always_comb begin
-    cache_wb = 0;
-    if (num_retire >= 1) cache_wb[2] = sq_reg[head];
-    if (num_retire >= 2) cache_wb[1] = sq_reg[head_inc_1];
-    if (num_retire >= 3) cache_wb[0] = sq_reg[head_inc_2];
+    cache_wb = sq_head;
+    if (num_retire == 0) cache_wb[2].ready = 0;
+    if (num_retire <= 1) cache_wb[1].ready = 0;
+    if (num_retire <= 2) cache_wb[0].ready = 0;
 end
 
 always_comb begin

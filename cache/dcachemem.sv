@@ -10,7 +10,7 @@ module dcache_mem(
         input  [2:0][7:0] wr1_tag,                                   // 
         input  [2:0][63:0] wr1_data,                                 //
         input  [2:0][7:0] used_bytes, 
-        output [2:0] wr1_hit,
+        input [2:0] wr1_hit,
         input  [2:0][4:0] wrh_idx,                                   // 
         input  [2:0][7:0] wrh_tag,
         output [2:0] wrh_hit,
@@ -60,10 +60,6 @@ module dcache_mem(
   assign rd1_data[0] = data[rd1_idx[0]];
   assign rd1_valid[1] = valids[rd1_idx[1]] && (tags[rd1_idx[1]] == rd1_tag[1]);
   assign rd1_valid[0] = valids[rd1_idx[0]] && (tags[rd1_idx[0]] == rd1_tag[0]);
-
-  assign wr1_hit[2] = valids[wr1_idx[2]] && (tags[wr1_idx[2]] == wr1_tag[2]);
-  assign wr1_hit[1] = valids[wr1_idx[1]] && (tags[wr1_idx[1]] == wr1_tag[1]);
-  assign wr1_hit[0] = valids[wr1_idx[0]] && (tags[wr1_idx[0]] == wr1_tag[0]);
 
   assign wrh_hit[2] = valids[wrh_idx[2]] && (tags[wrh_idx[2]] == wrh_tag[2]);
   assign wrh_hit[1] = valids[wrh_idx[1]] && (tags[wrh_idx[1]] == wrh_tag[1]);
